@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:body>
+	<ui:composition template="/template/layout.xhtml">
+		<ui:define name="content">
+			<p:panel header="Ajout de Personne" styleClass="panel">
+				<h:form id="addPersonForm">
+					<div class="row">
+						<div class="col-md-2 col-md-offset-5 text-center">
+							<div class="form-group">
+								<label for="nom">Nom</label>
+								<h:inputText id="nom" required="true" styleClass="form-control"
+									label="nom" value="#{personneBean.nom}" autocomplete="off" />
+							</div>
+							
+							<div class="form-group">
+								<label for="prenom">Prénom</label>
+								<h:inputText id="prenom" required="true"
+									styleClass="form-control" label="prenom"
+									value="#{personneBean.prenom}"
+									autocomplete="off" />
+							</div>
+
+						<div class="act-submit">
+							<p:commandButton value="Ajouter" id="addPersonButton"
+								actionListener="#{personneBean.add}" ajax="false" />
+						</div>
+					</div>
+					<br />
+					<p:messages id="messages" showDetail="false" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+					</div>
+				</h:form>
+			</p:panel>
+		</ui:define>
+
+	</ui:composition>
+</h:body>
+
+</html>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:body>
+	<ui:composition template="/template/layout.xhtml">
+		<ui:define name="content">
+
+			<h:form id="filtre">
+				<div class="row">
+					<div class="col-md-12">
+
+						<div class="col-md-2">
+							<div class="form-group #{!name.valid ? 'has-error' : 'none'}">
+								<label for="titre">Par Titre</label>
+								<h:inputText id="titre" value="#{filtreBean.titre}"
+									styleClass="form-control" />
+							</div>
+						</div>
+
+						<div class="col-md-2">
+							<div class="form-group #{!name.valid ? 'has-error' : 'none'}">
+								<label for="realisateur">Par Réalisateur</label>
+								<h:selectOneMenu id="realisateur" styleClass="form-control"
+									value="#{filtreBean.selectedRealisateur}"
+									converter="#{personneConverter}">
+									<f:selectItem itemLabel="Selectionner un Réalisateur"
+										itemDisabled="true"></f:selectItem>
+									<f:selectItems
+										value="#{personneListBean.personneSelectItemList}"
+										var="selectedRealisateur"
+										itemLabel="#{selectedRealisateur.prenom} #{selectedRealisateur.nom}"
+										itemValue="#{selectedRealisateur}" />
+								</h:selectOneMenu>
+							</div>
+						</div>
+
+						<div class="col-md-2">
+							<div class="form-group #{!name.valid ? 'has-error' : 'none'}">
+								<label for="annee">Par Année</label>
+								<h:selectOneMenu id="annee" value="#{filtreBean.annee}"
+									styleClass="form-control">
+									<f:selectItem itemLabel="Selectionner une année"
+										itemDisabled="true"></f:selectItem>
+									<f:selectItems value="#{filmBean.anneeList}"
+										var="selectedAnnee" itemLabel="#{selectedAnnee}"
+										itemValue="#{selectedAnnee}" />
+								</h:selectOneMenu>
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group #{!name.valid ? 'has-error' : 'none'}">
+								<label for="acteur">Par Acteur</label>
+								<h:selectOneMenu id="acteur" styleClass="form-control" valueChangeListener="#{filtreBean.selectActeur}"
+									value="#{filtreBean.selectedActeur}"
+									converter="#{personneConverter}">
+									<f:selectItem itemLabel="Selectionner un Acteur"
+										itemDisabled="true"></f:selectItem>
+									<f:selectItems
+										value="#{personneListBean.personneSelectItemList}"
+										var="selectedActeur"
+										itemLabel="#{selectedActeur.prenom} #{selectedActeur.nom}"
+										itemValue="#{selectedActeur}" />
+								</h:selectOneMenu>
+							</div>
+						</div>
+						
+						<div class="col-md-2">
+							<div class="form-group #{!name.valid ? 'has-error' : 'none'}">
+								<label for="ripped">Ripped</label>
+								<h:selectOneMenu id="ripped" styleClass="form-control"
+									value="#{filtreBean.selectedRipped}"
+									converter="javax.faces.Boolean">
+									<f:selectItem itemLabel="Les films rippés ou pas"
+										itemDisabled="true"/>
+									<f:selectItem itemLabel="rippés" itemValue="${true}"/>
+									<f:selectItem itemLabel="non rippés" itemValue="${false}"/>
+								</h:selectOneMenu>
+							</div>
+						</div>
+						
+						<div class="col-md-12 text-center">
+							<div class="act-submit">
+								<p:commandButton actionListener="#{filtreBean.launch}"
+									ajax="false" value="Filtrer"></p:commandButton>
+								<p:commandButton actionListener="#{filtreBean.clean}"
+									ajax="false" value="Cleaner"></p:commandButton>
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<br />
+				<div class="row">
+					<div class="col-md-12 text-center">
+						<label>#{filmListBean.nbFilms} films</label>
+					</div>
+					<div class="col-md-12 text-center">
+						<p:dataTable var="f" value="#{filmListBean.filmList}" rows="30"
+							styleClass="table-striped" headerClass="table-header-group"
+							rowClasses="table-striped" paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="15,20,25">
+							<p:column headerText="Titre">
+								<h:outputText value="#{f.titre}" rendered="#{!user.connected}" />
+								<h:commandLink action="#{filmBean.edit}" value="#{f.titre}"
+									rendered="#{user.connected}">
+									<f:setPropertyActionListener target="#{filmBean.id}"
+										value="#{f.id}" />
+								</h:commandLink>
+							</p:column>
+
+							<p:column headerText="Réalisateur">
+								<h:outputText value="#{f.printRealisateur}" />
+							</p:column>
+
+							<p:column headerText="Acteurs">
+								<h:outputText value="#{f.printActeurs}" />
+							</p:column>
+
+							<p:column headerText="Année">
+								<h:outputText value="#{f.annee}" />
+							</p:column>
+
+							<p:column headerText="Ripped">
+								<h:graphicImage rendered="#{f.ripped}" value="img/ok.png"></h:graphicImage>
+								<h:graphicImage rendered="#{!f.ripped}" value="img/ko.png"></h:graphicImage>
+							</p:column>
+
+							<p:column headerText="Trash" rendered="#{user.connected}">
+								<p:commandButton action="#{filmListBean.removeFilm(f)}"
+									onclick="return confirm('Are you sure?');" ajax="false"
+									value="Supprimer" />
+							</p:column>
+
+							<f:facet name="paginatorTopLeft">
+								<p:commandButton type="button" icon="fa fa-sync" />
+							</f:facet>
+
+							<f:facet name="paginatorBottomRight">
+								<p:commandButton type="button" icon="fa fa-cloud-upload" />
+							</f:facet>
+						</p:dataTable>
+					</div>
+				</div>
+			</h:form>
+		</ui:define>
+
+	</ui:composition>
+</h:body>
+
+</html>

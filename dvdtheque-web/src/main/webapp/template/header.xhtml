@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<body>
+	<ui:composition>
+		<h:form id="nav">
+			<nav class="navbar navbar-inverse">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse"
+						data-target="#myNavbar">
+						<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#"></a>
+				</div>
+				<div class="collapse navbar-collapse" id="myNavbar">
+					<ul class="nav navbar-nav">
+						<li class="active"><h:outputLink value="default.xhtml">Liste des Films</h:outputLink></li>
+						<li><h:commandLink action="#{filmBean.add}" rendered="#{user.connected}">Ajouter un Film</h:commandLink></li>
+						<li><h:commandLink action="#{personneBean.navToAdd}" rendered="#{user.connected}">Ajouter une Personne</h:commandLink></li>
+						<li><h:commandLink action="#{personneBean.navToModify}" rendered="#{user.connected}">Modifier une Personne</h:commandLink></li>
+						<li><a href="mailto:fred@autogrif.com">Contact</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<h:outputLink value="login.xhtml"
+								rendered="#{!user.connected}">
+								<span class="glyphicon glyphicon-log-in"></span>
+								<h:outputText value=" Login" />
+							</h:outputLink> 
+							<h:commandLink actionListener="#{loginAction.navLogout}"
+								rendered="#{user.connected}" onclick="return confirm('Are you sure?');">
+								<span class="glyphicon glyphicon-log-out"></span>
+								<h:outputText value=" Logout" />
+							</h:commandLink>
+						</li>
+					</ul>
+				</div>
+			</div>
+			</nav>
+		</h:form>
+	</ui:composition>
+</body>
+</html>
