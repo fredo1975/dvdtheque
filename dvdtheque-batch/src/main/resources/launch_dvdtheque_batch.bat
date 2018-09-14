@@ -1,0 +1,1 @@
+java -cp "lib/*;properties;context;dvdtheque-batch-1.0-SNAPSHOT.jar" org.springframework.batch.core.launch.support.CommandLineJobRunner spring-batch-job.xml importFilm
