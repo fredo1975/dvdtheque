@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- *************************************************** -->
+	<!-- HEADER ******************************************* -->
+	<!-- *************************************************** -->
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>fr.fredos.dvdtheque</groupId>
+	<artifactId>dvdtheque</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>dvdtheque</name>
+	<description>Dvdtheque project and related components</description>
+	<!-- *************************************************** -->
+	<!-- MODULES ***************************************** -->
+	<!-- *************************************************** -->
+	<modules>
+		<module>dvdtheque-commons</module>
+		<module>dvdtheque-dao</module>
+		<module>dvdtheque-business</module>
+		<module>dvdtheque-batch</module>
+		<module>dvdtheque-swing</module>
+		<module>dvdtheque-web</module>
+		<!--module>dvdtheque-ejb</module> -->
+	</modules>
+	<dependencyManagement>
+		<dependencies>
+			<!-- MySQL database driver -->
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>5.1.10</version>
+			</dependency>
+
+			<dependency>
+				<groupId>c3p0</groupId>
+				<artifactId>c3p0</artifactId>
+				<version>0.9.0.4</version>
+			</dependency>
+
+			<!-- Logging with SLF4J & LogBack -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.22</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
+				<scope>runtime</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>1.7.25</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>${assertj.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-digester</groupId>
+				<artifactId>commons-digester</artifactId>
+				<version>2.1</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.8.3</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.6</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>3.2.1</version>
+			</dependency>
+
+			<!-- Spring framework -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${spring.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.batch</groupId>
+				<artifactId>spring-batch-core</artifactId>
+				<version>${spring.batch.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.batch</groupId>
+				<artifactId>spring-batch-infrastructure</artifactId>
+				<version>${spring.batch.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.batch</groupId>
+				<artifactId>spring-batch-test</artifactId>
+				<version>${spring.batch.version}</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-maven-plugin -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>1.5.1.RELEASE</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.springframework.integration</groupId>
+				<artifactId>spring-integration-core</artifactId>
+				<version>${spring.io.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.springframework.integration</groupId>
+				<artifactId>spring-integration-file</artifactId>
+				<version>${spring.io.version}</version>
+			</dependency>
+
+			<!-- Spring framework -->
+
+			<!-- HIBERNATE -->
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-entitymanager</artifactId>
+				<version>${hibernate.em.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>${hibernate.valid.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-ehcache</artifactId>
+				<version>${hibernate.em.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache</artifactId>
+				<version>2.10.3</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.el</groupId>
+				<artifactId>javax.el-api</artifactId>
+				<version>2.2.4</version>
+			</dependency>
+			<!-- <dependency> <groupId>weblogic</groupId> <artifactId>client</artifactId> 
+				<version>${weblogic.version}</version> </dependency> <dependency> <groupId>weblogic</groupId> 
+				<artifactId>weblogic</artifactId> <version>${weblogic.version}</version> 
+				</dependency> -->
+			<dependency>
+				<groupId>com.sun.faces</groupId>
+				<artifactId>jsf-api</artifactId>
+				<version>${jsf.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.sun.faces</groupId>
+				<artifactId>jsf-impl</artifactId>
+				<version>${jsf.version}</version>
+			</dependency>
+
+			<!-- http://repo1.maven.org/maven2/ -->
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>1.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>2.5</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.servlet.jsp</groupId>
+				<artifactId>jsp-api</artifactId>
+				<version>2.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.glassfish.web</groupId>
+				<artifactId>el-impl</artifactId>
+				<version>2.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.primefaces</groupId>
+				<artifactId>primefaces</artifactId>
+				<version>${primefaces.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>tomcat</artifactId>
+				<version>9.0.0.M1</version>
+				<type>pom</type>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.12</version>
+				<scope>test</scope>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<!-- declared explicitly so Spring config files can be placed next to 
+					their corresponding JUnit test class -->
+				<directory>${project.basedir}/src/test/java</directory>
+			</testResource>
+			<testResource>
+				<directory>${project.basedir}/src/test/resources</directory>
+			</testResource>
+		</testResources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<compilerArguments>
+						<Xlint />
+					</compilerArguments>
+					<verbose>true</verbose>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+					<wtpversion>2.0</wtpversion>
+					<sourceIncludes>
+						<sourceInclude>**/*.*</sourceInclude>
+					</sourceIncludes>
+					<additionalBuildcommands>
+						<buildCommand>
+							<name>org.springframework.ide.eclipse.core.springbuilder</name>
+						</buildCommand>
+						<buildCommand>
+							<name>org.eclipse.m2e.core.maven2Builder</name>
+						</buildCommand>
+					</additionalBuildcommands>
+					<additionalProjectnatures>
+						<projectnature>org.eclipse.jdt.core.javanature</projectnature>
+						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+						<projectnature>org.eclipse.m2e.core.maven2Nature</projectnature>
+					</additionalProjectnatures>
+				</configuration>
+			</plugin>
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-assembly-plugin</artifactId> 
+				<version>2.4</version> <configuration> <descriptorRefs> <descriptorRef>jar-with-dependencies</descriptorRef> 
+				</descriptorRefs> </configuration> </plugin> -->
+
+			<!--Specify the encoding for copying resources -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.2</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<!-- <plugin> <groupId>org.apache.tomcat.maven</groupId> <artifactId>tomcat9-maven-plugin</artifactId> 
+				<version>${tomcat9-maven-plugin.version}</version> <configuration> <port>8080</port> 
+				<path>/dvdtheque</path> </configuration> </plugin> -->
+		</plugins>
+	</build>
+
+	<properties>
+		<spring.version>4.3.17.RELEASE</spring.version>
+		<spring.batch.version>3.0.1.RELEASE</spring.batch.version>
+		<spring.io.version>4.3.7.RELEASE</spring.io.version>
+		<weblogic.version>10.3.2.0</weblogic.version>
+		<slf4j.version>1.6.1</slf4j.version>
+		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<!-- Test -->
+		<assertj.version>2.2.0</assertj.version>
+		<hibernate.em.version>5.2.6.Final</hibernate.em.version>
+		<hibernate.valid.version>5.2.4.Final</hibernate.valid.version>
+		<jsf.version>2.2.15</jsf.version>
+		<primefaces.version>6.2</primefaces.version>
+		<logback.version>1.2.3</logback.version>
+		<tomcat9-maven-plugin.version>2.2</tomcat9-maven-plugin.version>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>local</id>
+			<properties>
+				<env>local</env>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<env>dev</env>
+			</properties>
+		</profile>
+	</profiles>
+	<repositories>
+		<!-- For main Spring releases -->
+		<repository>
+			<id>org.springframework.maven.release</id>
+			<name>Spring Maven Release Repository</name>
+			<url>http://maven.springframework.org/release</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>prime-repo</id>
+			<name>PrimeFaces Maven Repository</name>
+			<url>http://repository.primefaces.org</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
+</project>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>dvdtheque</artifactId>
+		<groupId>fr.fredos.dvdtheque</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<groupId>fr.fredos.dvdtheque</groupId>
+	<artifactId>dvdtheque-ejb</artifactId>
+	<packaging>ejb</packaging>
+	<version>1.0-SNAPSHOT</version>
+	<name>dvdtheque-ejb</name>
+	<url>http://maven.apache.org</url>
+	<dependencies>
+		<dependency>
+			<groupId>fr.fredos.dvdtheque</groupId>
+			<artifactId>dvdtheque-business</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<build>
+		<defaultGoal>package</defaultGoal>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<!-- 4.5. Specify used Java version. -->
+					<source>1.5</source>
+					<target>1.5</target>
+
+					<!-- 4.6. Specify files to include. <includes> <include>**/ejb/**</include> 
+						</includes> -->
+					<!-- 4.7. Nothing to exclude. -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ejb-plugin</artifactId>
+				<configuration>
+					<ejbVersion>3.1</ejbVersion>
+					<archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
