@@ -37,12 +37,12 @@ public class PersonneListBean implements Serializable{
 		handlePersonneList();
 	}
 	public void handlePersonneList() {
-		List<PersonneDto> source = new ArrayList<PersonneDto>();
-        List<PersonneDto> target = new ArrayList<PersonneDto>();
+		List<PersonneDto> source = new ArrayList<>();
+        List<PersonneDto> target = new ArrayList<>();
 		personneList = personneService.findAllPersonne();
 		personneDtoByIdMap = new HashMap<Integer,PersonneDto>(personneList.size());
 		personneSelectItemList = new ArrayList<PersonneDto>(personneList.size());
-		acteursListModel = new DualListModel<PersonneDto>();
+		acteursListModel = new DualListModel<>();
 		for(PersonneDto personneDto : personneList){
 			personneDtoByIdMap.put(personneDto.getId(), personneDto);
 			personneSelectItemList.add(personneDto);
@@ -57,7 +57,6 @@ public class PersonneListBean implements Serializable{
 		this.personneList = personneList;
 	}
 	public List<PersonneDto> getPersonneSelectItemList() {
-		personneList = personneService.findAllPersonne();
 		return personneSelectItemList;
 	}
 	public void setPersonneSelectItemList(List<PersonneDto> personneSelectItemList) {

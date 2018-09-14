@@ -6,6 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +66,7 @@ public class PersonneServiceImpl implements PersonneService {
 		logger.debug(methodName + "end");
 		return realisateurDto;
 	}
+	@Cacheable(value= "personneDtoCache")
 	@Transactional(readOnly = true)
 	public List<PersonneDto> findAllPersonne(){
 		String methodName = "findAllPersonne : ";
@@ -116,6 +119,7 @@ public class PersonneServiceImpl implements PersonneService {
 		logger.debug(methodName + "end");
 		return resultPersonneDto;
 	}
+	@CacheEvict(value= "personneDtoCache")
 	@Transactional(readOnly = false)
 	public PersonneDto updatePersonne(PersonneDto personneDto){
 		String methodName = "updatePersonne : ";
@@ -131,6 +135,7 @@ public class PersonneServiceImpl implements PersonneService {
 		logger.debug(methodName + "end");
 		return resultPersonneDto;
 	}
+	@CacheEvict(value= "personneDtoCache")
 	@Transactional(readOnly = false)
 	public void deletePersonne(PersonneDto personneDto){
 		String methodName = "deletePersonne : ";
@@ -145,7 +150,6 @@ public class PersonneServiceImpl implements PersonneService {
 		logger.debug(methodName + "start : nom="+nom+" prenom="+prenom);
 		Personne p = null;
 		PersonneDto pDto = null;
-		PersonneDto personneDto = null;
 		p = personneDao.findPersonneByFullName(nom, prenom);
 		if(null != p){
 			pDto = PersonneDto.toDto(p);

@@ -70,6 +70,9 @@
 					name="filmDtoCache" />
 				<bean
 					class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+					name="personneDtoCache" />
+				<bean
+					class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
 					name="filmCache" />
 			</set>
 		</property>
