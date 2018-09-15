@@ -367,14 +367,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.0.2</version>
+				<version>3.1.0</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-			<!-- <plugin> <groupId>org.apache.tomcat.maven</groupId> <artifactId>tomcat9-maven-plugin</artifactId> 
-				<version>${tomcat9-maven-plugin.version}</version> <configuration> <port>8080</port> 
-				<path>/dvdtheque</path> </configuration> </plugin> -->
 		</plugins>
 	</build>
 
