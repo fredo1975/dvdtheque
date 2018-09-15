@@ -126,7 +126,7 @@ public class FilmBean implements Serializable{
 		Film film = filmDto.fromDto();
 		try {
 			filmService.updateFilm(film);
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Film Ajouté",  null);
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Film Ajoute",  null);
 	        FacesContext.getCurrentInstance().addMessage("messages", message);
 		} catch (Exception e) {
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "une erreur est survenue lors de l'enregistrement",  null);
