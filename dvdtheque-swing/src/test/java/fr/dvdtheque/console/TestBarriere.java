@@ -1,6 +1,7 @@
 package fr.dvdtheque.console;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -14,6 +15,7 @@ public class TestBarriere extends AbstractTransactionalJUnit4SpringContextTests{
 	private Barriere synchro;
 	
 	@Test
+	@Ignore
 	public void testBarriere(){
 		logger.info("testBarriere start");
 		

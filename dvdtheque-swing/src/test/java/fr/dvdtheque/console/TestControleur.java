@@ -2,6 +2,7 @@ package fr.dvdtheque.console;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -16,6 +17,7 @@ public class TestControleur extends AbstractTransactionalJUnit4SpringContextTest
 	@Autowired
 	private Controleur controleur;
 	@Test
+	@Ignore
 	public void testControleur(){
 		logger.info("testControleur start");
 		//controleur.run();
