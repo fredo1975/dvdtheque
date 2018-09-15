@@ -41,12 +41,12 @@ public class PersonneDao {
 			return null;
 		
 	}
-	@SuppressWarnings("unchecked")
+	
     public List<Personne> findAllPersonne() {
 		Query q = this.em.createQuery("from Personne personne order by personne.prenom,personne.nom ASC");
 		return q.getResultList();
     }
-	@SuppressWarnings("unchecked")
+	
 	public List<Personne> findAllPersonneByType(Integer typeId) {
 		StringBuilder sb = new StringBuilder("select distinct personneType.personne ");
 		if(typeId==2){
@@ -59,7 +59,7 @@ public class PersonneDao {
         return query.getResultList();
     }
 	
-	@SuppressWarnings("unchecked")
+	
 	public Personne findPersonneByFullName(String nom,String prenom) {
 		StringBuilder sb = new StringBuilder("from Personne personne where personne.nom=:nom and personne.prenom=:prenom ");
         Query query = this.em.createQuery(sb.toString());
@@ -67,7 +67,7 @@ public class PersonneDao {
         query.setParameter("prenom", prenom);
         return (Personne) query.getSingleResult();
     }
-	@SuppressWarnings("unchecked")
+	
 	public Personne findPersonneByName(String nom) {
 		StringBuilder sb = new StringBuilder("from Personne personne where personne.nom=:nom ");
         Query query = this.em.createQuery(sb.toString());
@@ -75,7 +75,7 @@ public class PersonneDao {
         return (Personne) query.getSingleResult();
     }
 	
-	@SuppressWarnings("unchecked")
+	
     public List<Personne> findAllPersonneByFilm(Film film) {
 		List<Personne> persList = new ArrayList<Personne>();
 		StringBuilder sbRealisateur = new StringBuilder("from Film film join fetch film.realisateurs real join fetch film.acteurs act ");
@@ -91,7 +91,7 @@ public class PersonneDao {
 		this.em.persist(p);
 	}
 	public Personne mergePersonne(Personne p){
-		return (Personne) this.em.merge(p);
+		return this.em.merge(p);
 	}
 	public void updatePersonne(Personne p){
 		this.em.merge(p);

@@ -84,7 +84,6 @@ public class PersonneServiceImpl implements PersonneService {
 	public PersonnesFilm findAllPersonneByFilm(FilmDto film){
 		String methodName = "findAllPersonneByFilm : ";
 		logger.debug(methodName + "start : ");
-		
 		PersonnesFilm personnesFilm = new PersonnesFilm();
 		List<PersonneDto> personneDtoList = new ArrayList<PersonneDto>();
 		List<Personne> allPersonneList = personneDao.findAllPersonneByFilm(film.fromDto());
