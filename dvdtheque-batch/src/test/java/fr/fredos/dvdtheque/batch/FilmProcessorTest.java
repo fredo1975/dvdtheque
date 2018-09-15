@@ -21,28 +21,28 @@ public class FilmProcessorTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmProcessorTest.class);
 
 	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils;
+	private JobLauncherTestUtils jobLauncherTestUtils1;
 
 	@Test
 	public void launchCheckFilmStep() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchStep("checkFilm");
+		JobExecution jobExecution = jobLauncherTestUtils1.launchStep("checkFilm");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 	
 	@Test
 	public void launchCleanDBStep() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchStep("cleanDB");
+		JobExecution jobExecution = jobLauncherTestUtils1.launchStep("cleanDB");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 	
 	@Test
 	public void launchSetRippedFlagStep() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchStep("setRippedFlag");
+		JobExecution jobExecution = jobLauncherTestUtils1.launchStep("setRippedFlag");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 	@Test
 	public void launchJob() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
+		JobExecution jobExecution = jobLauncherTestUtils1.launchJob();
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 }

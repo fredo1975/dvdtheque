@@ -20,7 +20,7 @@ public interface FilmService {
 	//public DvdDto saveDvd(DvdDto dvdDto) throws Exception;
 	
 	public FilmDto findFilmWithAllObjectGraph(Integer id);
-	
+	public List<RippedFilm> findAllRippedFilms();
 	public List<Film> findAllFilms();
 	public Film updateFilm(Film film);
 	public void saveNewFilm(Film film);
