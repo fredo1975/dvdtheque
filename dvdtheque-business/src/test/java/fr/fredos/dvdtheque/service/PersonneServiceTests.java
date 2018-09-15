@@ -111,13 +111,11 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	public void findPersonneByFullName() throws Exception {
 		String methodName = "findPersonneByFullName : ";
 		logger.debug(methodName + "start");
-		String nom = "allen";
-		String prenom = "woody";
 		// insert a personne first
-		PersonneDto pToInsert = new PersonneDto(nom, prenom);
+		PersonneDto pToInsert = new PersonneDto(FilmTestUtils.ACT_NOM, FilmTestUtils.ACT_PRENOM);
 		pToInsert = personneService.savePersonne(pToInsert);
 		assertNotNull(pToInsert);
-		PersonneDto pDto = personneService.findPersonneByFullName(nom, prenom);
+		PersonneDto pDto = personneService.findPersonneByFullName(FilmTestUtils.ACT_NOM, FilmTestUtils.ACT_PRENOM);
 		assertNotNull(pDto);
 		logger.debug(methodName + "pDto = " + pDto.toString());
 		logger.debug(methodName + "end");

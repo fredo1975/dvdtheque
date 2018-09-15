@@ -25,27 +25,33 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	public void findFilmWithAllObjectGraph() throws Exception{
 		String methodName = "findFilmWithAllObjectGraph : ";
-		logger.info(methodName + "start");
+		logger.debug(methodName + "start");
 		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
+		if(id==null) {
+			FilmDto film = filmService.saveNewFilm(FilmTestUtils.buildFilmDto("titre"));
+			assertNotNull(film);
+			id = film.getId();
+		}
 		FilmDto film = filmService.findFilmWithAllObjectGraph(id);
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
-		logger.info(methodName + "film ="+film.toString());
+		logger.debug(methodName + "film ="+film.toString());
 		assertNotNull(film.getPersonnesFilm().getActeurs());
 		for(ActeurDto acteur : film.getPersonnesFilm().getActeurs()){
 			logger.info(methodName + " acteur="+acteur.toString());
 		}
-		logger.info(methodName + "end");
+		logger.debug(methodName + "end");
 	}
 	
 	@Test
 	public void findAllFilms() throws Exception{
 		String methodName = "findAllFilms : ";
-		logger.info(methodName + "start");
-		Integer id = new Integer(30);
+		logger.debug(methodName + "start");
+		FilmDto film = filmService.saveNewFilm(FilmTestUtils.buildFilmDto(FilmTestUtils.TITRE_FILM));
+		assertNotNull(film);
 		List<Film> filmList = filmService.getAllFilms();
 		assertNotNull(filmList);
-		logger.info(methodName + "filmList ="+filmList.toString());
-		logger.info(methodName + "end");
+		logger.debug(methodName + "filmList ="+filmList.toString());
+		logger.debug(methodName + "end");
 	}
 }
