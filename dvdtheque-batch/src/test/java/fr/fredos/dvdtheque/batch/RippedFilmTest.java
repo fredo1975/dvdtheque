@@ -17,27 +17,22 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath*:spring-batch-job.xml",
 		"classpath*:applicationContext-batch.xml",
 		"classpath*:test-context.xml" })
-public class FilmProcessorTest {
-	protected Logger logger = LoggerFactory.getLogger(FilmProcessorTest.class);
+public class RippedFilmTest {
+	protected Logger logger = LoggerFactory.getLogger(RippedFilmTest.class);
 
 	@Autowired
 	private JobLauncherTestUtils jobLauncherTestUtils;
 
+	
 	@Test
-	public void launchCheckFilmStep() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchStep("checkFilm");
+	public void launchCleanRippedFilmDBStep() throws Exception {
+		JobExecution jobExecution = jobLauncherTestUtils.launchStep("cleanRippedFilmDB");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 	
 	@Test
-	public void launchCleanDBStep() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchStep("cleanDB");
-		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-	}
-	
-	@Test
-	public void launchSetRippedFlagStep() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchStep("setRippedFlag");
+	public void launchSaveRippedFilmStep() throws Exception {
+		JobExecution jobExecution = jobLauncherTestUtils.launchStep("saveRippedFilm");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 	@Test

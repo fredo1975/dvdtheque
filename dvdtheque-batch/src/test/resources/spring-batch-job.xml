@@ -11,8 +11,18 @@
 	<import resource="classpath*:applicationContext-batch.xml" />
 	
 	<bean id="cleanDBTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.CleanDBTasklet"/>
+	<bean id="cleanRippedFilmDBTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.CleanRippedFilmDBTasklet"/>
 	
 	<bean id="rippedFlagTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet">
+		<property name="directoryResource">
+	        <bean id="directory"
+	                    class="org.springframework.core.io.FileSystemResource">
+	            <constructor-arg value="${dvd.file.path}" />
+	        </bean>
+    	</property>
+	</bean>
+	
+	<bean id="saveRippedFilmTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.SaveRippedFilmTasklet">
 		<property name="directoryResource">
 	        <bean id="directory"
 	                    class="org.springframework.core.io.FileSystemResource">
@@ -32,6 +42,15 @@
 		</step>
 		<step id="setRippedFlag">
 			<tasklet ref="rippedFlagTasklet" allow-start-if-complete="true"/>
+		</step>
+	</job>
+	
+	<job id="importRippedFilm" xmlns="http://www.springframework.org/schema/batch" job-repository="jobRepository">
+		<step id="cleanRippedFilmDB" next="saveRippedFilm">
+			<tasklet ref="cleanRippedFilmDBTasklet" allow-start-if-complete="true"/>
+		</step>
+		<step id="saveRippedFilm">
+			<tasklet ref="saveRippedFilmTasklet" allow-start-if-complete="true"/>
 		</step>
 	</job>
 
