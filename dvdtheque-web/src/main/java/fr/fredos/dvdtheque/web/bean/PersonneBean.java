@@ -88,7 +88,7 @@ public class PersonneBean implements Serializable{
 		personneDto = new PersonneDto(nom,prenom);
 		Personne personne = PersonneDto.fromDto(personneDto);
 		personneService.savePersonne(personne);
-		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Personne Ajoutée",  null);
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Personne Ajoutee",  null);
         FacesContext.getCurrentInstance().addMessage("messages", message);
 	}
 	

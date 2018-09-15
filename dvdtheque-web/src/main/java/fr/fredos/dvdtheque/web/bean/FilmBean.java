@@ -194,7 +194,7 @@ public class FilmBean implements Serializable{
 		Film f = filmDto.fromDto();
 		filmService.updateFilm(f);
 		
-		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Film Modifié",  null);
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Film Modifie",  null);
         FacesContext.getCurrentInstance().addMessage("messages", message);
 	}
 	
