@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.batch;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -10,13 +11,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:spring-int-copy-files.xml",
+@ContextConfiguration(locations = { /*"classpath*:spring-int-copy-files.xml",*/
 		"classpath*:test-context.xml",
 		"classpath*:applicationContext-batch.xml"})
 public class FilmBackupTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmBackupTest.class);
 	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils;
+	private JobLauncherTestUtils jobLauncherTestUtils1;
 	/*@Autowired
 	MessageChannel source;
 	@Autowired
@@ -26,6 +27,7 @@ public class FilmBackupTest {
 	@Autowired
 	FileReadingMessageSource fileInAdapter;*/
 	@Test
+	@Ignore
 	public void launchCopyStep() throws Exception {
 		/*
 		JobExecution jobExecution = jobLauncherTestUtils.launchStep("copy");
