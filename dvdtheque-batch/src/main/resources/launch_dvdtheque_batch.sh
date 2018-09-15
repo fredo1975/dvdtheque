@@ -1,1 +1,1 @@
-java -cp ".:/home/fredo/dvdtheque/batch/lib/*:/home/fredo/dvdtheque/batch/properties:/home/fredo/dvdtheque/batch/context:dvdtheque-batch-1.0-SNAPSHOT.jar" org.springframework.batch.core.launch.support.CommandLineJobRunner spring-batch-job.xml importFilm
+java -cp ".:lib/*:properties:context:dvdtheque-batch-1.0-SNAPSHOT.jar" org.springframework.batch.core.launch.support.CommandLineJobRunner spring-batch-job.xml importFilm
