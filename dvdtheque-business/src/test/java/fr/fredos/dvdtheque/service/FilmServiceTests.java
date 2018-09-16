@@ -145,22 +145,6 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public void findAllRippedFilm() throws Exception {
 		String methodName = "findAllRippedFilm : ";
 		logger.debug(methodName + "start");
-		StopWatch watch = new StopWatch();
-		watch.start();
-		List<RippedFilm> films = filmService.findAllRippedFilms();
-		assertNotNull(films);
-		watch.stop();
-		logger.debug(watch.prettyPrint());
-		logger.debug(methodName + "end");
-	}
-	@Test
-	/**
-	 * find all film in table FILM that have the flag RIPPED to true
-	 * @throws Exception
-	 */
-	public void getAllRippedFilm() throws Exception {
-		String methodName = "findAllRippedFilm : ";
-		logger.debug(methodName + "start");
 		List<Film> films = filmService.getAllRippedFilms();
 		logger.info(methodName + "######### size ="+films.size());
 		for(Film film : films){

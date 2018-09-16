@@ -2,7 +2,6 @@ package fr.fredos.dvdtheque.batch;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -22,24 +21,23 @@ public class RippedFilmTest {
 	protected Logger logger = LoggerFactory.getLogger(RippedFilmTest.class);
 
 	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils2;
+	private JobLauncherTestUtils jobLauncherTestUtils;
 
+	
 	@Test
 	public void launchCleanRippedFilmDBStep() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils2.launchStep("cleanRippedFilmDB");
+		JobExecution jobExecution = jobLauncherTestUtils.launchStep("cleanRippedFilmDB");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 	
 	@Test
-	@Ignore
 	public void launchSaveRippedFilmStep() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils2.launchStep("saveRippedFilm");
+		JobExecution jobExecution = jobLauncherTestUtils.launchStep("saveRippedFilm");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 	@Test
-	@Ignore
 	public void launchJob() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils2.launchJob();
+		JobExecution jobExecution = jobLauncherTestUtils.launchJob();
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 }

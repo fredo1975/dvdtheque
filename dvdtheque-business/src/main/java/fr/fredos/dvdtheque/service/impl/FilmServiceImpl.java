@@ -209,8 +209,4 @@ public class FilmServiceImpl implements FilmService {
 	public void cleanAllRippedFilms() {
 		filmDao.cleanAllRippedFilms();
 	}
-	@Override
-	public List<RippedFilm> findAllRippedFilms() {
-		return filmDao.findAllRippedFilms();
-	}
 }

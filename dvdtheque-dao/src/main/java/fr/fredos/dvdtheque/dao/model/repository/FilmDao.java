@@ -66,14 +66,10 @@ public class FilmDao {
 	public void saveDvd(Dvd dvd){
 		this.em.persist(dvd);
 	}
-	
+	@SuppressWarnings("unchecked")
     public List<Film> findAllFilms() {
 		Query query = this.em.createQuery("from Film film left join fetch film.acteurs left join fetch film.realisateurs real ");
-        return new ArrayList<>(new HashSet<Film>(query.getResultList()));
-    }
-    public List<RippedFilm> findAllRippedFilms() {
-		Query query = this.em.createQuery("from RippedFilm");
-        return new ArrayList<>(new HashSet<RippedFilm>(query.getResultList()));
+        return new ArrayList<Film>(new HashSet<Film>(query.getResultList()));
     }
 	@SuppressWarnings("unchecked")
     public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {

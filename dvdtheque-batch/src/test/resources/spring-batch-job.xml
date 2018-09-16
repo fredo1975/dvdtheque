@@ -13,7 +13,14 @@
 	<bean id="cleanDBTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.CleanDBTasklet"/>
 	<bean id="cleanRippedFilmDBTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.CleanRippedFilmDBTasklet"/>
 	
-	<bean id="rippedFlagTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet"/>
+	<bean id="rippedFlagTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet">
+		<property name="directoryResource">
+	        <bean id="directory"
+	                    class="org.springframework.core.io.FileSystemResource">
+	            <constructor-arg value="${dvd.file.path}" />
+	        </bean>
+    	</property>
+	</bean>
 	
 	<bean id="saveRippedFilmTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.SaveRippedFilmTasklet">
 		<property name="directoryResource">
