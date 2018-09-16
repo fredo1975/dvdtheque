@@ -26,7 +26,7 @@
 			<tasklet ref="copyFileTasklet" allow-start-if-complete="true"/>
 		</step>
 	</job>
-	
+	<!-- 
 	<int-file:inbound-channel-adapter id="source"
 	                              directory="file:${dvd.file.path}" prevent-duplicates="true">
 	    <int:poller id="poller" fixed-delay="500"/>
@@ -41,4 +41,5 @@
 								   delete-source-files="false"/>
 
 	<bean id="handler" class="fr.fredos.dvdtheque.batch.film.backup.Handler"/>
+	 -->
 </beans>
