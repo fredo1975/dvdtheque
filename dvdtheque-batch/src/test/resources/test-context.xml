@@ -5,6 +5,6 @@
 	http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- Spring should auto load this bean -->
-    <bean id="jobLauncherTestUtils1" class="org.springframework.batch.test.JobLauncherTestUtils"/>
+    <bean id="jobLauncherTestUtils" class="org.springframework.batch.test.JobLauncherTestUtils"/>
 
 </beans>
