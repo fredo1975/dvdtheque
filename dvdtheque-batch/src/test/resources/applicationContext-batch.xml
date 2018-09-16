@@ -14,8 +14,8 @@
 	<context:property-placeholder location="classpath*:filePath.properties" ignore-unresolvable="true"/>
 	
 	<bean id="filmReaderCSV" class="org.springframework.batch.item.file.FlatFileItemReader">
-		<!-- property name="resource" value="classpath:ListeDVD.csv" / -->
-		<property name="resource" value="file:${liste.dvd.path}" />
+		<property name="resource" value="classpath:ListeDVD.csv" />
+		<!--<property name="resource" value="file:${liste.dvd.path}" /-->
 		<property name="linesToSkip" value="1" />
 		<property name="lineMapper">
 			<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
