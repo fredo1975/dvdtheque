@@ -10,7 +10,7 @@ REM echo "del /f /s /q E:\dev\apache-tomcat-9.0.1\webapps\dvdtheque-web-1.0-SNAP
 rmdir /s /q E:\dev\apache-tomcat-9.0.1\webapps\dvdtheque-web-1.0-SNAPSHOT
 REM echo "rmdir /s /q E:\dev\apache-tomcat-9.0.1\webapps\dvdtheque-web-1.0-SNAPSHOT"
 
-xcopy E:\dev\git\dvdtheque\dvdtheque-web\target\dvdtheque-web-1.0-SNAPSHOT.war E:\dev\apache-tomcat-9.0.1\webapps
-REM echo "xcopy E:\dev\git\dvdtheque\dvdtheque-web\target\del dvdtheque-web-1.0-SNAPSHOT.war E:\dev\apache-tomcat-9.0.1\webapps"
+xcopy E:\dev\github\dvdtheque\dvdtheque-web\target\dvdtheque-web-1.0-SNAPSHOT.war E:\dev\apache-tomcat-9.0.1\webapps
+REM echo "xcopy E:\dev\github\dvdtheque\dvdtheque-web\target\del dvdtheque-web-1.0-SNAPSHOT.war E:\dev\apache-tomcat-9.0.1\webapps"
 
 E:\dev\apache-tomcat-9.0.1\bin\startup-debug.bat
