@@ -16,7 +16,6 @@ import org.springframework.util.CollectionUtils;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dao.model.object.RippedFilm;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
 import fr.fredos.dvdtheque.dto.FilmDto;
 import fr.fredos.dvdtheque.service.FilmService;
@@ -69,6 +68,7 @@ public class FilmServiceImpl implements FilmService {
 			if (null != film) {
 				filmDto = FilmDto.toDto(film);
 			}
+
 		} catch (Exception e) {
 			logger.error("",e);
 			throw e;
@@ -76,11 +76,8 @@ public class FilmServiceImpl implements FilmService {
 		if (null != filmDto) {
 			logger.debug("end film=" + filmDto.toString());
 		}
+		
 		return filmDto;
-	}
-	@Transactional(readOnly = true,noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })
-	public RippedFilm findRippedFilmByTitre(String titre){
-		return filmDao.findRippedFilmByTitre(titre);
 	}
 	@Transactional(readOnly = true)
 	public FilmDto findFilmWithAllObjectGraph(Integer id)  {
@@ -196,17 +193,5 @@ public class FilmServiceImpl implements FilmService {
 	public void removeFilm(FilmDto filmDto) {
 		Film film = filmDao.findFilm(filmDto.fromDto().getId());
 		filmDao.removeFilm(film);
-	}
-	@Override
-	public RippedFilm findRippedFilm(Integer id) {
-		return filmDao.findRippedFilm(id);
-	}
-	@Override
-	public void saveNewRippedFilm(RippedFilm film) {
-		filmDao.saveNewRippedFilm(film);
-	}
-	@Override
-	public void cleanAllRippedFilms() {
-		filmDao.cleanAllRippedFilms();
 	}
 }

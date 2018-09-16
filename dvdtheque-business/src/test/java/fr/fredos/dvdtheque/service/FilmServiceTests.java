@@ -24,7 +24,6 @@ import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.dao.model.object.RippedFilm;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
 import fr.fredos.dvdtheque.dto.ActeurDto;
 import fr.fredos.dvdtheque.dto.FilmDto;
@@ -43,7 +42,6 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	@Autowired
 	protected PersonneService personneService;
 	private final static String MAX_ID_SQL = "select max(id) from FILM";
-	private final static String MAX_RIPPED_ID_SQL = "select max(id) from RIPPED_FILM";
 	
 	@Test
 	public void findFilmByTitre() throws Exception{
@@ -100,26 +98,6 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		for(ActeurDto acteur : film.getPersonnesFilm().getActeurs()){
 			logger.debug(methodName + " acteur="+acteur.toString());
 		}
-		logger.debug(methodName + "end");
-	}
-	private RippedFilm buildRippedFilm() {
-		return new RippedFilm(FilmTestUtils.TITRE_FILM);
-	}
-	@Test
-	public void findRippedFilm() throws Exception {
-		String methodName = "findRippedFilm : ";
-		logger.debug(methodName + "start");
-		Integer id = this.jdbcTemplate.queryForObject(MAX_RIPPED_ID_SQL, Integer.class);
-		if(id==null) {
-			filmService.saveNewRippedFilm(buildRippedFilm());
-			RippedFilm rp = filmService.findRippedFilmByTitre(FilmTestUtils.TITRE_FILM);
-			assertNotNull(rp);
-			id = rp.getId();
-		}
-		RippedFilm film = filmService.findRippedFilm(id);
-		assertNotNull(film);
-		assertNotNull(film.getTitre());
-		logger.debug(methodName + "film ="+film.toString());
 		logger.debug(methodName + "end");
 	}
 	@Test
@@ -245,17 +223,6 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	@Transactional
-	public void saveNewRippedFilm() {
-		String methodName = "findRippedFilm : ";
-		logger.debug(methodName + "start");
-		filmService.saveNewRippedFilm(buildRippedFilm());
-		RippedFilm rp = filmService.findRippedFilmByTitre(FilmTestUtils.TITRE_FILM);
-		assertNotNull(rp);
-		logger.debug(methodName + "film ="+rp.toString());
-		logger.debug(methodName + "end");
-	}
-	@Test
-	@Transactional
 	public void saveNewFilmWithExistingPersons() {
 		String methodName = "saveNewFilmWithExistingPersons : ";
 		logger.debug(methodName + "start");
@@ -354,13 +321,6 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		String methodName = "cleanAllFilms : ";
 		logger.debug(methodName + "start");
 		filmService.cleanAllFilms();
-		logger.debug(methodName + "end");
-	}
-	@Test
-	public void cleanAllRippedFilms() {
-		String methodName = "cleanAllRippedFilms : ";
-		logger.debug(methodName + "start");
-		filmService.cleanAllRippedFilms();
 		logger.debug(methodName + "end");
 	}
 	@Test

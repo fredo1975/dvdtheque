@@ -33,12 +33,14 @@ public class FilmProcessorTest {
 	public void launchCleanDBStep() throws Exception {
 		JobExecution jobExecution = jobLauncherTestUtils.launchStep("cleanDB");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+
 	}
 	
 	@Test
 	public void launchSetRippedFlagStep() throws Exception {
 		JobExecution jobExecution = jobLauncherTestUtils.launchStep("setRippedFlag");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+
 	}
 	@Test
 	public void launchJob() throws Exception {

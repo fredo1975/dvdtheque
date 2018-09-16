@@ -17,7 +17,6 @@ import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.FilmFilterCriteriaType;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dao.model.object.RippedFilm;
 
 @Repository
 public class FilmDao {
@@ -30,31 +29,18 @@ public class FilmDao {
 		q.setParameter("id", id);
 		return (Film)q.getSingleResult();
 	}
-	public RippedFilm findRippedFilm(Integer id){
-		Query q = this.em.createQuery("from RippedFilm film where film.id = :id");
-		q.setParameter("id", id);
-		return (RippedFilm)q.getSingleResult();
-	}
 	public Film findFilmByTitre(String titre){
 		Query q = this.em.createQuery("from Film film where film.titre = :titre");
 		q.setParameter("titre", titre);
 		return (Film)q.getSingleResult();
 	}
-	public RippedFilm findRippedFilmByTitre(String titre){
-		Query q = this.em.createQuery("from RippedFilm film where film.titre = :titre");
-		q.setParameter("titre", titre);
-		return (RippedFilm)q.getSingleResult();
-	}
+	@SuppressWarnings("unchecked")
 	public Film findFilmWithAllObjectGraph(Integer id){
 		Query q = this.em.createQuery("select f from Film f left join f.acteurs acteur where f.id = :id ");
 		q.setParameter("id", id);
 		return (Film)q.getSingleResult();
 	}
 	public void saveNewFilm(Film film){
-		this.em.persist(film);
-		this.em.flush();
-	}
-	public void saveNewRippedFilm(RippedFilm film){
 		this.em.persist(film);
 		this.em.flush();
 	}
@@ -128,11 +114,6 @@ public class FilmDao {
 		int nbDvd = queryDvd.executeUpdate();
 		logger.debug(nbDvd+" dvd deleted");
 		Query query = this.em.createQuery("delete from Film");
-		int nb = query.executeUpdate();
-		logger.debug(nb+" films deleted");
-	}
-	public void cleanAllRippedFilms() {
-		Query query = this.em.createQuery("delete from RippedFilm");
 		int nb = query.executeUpdate();
 		logger.debug(nb+" films deleted");
 	}
