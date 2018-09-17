@@ -2,9 +2,7 @@ package fr.fredos.dvdtheque.service;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -18,8 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.dto.ActeurDto;
-import fr.fredos.dvdtheque.dto.DvdDto;
 import fr.fredos.dvdtheque.dto.FilmDto;
 import fr.fredos.dvdtheque.dto.PersonneDto;
 import fr.fredos.dvdtheque.dto.PersonnesFilm;
@@ -42,6 +38,11 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	public final static String MAX_FILM_ID_SQL = "select max(id) from FILM";
 	public final static String MAX_PERSONNE_ID_SQL = "select max(id) from PERSONNE";
 
+	private FilmDto createNewFilm() {
+		FilmDto film = filmService.saveNewFilm(FilmTestUtils.buildFilmDto("Titre"));
+		assertNotNull(film);
+		return film;
+	}
 	@Test
 	public void findPersonneGetVersusLoad() throws Exception {
 		Integer id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
@@ -74,12 +75,22 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	}
 
 	@Test
+	public void findAllRealisateur() {
+		String methodName = "findAllRealisateur : ";
+		logger.debug(methodName + "start");
+		FilmDto film = createNewFilm();
+		assertNotNull(film);
+		List<PersonneDto> realList = personneService.findAllRealisateur();
+		assertNotNull(realList);
+		logger.debug(methodName + "end");
+	}
+	@Test
 	public void findRealisateurByFilm() throws Exception {
 		String methodName = "findRealisateurByFilm : ";
 		logger.debug(methodName + "start");
 		Integer id = this.jdbcTemplate.queryForObject(MAX_FILM_ID_SQL, Integer.class);
 		if(id==null) {
-			FilmDto film = filmService.saveNewFilm(FilmTestUtils.buildFilmDto("Titre"));
+			FilmDto film = createNewFilm();
 			assertNotNull(film);
 			id = film.getId();
 		}
@@ -128,7 +139,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		logger.debug(methodName + "start");
 		Integer id = this.jdbcTemplate.queryForObject(MAX_FILM_ID_SQL, Integer.class);
 		if(id==null) {
-			FilmDto film = filmService.saveNewFilm(FilmTestUtils.buildFilmDto("Titre"));
+			FilmDto film = createNewFilm();
 			assertNotNull(film);
 			id = film.getId();
 		}

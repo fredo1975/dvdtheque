@@ -2,6 +2,7 @@ package fr.fredos.dvdtheque.dao.model.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -41,7 +42,16 @@ public class PersonneDao {
 			return null;
 		
 	}
-	
+	public List<Personne> findAllRealisateur(){
+		Query q = this.em.createQuery("from Film f join fetch f.realisateurs real ");
+		List<Film> filmList = q.getResultList();
+		return filmList.stream().flatMap(list->list.getRealisateurs().stream()).collect(Collectors.toList());
+	}
+	public List<Personne> findAllActeur(){
+		Query q = this.em.createQuery("from Film f join fetch f.acteurs act ");
+		List<Film> filmList = q.getResultList();
+		return filmList.stream().flatMap(list->list.getActeurs().stream()).collect(Collectors.toList());
+	}
     public List<Personne> findAllPersonne() {
 		Query q = this.em.createQuery("from Personne personne order by personne.prenom,personne.nom ASC");
 		return q.getResultList();

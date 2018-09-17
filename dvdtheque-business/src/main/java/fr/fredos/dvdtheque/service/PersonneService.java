@@ -35,4 +35,8 @@ public interface PersonneService {
 	public Personne savePersonne(Personne personne);
 	
 	public void cleanAllPersonnes();
+	
+	public List<PersonneDto> findAllRealisateur();
+	
+	public List<PersonneDto> findAllActeur();
 }

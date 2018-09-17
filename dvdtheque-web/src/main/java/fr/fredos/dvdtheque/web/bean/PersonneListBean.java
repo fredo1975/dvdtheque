@@ -40,8 +40,8 @@ public class PersonneListBean implements Serializable{
 		List<PersonneDto> source = new ArrayList<>();
         List<PersonneDto> target = new ArrayList<>();
 		personneList = personneService.findAllPersonne();
-		personneDtoByIdMap = new HashMap<Integer,PersonneDto>(personneList.size());
-		personneSelectItemList = new ArrayList<PersonneDto>(personneList.size());
+		personneDtoByIdMap = new HashMap<>(personneList.size());
+		personneSelectItemList = new ArrayList<>(personneList.size());
 		acteursListModel = new DualListModel<>();
 		for(PersonneDto personneDto : personneList){
 			personneDtoByIdMap.put(personneDto.getId(), personneDto);

@@ -71,7 +71,7 @@ public class PersonneServiceImpl implements PersonneService {
 	public List<PersonneDto> findAllPersonne(){
 		String methodName = "findAllPersonne : ";
 		logger.debug(methodName + "start : ");
-		List<PersonneDto> personneDtoList = new ArrayList<PersonneDto>();
+		List<PersonneDto> personneDtoList = new ArrayList<>();
 		List<Personne> allPersonneList = personneDao.findAllPersonne();
 		for(Personne p : allPersonneList){
 			personneDtoList.add(PersonneDto.toDto(p));
@@ -176,5 +176,24 @@ public class PersonneServiceImpl implements PersonneService {
 	@Override
 	public void cleanAllPersonnes() {
 		personneDao.cleanAllPersons();
+	}
+	
+	@Override
+	public List<PersonneDto> findAllRealisateur() {
+		List<PersonneDto> personneDtoList = new ArrayList<>();
+		List<Personne> allRealList = personneDao.findAllRealisateur();
+		for(Personne p : allRealList){
+			personneDtoList.add(PersonneDto.toDto(p));
+		}
+		return personneDtoList;
+	}
+	@Override
+	public List<PersonneDto> findAllActeur() {
+		List<PersonneDto> personneDtoList = new ArrayList<>();
+		List<Personne> allRealList = personneDao.findAllRealisateur();
+		for(Personne p : allRealList){
+			personneDtoList.add(PersonneDto.toDto(p));
+		}
+		return personneDtoList;
 	}
 }
