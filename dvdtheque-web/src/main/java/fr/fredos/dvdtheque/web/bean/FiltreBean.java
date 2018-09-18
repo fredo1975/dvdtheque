@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.web.bean;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -8,12 +9,11 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
-import fr.fredos.dvdtheque.common.enums.FilmFilterCriteriaType;
+import fr.fredos.dvdtheque.dto.FilmDto;
 import fr.fredos.dvdtheque.dto.PersonneDto;
 import fr.fredos.dvdtheque.service.FilmService;
 
@@ -24,24 +24,20 @@ public class FiltreBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@ManagedProperty(value = "#{filmListBean}")
 	protected FilmListBean filmListBean;
-
+	private String sort="sort_real";
 	public void setFilmListBean(FilmListBean filmListBean) {
 		this.filmListBean = filmListBean;
 	}
-
 	@ManagedProperty(value = "#{filmService}")
 	protected FilmService filmService;
-
 	public void setFilmService(FilmService filmService) {
 		this.filmService = filmService;
 	}
-
 	private String titre;
 	private PersonneDto selectedRealisateur;
 	private Integer annee;
 	private PersonneDto selectedActeur;
 	private Boolean selectedRipped;
-
 	public String getTitre() {
 		return titre;
 	}
@@ -81,6 +77,12 @@ public class FiltreBean implements Serializable {
 	public void setSelectedRipped(Boolean selectedRipped) {
 		this.selectedRipped = selectedRipped;
 	}
+	public String getSort() {
+		return sort;
+	}
+	public void setSort(String sort) {
+		this.sort = sort;
+	}
 
 	public void clean(ActionEvent actionEvent) {
 		resetFields();
@@ -103,5 +105,14 @@ public class FiltreBean implements Serializable {
 				selectedActeur != null && selectedActeur.getId() != null ? selectedActeur.getId() : null,
 				selectedRipped);
 		filmListBean.setFilmList(filmService.findAllFilmsByCriteria(filmFilterCriteriaDto));
+	}
+	public void sortList(ValueChangeEvent valueChangeEvent) {
+		String sort = (String) valueChangeEvent.getNewValue();
+		if(sort.equals("sort_titre")) {
+			filmListBean.getFilmList().sort(Comparator.comparing(FilmDto::getTitre));
+		}else {
+			filmListBean.getFilmList().sort(Comparator.comparing(FilmDto::getPrintRealisateur).thenComparing(FilmDto::getTitre));
+		}
+		
 	}
 }

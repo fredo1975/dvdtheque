@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.service.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -57,6 +58,7 @@ public class FilmServiceImpl implements FilmService {
 		} catch (Exception e) {
 			logger.error(e.getCause().getMessage());
 		}
+		filmDtoList.sort(Comparator.comparing(FilmDto::getPrintRealisateur).thenComparing(FilmDto::getTitre));
 		return filmDtoList;
 	}
 	@Transactional(readOnly = true,noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })
@@ -167,7 +169,6 @@ public class FilmServiceImpl implements FilmService {
 	public List<Film> findAllFilms() {
 		return filmDao.findAllFilms();
 	}
-	
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
 		filmDao.cleanAllFilms();
@@ -186,6 +187,7 @@ public class FilmServiceImpl implements FilmService {
 				filmDtoList.add(filmDto);
 			}
 		}
+		filmDtoList.sort(Comparator.comparing(FilmDto::getPrintRealisateur).thenComparing(FilmDto::getTitre));
 		return filmDtoList;
 	}
 	@Override
