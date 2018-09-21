@@ -26,7 +26,6 @@
 		<property name="password" value="${jdbc.password}" />
 		<property name="testConnectionOnCheckout" value="true" />
 		<property name="preferredTestQuery" value="SELECT 1" />
-		
 	</bean>
 
 </beans>
