@@ -30,27 +30,27 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.springframework" level="INFO" additivity="false">
+	<logger name="org.springframework" level="${logging.level.org.springframework}" additivity="false">
 		<appender-ref ref="console" />
 		<appender-ref ref="dailyRollingFileAppender" />
 	</logger>
 
-	<logger name="fr.fredos.dvdtheque.dao" level="INFO" additivity="false">
+	<logger name="fr.fredos.dvdtheque.dao" level="${logging.level.fr.fredos.dvdtheque.dao}" additivity="false">
 		<appender-ref ref="console" />
 		<appender-ref ref="dailyRollingFileAppender" />
 	</logger>
 
-	<logger name="fr.fredos.dvdtheque.service" level="INFO" additivity="false">
+	<logger name="fr.fredos.dvdtheque.service" level="${logging.level.fr.fredos.dvdtheque.service}" additivity="false">
 		<appender-ref ref="console" />
 		<appender-ref ref="dailyRollingFileAppender" />
 	</logger>
 	
-	<logger name="fr.fredos.dvdtheque.web" level="INFO" additivity="false">
+	<logger name="fr.fredos.dvdtheque.web" level="${logging.level.fr.fredos.dvdtheque.web}" additivity="false">
 		<appender-ref ref="console" />
 		<appender-ref ref="dailyRollingFileAppender" />
 	</logger>
 
-	<logger name="org.hibernate" level="INFO" additivity="false">
+	<logger name="org.hibernate" level="${logging.level.org.hibernate}" additivity="false">
 		<appender-ref ref="console" />
 		<appender-ref ref="dailyRollingFileAppender" />
 	</logger>
