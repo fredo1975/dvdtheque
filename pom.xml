@@ -31,7 +31,7 @@
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
-				<version>8.0.11</version>
+				<version>8.0.12</version>
 			</dependency>
 
 			<dependency>
@@ -232,7 +232,7 @@
 			<dependency>
 				<groupId>javax.el</groupId>
 				<artifactId>javax.el-api</artifactId>
-				<version>2.2.4</version>
+				<version>3.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.faces</groupId>
@@ -388,8 +388,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- Test -->
 		<assertj.version>2.2.0</assertj.version>
-		<hibernate.em.version>5.2.6.Final</hibernate.em.version>
-		<hibernate.valid.version>5.2.4.Final</hibernate.valid.version>
+		<hibernate.em.version>5.3.6.Final</hibernate.em.version>
+		<hibernate.valid.version>6.0.13.Final</hibernate.valid.version>
 		<jsf.version>2.2.15</jsf.version>
 		<primefaces.version>6.2</primefaces.version>
 		<logback.version>1.2.3</logback.version>
