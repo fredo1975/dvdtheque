@@ -93,13 +93,6 @@ public class DvdDto implements Serializable {
 	public static DvdDto toDto(Dvd dvd){
 		DvdDto dvdDto = new DvdDto();
 		BeanUtils.copyProperties(dvd, dvdDto);
-		/*
-		if(null != dvd){
-			dvdDto.setZone(dvd.getZone());
-			dvdDto.setId(dvd.getId());
-			dvdDto.setEdition(dvd.getEdition());
-			dvdDto.setAnnee(dvd.getAnnee());
-		}*/
 		return dvdDto;
 	}
 	

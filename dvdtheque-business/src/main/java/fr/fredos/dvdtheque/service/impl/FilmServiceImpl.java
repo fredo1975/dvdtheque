@@ -117,10 +117,10 @@ public class FilmServiceImpl implements FilmService {
 	@Transactional(readOnly = false)
 	public FilmDto saveNewFilm(FilmDto filmDto) {
 		String methodName = "saveNewFilm: ";
-		logger.debug(methodName + "start filmDto=" + filmDto.toString());
+		//logger.debug(methodName + "start filmDto=" + filmDto.toString());
 		Film filmRes = filmDto.fromDto();
 		filmDao.saveNewFilm(filmRes);
-		logger.debug(methodName + "end");
+		//logger.debug(methodName + "end");
 		return FilmDto.toDto(filmRes);
 	}
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED,isolation=Isolation.DEFAULT)
@@ -181,6 +181,7 @@ public class FilmServiceImpl implements FilmService {
 	public List<FilmDto> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {
 		List<FilmDto> filmDtoList = new ArrayList<>();
 		List<Film> filmList = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
+		logger.debug("####################   filmList.size()="+filmList.size());
 		if(!CollectionUtils.isEmpty(filmList)){
 			for(Film film : filmList) {
 				FilmDto filmDto = FilmDto.toDto(film);
