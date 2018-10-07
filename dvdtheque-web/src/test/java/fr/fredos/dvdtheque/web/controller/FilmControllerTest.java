@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.controller;
+package fr.fredos.dvdtheque.web.controller;
 
 import java.nio.charset.Charset;
 

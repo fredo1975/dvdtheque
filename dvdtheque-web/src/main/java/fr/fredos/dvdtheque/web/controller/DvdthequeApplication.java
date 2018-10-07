@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.web.app;
+package fr.fredos.dvdtheque.web.controller;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
