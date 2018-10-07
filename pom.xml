@@ -21,7 +21,7 @@
 		<module>dvdtheque-dao</module>
 		<module>dvdtheque-business</module>
 		<module>dvdtheque-batch</module>
-		<module>dvdtheque-swing</module>
+		<!-- module>dvdtheque-swing</module -->
 		<module>dvdtheque-web</module>
 	</modules>
 	<dependencyManagement>

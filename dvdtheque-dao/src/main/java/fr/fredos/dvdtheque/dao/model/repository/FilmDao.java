@@ -34,7 +34,6 @@ public class FilmDao {
 		q.setParameter("titre", titre);
 		return (Film)q.getSingleResult();
 	}
-	@SuppressWarnings("unchecked")
 	public Film findFilmWithAllObjectGraph(Integer id){
 		Query q = this.em.createQuery("select f from Film f left join f.acteurs acteur where f.id = :id ");
 		q.setParameter("id", id);
