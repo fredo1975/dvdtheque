@@ -12,7 +12,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.validator.constraints.NotEmpty;
+
 @Entity
 @Table(name = "DVD")
 public class Dvd implements Serializable {

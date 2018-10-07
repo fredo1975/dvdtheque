@@ -9,10 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @Table(name = "TYPE")
 public class Type implements Serializable {
@@ -30,7 +30,7 @@ public class Type implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private java.lang.Integer id;
 	@Column(name = "LIB")
-    @NotEmpty
+	@NotNull
 	private String lib;
 	
 	public java.lang.Integer getId() {

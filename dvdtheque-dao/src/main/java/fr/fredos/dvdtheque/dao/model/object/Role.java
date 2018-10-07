@@ -13,8 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @Entity
@@ -28,7 +28,7 @@ public class Role implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	@Column(name = "NAME")
-    @NotEmpty
+	@NotNull
 	private String name;
 	@OneToMany(cascade = CascadeType.ALL, targetEntity=User.class, fetch = FetchType.LAZY)
 	private Set<User> users;

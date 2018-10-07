@@ -14,10 +14,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Table(name = "USER")
@@ -32,20 +32,20 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	@Column(name = "USERNAME")
-	@NotEmpty
+	@NotNull
 	private String userName;
 	@Column(name = "PASSWORD")
-	@NotEmpty
+	@NotNull
 	private String password;
 
 	@Column(name = "EMAIL")
-	@NotEmpty
+	@NotNull
 	private String email;
 	@Column(name = "FIRSTNAME")
-	@NotEmpty
+	@NotNull
 	private String firstName;
 	@Column(name = "LASTNAME")
-	@NotEmpty
+	@NotNull
 	private String lastName;
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "USERROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))

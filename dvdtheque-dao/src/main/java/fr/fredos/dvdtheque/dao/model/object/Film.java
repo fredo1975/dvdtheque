@@ -17,8 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class Film implements Serializable {
 	@Column(name = "ANNEE")
 	private Integer annee;
 	@Column(name = "TITRE")
-	@NotEmpty
+	@NotNull
 	private String titre;
 	@Column(name = "TITRE_O")
 	private String titreO;

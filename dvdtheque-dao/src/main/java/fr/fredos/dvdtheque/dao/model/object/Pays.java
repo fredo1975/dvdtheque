@@ -9,8 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "PAYS")
 public class Pays implements Serializable {
@@ -22,7 +21,7 @@ public class Pays implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private java.lang.Integer id;
 	@Column(name = "LIB")
-    @NotEmpty
+	@NotNull
 	private String lib;
 	@Column(name = "I18N")
 	private String i18n;
