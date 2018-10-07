@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(FilmControllerTest.class)
@@ -28,6 +29,7 @@ public class FilmControllerTest {
 		
 		MockHttpServletRequestBuilder mm = MockMvcRequestBuilders.get("/films").contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(mm).andDo(MockMvcResultHandlers.print());
+		mvc.perform(MockMvcRequestBuilders.get("/films").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
 		//ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/films").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.content", Is.is(greeting.getContent())));
 		//assertNotNull(resultActions);
 	}
