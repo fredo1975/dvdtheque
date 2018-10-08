@@ -26,6 +26,7 @@
 	</modules>
 	<dependencyManagement>
 		<dependencies>
+		<!-- 
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
@@ -37,7 +38,7 @@
 				<artifactId>c3p0</artifactId>
 				<version>0.9.1.2</version>
 			</dependency>
-
+ -->
 			<dependency>
 				<groupId>commons-digester</groupId>
 				<artifactId>commons-digester</artifactId>
