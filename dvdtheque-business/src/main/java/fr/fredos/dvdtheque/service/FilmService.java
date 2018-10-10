@@ -4,7 +4,7 @@ import java.util.List;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dto.FilmDto;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
 
 public interface FilmService {
 	

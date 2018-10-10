@@ -3,10 +3,10 @@ package fr.fredos.dvdtheque.service;
 import java.util.List;
 
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.dto.FilmDto;
-import fr.fredos.dvdtheque.dto.PersonneDto;
-import fr.fredos.dvdtheque.dto.PersonnesFilm;
-import fr.fredos.dvdtheque.dto.RealisateurDto;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
+import fr.fredos.dvdtheque.service.dto.PersonneDto;
+import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
+import fr.fredos.dvdtheque.service.dto.RealisateurDto;
 
 public interface PersonneService {
 	

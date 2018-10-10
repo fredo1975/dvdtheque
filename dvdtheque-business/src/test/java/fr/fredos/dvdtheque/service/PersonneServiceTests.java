@@ -10,22 +10,18 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.dto.FilmDto;
-import fr.fredos.dvdtheque.dto.PersonneDto;
-import fr.fredos.dvdtheque.dto.PersonnesFilm;
-import fr.fredos.dvdtheque.dto.RealisateurDto;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
+import fr.fredos.dvdtheque.service.dto.PersonneDto;
+import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
+import fr.fredos.dvdtheque.service.dto.RealisateurDto;
 
-@ContextConfiguration(locations = { "classpath:business-config.xml" })
-@RunWith(SpringJUnit4ClassRunner.class)
-@Transactional
-// @TransactionConfiguration(transactionManager = "transactionManager",
-// defaultRollback = false)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.Application.class})
 public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceTests.class);
 	@Autowired

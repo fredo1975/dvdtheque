@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.dto;
+package fr.fredos.dvdtheque.service.dto;
 
 import java.io.Serializable;
 

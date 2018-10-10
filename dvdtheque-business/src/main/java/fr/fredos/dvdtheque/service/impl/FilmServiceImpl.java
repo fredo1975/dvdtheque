@@ -18,8 +18,8 @@ import org.springframework.util.CollectionUtils;
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
-import fr.fredos.dvdtheque.dto.FilmDto;
 import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
 @Service("filmService")
 public class FilmServiceImpl implements FilmService {
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceImpl.class);
@@ -27,9 +27,6 @@ public class FilmServiceImpl implements FilmService {
 	@Autowired
 	private FilmDao filmDao;
 
-	public void setFilmDao(FilmDao filmDao) {
-		this.filmDao = filmDao;
-	}
 	@Cacheable(value= "filmCache")
 	@Transactional(readOnly = true)
 	public List<Film> getAllFilms() {

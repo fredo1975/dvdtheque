@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.enums;
+package fr.fredos.dvdtheque.service.enums;
 
 public enum ZoneDvd {
 	Zone1(1),Zone2(2);
