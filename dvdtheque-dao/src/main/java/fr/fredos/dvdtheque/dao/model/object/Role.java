@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 public class Role implements Serializable {
 	@Transient
 	protected Logger logger = LoggerFactory.getLogger(Role.class);
+	@Transient
 	private int hashCode = Integer.MIN_VALUE;
 	private static final long serialVersionUID = 1L;
 	@Id

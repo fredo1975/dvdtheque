@@ -75,6 +75,19 @@ INSERT INTO `ROLES` (`ID`, `NAME`) VALUES
 
 -- --------------------------------------------------------
 
+CREATE TABLE `USERROLES` (
+  `ID` int(11) NOT NULL,
+  `USER_ID` int(11) NOT NULL,
+  `ROLE_ID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- 
+-- Contenu de la table `USERROLES`
+-- 
+
+INSERT INTO `USERROLES` (`ID`, `USER_ID`, `ROLE_ID`) VALUES 
+(1, 1, 1),
+(2, 2, 1);
 -- 
 -- Structure de la table `TYPE`
 -- 
