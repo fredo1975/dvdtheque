@@ -7,13 +7,13 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.batch.item.ItemProcessor;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
-import fr.fredos.dvdtheque.dto.ActeurDto;
-import fr.fredos.dvdtheque.dto.DvdDto;
-import fr.fredos.dvdtheque.dto.FilmDto;
-import fr.fredos.dvdtheque.dto.PersonneDto;
-import fr.fredos.dvdtheque.dto.PersonnesFilm;
-import fr.fredos.dvdtheque.dto.RealisateurDto;
-import fr.fredos.dvdtheque.enums.TypePersonne;
+import fr.fredos.dvdtheque.service.dto.ActeurDto;
+import fr.fredos.dvdtheque.service.dto.DvdDto;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
+import fr.fredos.dvdtheque.service.dto.PersonneDto;
+import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
+import fr.fredos.dvdtheque.service.dto.RealisateurDto;
+import fr.fredos.dvdtheque.service.enums.TypePersonne;
 
 public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto> {
 	

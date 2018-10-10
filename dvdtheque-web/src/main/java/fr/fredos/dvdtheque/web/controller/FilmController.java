@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.fredos.dvdtheque.dto.FilmDto;
 import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
 
 @RestController
 @ComponentScan({ "fr.fredos.dvdtheque.service,fr.fredos.dvdtheque.dao.model.repository"})

@@ -3,12 +3,12 @@ package fr.fredos.dvdtheque.web.service;
 import java.util.HashSet;
 import java.util.Set;
 
-import fr.fredos.dvdtheque.dto.ActeurDto;
-import fr.fredos.dvdtheque.dto.DvdDto;
-import fr.fredos.dvdtheque.dto.FilmDto;
-import fr.fredos.dvdtheque.dto.PersonneDto;
-import fr.fredos.dvdtheque.dto.PersonnesFilm;
-import fr.fredos.dvdtheque.dto.RealisateurDto;
+import fr.fredos.dvdtheque.service.dto.ActeurDto;
+import fr.fredos.dvdtheque.service.dto.DvdDto;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
+import fr.fredos.dvdtheque.service.dto.PersonneDto;
+import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
+import fr.fredos.dvdtheque.service.dto.RealisateurDto;
 
 public class FilmTestUtils {
 	public static final String TITRE_FILM = "Lorem Ipsum";

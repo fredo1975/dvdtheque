@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableJpaRepositories(basePackages = { "fr.fredos.dvdtheque.dao.model.repository" })
 @PropertySource("classpath:persistence-generic-entity.properties")
-@EnableTransactionManagement
+//@EnableTransactionManagement
 public class MysqlJpaConfig {
 
 	@Autowired

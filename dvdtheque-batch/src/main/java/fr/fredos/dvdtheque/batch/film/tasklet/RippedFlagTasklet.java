@@ -15,8 +15,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.util.Assert;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dto.FilmDto;
 import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
 
 public class RippedFlagTasklet implements Tasklet{
 	protected Logger logger = LoggerFactory.getLogger(RippedFlagTasklet.class);

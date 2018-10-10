@@ -13,11 +13,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.dto.ActeurDto;
-import fr.fredos.dvdtheque.dto.FilmDto;
-import fr.fredos.dvdtheque.dto.PersonneDto;
-import fr.fredos.dvdtheque.dto.PersonnesFilm;
-import fr.fredos.dvdtheque.dto.RealisateurDto;
+import fr.fredos.dvdtheque.service.dto.ActeurDto;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
+import fr.fredos.dvdtheque.service.dto.PersonneDto;
+import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
+import fr.fredos.dvdtheque.service.dto.RealisateurDto;
 
 public class FilmWriter implements ItemWriter<FilmDto> {
 	protected Logger logger = LoggerFactory.getLogger(FilmWriter.class);

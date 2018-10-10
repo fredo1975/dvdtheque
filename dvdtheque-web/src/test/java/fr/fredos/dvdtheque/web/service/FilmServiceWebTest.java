@@ -12,9 +12,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dto.ActeurDto;
-import fr.fredos.dvdtheque.dto.FilmDto;
 import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.dto.ActeurDto;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
 
 
 @ContextConfiguration(locations={"classpath:business-config.xml"})
