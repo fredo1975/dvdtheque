@@ -21,7 +21,7 @@ import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
 import fr.fredos.dvdtheque.service.dto.RealisateurDto;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.Application.class})
+@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class})
 public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceTests.class);
 	@Autowired

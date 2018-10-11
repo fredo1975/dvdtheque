@@ -1,23 +1,31 @@
 package fr.fredos.dvdtheque.web.controller;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.nio.charset.Charset;
 
+import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(FilmControllerTest.class)
-public class FilmControllerTest {
+import fr.fredos.dvdtheque.dao.model.object.Film;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+//@TestPropertySource(locations = "classpath:application-integrationtest.properties")
+public class FilmControllerTest {
 	@Autowired
 	private MockMvc mvc;
 	
@@ -25,12 +33,13 @@ public class FilmControllerTest {
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
 	@Test
-	public void all() throws Exception {
-		
-		MockHttpServletRequestBuilder mm = MockMvcRequestBuilders.get("/films").contentType(MediaType.APPLICATION_JSON);
+	public void findAllFilms() throws Exception {
+		Film film = new Film();
+		film.setTitre("L'HOMME SANS PASSE");
+		MockHttpServletRequestBuilder mm = MockMvcRequestBuilders.get("/dvdtheque/films").contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(mm).andDo(MockMvcResultHandlers.print());
-		mvc.perform(MockMvcRequestBuilders.get("/films").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
-		//ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/films").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.content", Is.is(greeting.getContent())));
-		//assertNotNull(resultActions);
+		mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
+		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film.getTitre())));
+		assertNotNull(resultActions);
 	}
 }

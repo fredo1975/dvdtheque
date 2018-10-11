@@ -4,6 +4,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication(scanBasePackages = "fr.fredos.dvdtheque")
-public class Application {
+public class ServiceApplication {
 	
 }

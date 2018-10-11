@@ -15,7 +15,7 @@
 
 	
 	
-	<logger name="org.hibernate" level="info"/>
+	<logger name="org.hibernate" level="debug"/>
 	<logger name="org.springframework" level="debug"/>
 	<logger name="fr.fredos.dvdtheque" level="debug" />
 	<root level="debug">
