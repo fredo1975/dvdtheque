@@ -14,9 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -36,9 +34,9 @@ public class FilmControllerTest {
 	public void findAllFilms() throws Exception {
 		Film film = new Film();
 		film.setTitre("L'HOMME SANS PASSE");
-		MockHttpServletRequestBuilder mm = MockMvcRequestBuilders.get("/dvdtheque/films").contentType(MediaType.APPLICATION_JSON);
-		mvc.perform(mm).andDo(MockMvcResultHandlers.print());
-		mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
+		//MockHttpServletRequestBuilder mm = MockMvcRequestBuilders.get("/dvdtheque/films").contentType(MediaType.APPLICATION_JSON);
+		//mvc.perform(mm).andDo(MockMvcResultHandlers.print());
+		//mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
 		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film.getTitre())));
 		assertNotNull(resultActions);
 	}
