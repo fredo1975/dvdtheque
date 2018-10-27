@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,14 +19,19 @@ import fr.fredos.dvdtheque.service.dto.FilmDto;
 public class FilmController {
 	@Autowired
 	private FilmService filmService;
-	
+	@CrossOrigin
 	@GetMapping("/films")
 	List<FilmDto> findAllFilms() {
 		return filmService.getAllFilmDtos();
 	}
-	
-	@GetMapping("/films/{titre}")
+	@CrossOrigin
+	@GetMapping("/films/byTitre/{titre}")
 	FilmDto findFilmByTitre(@PathVariable String titre) {
 		return filmService.findFilmByTitre(titre);
+	}
+	@CrossOrigin
+	@GetMapping("/films/byId/{id}")
+	FilmDto findFilmById(@PathVariable Integer id) {
+		return filmService.findFilm(id);
 	}
 }
