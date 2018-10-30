@@ -2,6 +2,7 @@ package fr.fredos.dvdtheque.dao.model.repository.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -43,10 +44,10 @@ public class PersonneDaoImpl implements PersonneDao{
 			return null;
 		
 	}
-	public List<Personne> findAllRealisateur(){
-		Query q = this.em.createQuery("from Film f join fetch f.realisateurs real ");
+	public Set<Personne> findAllRealisateur(){
+		Query q = this.em.createQuery("from Film f join fetch f.realisateurs real");
 		List<Film> filmList = q.getResultList();
-		return filmList.stream().flatMap(list->list.getRealisateurs().stream()).collect(Collectors.toList());
+		return filmList.stream().flatMap(list->list.getRealisateurs().stream()).collect(Collectors.toSet());
 	}
 	public List<Personne> findAllActeur(){
 		Query q = this.em.createQuery("from Film f join fetch f.acteurs act ");

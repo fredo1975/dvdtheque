@@ -40,13 +40,9 @@ public class PersonnesFilm implements Serializable {
 			}
 			this.acteurs.add(acteurDto);
 		}
-		
-		
 	}
 	@Override
 	public String toString() {
 		return "PersonnesFilm [realisateur=" + realisateur + ", acteurs=" + acteurs + "]";
 	}
-	
-	
 }

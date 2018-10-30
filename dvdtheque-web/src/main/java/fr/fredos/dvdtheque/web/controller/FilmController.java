@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.web.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.PersonneService;
 import fr.fredos.dvdtheque.service.dto.FilmDto;
+import fr.fredos.dvdtheque.service.dto.PersonneDto;
 
 @RestController
 @ComponentScan({"fr.fredos.dvdtheque.service,fr.fredos.dvdtheque.dao.model.repository"})
@@ -19,6 +22,8 @@ import fr.fredos.dvdtheque.service.dto.FilmDto;
 public class FilmController {
 	@Autowired
 	private FilmService filmService;
+	@Autowired
+	protected PersonneService personneService;
 	@CrossOrigin
 	@GetMapping("/films")
 	List<FilmDto> findAllFilms() {
@@ -33,5 +38,15 @@ public class FilmController {
 	@GetMapping("/films/byId/{id}")
 	FilmDto findFilmById(@PathVariable Integer id) {
 		return filmService.findFilm(id);
+	}
+	@CrossOrigin
+	@GetMapping("/realisateurs")
+	Set<PersonneDto> findAllRealisateurs() {
+		return personneService.findAllRealisateur();
+	}
+	@CrossOrigin
+	@GetMapping("/acteurs")
+	List<PersonneDto> findAllActeurs() {
+		return personneService.findAllActeur();
 	}
 }

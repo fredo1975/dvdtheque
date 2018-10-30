@@ -92,7 +92,6 @@ public class FilmDto implements Serializable {
 	}
 	@Override
 	public String toString() {
-		
 		return new ToStringBuilder(this).
 	       append("id", id).
 	       append("annee", annee).

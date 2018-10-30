@@ -18,13 +18,12 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.service.dto.PersonneDto;
 
 
 @RunWith(SpringRunner.class)
@@ -36,6 +35,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private MockMvc mvc;
 	private final static String MAX_ID_SQL = "SELECT f.id, titre " + 
 			"FROM (SELECT MAX( id ) AS id FROM FILM )f INNER JOIN FILM f2 ON f2.id = f.id";
+	private final static String PERSONNE_ID_SQL = "SELECT id,prenom,nom " + 
+			"FROM PERSONNE where id=570";
+	
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
@@ -60,6 +62,18 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			}
 		});
 	}
+	private List<PersonneDto> retrievePersonneDto(){
+		return this.jdbcTemplate.query(PERSONNE_ID_SQL, new RowMapper<PersonneDto>() {
+			@Override
+			public PersonneDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+				PersonneDto personneDto=new PersonneDto();  
+				personneDto.setId(rs.getInt(1));  
+				personneDto.setPrenom(rs.getString(2));
+				personneDto.setNom(rs.getString(3));
+		        return personneDto;  
+			}
+		});
+	}
 	@Test
 	public void findById() throws Exception {
 		Film film = retrieveIdAndTitreFilm().get(0);
@@ -69,5 +83,14 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films/byId/"+film.getId()).contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
 		assertNotNull(resultActions);
 		
+	}
+	@Test
+	public void findAllRealisateurs() throws Exception {
+		PersonneDto realisateur = retrievePersonneDto().get(0);
+		assertNotNull(realisateur);
+		assertNotNull(realisateur.getId());
+		
+		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/realisateurs").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(realisateur.getId())));
+		assertNotNull(resultActions);
 	}
 }

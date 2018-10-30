@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.dao.model.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
@@ -11,7 +12,7 @@ public interface PersonneDao {
 	public Personne getPersonne(Integer id);
 	public Personne loadPersonne(Integer id);
 	public Personne findRealisateurByFilm(Film film);
-	public List<Personne> findAllRealisateur();
+	public Set<Personne> findAllRealisateur();
 	public List<Personne> findAllActeur();
     public List<Personne> findAllPersonne();
 	public List<Personne> findAllPersonneByType(Integer typeId);

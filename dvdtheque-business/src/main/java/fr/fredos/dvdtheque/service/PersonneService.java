@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.service;
 
 import java.util.List;
+import java.util.Set;
 
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.dto.FilmDto;
@@ -36,7 +37,7 @@ public interface PersonneService {
 	
 	public void cleanAllPersonnes();
 	
-	public List<PersonneDto> findAllRealisateur();
+	public Set<PersonneDto> findAllRealisateur();
 	
 	public List<PersonneDto> findAllActeur();
 }

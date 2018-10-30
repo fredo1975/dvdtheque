@@ -1,7 +1,9 @@
 package fr.fredos.dvdtheque.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,9 +181,9 @@ public class PersonneServiceImpl implements PersonneService {
 	}
 	
 	@Override
-	public List<PersonneDto> findAllRealisateur() {
-		List<PersonneDto> personneDtoList = new ArrayList<>();
-		List<Personne> allRealList = personneDao.findAllRealisateur();
+	public Set<PersonneDto> findAllRealisateur() {
+		Set<PersonneDto> personneDtoList = new HashSet<>();
+		Set<Personne> allRealList = personneDao.findAllRealisateur();
 		for(Personne p : allRealList){
 			personneDtoList.add(PersonneDto.toDto(p));
 		}
@@ -190,7 +192,7 @@ public class PersonneServiceImpl implements PersonneService {
 	@Override
 	public List<PersonneDto> findAllActeur() {
 		List<PersonneDto> personneDtoList = new ArrayList<>();
-		List<Personne> allRealList = personneDao.findAllRealisateur();
+		List<Personne> allRealList = personneDao.findAllActeur();
 		for(Personne p : allRealList){
 			personneDtoList.add(PersonneDto.toDto(p));
 		}
