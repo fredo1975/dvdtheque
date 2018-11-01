@@ -55,7 +55,7 @@ public class FilmServiceImpl implements FilmService {
 		} catch (Exception e) {
 			logger.error(e.getCause().getMessage());
 		}
-		filmDtoList.sort(Comparator.comparing(FilmDto::getPrintRealisateur).thenComparing(FilmDto::getTitre));
+		filmDtoList.sort(Comparator.comparing(FilmDto::getTitre));
 		return filmDtoList;
 	}
 	@Transactional(readOnly = true,noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })

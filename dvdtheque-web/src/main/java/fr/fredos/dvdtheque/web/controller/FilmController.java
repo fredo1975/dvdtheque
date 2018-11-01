@@ -41,7 +41,7 @@ public class FilmController {
 	}
 	@CrossOrigin
 	@GetMapping("/realisateurs")
-	Set<PersonneDto> findAllRealisateurs() {
+	List<PersonneDto> findAllRealisateurs() {
 		return personneService.findAllRealisateur();
 	}
 	@CrossOrigin

@@ -3,7 +3,7 @@ package fr.fredos.dvdtheque.service;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
-import java.util.Set;
+import java.util.SortedSet;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -72,14 +72,18 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	}
 
 	@Test
-	public void findAllRealisateur() {
-		String methodName = "findAllRealisateur : ";
-		logger.debug(methodName + "start");
+	public void findAllRealisateurs() {
 		FilmDto film = createNewFilm();
 		assertNotNull(film);
-		Set<PersonneDto> realList = personneService.findAllRealisateur();
+		List<PersonneDto> realList = personneService.findAllRealisateur();
 		assertNotNull(realList);
-		logger.debug(methodName + "end");
+	}
+	@Test
+	public void findAllActeurs() {
+		FilmDto film = createNewFilm();
+		assertNotNull(film);
+		List<PersonneDto> actList = personneService.findAllActeur();
+		assertNotNull(actList);
 	}
 	@Test
 	public void findRealisateurByFilm() throws Exception {

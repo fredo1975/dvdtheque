@@ -1,8 +1,10 @@
 package fr.fredos.dvdtheque.dao.model.repository.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -56,7 +58,10 @@ public class FilmDaoImpl implements FilmDao {
 	@SuppressWarnings("unchecked")
     public List<Film> findAllFilms() {
 		Query query = this.entityManager.createQuery("from Film film left join fetch film.acteurs left join fetch film.realisateurs real ");
-        return new ArrayList<Film>(new HashSet<Film>(query.getResultList()));
+        Set<Film> set = new HashSet<>(query.getResultList());
+        List<Film> l = new ArrayList<>(set);
+        Collections.sort(l, (f1,f2)->f1.getTitre().compareTo(f2.getTitre()));
+		return l;
     }
 	@SuppressWarnings("unchecked")
     public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {

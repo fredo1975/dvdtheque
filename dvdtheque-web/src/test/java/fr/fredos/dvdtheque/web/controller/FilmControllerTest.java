@@ -35,16 +35,17 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private MockMvc mvc;
 	private final static String MAX_ID_SQL = "SELECT f.id, titre " + 
 			"FROM (SELECT MAX( id ) AS id FROM FILM )f INNER JOIN FILM f2 ON f2.id = f.id";
-	private final static String PERSONNE_ID_SQL = "SELECT id,prenom,nom " + 
-			"FROM PERSONNE where id=570";
-	
+	private final static String REALISATEUR_ID_SQL = "SELECT id,prenom,nom " + 
+			"FROM PERSONNE where id=516";
+	private final static String ACTEUR_ID_SQL = "SELECT id,prenom,nom " + 
+			"FROM PERSONNE where id=503";
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
 	@Test
 	public void findAllFilms() throws Exception {
 		Film film = new Film();
-		film.setTitre("L'HOMME SANS PASSE");
+		film.setTitre("2046");
 		//MockHttpServletRequestBuilder mm = MockMvcRequestBuilders.get("/dvdtheque/films").contentType(MediaType.APPLICATION_JSON);
 		//mvc.perform(mm).andDo(MockMvcResultHandlers.print());
 		//mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk());
@@ -62,8 +63,20 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			}
 		});
 	}
-	private List<PersonneDto> retrievePersonneDto(){
-		return this.jdbcTemplate.query(PERSONNE_ID_SQL, new RowMapper<PersonneDto>() {
+	private List<PersonneDto> retrieveRealisateur(){
+		return this.jdbcTemplate.query(REALISATEUR_ID_SQL, new RowMapper<PersonneDto>() {
+			@Override
+			public PersonneDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+				PersonneDto personneDto=new PersonneDto();  
+				personneDto.setId(rs.getInt(1));  
+				personneDto.setPrenom(rs.getString(2));
+				personneDto.setNom(rs.getString(3));
+		        return personneDto;  
+			}
+		});
+	}
+	private List<PersonneDto> retrieveActeur(){
+		return this.jdbcTemplate.query(ACTEUR_ID_SQL, new RowMapper<PersonneDto>() {
 			@Override
 			public PersonneDto mapRow(ResultSet rs, int rowNum) throws SQLException {
 				PersonneDto personneDto=new PersonneDto();  
@@ -86,11 +99,20 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findAllRealisateurs() throws Exception {
-		PersonneDto realisateur = retrievePersonneDto().get(0);
+		PersonneDto realisateur = retrieveRealisateur().get(0);
 		assertNotNull(realisateur);
 		assertNotNull(realisateur.getId());
 		
 		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/realisateurs").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(realisateur.getId())));
+		assertNotNull(resultActions);
+	}
+	@Test
+	public void findAllActeurs() throws Exception {
+		PersonneDto acteur = retrieveActeur().get(0);
+		assertNotNull(acteur);
+		assertNotNull(acteur.getId());
+		
+		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/acteurs").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(acteur.getId())));
 		assertNotNull(resultActions);
 	}
 }

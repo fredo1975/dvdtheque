@@ -3,7 +3,6 @@ package fr.fredos.dvdtheque.dao.model.repository;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +23,7 @@ public class PersonneDaoIntegrationTest {
     private PersonneDao personneDao;
 	@Test
 	public void findAllRealisateur(){
-		Set<Personne> realisateurs = personneDao.findAllRealisateur();
+		List<Personne> realisateurs = personneDao.findAllRealisateur();
 		assertNotNull(realisateurs);
 		logger.info("realisateurs.size()="+realisateurs.size());
 	}

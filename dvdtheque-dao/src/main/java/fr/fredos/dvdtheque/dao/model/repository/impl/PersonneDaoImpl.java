@@ -1,6 +1,8 @@
 package fr.fredos.dvdtheque.dao.model.repository.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,15 +46,21 @@ public class PersonneDaoImpl implements PersonneDao{
 			return null;
 		
 	}
-	public Set<Personne> findAllRealisateur(){
+	public List<Personne> findAllRealisateur(){
 		Query q = this.em.createQuery("from Film f join fetch f.realisateurs real");
 		List<Film> filmList = q.getResultList();
-		return filmList.stream().flatMap(list->list.getRealisateurs().stream()).collect(Collectors.toSet());
+		Set<Personne> set = filmList.stream().flatMap(list->list.getRealisateurs().stream()).collect(Collectors.toSet());
+		List<Personne> l = new ArrayList<>(set);
+		Collections.sort(l, (p1,p2)->(p1.getPrenom()+" "+p1.getNom()).compareTo((p2.getPrenom()+" "+p2.getNom())));
+		return l;
 	}
 	public List<Personne> findAllActeur(){
 		Query q = this.em.createQuery("from Film f join fetch f.acteurs act ");
 		List<Film> filmList = q.getResultList();
-		return filmList.stream().flatMap(list->list.getActeurs().stream()).collect(Collectors.toList());
+		Set<Personne> set = filmList.stream().flatMap(list->list.getActeurs().stream()).collect(Collectors.toSet());
+		List<Personne> l = new ArrayList<>(set);
+		Collections.sort(l, (p1,p2)->(p1.getPrenom()+" "+p1.getNom()).compareTo((p2.getPrenom()+" "+p2.getNom())));
+		return l;
 	}
     public List<Personne> findAllPersonne() {
 		Query q = this.em.createQuery("from Personne personne order by personne.prenom,personne.nom ASC");
