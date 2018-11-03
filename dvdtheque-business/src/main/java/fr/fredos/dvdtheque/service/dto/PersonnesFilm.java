@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.util.CollectionUtils;
 
 import fr.fredos.dvdtheque.dao.model.object.Personne;

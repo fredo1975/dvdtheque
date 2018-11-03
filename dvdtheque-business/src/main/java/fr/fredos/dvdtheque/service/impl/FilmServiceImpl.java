@@ -113,11 +113,8 @@ public class FilmServiceImpl implements FilmService {
 	}
 	@Transactional(readOnly = false)
 	public FilmDto saveNewFilm(FilmDto filmDto) {
-		String methodName = "saveNewFilm: ";
-		//logger.debug(methodName + "start filmDto=" + filmDto.toString());
 		Film filmRes = filmDto.fromDto();
 		filmDao.saveNewFilm(filmRes);
-		//logger.debug(methodName + "end");
 		return FilmDto.toDto(filmRes);
 	}
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED,isolation=Isolation.DEFAULT)

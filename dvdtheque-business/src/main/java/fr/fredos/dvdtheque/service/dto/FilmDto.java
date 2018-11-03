@@ -17,7 +17,6 @@ public class FilmDto implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	protected final Log logger = LogFactory.getLog(getClass());
-	private int hashCode = Integer.MIN_VALUE;
 	// primary key
 	private java.lang.Integer id;
 	// fields
@@ -26,8 +25,6 @@ public class FilmDto implements Serializable {
 	private String titreO;
 	private DvdDto dvd;
 	private PersonnesFilm personnesFilm;
-	private String printRealisateur;
-	private String printActeurs;
 	private boolean ripped;
 	
 	/*

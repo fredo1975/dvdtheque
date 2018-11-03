@@ -33,7 +33,6 @@ public class PersonneDto implements Serializable,Comparable<PersonneDto> {
 		this.pays = pays;
 	}
 
-	private int hashCode = Integer.MIN_VALUE;
 	private java.lang.Integer id;
 	// fields
 	private String nom;
