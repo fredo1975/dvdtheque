@@ -4,12 +4,17 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.FilmService;
 import fr.fredos.dvdtheque.service.PersonneService;
 import fr.fredos.dvdtheque.service.dto.FilmDto;
@@ -47,5 +52,12 @@ public class FilmController {
 	@GetMapping("/acteurs")
 	List<PersonneDto> findAllActeurs() {
 		return personneService.findAllActeur();
+	}
+	
+	@CrossOrigin
+	@PutMapping("/films/byId/{id}")
+	@ResponseStatus(HttpStatus.CREATED)
+	Film updateFilm(@RequestBody() Film film,@PathVariable Integer id) {
+		return filmService.updateFilm(film);
 	}
 }

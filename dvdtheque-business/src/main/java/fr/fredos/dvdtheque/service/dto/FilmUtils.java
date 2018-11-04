@@ -1,16 +1,9 @@
-package fr.fredos.dvdtheque.service;
+package fr.fredos.dvdtheque.service.dto;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import fr.fredos.dvdtheque.service.dto.ActeurDto;
-import fr.fredos.dvdtheque.service.dto.DvdDto;
-import fr.fredos.dvdtheque.service.dto.FilmDto;
-import fr.fredos.dvdtheque.service.dto.PersonneDto;
-import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
-import fr.fredos.dvdtheque.service.dto.RealisateurDto;
-
-public class FilmTestUtils {
+public class FilmUtils {
 
 	public static final String TITRE_FILM = "Lorem Ipsum";
 	public static final String REAL_NOM = "toto";

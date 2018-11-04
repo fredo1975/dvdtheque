@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.dto.FilmDto;
+import fr.fredos.dvdtheque.service.dto.FilmUtils;
 import fr.fredos.dvdtheque.service.dto.PersonneDto;
 import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
 import fr.fredos.dvdtheque.service.dto.RealisateurDto;
@@ -36,7 +37,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	public final static String MAX_PERSONNE_ID_SQL = "select max(id) from PERSONNE";
 
 	private FilmDto createNewFilm() {
-		FilmDto film = filmService.saveNewFilm(FilmTestUtils.buildFilmDto("Titre"));
+		FilmDto film = filmService.saveNewFilm(FilmUtils.buildFilmDto("Titre"));
 		assertNotNull(film);
 		return film;
 	}
@@ -124,10 +125,10 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		String methodName = "findPersonneByFullName : ";
 		logger.debug(methodName + "start");
 		// insert a personne first
-		PersonneDto pToInsert = new PersonneDto(FilmTestUtils.ACT_NOM, FilmTestUtils.ACT_PRENOM);
+		PersonneDto pToInsert = new PersonneDto(FilmUtils.ACT_NOM, FilmUtils.ACT_PRENOM);
 		pToInsert = personneService.savePersonne(pToInsert);
 		assertNotNull(pToInsert);
-		PersonneDto pDto = personneService.findPersonneByFullName(FilmTestUtils.ACT_NOM, FilmTestUtils.ACT_PRENOM);
+		PersonneDto pDto = personneService.findPersonneByFullName(FilmUtils.ACT_NOM, FilmUtils.ACT_PRENOM);
 		assertNotNull(pDto);
 		logger.debug(methodName + "pDto = " + pDto.toString());
 		logger.debug(methodName + "end");
@@ -162,7 +163,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		logger.debug(methodName + "start");
 		String prenom = "fredo";
 		String nom = "elbedo";
-		PersonneDto personneDto = FilmTestUtils.buildPersonneDto(prenom, nom);
+		PersonneDto personneDto = FilmUtils.buildPersonneDto(prenom, nom);
 		PersonneDto resultPersonneDto = personneService.savePersonne(personneDto);
 		assertNotNull(resultPersonneDto);
 		logger.debug(methodName + "resultPersonneDto = " + resultPersonneDto.toString());

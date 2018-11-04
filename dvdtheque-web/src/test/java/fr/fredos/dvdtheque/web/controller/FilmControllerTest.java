@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.web.controller;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.nio.charset.Charset;
@@ -19,10 +20,19 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.dto.ActeurDto;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
+import fr.fredos.dvdtheque.service.dto.FilmUtils;
 import fr.fredos.dvdtheque.service.dto.PersonneDto;
 
 
@@ -33,6 +43,8 @@ import fr.fredos.dvdtheque.service.dto.PersonneDto;
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests{
 	@Autowired
 	private MockMvc mvc;
+	@Autowired
+	protected FilmService filmService;
 	private final static String MAX_ID_SQL = "SELECT f.id, titre " + 
 			"FROM (SELECT MAX( id ) AS id FROM FILM )f INNER JOIN FILM f2 ON f2.id = f.id";
 	private final static String REALISATEUR_ID_SQL = "SELECT id,prenom,nom " + 
@@ -41,7 +53,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			"FROM PERSONNE where id=503";
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-
+	
 	@Test
 	public void findAllFilms() throws Exception {
 		Film film = new Film();
@@ -92,7 +104,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film film = retrieveIdAndTitreFilm().get(0);
 		assertNotNull(film);
 		assertNotNull(film.getId());
-		
 		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films/byId/"+film.getId()).contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
 		assertNotNull(resultActions);
 		
@@ -102,7 +113,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		PersonneDto realisateur = retrieveRealisateur().get(0);
 		assertNotNull(realisateur);
 		assertNotNull(realisateur.getId());
-		
 		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/realisateurs").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(realisateur.getId())));
 		assertNotNull(resultActions);
 	}
@@ -111,8 +121,33 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		PersonneDto acteur = retrieveActeur().get(0);
 		assertNotNull(acteur);
 		assertNotNull(acteur.getId());
-		
 		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/acteurs").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(acteur.getId())));
 		assertNotNull(resultActions);
+	}
+	@Test
+	@Transactional
+	public void testUpdateFilm() throws Exception {
+		Film film = retrieveIdAndTitreFilm().get(0);
+		Integer id = null;
+		if(film==null) {
+			FilmDto filmDto = filmService.saveNewFilm(FilmUtils.buildFilmDto(FilmUtils.TITRE_FILM));
+			assertNotNull(filmDto);
+			id = filmDto.getId();
+		}else {
+			id = film.getId();
+		}
+		FilmDto filmToUpdate = filmService.findFilm(id);
+		assertNotNull(filmToUpdate);
+		logger.debug("filmToUpdate="+filmToUpdate.toString());
+		filmToUpdate.setTitre(FilmUtils.TITRE_FILM);
+		Film f = filmToUpdate.fromDto();
+		ObjectMapper mapper = new ObjectMapper();
+		String filmJsonString = mapper.writeValueAsString(f);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+				.put("/dvdtheque/films/byId/"+film.getId(),f,film.getId())
+				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
+		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andDo(MockMvcResultHandlers.print());
+		FilmDto filmUpdated = filmService.findFilm(id);
+		assertEquals(FilmUtils.TITRE_FILM, filmUpdated.getTitre());
 	}
 }
