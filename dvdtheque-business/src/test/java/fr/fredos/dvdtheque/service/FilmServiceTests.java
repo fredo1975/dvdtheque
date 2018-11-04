@@ -268,8 +268,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		}
 		FilmDto film = filmService.findFilm(id);
 		assertNotNull(film);
-		logger.debug("film="+film.toString());
-		film.setTitre("fake titre");
+		film.setTitre(FilmUtils.TITRE_FILM);
 		ActeurDto ac = null;
 		for(ActeurDto p : film.getPersonnesFilm().getActeurs()){
 			logger.debug("p.getPersonne().toString()="+p.getPersonne().toString());
@@ -277,8 +276,9 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		}
 		film.getPersonnesFilm().getActeurs().remove(ac);
 		Film f = film.fromDto();
-		filmService.updateFilm(f);
-		
+		Film filmUpdated = filmService.updateFilm(f);
+		assertNotNull(filmUpdated);
+		assertEquals(FilmUtils.TITRE_FILM, filmUpdated.getTitre());
 	}
 	@Test
 	public void getAllFilmsByDao(){

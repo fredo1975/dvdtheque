@@ -67,7 +67,6 @@ public class FilmServiceImpl implements FilmService {
 			if (null != film) {
 				filmDto = FilmDto.toDto(film);
 			}
-
 		} catch (Exception e) {
 			logger.error("",e);
 			throw e;
@@ -75,7 +74,6 @@ public class FilmServiceImpl implements FilmService {
 		if (null != filmDto) {
 			logger.debug("end film=" + filmDto.toString());
 		}
-		
 		return filmDto;
 	}
 	@Transactional(readOnly = true)
@@ -89,7 +87,6 @@ public class FilmServiceImpl implements FilmService {
 		if (null != filmDto) {
 			logger.debug("film=" + filmDto.toString());
 		}
-		
 		return filmDto;
 	}
 
