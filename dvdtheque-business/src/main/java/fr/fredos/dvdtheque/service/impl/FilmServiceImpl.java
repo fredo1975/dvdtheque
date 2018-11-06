@@ -105,8 +105,13 @@ public class FilmServiceImpl implements FilmService {
 	}
 	@CacheEvict(value= "filmCache")
 	@Transactional(readOnly = false)
-	public Film updateFilm(Film film){
-		return filmDao.updateFilm(film);
+	public void updateFilm(Film film){
+		filmDao.updateFilm(film);
+	}
+	@Transactional(readOnly = false)
+	public void updateFilm(FilmDto film){
+		Film f = film.fromDto();
+		filmDao.updateFilm(f);
 	}
 	@Transactional(readOnly = false)
 	public FilmDto saveNewFilm(FilmDto filmDto) {

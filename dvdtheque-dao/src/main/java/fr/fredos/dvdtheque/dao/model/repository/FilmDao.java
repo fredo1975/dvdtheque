@@ -15,7 +15,7 @@ public interface FilmDao {
 	
 	public void saveNewFilm(Film film);
 	
-	public Film updateFilm(Film film);
+	public void updateFilm(Film film);
 	
 	public void saveDvd(Dvd dvd);
 	

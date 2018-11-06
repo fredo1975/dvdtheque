@@ -19,7 +19,7 @@ public interface FilmService {
 	public FilmDto findFilmWithAllObjectGraph(Integer id);
 	
 	public List<Film> findAllFilms();
-	public Film updateFilm(Film film);
+	public void updateFilm(Film film);
 	public void saveNewFilm(Film film);
 	public List<FilmDto> getAllFilmDtos();
 	public void cleanAllFilms();
@@ -27,4 +27,5 @@ public interface FilmService {
 	public List<Film> getAllRippedFilms();
 	public List<FilmDto> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto);
 	public void removeFilm(FilmDto film);
+	public void updateFilm(FilmDto film);
 }

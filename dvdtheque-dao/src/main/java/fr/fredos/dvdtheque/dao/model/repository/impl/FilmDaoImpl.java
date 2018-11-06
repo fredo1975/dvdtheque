@@ -47,10 +47,10 @@ public class FilmDaoImpl implements FilmDao {
 		this.entityManager.persist(film);
 		this.entityManager.flush();
 	}
-	public Film updateFilm(Film film){
+	public void updateFilm(Film film){
 		Film filmResult = this.entityManager.merge(film);
 		this.entityManager.flush();
-		return filmResult;
+		//return filmResult;
 	}
 	public void saveDvd(Dvd dvd){
 		this.entityManager.persist(dvd);

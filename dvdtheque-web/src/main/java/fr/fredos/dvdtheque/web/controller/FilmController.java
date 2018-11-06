@@ -57,7 +57,7 @@ public class FilmController {
 	@CrossOrigin
 	@PutMapping("/films/byId/{id}")
 	@ResponseStatus(HttpStatus.CREATED)
-	Film updateFilm(@RequestBody() Film film,@PathVariable Integer id) {
-		return filmService.updateFilm(film);
+	void updateFilm(@PathVariable Integer id,@RequestBody() FilmDto film) {
+		filmService.updateFilm(film);
 	}
 }
