@@ -48,7 +48,7 @@ public class FilmDaoImpl implements FilmDao {
 		this.entityManager.flush();
 	}
 	public void updateFilm(Film film){
-		Film filmResult = this.entityManager.merge(film);
+		this.entityManager.merge(film);
 		this.entityManager.flush();
 		//return filmResult;
 	}
@@ -113,7 +113,7 @@ public class FilmDaoImpl implements FilmDao {
 				query.setParameter("ripped", filmFilterCriteriaDto.getSelectedRipped());
 			}
 		}
-        return new ArrayList<Film>(new HashSet<Film>(query.getResultList()));
+		return new ArrayList<Film>(new HashSet<Film>(query.getResultList()));
     }
 	public void cleanAllFilms() {
 		Query queryDvd = this.entityManager.createQuery("delete from Dvd");

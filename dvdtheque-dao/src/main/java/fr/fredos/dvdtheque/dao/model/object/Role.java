@@ -22,8 +22,6 @@ import org.slf4j.LoggerFactory;
 public class Role implements Serializable {
 	@Transient
 	protected Logger logger = LoggerFactory.getLogger(Role.class);
-	@Transient
-	private int hashCode = Integer.MIN_VALUE;
 	private static final long serialVersionUID = 1L;
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,8 +67,8 @@ public class Role implements Serializable {
         result = 37 * result + ( getId() == null ? 0 : this.getId().hashCode() );
         return result;
     }
-    @Override
-    public String toString(){
-    	return "Role [id=" + id + ", name=" + name + ", hashCode=" + hashCode + "]";
-    }
+	@Override
+	public String toString() {
+		return "Role [logger=" + logger + ", id=" + id + ", name=" + name + ", users=" + users + "]";
+	}
 }

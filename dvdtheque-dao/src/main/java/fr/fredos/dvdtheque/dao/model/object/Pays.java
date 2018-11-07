@@ -8,15 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "PAYS")
 public class Pays implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	@Transient
-	private int hashCode = Integer.MIN_VALUE;
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private java.lang.Integer id;
@@ -72,8 +69,6 @@ public class Pays implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "Personne [id=" + id + ", lib=" + lib + ", i18n=" + i18n
-				+ ", -hashCode=" + hashCode + "]";
+		return "Pays [id=" + id + ", lib=" + lib + ", i18n=" + i18n + "]";
 	}
-	
 }

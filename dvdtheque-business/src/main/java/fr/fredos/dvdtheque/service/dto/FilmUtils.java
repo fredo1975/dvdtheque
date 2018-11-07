@@ -3,56 +3,56 @@ package fr.fredos.dvdtheque.service.dto;
 import java.util.HashSet;
 import java.util.Set;
 
+import fr.fredos.dvdtheque.dao.model.object.Dvd;
+import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Personne;
+
 public class FilmUtils {
 
 	public static final String TITRE_FILM = "Lorem Ipsum";
 	public static final String REAL_NOM = "toto";
 	public static final String REAL_PRENOM = "titi";
-	public static final String ACT_NOM = "toto";
-	public static final String ACT_PRENOM = "titi";
+	public static final String ACT1_NOM = "toto";
+	public static final String ACT1_PRENOM = "titi";
+	public static final String ACT2_NOM = "toto";
+	public static final String ACT2_PRENOM = "titi";
+	public static final String ACT3_NOM = "toto";
+	public static final String ACT3_PRENOM = "titi";
 	
-	public static PersonneDto buildPersonneDto(String nom,String prenom) {
-		PersonneDto p = new PersonneDto();
+	public static Personne buildPersonne(String nom,String prenom) {
+		Personne p = new Personne();
 		p.setNom(nom);
 		p.setPrenom(prenom);
 		return p;
 	}
-
-	public static RealisateurDto buildRealisateurDto() {
-		RealisateurDto r = new RealisateurDto();
-		r.setPersonne(buildPersonneDto(REAL_NOM,REAL_PRENOM));
-		return r;
+	
+	public static Dvd buildDvd() {
+		Dvd dvd = new Dvd();
+		dvd.setAnnee(1999);
+		dvd.setEdition("edition");
+		dvd.setZone(1);
+		return dvd;
 	}
-	public static ActeurDto buildActeurDto() {
-		ActeurDto acteurDto = new ActeurDto();
-		acteurDto.setPersonne(buildPersonneDto(ACT_NOM, ACT_PRENOM));
-		return acteurDto;
+	public static Set<Personne> buildActeurs(){
+		Set<Personne> acteurs = new HashSet<>();
+		acteurs.add(buildPersonne(ACT1_NOM, ACT1_PRENOM));
+		acteurs.add(buildPersonne(ACT2_NOM, ACT2_PRENOM));
+		acteurs.add(buildPersonne(ACT3_NOM, ACT3_PRENOM));
+		return acteurs;
 	}
-	public static Set<ActeurDto> buildActeurSet() {
-		Set<ActeurDto> set = new HashSet<>();
-		set.add(buildActeurDto());
-		return set;
+	public static Set<Personne> buildRealisateurs(){
+		Set<Personne> acteurs = new HashSet<>();
+		acteurs.add(buildPersonne(REAL_NOM, REAL_PRENOM));
+		return acteurs;
 	}
-	public static PersonnesFilm buildPersonnesFilm() {
-		PersonnesFilm pf = new PersonnesFilm();
-		pf.setRealisateur(buildRealisateurDto());
-		pf.setActeur(buildActeurSet());
-		return pf;
-	}
-	public static DvdDto buildDvdDto() {
-		DvdDto dvdDto = new DvdDto();
-		dvdDto.setAnnee(1999);
-		dvdDto.setEdition("edition");
-		dvdDto.setZone(1);
-		return dvdDto;
-	}
-	public static FilmDto buildFilmDto(String titre) {
-		FilmDto film = new FilmDto();
+	public static Film buildFilm(String titre) {
+		Film film = new Film();
 		film.setAnnee(new Integer(1999));
 		film.setRipped(false);
 		film.setTitre(titre);
-		film.setDvd(buildDvdDto());
-		film.setPersonnesFilm(buildPersonnesFilm());
+		film.setDvd(buildDvd());
+		film.setRealisateurs(buildRealisateurs());
+		film.setActeurs(buildActeurs());
 		return film;
 	}
 }

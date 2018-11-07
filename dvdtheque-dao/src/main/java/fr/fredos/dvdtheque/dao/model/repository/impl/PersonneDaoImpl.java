@@ -109,9 +109,7 @@ public class PersonneDaoImpl implements PersonneDao{
 	public void savePersonne(Personne p){
 		this.em.persist(p);
 	}
-	public Personne mergePersonne(Personne p){
-		return this.em.merge(p);
-	}
+	
 	public void updatePersonne(Personne p){
 		this.em.merge(p);
 	}

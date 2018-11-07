@@ -15,10 +15,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.FilmService;
 import fr.fredos.dvdtheque.service.PersonneService;
-import fr.fredos.dvdtheque.service.dto.FilmDto;
-import fr.fredos.dvdtheque.service.dto.PersonneDto;
 
 @RestController
 @ComponentScan({"fr.fredos.dvdtheque.service,fr.fredos.dvdtheque.dao.model.repository"})
@@ -30,34 +29,34 @@ public class FilmController {
 	protected PersonneService personneService;
 	@CrossOrigin
 	@GetMapping("/films")
-	List<FilmDto> findAllFilms() {
-		return filmService.getAllFilmDtos();
+	List<Film> findAllFilms() {
+		return filmService.findAllFilms();
 	}
 	@CrossOrigin
 	@GetMapping("/films/byTitre/{titre}")
-	FilmDto findFilmByTitre(@PathVariable String titre) {
+	Film findFilmByTitre(@PathVariable String titre) {
 		return filmService.findFilmByTitre(titre);
 	}
 	@CrossOrigin
 	@GetMapping("/films/byId/{id}")
-	FilmDto findFilmById(@PathVariable Integer id) {
+	Film findFilmById(@PathVariable Integer id) {
 		return filmService.findFilm(id);
 	}
 	@CrossOrigin
 	@GetMapping("/realisateurs")
-	List<PersonneDto> findAllRealisateurs() {
+	List<Personne> findAllRealisateurs() {
 		return personneService.findAllRealisateur();
 	}
 	@CrossOrigin
 	@GetMapping("/acteurs")
-	List<PersonneDto> findAllActeurs() {
+	List<Personne> findAllActeurs() {
 		return personneService.findAllActeur();
 	}
 	
 	@CrossOrigin
 	@PutMapping("/films/byId/{id}")
 	@ResponseStatus(HttpStatus.CREATED)
-	void updateFilm(@PathVariable Integer id,@RequestBody() FilmDto film) {
+	void updateFilm(@PathVariable Integer id,@RequestBody() Film film) {
 		filmService.updateFilm(film);
 	}
 }

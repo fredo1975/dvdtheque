@@ -3,7 +3,6 @@ package fr.fredos.dvdtheque.service;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
-import java.util.SortedSet;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -15,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.service.dto.FilmDto;
 import fr.fredos.dvdtheque.service.dto.FilmUtils;
 import fr.fredos.dvdtheque.service.dto.PersonneDto;
 import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
@@ -36,18 +35,19 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	public final static String MAX_FILM_ID_SQL = "select max(id) from FILM";
 	public final static String MAX_PERSONNE_ID_SQL = "select max(id) from PERSONNE";
 
-	private FilmDto createNewFilm() {
-		FilmDto film = filmService.saveNewFilm(FilmUtils.buildFilmDto("Titre"));
+	private Film createNewFilm() {
+		filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM));
+		Film film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
 		assertNotNull(film);
 		return film;
 	}
 	@Test
-	public void findPersonneGetVersusLoad() throws Exception {
+	public void getPersonneVersusLoadPersonne() throws Exception {
 		Integer id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		if(id==null) {
 			// insert a personne first
-			PersonneDto pToInsert = personneService.savePersonne(new PersonneDto("toto", "titi"));
-			assertNotNull(pToInsert);
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			
 			id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Personne personneByLoad = personneService.loadPersonne(id);
@@ -57,117 +57,85 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 
 	@Test
 	public void findPersonne() throws Exception {
-		String methodName = "findPersonne : ";
-		logger.debug(methodName + "start");
 		Integer id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		if(id==null) {
 			// insert a personne first
-			PersonneDto pToInsert = personneService.savePersonne(new PersonneDto("toto", "titi"));
-			assertNotNull(pToInsert);
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
 			id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		}
-		PersonneDto personneDto = personneService.findByPersonneId(id);
-		assertNotNull(personneDto);
-		logger.debug(methodName + "personneDto=" + personneDto.toString());
-		logger.debug(methodName + "end");
+		Personne personne = personneService.findByPersonneId(id);
+		assertNotNull(personne);
+		
 	}
 
 	@Test
 	public void findAllRealisateurs() {
-		FilmDto film = createNewFilm();
+		Film film = createNewFilm();
 		assertNotNull(film);
-		List<PersonneDto> realList = personneService.findAllRealisateur();
+		List<Personne> realList = personneService.findAllRealisateur();
 		assertNotNull(realList);
 	}
 	@Test
 	public void findAllActeurs() {
-		FilmDto film = createNewFilm();
+		Film film = createNewFilm();
 		assertNotNull(film);
-		List<PersonneDto> actList = personneService.findAllActeur();
+		List<Personne> actList = personneService.findAllActeur();
 		assertNotNull(actList);
 	}
 	@Test
 	public void findRealisateurByFilm() throws Exception {
-		String methodName = "findRealisateurByFilm : ";
-		logger.debug(methodName + "start");
 		Integer id = this.jdbcTemplate.queryForObject(MAX_FILM_ID_SQL, Integer.class);
 		if(id==null) {
-			FilmDto film = createNewFilm();
+			Film film = createNewFilm();
 			assertNotNull(film);
 			id = film.getId();
 		}
-		FilmDto film = filmService.findFilm(id);
+		Film film = filmService.findFilm(id);
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
-		logger.debug(methodName + "film =" + film.toString());
-		RealisateurDto real = personneService.findRealisateurByFilm(film);
+		Personne real = personneService.findRealisateurByFilm(film);
 		assertNotNull(real);
-		logger.debug(methodName + "real = " + real.toString());
-		logger.debug(methodName + "end");
 	}
 
 	@Test
 	public void findAllPersonne() throws Exception {
-		String methodName = "findAllPersonne : ";
-		logger.debug(methodName + "start");
-		List<PersonneDto> personneList = personneService.findAllPersonne();
+		List<Personne> personneList = personneService.findAllPersonne();
 		assertNotNull(personneList);
-		for (PersonneDto personne : personneList) {
+		for (Personne personne : personneList) {
 			personneService.findByPersonneId(personne.getId());
-			// logger.info(methodName + "personne="+personne.toString());
 		}
-		logger.debug(methodName + "personneList.size() = " + personneList.size());
-		logger.debug(methodName + "end");
 	}
 
 	@Test
 	public void findPersonneByFullName() throws Exception {
-		String methodName = "findPersonneByFullName : ";
-		logger.debug(methodName + "start");
 		// insert a personne first
-		PersonneDto pToInsert = new PersonneDto(FilmUtils.ACT_NOM, FilmUtils.ACT_PRENOM);
-		pToInsert = personneService.savePersonne(pToInsert);
-		assertNotNull(pToInsert);
-		PersonneDto pDto = personneService.findPersonneByFullName(FilmUtils.ACT_NOM, FilmUtils.ACT_PRENOM);
-		assertNotNull(pDto);
-		logger.debug(methodName + "pDto = " + pDto.toString());
-		logger.debug(methodName + "end");
+		personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+		Personne personne = personneService.findPersonneByFullName(FilmUtils.ACT1_NOM, FilmUtils.ACT1_PRENOM);
+		assertNotNull(personne);
 	}
 
 	
 	@Test
 	public void findAllPersonneByFilm() throws Exception {
-		String methodName = "findAllPersonneByFilm : ";
-		logger.debug(methodName + "start");
 		Integer id = this.jdbcTemplate.queryForObject(MAX_FILM_ID_SQL, Integer.class);
 		if(id==null) {
-			FilmDto film = createNewFilm();
+			Film film = createNewFilm();
 			assertNotNull(film);
 			id = film.getId();
 		}
-		FilmDto filmDto = filmService.findFilm(id);
-		assertNotNull(filmDto);
-		assertNotNull(filmDto.getTitre());
-		logger.debug(methodName + "filmDto =" + filmDto.toString());
-		PersonnesFilm personnesFilm = personneService.findAllPersonneByFilm(filmDto);
-		assertNotNull(personnesFilm);
-
-		logger.debug(methodName + "personnesFilm = " + personnesFilm.toString());
-		logger.debug(methodName + "end");
+		Film film = filmService.findFilm(id);
+		assertNotNull(film);
+		assertNotNull(film.getTitre());
+		
 	}
 
 	
 	@Test
 	public void savePersonne() throws Exception {
-		String methodName = "savePersonne : ";
-		logger.debug(methodName + "start");
-		String prenom = "fredo";
-		String nom = "elbedo";
-		PersonneDto personneDto = FilmUtils.buildPersonneDto(prenom, nom);
-		PersonneDto resultPersonneDto = personneService.savePersonne(personneDto);
-		assertNotNull(resultPersonneDto);
-		logger.debug(methodName + "resultPersonneDto = " + resultPersonneDto.toString());
-		logger.debug(methodName + "end");
+		Personne personne = FilmUtils.buildPersonne(FilmUtils.ACT1_NOM, FilmUtils.ACT1_PRENOM);
+		personneService.savePersonne(personne);
+		personne = personneService.findPersonneByFullName(FilmUtils.ACT1_NOM, FilmUtils.ACT1_PRENOM);
+		assertNotNull(personne);
 	}
 
 	@Test
@@ -177,17 +145,13 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		Integer id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		if(id==null) {
 			// insert a personne first
-			PersonneDto pToInsert = personneService.savePersonne(new PersonneDto("toto", "titi"));
-			assertNotNull(pToInsert);
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM, FilmUtils.ACT1_PRENOM));
 			id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Personne personneByLoad = personneService.loadPersonne(id);
 		assertNotNull(personneByLoad);
-		PersonneDto personneDto = PersonneDto.toDto(personneByLoad);
-		personneDto.setNom("elmafioso33");
-		personneService.updatePersonne(personneDto);
-		logger.debug(methodName + "personneDto = " + personneDto.toString());
-		logger.debug(methodName + "end");
+		personneByLoad.setNom("elmafioso33");
+		personneService.updatePersonne(personneByLoad);
 	}
 
 	@Test
@@ -207,7 +171,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		// PersonneDto personneDto = personneService.findByPersonneId(maxPersonneId);
 		PersonneDto personneDto = new PersonneDto();
 		personneDto.setId(maxPersonneId);
-		personneService.deletePersonne(personneDto);
+		//personneService.deletePersonne(personneDto);
 		logger.debug(methodName + "end");
 	}
 }

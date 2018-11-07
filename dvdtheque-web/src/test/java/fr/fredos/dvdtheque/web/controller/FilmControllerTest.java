@@ -30,10 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.FilmService;
-import fr.fredos.dvdtheque.service.dto.ActeurDto;
-import fr.fredos.dvdtheque.service.dto.FilmDto;
 import fr.fredos.dvdtheque.service.dto.FilmUtils;
-import fr.fredos.dvdtheque.service.dto.PersonneDto;
 
 
 @RunWith(SpringRunner.class)
@@ -114,13 +111,14 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film film = retrieveIdAndTitreFilm().get(0);
 		Integer id = null;
 		if(film==null) {
-			FilmDto filmDto = filmService.saveNewFilm(FilmUtils.buildFilmDto(FilmUtils.TITRE_FILM));
-			assertNotNull(filmDto);
-			id = filmDto.getId();
+			filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM));
+			film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
+			assertNotNull(film);
+			id = film.getId();
 		}else {
 			id = film.getId();
 		}
-		FilmDto filmToUpdate = filmService.findFilm(id);
+		Film filmToUpdate = filmService.findFilm(id);
 		assertNotNull(filmToUpdate);
 		logger.debug("filmToUpdate="+filmToUpdate.toString());
 		filmToUpdate.setTitre(FilmUtils.TITRE_FILM);
@@ -133,7 +131,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		mvc.perform(builder)
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andDo(MockMvcResultHandlers.print());
-		FilmDto filmUpdated = filmService.findFilm(id);
+		Film filmUpdated = filmService.findFilm(id);
 		assertEquals(FilmUtils.TITRE_FILM, filmUpdated.getTitre());
 	}
 }

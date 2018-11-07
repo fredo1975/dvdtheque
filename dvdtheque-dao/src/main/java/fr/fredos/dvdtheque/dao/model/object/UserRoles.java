@@ -9,13 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 @Entity
 @Table(name = "USERROLES")
 public class UserRoles implements Serializable {
-	@Transient
-	private int hashCode = Integer.MIN_VALUE;
-	
 	private static final long serialVersionUID = 1L;
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

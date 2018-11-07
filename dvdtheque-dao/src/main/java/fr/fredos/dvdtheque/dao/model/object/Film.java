@@ -19,8 +19,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "FILM")
@@ -54,17 +56,14 @@ public class Film implements Serializable {
 	@Column(name = "RIPPED")
 	private boolean ripped;
 	@Transient
-	private int hashCode = Integer.MIN_VALUE;
-
+	private Personne realisateur;
 	public Film() {
 		super();
 	}
-
 	public Film(Integer id) {
 		super();
 		this.id = id;
 	}
-
 	public Film(Integer id, Integer annee, String titre, String titreO) {
 		super();
 		this.id = id;
@@ -72,76 +71,76 @@ public class Film implements Serializable {
 		this.titre = titre;
 		this.titreO = titreO;
 	}
-
 	public java.lang.Integer getId() {
 		return id;
 	}
-
 	public void setId(java.lang.Integer id) {
 		this.id = id;
 	}
-
 	public Integer getAnnee() {
 		return annee;
 	}
-
 	public void setAnnee(Integer annee) {
 		this.annee = annee;
 	}
-
 	public String getTitre() {
 		return titre;
 	}
-
 	public void setTitre(String titre) {
 		this.titre = titre;
 	}
-
 	public String getTitreO() {
 		return titreO;
 	}
-
 	public void setTitreO(String titreO) {
 		this.titreO = titreO;
 	}
-
 	public Dvd getDvd() {
 		return dvd;
 	}
-
 	public void setDvd(Dvd dvd) {
 		this.dvd = dvd;
 	}
-	
 	public Set<Personne> getActeurs() {
 		return acteurs;
 	}
-
 	public void setActeurs(Set<Personne> acteurs) {
 		this.acteurs = acteurs;
 	}
-
 	public Set<Personne> getRealisateurs() {
 		return realisateurs;
 	}
-
 	public void setRealisateurs(Set<Personne> realisateurs) {
 		this.realisateurs = realisateurs;
 	}
 	public boolean isRipped() {
 		return ripped;
 	}
-
+	public Personne getRealisateur() {
+		return realisateur;
+	}
+	public void setRealisateur(Personne realisateur) {
+		this.realisateur = realisateur;
+	}
 	public void setRipped(boolean ripped) {
 		this.ripped = ripped;
 	}
-
-	@Override
-	public String toString() {
-		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
-				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped + "]";
+	public String getPrintRealisateur() {
+		if(!CollectionUtils.isEmpty(this.realisateurs)) {
+			Personne reamisateur = this.getRealisateurs().iterator().next();
+			return reamisateur.getPrenom()+" "+reamisateur.getNom();
+		}
+		return StringUtils.EMPTY;
 	}
-
+	public String getPrintActeurs() {
+		StringBuilder sb = new StringBuilder();
+		if(!CollectionUtils.isEmpty(this.getActeurs())) {
+			for(Personne acteur : this.getActeurs()){
+				sb.append(acteur.getPrenom()+" "+acteur.getNom()+" - ");
+			}
+		}
+		return StringUtils.removeEnd(sb.toString(), " - ");
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -149,7 +148,6 @@ public class Film implements Serializable {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -166,5 +164,10 @@ public class Film implements Serializable {
 			return false;
 		return true;
 	}
-
+	@Override
+	public String toString() {
+		return "Film [logger=" + logger + ", id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
+				+ ", dvd=" + dvd + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped
+				+ ", realisateur=" + realisateur + "]";
+	}
 }

@@ -2,41 +2,34 @@ package fr.fredos.dvdtheque.service;
 
 import java.util.List;
 
+import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.service.dto.FilmDto;
-import fr.fredos.dvdtheque.service.dto.PersonneDto;
-import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
-import fr.fredos.dvdtheque.service.dto.RealisateurDto;
 
 public interface PersonneService {
 	
-	public PersonneDto findByPersonneId(Integer id);
+	public Personne findByPersonneId(Integer id);
 	
-	public RealisateurDto findRealisateurByFilm(FilmDto film);
+	public Personne findRealisateurByFilm(Film film);
 	
-	public List<PersonneDto> findAllPersonne();
+	public List<Personne> findAllPersonne();
 	
-	public PersonnesFilm findAllPersonneByFilm(FilmDto film);
+	public void savePersonne(Personne personne);
 	
-	public PersonneDto savePersonne(PersonneDto personne);
+	public void updatePersonne(Personne p);
 	
-	public PersonneDto updatePersonne(PersonneDto p);
+	public void deletePersonne(Personne p);
 	
-	public void deletePersonne(PersonneDto p);
+	public Personne findPersonneByFullName(String nom,String prenom);
 	
-	public PersonneDto findPersonneByFullName(String nom,String prenom);
-	
-	public PersonneDto findPersonneByName(String nom);
+	public Personne findPersonneByName(String nom);
 	
 	public Personne getPersonne(Integer id);
 	
 	public Personne loadPersonne(Integer id);
 	
-	public Personne savePersonne(Personne personne);
-	
 	public void cleanAllPersonnes();
 	
-	public List<PersonneDto> findAllRealisateur();
+	public List<Personne> findAllRealisateur();
 	
-	public List<PersonneDto> findAllActeur();
+	public List<Personne> findAllActeur();
 }
