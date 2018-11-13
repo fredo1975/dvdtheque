@@ -12,12 +12,12 @@ public class FilmUtils {
 	public static final String TITRE_FILM = "Lorem Ipsum";
 	public static final String REAL_NOM = "toto";
 	public static final String REAL_PRENOM = "titi";
-	public static final String ACT1_NOM = "toto";
-	public static final String ACT1_PRENOM = "titi";
-	public static final String ACT2_NOM = "toto";
-	public static final String ACT2_PRENOM = "titi";
-	public static final String ACT3_NOM = "toto";
-	public static final String ACT3_PRENOM = "titi";
+	public static final String ACT1_NOM = "tata";
+	public static final String ACT1_PRENOM = "tutu";
+	public static final String ACT2_NOM = "toitoi";
+	public static final String ACT2_PRENOM = "tuitui";
+	public static final String ACT3_NOM = "tuotuo";
+	public static final String ACT3_PRENOM = "tmitmi";
 	
 	public static Personne buildPersonne(String nom,String prenom) {
 		Personne p = new Personne();

@@ -16,7 +16,6 @@ import org.springframework.util.Assert;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.FilmService;
-import fr.fredos.dvdtheque.service.dto.FilmDto;
 
 public class RippedFlagTasklet implements Tasklet{
 	protected Logger logger = LoggerFactory.getLogger(RippedFlagTasklet.class);
@@ -37,10 +36,9 @@ public class RippedFlagTasklet implements Tasklet{
         	if(extension.equalsIgnoreCase("mkv")) {
         		String titre = StringUtils.substringBefore(name, ".");
         		try {
-        			FilmDto film = filmService.findFilmByTitre(titre);
+        			Film film = filmService.findFilmByTitre(titre);
         			film.setRipped(true);
-        			Film f = film.fromDto();
-        			filmService.updateFilm(f);
+        			filmService.updateFilm(film);
         			logger.debug(film.toString());
         		}catch(EmptyResultDataAccessException e) {
         			//logger.error(titre+" not found");
