@@ -193,15 +193,17 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Film film = null;
 		if(id==null) {
 			filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM));
+			film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
 		}else {
 			film = filmService.findFilm(id);
+			assertNotNull(film);
 		}
 		assertNotNull(film);
-		film.setTitre(FilmUtils.TITRE_FILM);
+		film.setTitre(FilmUtils.TITRE_FILM_UPDATED);
 		filmService.updateFilm(film);
-		Film filmUpdated = filmService.findFilm(id);
+		Film filmUpdated = filmService.findFilm(film.getId());
 		assertNotNull(filmUpdated);
-		assertEquals(FilmUtils.TITRE_FILM, filmUpdated.getTitre());
+		assertEquals(FilmUtils.TITRE_FILM_UPDATED, filmUpdated.getTitre());
 	}
 	@Test
 	public void cleanAllFilms() {

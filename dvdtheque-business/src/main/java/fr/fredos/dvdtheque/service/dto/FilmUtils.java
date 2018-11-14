@@ -10,6 +10,7 @@ import fr.fredos.dvdtheque.dao.model.object.Personne;
 public class FilmUtils {
 
 	public static final String TITRE_FILM = "Lorem Ipsum";
+	public static final String TITRE_FILM_UPDATED = "Lorem Ipsum updated";
 	public static final String REAL_NOM = "toto";
 	public static final String REAL_PRENOM = "titi";
 	public static final String ACT1_NOM = "tata";
