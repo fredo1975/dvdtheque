@@ -8,15 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-//@RunWith(SpringJUnit4ClassRunner.class)
-/*@ContextConfiguration(locations = { "classpath*:spring-batch-job.xml",
-		"classpath*:applicationContext-batch.xml",
-		"classpath*:test-context.xml" })*/
+@ContextConfiguration(locations = { "classpath*:test-context.xml" })
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.batch.BatchApplication.class,fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class})
 public class FilmProcessorTest {
@@ -24,7 +23,7 @@ public class FilmProcessorTest {
 
 	@Autowired
 	private JobLauncherTestUtils jobLauncherTestUtils;
-
+	
 	@Test
 	public void launchCheckFilmStep() throws Exception {
 		JobExecution jobExecution = jobLauncherTestUtils.launchStep("checkFilm");

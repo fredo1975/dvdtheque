@@ -14,7 +14,7 @@
     </appender>
 
     <!--<logger name="org.hibernate" level="debug"/> -->
-    <logger name="fr.fredos.dvdtheque" level="debug"/>
+    <logger name="fr.fredos.dvdtheque" level="info"/>
 
     <root level="info">
         <appender-ref ref="console"/>
