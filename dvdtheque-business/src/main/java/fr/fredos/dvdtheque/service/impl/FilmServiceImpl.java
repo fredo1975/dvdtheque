@@ -69,8 +69,8 @@ public class FilmServiceImpl implements FilmService {
 		filmDao.updateFilm(film);
 	}
 	@Transactional(readOnly = false)
-	public void saveNewFilm(Film film) {
-		filmDao.saveNewFilm(film);
+	public Integer saveNewFilm(Film film) {
+		return filmDao.saveNewFilm(film);
 	}
 	private void setRealisateur(Film film) {
 		if(film.getRealisateurs()!=null) {

@@ -43,17 +43,19 @@ public class FilmDaoImpl implements FilmDao {
 		q.setParameter("id", id);
 		return (Film)q.getSingleResult();
 	}
-	public void saveNewFilm(Film film){
+	public Integer saveNewFilm(Film film){
 		this.entityManager.persist(film);
 		this.entityManager.flush();
+		return film.getId();
 	}
 	public void updateFilm(Film film){
 		this.entityManager.merge(film);
 		this.entityManager.flush();
 		//return filmResult;
 	}
-	public void saveDvd(Dvd dvd){
+	public Integer saveDvd(Dvd dvd){
 		this.entityManager.persist(dvd);
+		return dvd.getId();
 	}
 	@SuppressWarnings("unchecked")
     public List<Film> findAllFilms() {

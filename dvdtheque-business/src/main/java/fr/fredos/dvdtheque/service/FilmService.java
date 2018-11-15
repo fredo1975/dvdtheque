@@ -10,7 +10,7 @@ public interface FilmService {
 	public Film findFilmWithAllObjectGraph(Integer id);
 	public List<Film> findAllFilms();
 	public void updateFilm(Film film);
-	public void saveNewFilm(Film film);
+	public Integer saveNewFilm(Film film);
 	//public List<FilmDto> getAllFilmDtos();
 	public void cleanAllFilms();
 	public Film findFilmByTitre(String titre);

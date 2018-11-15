@@ -2,8 +2,8 @@ package fr.fredos.dvdtheque.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,12 +25,7 @@ import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
-import fr.fredos.dvdtheque.service.dto.ActeurDto;
-import fr.fredos.dvdtheque.service.dto.FilmDto;
 import fr.fredos.dvdtheque.service.dto.FilmUtils;
-import fr.fredos.dvdtheque.service.dto.PersonneDto;
-import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
-import fr.fredos.dvdtheque.service.dto.RealisateurDto;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class})
@@ -75,7 +70,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(methodName + "film ="+film.toString());
 		assertNotNull(film.getActeurs());
 		assertNotNull(film.getRealisateurs());
-		assertNotNull(film.getRealisateur());
+		
 		for(Personne acteur : film.getActeurs()){
 			logger.debug(methodName + " acteur="+acteur.toString());
 		}
@@ -86,8 +81,9 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
 		Film film = null;
 		if(id==null) {
-			filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM));
-			film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
+			film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM);
+			id = filmService.saveNewFilm(film);
+			assertNotNull(id);
 		}else {
 			film = filmService.findFilm(id);
 		}
@@ -95,8 +91,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertNotNull(film.getTitre());
 		logger.debug("film ="+film.toString());
 		assertNotNull(film.getRealisateurs());
-		assertNotNull(film.getRealisateur());
-		logger.debug("Realisateur ="+film.getRealisateur().toString());
+		
+		logger.debug("Realisateur ="+film.getRealisateurs().iterator().next());
 		assertNotNull(film.getActeurs());
 		for(Personne acteur : film.getActeurs()){
 			logger.debug("Acteur="+acteur.toString());
@@ -144,7 +140,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		
 		film.getRealisateurs().add(real);
 		film.getActeurs().add(acteur);
-		filmService.saveNewFilm(film);
+		Integer id = filmService.saveNewFilm(film);
+		assertNotNull(real);
 		logger.debug(methodName + "end");
 	}
 	@Test
@@ -154,36 +151,37 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(methodName + "start");
 		
 		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM);
-		filmService.saveNewFilm(film);
-		film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
-		film = filmService.findFilmWithAllObjectGraph(film.getId());
-		assertNotNull(film);
-		assertNotNull(film.getTitre());
-		assertEquals(FilmUtils.TITRE_FILM, film.getTitre());
-		assertNotNull(film.getRealisateur().getId());
-		Integer idReal = film.getRealisateur().getId();
+		Integer id = filmService.saveNewFilm(film);
+		assertNotNull(id);
+		assertNotNull(film.getRealisateurs());
+		Iterator<Personne> iterator = film.getRealisateurs().iterator();
+		assertNotNull(iterator);
+		Personne realisateur = iterator.next();
+		assertNotNull(realisateur.getId());
+		Integer idReal = realisateur.getId();
 		assertNotNull(idReal);
-		Personne realisateur = personneService.findByPersonneId(idReal);
+		realisateur = personneService.findByPersonneId(idReal);
 		assertNotNull(realisateur);
 		assertNotNull(film.getActeurs().iterator());
 		Integer idAct = film.getActeurs().iterator().next().getId();
 		assertNotNull(idAct);
 		Personne acteur = personneService.findByPersonneId(idAct);
-		
+		assertNotNull(acteur);
 		Dvd dvd = new Dvd();
 		dvd.setZone(new Integer(2));
 		dvd.setAnnee(2002);
 		dvd.setEdition("edition");
 		Film newFilm = new Film();
-		newFilm.setTitre("test1");
+		newFilm.setTitre(FilmUtils.TITRE_FILM_UPDATED);
 		newFilm.setAnnee(2002);
 		newFilm.setDvd(dvd);
 		newFilm.getRealisateurs().add(realisateur);
 		newFilm.getActeurs().add(acteur);
 		
-		filmService.saveNewFilm(newFilm);
-		Film filmUpdated = filmService.findFilm(newFilm.getId());
-		assertNotNull(filmUpdated);
+		id = filmService.saveNewFilm(newFilm);
+		assertNotNull(id);
+		Film filmSaved = filmService.findFilm(id);
+		assertNotNull(filmSaved);
 		logger.debug(methodName + "end");
 	}
 	@Test

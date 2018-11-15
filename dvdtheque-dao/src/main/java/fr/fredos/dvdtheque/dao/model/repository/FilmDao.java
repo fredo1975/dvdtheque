@@ -13,11 +13,11 @@ public interface FilmDao {
 	
 	public Film findFilmWithAllObjectGraph(Integer id);
 	
-	public void saveNewFilm(Film film);
+	public Integer saveNewFilm(Film film);
 	
 	public void updateFilm(Film film);
 	
-	public void saveDvd(Dvd dvd);
+	public Integer saveDvd(Dvd dvd);
 	
 	public List<Film> findAllFilms();
 	
