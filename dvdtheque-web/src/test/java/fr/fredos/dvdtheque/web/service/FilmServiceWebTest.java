@@ -28,10 +28,8 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 		Film film = null;
 		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
 		if(id==null) {
-			filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM));
-			film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
-			assertNotNull(film);
-			id = film.getId();
+			id = filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM));
+			assertNotNull(id);
 		}
 		film = filmService.findFilmWithAllObjectGraph(id);
 		assertNotNull(film);

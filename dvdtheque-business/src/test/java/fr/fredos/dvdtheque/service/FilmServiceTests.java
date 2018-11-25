@@ -2,6 +2,7 @@ package fr.fredos.dvdtheque.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
 import java.util.List;
@@ -198,10 +199,16 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		}
 		assertNotNull(film);
 		film.setTitre(FilmUtils.TITRE_FILM_UPDATED);
+		List<Personne> realList = personneService.findAllRealisateur();
+		assertNotNull(realList);
+		assertTrue(realList.size()>0);
+		Personne realisateur = realList.get(0);
+		film.setRealisateur(realisateur);
 		filmService.updateFilm(film);
 		Film filmUpdated = filmService.findFilm(film.getId());
 		assertNotNull(filmUpdated);
 		assertEquals(FilmUtils.TITRE_FILM_UPDATED, filmUpdated.getTitre());
+		assertEquals(realisateur, filmUpdated.getRealisateur());
 	}
 	@Test
 	public void cleanAllFilms() {

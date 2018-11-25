@@ -16,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.FilmFilterCriteriaType;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
 import fr.fredos.dvdtheque.service.FilmService;
 import fr.fredos.dvdtheque.service.dto.FilmDto;
@@ -66,6 +67,8 @@ public class FilmServiceImpl implements FilmService {
 	@CacheEvict(value= "filmCache")
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
+		film.getRealisateurs().clear();
+		film.getRealisateurs().add(film.getRealisateur());
 		filmDao.updateFilm(film);
 	}
 	@Transactional(readOnly = false)
