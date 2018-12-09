@@ -28,7 +28,10 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 		Film film = null;
 		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
 		if(id==null) {
-			id = filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM));
+			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
+			Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
+			film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
+			id = filmService.saveNewFilm(film);
 			assertNotNull(id);
 		}
 		film = filmService.findFilmWithAllObjectGraph(id);
@@ -45,7 +48,11 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 	public void findAllFilms() throws Exception{
 		String methodName = "findAllFilms : ";
 		logger.debug(methodName + "start");
-		filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM));
+		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
+		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
+		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
+		Integer id = filmService.saveNewFilm(film);
+		assertNotNull(id);
 		List<Film> filmList = filmService.findAllFilms();
 		assertNotNull(filmList);
 		logger.debug(methodName + "filmList ="+filmList.toString());

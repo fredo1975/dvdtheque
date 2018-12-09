@@ -111,7 +111,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film film = retrieveIdAndTitreFilm().get(0);
 		Integer id = null;
 		if(film==null) {
-			filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM));
+			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
+			Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
+			film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
+			id = filmService.saveNewFilm(film);
 			film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
 			assertNotNull(film);
 			id = film.getId();

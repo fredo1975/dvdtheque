@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+
+import fr.fredos.dvdtheque.common.dto.NewActeurDto;
 @Entity
 @Table(name = "PERSONNE")
 public class Personne implements Serializable {
@@ -89,5 +91,12 @@ public class Personne implements Serializable {
 	@Override
 	public String toString() {
 		return prenom+" "+nom;
+	}
+	
+	public static final Personne buildPersonneFromNewActeurDto(NewActeurDto newActeurDto) {
+		Personne p = new Personne();
+		p.setNom(newActeurDto.getNom());
+		p.setPrenom(newActeurDto.getPrenom());
+		return p;
 	}
 }

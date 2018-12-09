@@ -2,7 +2,9 @@ package fr.fredos.dvdtheque.service.impl;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,21 +13,27 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
-import fr.fredos.dvdtheque.common.enums.FilmFilterCriteriaType;
+import fr.fredos.dvdtheque.common.dto.NewActeurDto;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
 import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.PersonneService;
 import fr.fredos.dvdtheque.service.dto.FilmDto;
 @Service("filmService")
 public class FilmServiceImpl implements FilmService {
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceImpl.class);
 	public static final String CACHE_DIST_FILM = "dist-film";
+	private static final String REALISATEUR_MESSAGE_WARNING = "Film should contains one producer";
+	private static final String ACTEURS_MESSAGE_WARNING = "Film should contains actors";
 	@Autowired
 	private FilmDao filmDao;
+	@Autowired
+	private PersonneService personneService;
 	@Cacheable(value= "filmDtoCache")
 	@Transactional(readOnly = true)
 	public List<FilmDto> getAllFilmDtos() {
@@ -73,6 +81,39 @@ public class FilmServiceImpl implements FilmService {
 	}
 	@Transactional(readOnly = false)
 	public Integer saveNewFilm(Film film) {
+		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
+		handleRelisateur(film);
+		Set<Personne> acteurs = new HashSet<>();
+		Assert.notEmpty(film.getActeurs(), "Film should contains actors");
+		for(Personne acteur : film.getActeurs()) {
+			acteurs.add(personneService.getPersonne(acteur.getId()));
+		}
+		film.getActeurs().clear();
+		film.setActeurs(acteurs);
+		return filmDao.saveNewFilm(film);
+	}
+	private void handleRelisateur(Film film) {
+		Set<Personne> realisateurs = new HashSet<>();
+		realisateurs.add(film.getRealisateurs().iterator().next());
+		film.getRealisateurs().clear();
+		film.getRealisateurs().add(personneService.getPersonne(realisateurs.iterator().next().getId()));
+	}
+	@Transactional(readOnly = false)
+	public Integer saveNewFilmWithNewPersons(Film film, Set<NewActeurDto> newActeurDtoSet) {
+		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
+		handleRelisateur(film);
+		if(CollectionUtils.isEmpty(film.getActeurs()) && CollectionUtils.isEmpty(newActeurDtoSet)) {
+			Assert.notEmpty(film.getActeurs(), ACTEURS_MESSAGE_WARNING);
+		}
+		Set<Personne> acteurs = new HashSet<>();
+		if(!CollectionUtils.isEmpty(film.getActeurs())) {
+			for(Personne acteur : film.getActeurs()) {
+				acteurs.add(personneService.getPersonne(acteur.getId()));
+			}
+		}
+		film.getActeurs().clear();
+		film.setActeurs(acteurs);
+		handleNewActeurDtoSet(film, newActeurDtoSet);
 		return filmDao.saveNewFilm(film);
 	}
 	private void setRealisateur(Film film) {
@@ -114,5 +155,23 @@ public class FilmServiceImpl implements FilmService {
 	public void removeFilm(Film film) {
 		film = filmDao.findFilm(film.getId());
 		filmDao.removeFilm(film);
+	}
+	@Override
+	public void updateFilmWithNewPersons(Film film, Set<NewActeurDto> newActeurDtoSet) {
+		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
+		handleNewActeurDtoSet(film, newActeurDtoSet);
+		updateFilm(film);
+	}
+	private void handleNewActeurDtoSet(Film film, Set<NewActeurDto> newActeurDtoSet) {
+		if(CollectionUtils.isEmpty(newActeurDtoSet)) {
+			for(NewActeurDto newActeurDto : newActeurDtoSet) {
+				Personne p = personneService.findPersonneByFullName(newActeurDto.getNom(), newActeurDto.getPrenom());
+				if(p==null) {
+					p = Personne.buildPersonneFromNewActeurDto(newActeurDto);
+					personneService.savePersonne(p);
+					film.getActeurs().add(p);
+				}
+			}
+		}
 	}
 }

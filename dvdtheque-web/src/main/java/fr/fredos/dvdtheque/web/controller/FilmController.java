@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,5 +56,11 @@ public class FilmController {
 	@PutMapping("/films/byId/{id}")
 	void updateFilm(@RequestBody Film film,@PathVariable Integer id) {
 		filmService.updateFilm(film);
+	}
+	
+	@CrossOrigin
+	@PutMapping("/films/save")
+	void saveFilm(@RequestBody Film film) {
+		filmService.saveNewFilm(film);
 	}
 }

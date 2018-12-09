@@ -32,9 +32,13 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	public static final String CACHE_FILM = "dist-film";
 	public final static String MAX_FILM_ID_SQL = "select max(id) from FILM";
 	public final static String MAX_PERSONNE_ID_SQL = "select max(id) from PERSONNE";
+	public final static String MAX_REALISATEUR_ID_SQL = "select max(p.id) from PERSONNE p inner join REALISATEUR r on r.ID_PERSONNE=p.ID";
+	public final static String MAX_ACTEUR_ID_SQL = "select max(p.id) from PERSONNE p inner join ACTEUR a on a.ID_PERSONNE=p.ID";
 
 	private Film createNewFilm() {
-		filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM));
+		Integer idRealisateur = this.jdbcTemplate.queryForObject(MAX_REALISATEUR_ID_SQL, Integer.class);
+		Integer idActeur1 = this.jdbcTemplate.queryForObject(MAX_ACTEUR_ID_SQL, Integer.class);
+		filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null));
 		Film film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
 		assertNotNull(film);
 		return film;

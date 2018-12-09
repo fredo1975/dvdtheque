@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -84,14 +85,26 @@ public class PersonneDaoImpl implements PersonneDao{
         Query query = this.em.createQuery(sb.toString());
         query.setParameter("nom", nom);
         query.setParameter("prenom", prenom);
-        return (Personne) query.getSingleResult();
+        Personne p = null;
+        try {
+        	p = (Personne) query.getSingleResult();
+        }catch(NoResultException nre) {
+        	logger.error(nre.getMessage());
+        }
+        return p;
     }
 	
 	public Personne findPersonneByName(String nom) {
 		StringBuilder sb = new StringBuilder("from Personne personne where personne.nom=:nom ");
         Query query = this.em.createQuery(sb.toString());
         query.setParameter("nom", nom);
-        return (Personne) query.getSingleResult();
+        Personne p = null;
+        try {
+        	p = (Personne) query.getSingleResult();
+        }catch(NoResultException nre) {
+        	logger.error(nre.getMessage());
+        }
+        return p;
     }
 	
 	
