@@ -1,9 +1,11 @@
 package fr.fredos.dvdtheque.web.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
@@ -26,6 +30,13 @@ public class FilmController {
 	private FilmService filmService;
 	@Autowired
 	protected PersonneService personneService;
+	
+	@CrossOrigin
+	@GetMapping("/films/byPersonne")
+	Personne findPersonne(@RequestParam("nom") String nom,@RequestParam("prenom") String prenom) {
+		return personneService.findPersonneByFullName(nom, prenom);
+	}
+	
 	@CrossOrigin
 	@GetMapping("/films")
 	List<Film> findAllFilms() {
@@ -53,14 +64,23 @@ public class FilmController {
 	}
 	
 	@CrossOrigin
-	@PutMapping("/films/byId/{id}")
-	void updateFilm(@RequestBody Film film,@PathVariable Integer id) {
+	@PutMapping("/films/{id}")
+	ResponseEntity<Object> updateFilm(@RequestBody Film film,@PathVariable Integer id) {
+		Film filmOptional = filmService.findFilm(id);
+
+		if(filmOptional==null) {
+			return ResponseEntity.notFound().build();
+		}
 		filmService.updateFilm(film);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@CrossOrigin
-	@PutMapping("/films/save")
-	void saveFilm(@RequestBody Film film) {
-		filmService.saveNewFilm(film);
+	@PostMapping("/films")
+	ResponseEntity<Object> saveFilm(@RequestBody Film film) {
+		Integer id = filmService.saveNewFilm(film);
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+				.buildAndExpand(id).toUri();
+		return ResponseEntity.created(location).build();
 	}
 }

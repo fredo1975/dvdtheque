@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang.StringUtils;
+
 import fr.fredos.dvdtheque.common.dto.NewActeurDto;
 @Entity
 @Table(name = "PERSONNE")
@@ -95,8 +97,8 @@ public class Personne implements Serializable {
 	
 	public static final Personne buildPersonneFromNewActeurDto(NewActeurDto newActeurDto) {
 		Personne p = new Personne();
-		p.setNom(newActeurDto.getNom());
-		p.setPrenom(newActeurDto.getPrenom());
+		p.setNom(StringUtils.upperCase(newActeurDto.getNom()));
+		p.setPrenom(StringUtils.upperCase(newActeurDto.getPrenom()));
 		return p;
 	}
 }

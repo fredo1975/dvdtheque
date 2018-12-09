@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,47 +76,55 @@ public class FilmServiceImpl implements FilmService {
 	@CacheEvict(value= "filmCache")
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
+		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
 		film.getRealisateurs().clear();
 		film.getRealisateurs().add(film.getRealisateur());
+		handleActeurs(film);
+		upperCaseTitre(film);
 		filmDao.updateFilm(film);
+	}
+	/**
+	 * attach to session existing acteurs and persist new acteurs
+	 * @param film
+	 */
+	private void handleActeurs(Film film) {
+		if(CollectionUtils.isEmpty(film.getActeurs()) && CollectionUtils.isEmpty(film.getNewActeurDtoSet())) {
+			Assert.notEmpty(film.getActeurs(), ACTEURS_MESSAGE_WARNING);
+		}
+		if(!CollectionUtils.isEmpty(film.getActeurs())) {
+			Set<Personne> acteurs = new HashSet<>();
+			for(Personne acteur : film.getActeurs()) {
+				acteurs.add(personneService.getPersonne(acteur.getId()));
+			}
+			film.getActeurs().clear();
+			film.setActeurs(acteurs);
+		}
+		handleNewActeurDtoSet(film);
+	}
+	private void upperCaseTitre(Film film) {
+		final String titre = StringUtils.upperCase(film.getTitre());
+		film.setTitre(titre);
+		final String titreO = StringUtils.upperCase(film.getTitreO());
+		film.setTitreO(titreO);
 	}
 	@Transactional(readOnly = false)
 	public Integer saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
-		handleRelisateur(film);
-		Set<Personne> acteurs = new HashSet<>();
-		Assert.notEmpty(film.getActeurs(), "Film should contains actors");
-		for(Personne acteur : film.getActeurs()) {
-			acteurs.add(personneService.getPersonne(acteur.getId()));
-		}
-		film.getActeurs().clear();
-		film.setActeurs(acteurs);
+		handleRealisateur(film);
+		handleActeurs(film);
+		upperCaseTitre(film);
 		return filmDao.saveNewFilm(film);
 	}
-	private void handleRelisateur(Film film) {
+	private void handleRealisateur(Film film) {
 		Set<Personne> realisateurs = new HashSet<>();
 		realisateurs.add(film.getRealisateurs().iterator().next());
 		film.getRealisateurs().clear();
 		film.getRealisateurs().add(personneService.getPersonne(realisateurs.iterator().next().getId()));
 	}
-	@Transactional(readOnly = false)
-	public Integer saveNewFilmWithNewPersons(Film film, Set<NewActeurDto> newActeurDtoSet) {
-		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
-		handleRelisateur(film);
-		if(CollectionUtils.isEmpty(film.getActeurs()) && CollectionUtils.isEmpty(newActeurDtoSet)) {
-			Assert.notEmpty(film.getActeurs(), ACTEURS_MESSAGE_WARNING);
-		}
-		Set<Personne> acteurs = new HashSet<>();
-		if(!CollectionUtils.isEmpty(film.getActeurs())) {
-			for(Personne acteur : film.getActeurs()) {
-				acteurs.add(personneService.getPersonne(acteur.getId()));
-			}
-		}
-		film.getActeurs().clear();
-		film.setActeurs(acteurs);
-		handleNewActeurDtoSet(film, newActeurDtoSet);
-		return filmDao.saveNewFilm(film);
-	}
+	/**
+	 * 
+	 * @param film
+	 */
 	private void setRealisateur(Film film) {
 		if(film.getRealisateurs()!=null) {
 			film.setRealisateur(film.getRealisateurs().iterator().next());
@@ -156,16 +165,16 @@ public class FilmServiceImpl implements FilmService {
 		film = filmDao.findFilm(film.getId());
 		filmDao.removeFilm(film);
 	}
-	@Override
-	public void updateFilmWithNewPersons(Film film, Set<NewActeurDto> newActeurDtoSet) {
-		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
-		handleNewActeurDtoSet(film, newActeurDtoSet);
-		updateFilm(film);
-	}
-	private void handleNewActeurDtoSet(Film film, Set<NewActeurDto> newActeurDtoSet) {
-		if(CollectionUtils.isEmpty(newActeurDtoSet)) {
-			for(NewActeurDto newActeurDto : newActeurDtoSet) {
-				Personne p = personneService.findPersonneByFullName(newActeurDto.getNom(), newActeurDto.getPrenom());
+	/**
+	 * film could contains new acteurs not persisted yet
+	 * @param film
+	 */
+	private void handleNewActeurDtoSet(Film film) {
+		if(!CollectionUtils.isEmpty(film.getNewActeurDtoSet())) {
+			for(NewActeurDto newActeurDto : film.getNewActeurDtoSet()) {
+				final String nom = StringUtils.upperCase(newActeurDto.getNom());
+				final String prenom = StringUtils.upperCase(newActeurDto.getPrenom());
+				Personne p = personneService.findPersonneByFullName(nom, prenom);
 				if(p==null) {
 					p = Personne.buildPersonneFromNewActeurDto(newActeurDto);
 					personneService.savePersonne(p);

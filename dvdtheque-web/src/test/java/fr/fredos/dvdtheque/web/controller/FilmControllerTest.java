@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -28,8 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.fredos.dvdtheque.common.dto.NewActeurDto;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.PersonneService;
 import fr.fredos.dvdtheque.service.dto.FilmUtils;
 
 
@@ -42,10 +47,14 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private MockMvc mvc;
 	@Autowired
 	protected FilmService filmService;
+	@Autowired
+	protected PersonneService personneService;
 	private final static String MAX_ID_SQL = "SELECT f.id, titre " + 
 			"FROM (SELECT MAX( id ) AS id FROM FILM )f INNER JOIN FILM f2 ON f2.id = f.id";
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+	private static final String UPDATE_FILM_URI = "/dvdtheque/films/";
+	private static final String SEARCH_PERSONNE_URI = "/films/byPersonne";
 	
 	@Test
 	public void findAllFilms() throws Exception {
@@ -124,17 +133,59 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film filmToUpdate = filmService.findFilm(id);
 		assertNotNull(filmToUpdate);
 		logger.debug("filmToUpdate="+filmToUpdate.toString());
-		filmToUpdate.setTitre(FilmUtils.TITRE_FILM);
-		
+		filmToUpdate.setTitre(FilmUtils.TITRE_FILM_UPDATED);
+		Set<NewActeurDto> newActeurDtoSet = new HashSet<>();
+		NewActeurDto newActeurDto = FilmUtils.buildNewActeurDto();
+		newActeurDtoSet.add(newActeurDto);
+		filmToUpdate.setNewActeurDtoSet(newActeurDtoSet);
 		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-				.put("/dvdtheque/films/byId/"+film.getId(),film.getId(),filmToUpdate)
+				.put(UPDATE_FILM_URI+film.getId(),filmToUpdate)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
 		mvc.perform(builder)
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andDo(MockMvcResultHandlers.print());
 		Film filmUpdated = filmService.findFilm(id);
-		assertEquals(FilmUtils.TITRE_FILM, filmUpdated.getTitre());
+		assertEquals(FilmUtils.TITRE_FILM_UPDATED, filmUpdated.getTitre());
+	}
+	@Test
+	@Transactional
+	public void testSaveNewFilm() throws Exception {
+		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
+		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
+		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
+		
+		Set<NewActeurDto> newActeurDtoSet = new HashSet<>();
+		NewActeurDto newActeurDto = FilmUtils.buildNewActeurDto();
+		newActeurDtoSet.add(newActeurDto);
+		film.setNewActeurDtoSet(newActeurDtoSet);
+		ObjectMapper mapper = new ObjectMapper();
+		String filmJsonString = mapper.writeValueAsString(film);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+				.post(UPDATE_FILM_URI,film)
+				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
+		mvc.perform(builder)
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+		.andDo(MockMvcResultHandlers.print());
+		Film filmSaved = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
+		assertNotNull(filmSaved);
+		assertNotNull(filmSaved.getTitre());
+		
+		assertEquals(FilmUtils.TITRE_FILM, filmSaved.getTitre());
+	}
+	@Test
+	@Transactional
+	public void testFindPersonne() throws Exception {
+		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
+		Personne personne = personneService.findByPersonneId(idRealisateur);
+		ObjectMapper mapper = new ObjectMapper();
+		String personneJsonString = mapper.writeValueAsString(personne);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+				.get(SEARCH_PERSONNE_URI,personne.getNom(),personne.getPrenom())
+				.contentType(MediaType.APPLICATION_JSON);
+		mvc.perform(builder)
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+		.andDo(MockMvcResultHandlers.print());
 	}
 }

@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
+import fr.fredos.dvdtheque.common.dto.NewActeurDto;
+
 @Entity
 @Table(name = "FILM")
 public class Film implements Serializable {
@@ -57,6 +59,9 @@ public class Film implements Serializable {
 	private boolean ripped;
 	@Transient
 	private Personne realisateur;
+	@Transient
+	Set<NewActeurDto> newActeurDtoSet;
+	
 	public Film() {
 		super();
 	}
@@ -140,6 +145,13 @@ public class Film implements Serializable {
 			}
 		}
 		return StringUtils.removeEnd(sb.toString(), " - ");
+	}
+	
+	public Set<NewActeurDto> getNewActeurDtoSet() {
+		return newActeurDtoSet;
+	}
+	public void setNewActeurDtoSet(Set<NewActeurDto> newActeurDtoSet) {
+		this.newActeurDtoSet = newActeurDtoSet;
 	}
 	@Override
 	public int hashCode() {
