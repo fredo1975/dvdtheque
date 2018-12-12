@@ -2,6 +2,7 @@ package fr.fredos.dvdtheque.web.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.Charset;
 import java.sql.ResultSet;
@@ -10,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,17 +57,28 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	private static final String UPDATE_FILM_URI = "/dvdtheque/films/";
-	private static final String SEARCH_PERSONNE_URI = "/films/byPersonne";
-	
+	private static final String UPDATE_PERSONNE_URI = "/dvdtheque/personnes/byId/";
+	private static final String SEARCH_PERSONNE_URI = "/dvdtheque/films/byPersonne";
+	private static final String SEARCH_ALL_REALISATEUR_URI = "/dvdtheque/realisateurs";
+	private static final String SEARCH_ALL_ACTTEUR_URI = "/dvdtheque/acteurs";
+	private static final String SEARCH_FILM_BY_ID = "/dvdtheque/films/byId/";
+	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque//personnes";
 	@Test
 	public void findAllFilms() throws Exception {
-		Film film = new Film();
-		film.setTitre("2046");
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/dvdtheque/films")
-				.contentType(MediaType.APPLICATION_JSON);
-		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
-		//ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film.getTitre())));
-		//assertNotNull(resultActions);
+		List<Film> allFilms = filmService.findAllFilms();
+		assertNotNull(allFilms);
+		if(CollectionUtils.isNotEmpty(allFilms)) {
+			assertTrue(allFilms.size()>0);
+			Film film = allFilms.get(0);
+			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/dvdtheque/films")
+					.contentType(MediaType.APPLICATION_JSON);
+			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films")
+					.contentType(MediaType.APPLICATION_JSON))
+					.andExpect(MockMvcResultMatchers.status().isOk())
+					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film.getTitre())));
+			assertNotNull(resultActions);
+		}
 	}
 	private List<Film> retrieveIdAndTitreFilm() {
 		return this.jdbcTemplate.query(MAX_ID_SQL, new RowMapper<Film>() {
@@ -82,7 +96,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film film = retrieveIdAndTitreFilm().get(0);
 		assertNotNull(film);
 		assertNotNull(film.getId());
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/dvdtheque/films/byId/"+film.getId())
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_FILM_BY_ID+film.getId())
 				.contentType(MediaType.APPLICATION_JSON);
 		ResultActions resultActions = mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
@@ -91,28 +105,51 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findAllRealisateurs() throws Exception {
-		//PersonneDto realisateur = retrieveRealisateur().get(0);
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/dvdtheque/realisateurs")
-				.contentType(MediaType.APPLICATION_JSON);
-		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
-		/*
-		assertNotNull(realisateur);
-		assertNotNull(realisateur.getId());
-		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/realisateurs").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(realisateur.getId())));
-		assertNotNull(resultActions);*/
+		List<Personne> allRealisateur = personneService.findAllRealisateur();
+		assertNotNull(allRealisateur);
+		if(CollectionUtils.isNotEmpty(allRealisateur)) {
+			Personne realisateur = allRealisateur.get(0);
+			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_URI)
+					.contentType(MediaType.APPLICATION_JSON);
+			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_URI)
+					.contentType(MediaType.APPLICATION_JSON))
+					.andExpect(MockMvcResultMatchers.status().isOk())
+					.andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(realisateur.getId())));
+			assertNotNull(resultActions);
+		}
+	}
+	@Test
+	public void findAllPersonne() throws Exception {
+		List<Personne> allPersonne = personneService.findAllPersonne();
+		assertNotNull(allPersonne);
+		if(CollectionUtils.isNotEmpty(allPersonne)) {
+			Personne personne = allPersonne.get(0);
+			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_ALL_PERSONNE_URI)
+					.contentType(MediaType.APPLICATION_JSON);
+			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_PERSONNE_URI)
+					.contentType(MediaType.APPLICATION_JSON))
+					.andExpect(MockMvcResultMatchers.status().isOk())
+					.andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(personne.getId())));
+			assertNotNull(resultActions);
+		}
 	}
 	@Test
 	public void findAllActeurs() throws Exception {
-		//PersonneDto acteur = retrieveActeur().get(0);
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/dvdtheque/acteurs")
-				.contentType(MediaType.APPLICATION_JSON);
-		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
-		
-		/*
-		assertNotNull(acteur);
-		assertNotNull(acteur.getId());
-		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/acteurs").contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(acteur.getId())));
-		assertNotNull(resultActions);*/
+		List<Personne> allActeur = personneService.findAllActeur();
+		assertNotNull(allActeur);
+		if(CollectionUtils.isNotEmpty(allActeur)) {
+			Personne acteur = allActeur.get(0);
+			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_URI)
+					.contentType(MediaType.APPLICATION_JSON);
+			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_URI)
+					.contentType(MediaType.APPLICATION_JSON))
+					.andExpect(MockMvcResultMatchers.status().isOk())
+					.andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(acteur.getId())));
+			assertNotNull(resultActions);
+		}
 	}
 	@Test
 	@Transactional
@@ -143,9 +180,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
 				.put(UPDATE_FILM_URI+film.getId(),filmToUpdate)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
-		mvc.perform(builder)
-		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
-		.andDo(MockMvcResultHandlers.print());
+		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		Film filmUpdated = filmService.findFilm(id);
 		assertEquals(FilmUtils.TITRE_FILM_UPDATED, filmUpdated.getTitre());
 	}
@@ -165,27 +201,50 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
 				.post(UPDATE_FILM_URI,film)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
-		mvc.perform(builder)
-		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
-		.andDo(MockMvcResultHandlers.print());
+		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		Film filmSaved = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
 		assertNotNull(filmSaved);
 		assertNotNull(filmSaved.getTitre());
-		
-		assertEquals(FilmUtils.TITRE_FILM, filmSaved.getTitre());
+		assertEquals(StringUtils.upperCase(FilmUtils.TITRE_FILM),filmSaved.getTitre());
 	}
 	@Test
 	@Transactional
 	public void testFindPersonne() throws Exception {
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 		Personne personne = personneService.findByPersonneId(idRealisateur);
-		ObjectMapper mapper = new ObjectMapper();
-		String personneJsonString = mapper.writeValueAsString(personne);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-				.get(SEARCH_PERSONNE_URI,personne.getNom(),personne.getPrenom())
+				.get(SEARCH_PERSONNE_URI)
+				.param("nom", personne.getNom())
+				.param("prenom", personne.getPrenom())
 				.contentType(MediaType.APPLICATION_JSON);
-		mvc.perform(builder)
+		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
-		.andDo(MockMvcResultHandlers.print());
+		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Is.is(personne.getId())));
+	}
+	@Test
+	@Transactional
+	public void testUpdatePersonne() throws Exception {
+		Integer id = this.jdbcTemplate.queryForObject(FilmUtils.MAX_PERSONNE_ID_SQL, Integer.class);
+		if(id==null) {
+			// insert a personne first
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM, FilmUtils.ACT1_PRENOM));
+			id = this.jdbcTemplate.queryForObject(FilmUtils.MAX_PERSONNE_ID_SQL, Integer.class);
+		}
+		Personne personneByLoad = personneService.loadPersonne(id);
+		assertNotNull(personneByLoad);
+		personneByLoad.setNom(FilmUtils.ACT2_NOM);
+		personneByLoad.setPrenom(FilmUtils.ACT2_PRENOM);
+		ObjectMapper mapper = new ObjectMapper();
+		String personneJsonString = mapper.writeValueAsString(personneByLoad);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+				.put(UPDATE_PERSONNE_URI+personneByLoad.getId(),personneByLoad)
+				.contentType(MediaType.APPLICATION_JSON).content(personneJsonString);
+		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+		
+		Personne personneUpdated = personneService.loadPersonne(id);
+		assertEquals(FilmUtils.ACT2_NOM, personneUpdated.getNom());
+		assertEquals(FilmUtils.ACT2_PRENOM, personneUpdated.getPrenom());
 	}
 }

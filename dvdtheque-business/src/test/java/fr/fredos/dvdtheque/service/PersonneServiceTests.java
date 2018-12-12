@@ -104,7 +104,8 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		List<Personne> personneList = personneService.findAllPersonne();
 		assertNotNull(personneList);
 		for (Personne personne : personneList) {
-			personneService.findByPersonneId(personne.getId());
+			Personne p = personneService.findByPersonneId(personne.getId());
+			assertNotNull(p);
 		}
 	}
 

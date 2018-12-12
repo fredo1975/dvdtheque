@@ -42,7 +42,7 @@ public class PersonneServiceImpl implements PersonneService {
 		realisateur = personneDao.findRealisateurByFilm(film);
 		return realisateur;
 	}
-	@Cacheable(value= "personneDtoCache")
+	@Cacheable(value= "personneCache")
 	@Transactional(readOnly = true)
 	public List<Personne> findAllPersonne(){
 		return personneDao.findAllPersonne();

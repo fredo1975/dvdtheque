@@ -33,10 +33,9 @@ public class FilmController {
 	
 	@CrossOrigin
 	@GetMapping("/films/byPersonne")
-	Personne findPersonne(@RequestParam("nom") String nom,@RequestParam("prenom") String prenom) {
+	Personne findPersonne(@RequestParam(name="nom",required = false) String nom,@RequestParam(name="prenom",required = false) String prenom) {
 		return personneService.findPersonneByFullName(nom, prenom);
 	}
-	
 	@CrossOrigin
 	@GetMapping("/films")
 	List<Film> findAllFilms() {
@@ -62,6 +61,11 @@ public class FilmController {
 	List<Personne> findAllActeurs() {
 		return personneService.findAllActeur();
 	}
+	@CrossOrigin
+	@GetMapping("/personnes")
+	List<Personne> findAllPersonne() {
+		return personneService.findAllPersonne();
+	}
 	
 	@CrossOrigin
 	@PutMapping("/films/{id}")
@@ -74,7 +78,16 @@ public class FilmController {
 		filmService.updateFilm(film);
 		return ResponseEntity.noContent().build();
 	}
-	
+	@CrossOrigin
+	@PutMapping("/personnes/byId/{id}")
+	ResponseEntity<Object> updatePersonne(@RequestBody Personne p,@PathVariable Integer id) {
+		Personne personne = personneService.findByPersonneId(id);
+		if(personne==null) {
+			return ResponseEntity.notFound().build();
+		}
+		personneService.updatePersonne(personne);
+		return ResponseEntity.noContent().build();
+	}
 	@CrossOrigin
 	@PostMapping("/films")
 	ResponseEntity<Object> saveFilm(@RequestBody Film film) {

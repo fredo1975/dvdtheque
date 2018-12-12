@@ -22,7 +22,7 @@ public class FilmUtils {
 	public static final String ACT3_PRENOM = "tmitmi";
 	public final static String MAX_REALISATEUR_ID_SQL = "select max(p.id) from PERSONNE p inner join REALISATEUR r on r.ID_PERSONNE=p.ID";
 	public final static String MAX_ACTEUR_ID_SQL = "select max(p.id) from PERSONNE p inner join ACTEUR a on a.ID_PERSONNE=p.ID";
-
+	public final static String MAX_PERSONNE_ID_SQL = "select max(id) from PERSONNE";
 	public static NewActeurDto buildNewActeurDto() {
 		NewActeurDto newActeurDto = new NewActeurDto();
 		newActeurDto.setNom(ACT1_NOM);
