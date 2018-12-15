@@ -48,7 +48,7 @@ public class PersonneServiceImpl implements PersonneService {
 		return personneDao.findAllPersonne();
 	}
 	
-	
+	@CacheEvict(value= "personneCache")
 	@Transactional(readOnly = false)
 	public void savePersonne(Personne personne) {
 		personneDao.savePersonne(personne);

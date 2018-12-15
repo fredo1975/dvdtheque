@@ -131,6 +131,7 @@ public class FilmServiceImpl implements FilmService {
 		}
 	}
 	@Transactional(readOnly = false)
+	@Cacheable(value= "filmCache")
 	public List<Film> findAllFilms() {
 		List<Film> l = filmDao.findAllFilms();
 		for(Film f : l) {

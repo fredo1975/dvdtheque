@@ -244,7 +244,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		filmService.updateFilm(film);
 		Film filmUpdated = filmService.findFilm(film.getId());
 		assertNotNull(filmUpdated);
-		assertEquals(FilmUtils.TITRE_FILM_UPDATED, filmUpdated.getTitre());
+		assertEquals(StringUtils.upperCase(FilmUtils.TITRE_FILM_UPDATED), filmUpdated.getTitre());
 		assertEquals(realisateur, filmUpdated.getRealisateur());
 	}
 	@Test
@@ -272,7 +272,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 			logger.debug(f.toString());
 		}
 		assertEquals(1, films.size());
-		assertEquals(FilmUtils.TITRE_FILM,films.get(0).getTitre());
+		assertEquals(StringUtils.upperCase(FilmUtils.TITRE_FILM),films.get(0).getTitre());
 		logger.debug(methodName + "end");
 	}
 	@Test
@@ -322,7 +322,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		}
 		assertEquals(1, films.size());
 		Film f2 = films.get(0);
-		assertEquals(FilmUtils.TITRE_FILM,f2.getTitre());
+		assertEquals(StringUtils.upperCase(FilmUtils.TITRE_FILM),f2.getTitre());
 		Set<Personne> realisateurSet = f2.getRealisateurs();
 		assertNotNull(realisateurSet);
 		assertEquals(1,realisateurSet.size());

@@ -3,6 +3,9 @@ package fr.fredos.dvdtheque.web.controller;
 import java.net.URI;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,7 @@ import fr.fredos.dvdtheque.service.PersonneService;
 @ComponentScan({"fr.fredos.dvdtheque.service,fr.fredos.dvdtheque.dao.model.repository"})
 @RequestMapping("/dvdtheque")
 public class FilmController {
+	protected Logger logger = LoggerFactory.getLogger(FilmController.class);
 	@Autowired
 	private FilmService filmService;
 	@Autowired
@@ -85,7 +89,14 @@ public class FilmController {
 		if(personne==null) {
 			return ResponseEntity.notFound().build();
 		}
+		if(StringUtils.isNotEmpty(p.getPrenom())) {
+			personne.setPrenom(StringUtils.upperCase(p.getPrenom()));
+		}
+		if(StringUtils.isNotEmpty(p.getNom())) {
+			personne.setNom(StringUtils.upperCase(p.getNom()));
+		}
 		personneService.updatePersonne(personne);
+		logger.info(personne.toString());
 		return ResponseEntity.noContent().build();
 	}
 	@CrossOrigin

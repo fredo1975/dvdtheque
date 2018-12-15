@@ -92,7 +92,7 @@ public class Personne implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return prenom+" "+nom;
+		return "id="+id+" prenom="+prenom+" nom="+nom;
 	}
 	
 	public static final Personne buildPersonneFromNewActeurDto(NewActeurDto newActeurDto) {
