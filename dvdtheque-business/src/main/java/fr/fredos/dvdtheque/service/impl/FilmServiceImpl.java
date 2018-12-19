@@ -172,7 +172,7 @@ public class FilmServiceImpl implements FilmService {
 	 */
 	private void handleNewActeurDtoSet(Film film) {
 		if(!CollectionUtils.isEmpty(film.getNewActeurDtoSet())) {
-			for(NewActeurDto newActeurDto : film.getNewActeurDtoSet()) {
+			film.getNewActeurDtoSet().forEach(newActeurDto->{
 				final String nom = StringUtils.upperCase(newActeurDto.getNom());
 				final String prenom = StringUtils.upperCase(newActeurDto.getPrenom());
 				Personne p = personneService.findPersonneByFullName(nom, prenom);
@@ -181,7 +181,7 @@ public class FilmServiceImpl implements FilmService {
 					personneService.savePersonne(p);
 					film.getActeurs().add(p);
 				}
-			}
+			});
 		}
 	}
 }

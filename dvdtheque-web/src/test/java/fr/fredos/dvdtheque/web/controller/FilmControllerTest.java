@@ -183,7 +183,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		Film filmUpdated = filmService.findFilm(id);
-		assertEquals(FilmUtils.TITRE_FILM_UPDATED, filmUpdated.getTitre());
+		assertEquals(StringUtils.upperCase(FilmUtils.TITRE_FILM_UPDATED), filmUpdated.getTitre());
 	}
 	@Test
 	@Transactional
@@ -244,7 +244,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		
 		Personne personneUpdated = personneService.loadPersonne(id);
-		assertEquals(FilmUtils.ACT2_NOM, personneUpdated.getNom());
-		assertEquals(FilmUtils.ACT2_PRENOM, personneUpdated.getPrenom());
+		assertEquals(StringUtils.upperCase(FilmUtils.ACT2_NOM), personneUpdated.getNom());
+		assertEquals(StringUtils.upperCase(FilmUtils.ACT2_PRENOM), personneUpdated.getPrenom());
 	}
 }
