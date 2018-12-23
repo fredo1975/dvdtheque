@@ -63,8 +63,26 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String SEARCH_ALL_ACTTEUR_URI = "/dvdtheque/acteurs";
 	private static final String SEARCH_FILM_BY_ID = "/dvdtheque/films/byId/";
 	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque//personnes";
+	
+	private void createFilm() {
+		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
+		if(idRealisateur==null) {
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			idRealisateur = this.jdbcTemplate.queryForObject(FilmServiceTest.MAX_PERSONNE_ID_SQL, Integer.class);
+		}
+		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
+		if(idActeur1==null) {
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			idActeur1 = this.jdbcTemplate.queryForObject(FilmServiceTest.MAX_PERSONNE_ID_SQL, Integer.class);
+		}
+		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
+		filmService.saveNewFilm(film);
+		film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
+		assertNotNull(film);
+	}
 	@Test
 	public void findAllFilms() throws Exception {
+		createFilm();
 		List<Film> allFilms = filmService.findAllFilms();
 		assertNotNull(allFilms);
 		if(CollectionUtils.isNotEmpty(allFilms)) {
@@ -93,6 +111,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findById() throws Exception {
+		createFilm();
 		Film film = retrieveIdAndTitreFilm().get(0);
 		assertNotNull(film);
 		assertNotNull(film.getId());
@@ -105,6 +124,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findAllRealisateurs() throws Exception {
+		createFilm();
 		List<Personne> allRealisateur = personneService.findAllRealisateur();
 		assertNotNull(allRealisateur);
 		if(CollectionUtils.isNotEmpty(allRealisateur)) {
@@ -121,6 +141,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findAllPersonne() throws Exception {
+		createFilm();
 		List<Personne> allPersonne = personneService.findAllPersonne();
 		assertNotNull(allPersonne);
 		if(CollectionUtils.isNotEmpty(allPersonne)) {
@@ -137,6 +158,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findAllActeurs() throws Exception {
+		createFilm();
 		List<Personne> allActeur = personneService.findAllActeur();
 		assertNotNull(allActeur);
 		if(CollectionUtils.isNotEmpty(allActeur)) {
@@ -154,6 +176,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	@Transactional
 	public void testUpdateFilm() throws Exception {
+		createFilm();
 		Film film = retrieveIdAndTitreFilm().get(0);
 		Integer id = null;
 		if(film==null) {
@@ -189,13 +212,22 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Transactional
 	public void testSaveNewFilm() throws Exception {
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
+		if(idRealisateur==null) {
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			idRealisateur = this.jdbcTemplate.queryForObject(FilmServiceTest.MAX_PERSONNE_ID_SQL, Integer.class);
+		}
 		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
+		if(idActeur1==null) {
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			idActeur1 = this.jdbcTemplate.queryForObject(FilmServiceTest.MAX_PERSONNE_ID_SQL, Integer.class);
+		}
 		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
 		
 		Set<NewActeurDto> newActeurDtoSet = new HashSet<>();
 		NewActeurDto newActeurDto = FilmUtils.buildNewActeurDto();
 		newActeurDtoSet.add(newActeurDto);
 		film.setNewActeurDtoSet(newActeurDtoSet);
+		
 		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(film);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
@@ -211,6 +243,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	@Transactional
 	public void testFindPersonne() throws Exception {
+		createFilm();
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 		Personne personne = personneService.findByPersonneId(idRealisateur);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
@@ -225,6 +258,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	@Transactional
 	public void testUpdatePersonne() throws Exception {
+		createFilm();
 		Integer id = this.jdbcTemplate.queryForObject(FilmUtils.MAX_PERSONNE_ID_SQL, Integer.class);
 		if(id==null) {
 			// insert a personne first
