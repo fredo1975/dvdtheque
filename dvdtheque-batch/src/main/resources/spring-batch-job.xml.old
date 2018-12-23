@@ -21,7 +21,7 @@
     	</property>
 	</bean>
 
-	<job id="importFilm" xmlns="http://www.springframework.org/schema/batch" job-repository="jobRepository">
+	<job id="importFilm" xmlns="http://www.springframework.org/schema/batch" job-repository="batchJobRepository">
 		<step id="cleanDB" next="checkFilm">
 			<tasklet ref="cleanDBTasklet" allow-start-if-complete="true"/>
 		</step>

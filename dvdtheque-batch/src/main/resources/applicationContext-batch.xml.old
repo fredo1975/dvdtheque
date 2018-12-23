@@ -40,16 +40,6 @@
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
-	<bean id="jobRepository"
-		class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
-		<property name="transactionManager" ref="transactionManager" />
-	</bean>
-
-	<bean id="jobLauncher"
-		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
-		<property name="jobRepository" ref="jobRepository" />
-	</bean>
 	
 	<bean id="jobExplorer"
 		class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean"
@@ -63,6 +53,16 @@
 	<bean id="jobRegistry"
 		class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
 		
+	<bean id="batchJobRepository"
+		class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+
+	<bean id="jobLauncher"
+		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
+	
 	<bean id="filmWriter" class="fr.fredos.dvdtheque.batch.film.writer.FilmWriter">
 		<property name="jdbcTemplate" ref="jdbcTemplate" />
 	</bean>

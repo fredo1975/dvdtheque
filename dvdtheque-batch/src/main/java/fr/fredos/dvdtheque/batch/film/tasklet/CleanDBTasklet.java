@@ -5,10 +5,11 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import fr.fredos.dvdtheque.service.FilmService;
 import fr.fredos.dvdtheque.service.PersonneService;
-
+@Component
 public class CleanDBTasklet implements Tasklet{
 	@Autowired
 	protected PersonneService personneService;
