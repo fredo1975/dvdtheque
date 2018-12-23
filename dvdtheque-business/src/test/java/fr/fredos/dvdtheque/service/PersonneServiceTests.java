@@ -37,7 +37,15 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 
 	private Film createNewFilm() {
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(MAX_REALISATEUR_ID_SQL, Integer.class);
-		Integer idActeur1 = this.jdbcTemplate.queryForObject(MAX_ACTEUR_ID_SQL, Integer.class);
+		if(idRealisateur==null) {
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
+		}
+		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
+		if(idActeur1==null) {
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
+		}
 		filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null));
 		Film film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
 		assertNotNull(film);

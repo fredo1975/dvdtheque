@@ -80,6 +80,7 @@ public class PersonneServiceImpl implements PersonneService {
 		return personneDao.findPersonneByName(nom);
 	}
 	@Override
+	@Transactional(readOnly = false)
 	public void cleanAllPersonnes() {
 		personneDao.cleanAllPersons();
 	}

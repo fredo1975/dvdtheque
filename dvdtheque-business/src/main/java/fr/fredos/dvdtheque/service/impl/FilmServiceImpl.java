@@ -18,7 +18,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
-import fr.fredos.dvdtheque.common.dto.NewActeurDto;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
@@ -126,7 +125,7 @@ public class FilmServiceImpl implements FilmService {
 	 * @param film
 	 */
 	private void setRealisateur(Film film) {
-		if(film.getRealisateurs()!=null) {
+		if(film.getRealisateurs()!=null && !CollectionUtils.isEmpty(film.getRealisateurs())) {
 			film.setRealisateur(film.getRealisateurs().iterator().next());
 		}
 	}

@@ -130,13 +130,6 @@ public class PersonneDaoImpl implements PersonneDao{
 		this.em.remove(p);
 	}
 	public void cleanAllPersons() {
-		/*
-		Query queryActeur = this.em.createQuery("delete from Acteur");
-		int nbActeur = queryActeur.executeUpdate();
-		logger.info(nbActeur+" acteur deleted");
-		Query queryRealisateur = this.em.createQuery("delete from Acteur");
-		int nbRealisateur = queryRealisateur.executeUpdate();
-		logger.info(nbRealisateur+" realisateur deleted");*/
 		Query queryPersonne = this.em.createQuery("delete from Personne");
 		int nbPersonne = queryPersonne.executeUpdate();
 		logger.info(nbPersonne+" personne deleted");
