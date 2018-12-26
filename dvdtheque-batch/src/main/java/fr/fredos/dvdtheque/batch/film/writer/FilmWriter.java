@@ -9,6 +9,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -21,12 +22,9 @@ import fr.fredos.dvdtheque.service.dto.RealisateurDto;
 
 public class FilmWriter implements ItemWriter<FilmDto> {
 	protected Logger logger = LoggerFactory.getLogger(FilmWriter.class);
-	
+	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
-	}
 	private static final String REQUEST_INSERT_DVD = "insert into DVD (ANNEE,ZONE,EDITION) values (?,?,?)";
 	private static final String REQUEST_SELECT_MAX_DVD = "select max(ID) from DVD";
 	private static final String REQUEST_INSERT_FILM = "insert into FILM (ANNEE,TITRE,TITRE_O,ID_DVD,RIPPED) values (?,?,?,?,?)";

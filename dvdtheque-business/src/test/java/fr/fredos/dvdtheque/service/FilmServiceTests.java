@@ -40,7 +40,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	protected FilmService filmService;
 	@Autowired
 	protected PersonneService personneService;
-	private final static String MAX_ID_SQL = "select max(id) from FILM";
+	private final static String MAX_ID_FILM_SQL = "select max(id) from FILM";
 	
 	@Test
 	public void findFilmByTitre() throws Exception{
@@ -69,7 +69,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public void findFilmWithAllObjectGraph() throws Exception{
 		String methodName = "findFilmWithAllObjectGraph : ";
 		logger.debug(methodName + "start");
-		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
+		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_FILM_SQL, Integer.class);
 		Film film = null;
 		if(id==null) {
 			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
@@ -100,7 +100,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	public void findFilm() throws Exception {
-		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
+		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_FILM_SQL, Integer.class);
 		Film film = null;
 		if(id==null) {
 			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
@@ -129,7 +129,6 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		for(Personne acteur : film.getActeurs()){
 			logger.debug("Acteur="+acteur.toString());
 		}
-		
 	}
 	@Test
 	public void findAllFilm() throws Exception {
@@ -230,7 +229,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	@Test
 	@Transactional
 	public void updateFilmWithNewPersons(){
-		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
+		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_FILM_SQL, Integer.class);
 		Film film = null;
 		if(id==null) {
 			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
@@ -263,7 +262,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	@Test
 	@Transactional
 	public void updateFilm(){
-		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
+		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_FILM_SQL, Integer.class);
 		Film film = null;
 		if(id==null) {
 			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
@@ -410,7 +409,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	public void removeFilmDao() {
-		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
+		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_FILM_SQL, Integer.class);
 		Film film = null;
 		if(id==null) {
 			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);

@@ -10,24 +10,31 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.FilmService;
-
+@Component
 public class RippedFlagTasklet implements Tasklet{
 	protected Logger logger = LoggerFactory.getLogger(RippedFlagTasklet.class);
-	private Resource directory;
+	private static String LISTE_DVD_FILE_PATH="dvd.file.path";
 	@Autowired
 	protected FilmService filmService;
+	@Autowired
+    Environment environment;
 	/*@Value( "${file.extension}" )
 	private String fileExtension;*/
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+		Resource directory = new FileSystemResource(environment.getRequiredProperty(LISTE_DVD_FILE_PATH));
 		File dir = directory.getFile();
-        Assert.state(dir.isDirectory());
+		Assert.notNull(directory, "directory must be set");
 
         File[] files = dir.listFiles();
         for (int i = 0; i < files.length; i++) {
@@ -48,11 +55,4 @@ public class RippedFlagTasklet implements Tasklet{
 		return RepeatStatus.FINISHED;
 	}
 	
-	public void setDirectoryResource(Resource directory) {
-        this.directory = directory;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(directory, "directory must be set");
-    }
 }
