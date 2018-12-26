@@ -1,25 +1,44 @@
 package fr.fredos.dvdtheque.batch.csv.format.launcher;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+@Component
 public class FilmCsvImportLauncher {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FilmCsvImportLauncher.class);
+	private final Job job;
+    private final JobLauncher jobLauncher;
+    
+    @Autowired
+    FilmCsvImportLauncher(@Qualifier("importFilmJob") Job job, JobLauncher jobLauncher) {
+        this.job = job;
+        this.jobLauncher = jobLauncher;
+    }
 
-	public static void main(String[] args) throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
-		ClassPathXmlApplicationContext cpt = new ClassPathXmlApplicationContext("classpath:spring-batch-job.xml");
-        cpt.start();
-        JobLauncher jobLauncher = (JobLauncher) cpt.getBean("jobLauncher");
-        Job job = (Job) cpt.getBean("importFilm");
-        JobParameters parameter = new JobParametersBuilder()/*.addDate("date", new Date()).addString("input.file", "E:/dev/liste_dvd/ListeDVD.csv")*/.toJobParameters();
-        jobLauncher.run(job, parameter);
-        cpt.close();
-	}
+    void launchCsvFileToDatabaseJob() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+        LOGGER.info("Starting importFilm job");
+        jobLauncher.run(job, newExecution());
+        LOGGER.info("Stopping importFilm job");
+    }
 
+    private JobParameters newExecution() {
+        Map<String, JobParameter> parameters = new HashMap<>();
+        JobParameter parameter = new JobParameter(new Date());
+        parameters.put("currentTime", parameter);
+        return new JobParameters(parameters);
+    }
 }

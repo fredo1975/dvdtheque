@@ -57,7 +57,7 @@ public class FilmServiceImpl implements FilmService {
 	@Transactional(readOnly = true,noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })
 	public Film findFilmByTitre(String titre){
 		Film film = filmDao.findFilmByTitre(titre);
-		//setRealisateur(film);
+		setRealisateur(film);
 		return film;
 	}
 	@Transactional(readOnly = true)

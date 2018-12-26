@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
@@ -48,16 +48,11 @@ public class BatchConfiguration{
         return new FilmProcessor();
     }
     
-    @Bean
-    public Job importFilmJob() {
-            return jobBuilderFactory.get("importFilm")
-            		.incrementer(new RunIdIncrementer())
-            		.flow(cleanDB())
-            		.next(checkFilmStep())
-            		.next(setRippedFlag())
-            		.end()
-            		.build();
-    }
+	@Bean
+	public Job importFilmJob() {
+		return jobBuilderFactory.get("importFilm").incrementer(new RunIdIncrementer()).start(cleanDB())
+				.next(checkFilmStep()).next(setRippedFlag()).build();
+	}
     
     @Bean
     protected Step cleanDB() {
@@ -74,7 +69,7 @@ public class BatchConfiguration{
     @Bean
     public FlatFileItemReader<FilmCsvImportFormat> reader() {
     	FlatFileItemReader<FilmCsvImportFormat> csvFileReader = new FlatFileItemReader<>();
-    	csvFileReader.setResource(new ClassPathResource(environment.getRequiredProperty(LISTE_DVD_FILE_NAME)));
+    	csvFileReader.setResource(new FileSystemResource(environment.getRequiredProperty(LISTE_DVD_FILE_NAME)));
         csvFileReader.setLinesToSkip(1);
         LineMapper<FilmCsvImportFormat> filmCsvImportFormatLineMapper = createFilmCsvImportFormatLineMapper();
         csvFileReader.setLineMapper(filmCsvImportFormatLineMapper);
