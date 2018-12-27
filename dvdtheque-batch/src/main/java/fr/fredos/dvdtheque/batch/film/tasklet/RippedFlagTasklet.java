@@ -11,7 +11,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -20,7 +19,7 @@ import org.springframework.util.Assert;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.FilmService;
-@Component
+@Component(value="rippedFlagTasklet")
 public class RippedFlagTasklet implements Tasklet{
 	protected Logger logger = LoggerFactory.getLogger(RippedFlagTasklet.class);
 	private static String LISTE_DVD_FILE_PATH="dvd.file.path";

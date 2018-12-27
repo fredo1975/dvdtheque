@@ -36,6 +36,10 @@
 			<artifactId>spring-boot-starter-batch</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-test</artifactId>
 		</dependency>
@@ -49,7 +53,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
+<!-- 
 	<build>
 		<plugins>
 			<plugin>
@@ -222,4 +226,14 @@
 			<url>http://192.168.1.42:8081/repository/maven-central/</url>
 		</snapshotRepository>
 	</distributionManagement>
+	 -->
+	 
+	 <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

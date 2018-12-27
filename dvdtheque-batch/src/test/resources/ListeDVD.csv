@@ -3,24 +3,24 @@ DAVID LYNCH;BLUE VELVET;2;1986;Kyle MacLachlan,Isabella Rossellini,Dennis Hopper
 DAVID LYNCH;ERASERHEAD;2;1976;Sheryl Lee, Kyle MacLachlan, Ray Wise
 DAVID LYNCH;SAYLOR & LULA;2;1990;Nicolas Cage,Laura Dern
 DAVID LYNCH;LOST HIGHWAY;2;1996;Bill Pullaman,Patricia Arquette
-DAVID LYNCH;MULHOLAND DRIVE;2;2002;Naomi Watts, Laura Harring, Justin Theroux
+DAVID LYNCH;MULHOLLAND DRIVE;2;2002;Naomi Watts, Laura Harring, Justin Theroux
 DAVID LYNCH;UNE HISTOIRE VRAIE;2;1999;Richard Farnsworth, Sissy Spacek, Harry Dean Stanton
 DAVID LYNCH;TWIN PEAKS;1;2002;Sheryl Lee, Kyle MacLachlan, Ray Wise
 MARTIN SCORSESE;RAGING BULL;2;1980;Robert De Niro, Cathy Moriarty, Joe Pesci
 MARTIN SCORSESE;TAXI DRIVER;2;1976;Robert De Niro, Jodie Foster, Harvey Keitel
 MARTIN SCORSESE;LES AFFRANCHIS;2;1990;Robert De Niro,Joe Pesci
 MARTIN SCORSESE;A TOMBEAU OUVERT;2;1999;Nicolas Cage, Patricia Arquette, John Goodman
-MARTIN SCORSESE;LES NERFS A VIFS;2;1991;Robert De Niro, Jodie Foster, Harvey Keitel
+MARTIN SCORSESE;LES NERFS A VIF;2;1991;Robert De Niro, Jodie Foster, Harvey Keitel
 MARTIN SCORSESE;LES INFILTRES;2;2006;Leonardo DiCaprio,Matt Damon
 MARTIN SCORSESE;CASINO;2;1995;Robert  De Niro,Sharon Stone,Joe Pesci
 MARTIN SCORSESE;THE AVIATOR;2;2005;Leonardo DiCaprio,Cate Blanchett
 MARTIN SCORSESE;MEAN STREETS;2;1973;Robert  De Niro,Harvey Keitel
-MARTIN SCORSESE;LE LOUP DE WALLSTREET;2;2013;Leonardo Di Caprio,Jonah Hill,Margot Robbie
+MARTIN SCORSESE;LE LOUP DE WALL STREET;2;2013;Leonardo Di Caprio,Jonah Hill,Margot Robbie
 MARTIN SCORSESE;LA DERNIERE TENTATION DU CHRIST;2;1988;Willem Dafoe, Harvey Keitel, Paul Greco
 MARTIN SCORSESE;SILENCE;2;2016;Andrew Garfield, Adam Driver, Liam Neeson
 BRIAN DE PALMA;PHANTOM OF THE PARADISE;2;1975;Paul Williams, William Finley, Jessica Harper
 BRIAN DE PALMA;SNAKE EYES;2;1998;Nicolas Cage, John Heard, Gary Sinise
-BRIAN DE PALMA;OBSCESSION;2;1977;Cliff Robertson, Geneviève Bujold, John Lithgow
+BRIAN DE PALMA;OBSESSION;2;1977;Cliff Robertson, Geneviève Bujold, John Lithgow
 BRIAN DE PALMA;CARRIE;2;1976;Sissy Spacek, Piper Laurie, Amy Irving
 BRIAN DE PALMA;PULSIONS;2;1981;Michael Caine, Angie Dickinson, Nancy Allen
 BRIAN DE PALMA;BLOW OUT;2;1982;John Travolta, Nancy Allen, John Lithgow
@@ -28,7 +28,7 @@ BRIAN DE PALMA;BODY DOUBLE;2;1985;Craig Wasson, Melanie Griffith, Gregg Henry
 BRIAN DE PALMA;FURIE;2;1978;Kirk Douglas, John Cassavetes, Carrie Snodgress
 BRIAN DE PALMA;L'IMPASSE;2;1994;Al Pacino, Sean Penn, Penelope Ann Miller
 BRIAN DE PALMA;SCARFACE;2;1984;Al Pacino, Michelle Pfeiffer, Steven Bauer
-BRIAN DE PALMA;L'ESPRIT DE CAÏN;2;1992;John Lithgow, Lolita Davidovich, Steven Bauer
+BRIAN DE PALMA;L'ESPRIT DE CAIN;2;1992;John Lithgow, Lolita Davidovich, Steven Bauer
 BRIAN DE PALMA;MISSION TO MARS;2;2000;Gary Sinise, Tim Robbins, Don Cheadle
 QUENTIN TARANTINO;RESERVOIR DOGS;2;1992;Harvey Keitel, Tim Roth, Michael Madsen
 QUENTIN TARANTINO;KILL BILL;2;2003;Uma Thurman,David Carradine
@@ -167,7 +167,7 @@ PEDRO ALMODOVAR;LA FLEUR DE MON SECRET;2;1995;Marisa Paredes
 PEDRO ALMODOVAR;VOLVER;2;2006;Penelop Cruz
 TSUI HARK;TIME AND TIDE;2;2001;Nicholas Tse
 TSUI HARK;DETECTIVE DEE 2;2;2014;Mark Chao, Feng Shaofeng, Carina Lau
-TSUI HARK;IL ÉTAIT UNE FOIS EN CHINE;2;2001;Jet Li, Jacky Cheung, Rosamund Kwan
+TSUI HARK;IL ETAIT UNE FOIS EN CHINE;2;2001;Jet Li, Jacky Cheung, Rosamund Kwan
 CHANG CHEH;LA RAGE DU TIGRE;2;2005;David Chiang, Ti Lung, Feng Ku
 CHANG CHEH;UN SEUL BRAS LES TUA TOUS;2;2005;Jimmy Wang Yu, Chiao Chiao, Chung-Hsin Huang
 CHANG CHEH;LE BRAS DE LA VENGEANCE;2;2005;Jimmy Wang Yu, Chiao Chiao, Tien Feng
@@ -205,7 +205,7 @@ CLINT EASTWOD;MILLION DOLLAR BABY;2;2005;Clint Eastwood,Morgan Freeman,Hilary Sw
 CLINT EASTWOD;MYSTIC RIVER;2;2003;Sean Penn, Kevin Bacon, Laurence Fishburne
 CLINT EASTWOD;UN MONDE PARFAIT;2;1993;Kevin Costner, Clint Eastwood, Laura Dern
 CLINT EASTWOD;GRAN TORINO;2;2009;Clint Eastwood,Bee Vang,Ahney Her 
-JUDD APATOW;40 ANS : MODE D'EMLOI;2;2013;Paul Rudd,Leslie Mann,John Lightgow
+JUDD APATOW;40 ANS MODE D'EMLOI;2;2013;Paul Rudd,Leslie Mann,John Lightgow
 JUDD APATOW;FUNNY PEOPLE;2;2009;Adam Sandler,Seth Rogen,Leslie Mann
 TODD PHILLIPS;VERY BAD TRIP;2;2009;Bradley Cooper,Ed Helms,Zach Galifanakis
 RAPHAEL JACOULOT;AVANT L'AUBE;2;2011;Jean-Pierre Bacri,Vincent Rottiers,Ludmila Mickael
@@ -214,10 +214,10 @@ CHRISTOPHE HONORE;DANS PARIS;2;2006;Romain Duris,Lios Garel,Joana Preiss
 PATRICE CHEREAU;LA REINE MARGOT;2;2013;Isabelle Adjiani,Daniel Auteuil,Jean-Hugues Anglade
 EMMANUEL MOURET;VENUS ET FLEUR;2;2004;Veroushka Knoge,Isabelle Pirès,Julien Imbert
 XAVIER GIANNOLI;QUAND J'ETAIS CHANTEUR;2;2006;Gerard Depardieu,Cecile De France,Mathieu Amalric
-XAVIER GIANNOLI;À L'ORIGINE;2;2009;François Cluzet, Emmanuelle Devos, Gérard Depardieu
+XAVIER GIANNOLI;A L'ORIGINE;2;2009;François Cluzet, Emmanuelle Devos, Gérard Depardieu
 XAVIER GIANNOLI;MARGUERITE;2;2015;Catherine Frot, André Marcon, Michel Fau
 XAVIER GIANNOLI;L'APPARITION;2;2017;Vincent Lindon, Galatea Bellugi, Patrick d'Assumçao
-KEN LOACH;THE NAVOGATORS;2;2002;Dean Andrews,Thomas Craig,Joe Duttine
+KEN LOACH;THE NAVIGATORS;2;2002;Dean Andrews,Thomas Craig,Joe Duttine
 STEVEN SPIELBERG;MINORITY REPORT;2;2002;Tom Cruise,Kathryn Morris,Colin Farrel
 STEVEN SPIELBERG;READY PLAYER ONE;2;2018;Tom Hanks, Mark Rylance, Scott Shepherd
 STEVEN SPIELBERG;LE PONT DES ESPIONS;2;2015;Tom Hanks, Mark Rylance, Scott Shepherd
@@ -230,7 +230,7 @@ IRVIN KERSHNER;LA MENACE FANTOME;2;1980;Mark Hamill,Harrison Ford,Carrie Fisher
 GEORGES LUCAS;AMERICAN GRAFFITI;2;1973;Richard Dreyfuss, Ron Howard, Paul Le Mat
 GEORGES LUCAS;L'EMPIRE CONTRE ATTAQUE;2;1980;Mark Hamill, Harrison Ford, Carrie Fisher
 GEORGES LUCAS;STAR WARS;2;1977;Mark Hamill,Harrison Ford,Carrie Fisher
-SPIKE LEE;INSIDE MAN – L'HOMME DE L'INTERIEUR;2;2006;Denzel Washington,Clive Owen,Jonnie Brown
+SPIKE LEE;INSIDE MAN L'HOMME DE L'INTERIEUR;2;2006;Denzel Washington,Clive Owen,Jonnie Brown
 MARC FORSTER;NEVERLAND;2;2005;Johnny Depp,Kate Winslet,Radha Mitchell
 MICHEL GONDRY;ETERNAL SUNSHINE OF THE SPOTLESS MIND;2;2004;Jim Carrey,Kate Winslet
 MICHEL GONDRY;THE GREEN HORNET;2;2011;Seth Rogen, Cameron Diaz, Jay Chou
@@ -242,28 +242,28 @@ MARJANE SATRAPI & VINCENT PARONNAUD;PERSEPOLIS;2;2007;Sean Penn,Iggy Pop,Gena Ro
 JAMES GRAY;TWO LOVERS;2;2008;Joaquin Phoenix,Gwyneth Pamtrow,Vinessa Shaw
 JAMES GRAY;THE LOST CITY OF Z;2;2016;Charlie Hunnam, Sienna Miller, Tom Holland
 NABIL AYOUCH;MUCH LOVED;2;2015;Loubna Abidar, Asmaa Lazrak, Halima Karaouane
-NEILL BLOMKAMP;DISTRCT 9;2;2009;Sharlto Copley, Jason Cope, Nathalie Boltt
+NEILL BLOMKAMP;DISTRICT 9;2;2009;Sharlto Copley, Jason Cope, Nathalie Boltt
 NEILL BLOMKAMP;ELYSIUM;2;2013;Matt Damon, Jodie Foster, Sharlto Copley
 MIA HANSEN-LOVE;EDEN;2;2014;Félix de Givry, Pauline Etienne, Hugo Conzelmann
 SPIKE JONZE;HER;2;2014;Joaquin Phoenix, Amy Adams, Rooney Mara
-MATTHEW VAUGHN;KINGSMAN : SERVICES SECRETS;2;2015;Colin Firth, Samuel L. Jackson, Taron Egerton
+MATTHEW VAUGHN;KINGSMAN SERVICES SECRETS;2;2015;Colin Firth, Samuel L. Jackson, Taron Egerton
 XAVIER DOLAN;LAURENCE ANYWAYS;2;2012;Melvil Poupaud, Suzanne Clément, Nathalie Baye
 JAMES CAMERON;AVATAR;2;2009;Sam Worthington, Zoe Saldana, Sigourney Weaver
 DENIS VILLENEUVE;PREMIER CONTACT;2;2016;Amy Adams, Jeremy Renner, Forest Whitaker
 DENIS VILLENEUVE;SICARIO;2;2015;Emily Blunt, Benicio Del Toro, Josh Brolin
 DENIS VILLENEUVE;BLADE RUNNER 2049;2;2017;Ryan Gosling, Harrison Ford, Jared Leto
-GEORGE MILLER;MAD MAX: FURY ROAD;2;2015;Tom Hardy, Charlize Theron, Zoë Kravitz
+GEORGE MILLER;MAD MAX FURY ROAD;2;2015;Tom Hardy, Charlize Theron, Zoë Kravitz
 KARIM DRIDI;CHOUF;2;2015;Sofian Khammes, Foued Nabba, Zine Darar
 RUPERT SANDERS;GHOST IN THE SHELL;2;2017;Scarlett Johansson, Pilou Asbæk, Takeshi Kitano
 NIGHT SHYAMALAN;SPLIT;2;2017;James McAvoy, Anya Taylor-Joy, Betty Buckley
 BARRY JENKINS;MOONLIGHT;2;2017;Alex R. Hibbert, Ashton Sanders, Trevante Rhodes
-AMOS GITAI;KIPPOUR;2;2000;Liron Levo, Tomer Russo, Juliano Merr
+AMOS GITAI;KIPPOUR;2;2000;Liron Levo,Tomer Russo,Juliano Merr
 TARIK SALEH;LE CAIRE CONFIDENTIEL;2;2017;Fares Fares, Mohamed Yousry, Hichem Yacoubi
 JUSTIN KURZEL;ASSASSIN'S CREED;2;2016;Michael Fassbender, Marion Cotillard, Jeremy Irons
-JON WATTS;SPIDER-MAN : HOMECOMING;2;2017;Tom Holland, Michael Keaton, Robert Downey JR
+JON WATTS;SPIDERMAN HOMECOMING;2;2017;Tom Holland, Michael Keaton, Robert Downey JR
 HAME BOUROKBA;LES DERNIERS PARISIENS;2;2017;Reda Kateb, Slimane Dazi, Mélanie Laurent
 BRUNO DUMONT;MA LOUTE;2;2016;Fabrice Luchini, Juliette Binoche, Valeria Bruni Tedeschi
-MATT REEVES;LA PLANÈTE DES SINGES : SUPREMATIE;2;2017;Andy Serkis, Woody Harrelson, Steve Zahn
+MATT REEVES;LA PLANETE DES SINGES SUPREMATIE;2;2017;Andy Serkis, Woody Harrelson, Steve Zahn
 RAMIN BAHRANI;99 HOMES;2;2016;Andrew Garfield, Michael Shannon, Laura Dern
 CHARLES FERGUSSON;INSIDE JOB;2;2010;Christine Lagarde, Dominique Strauss-Kahn, William Ackman
 TOM MC CARTHY;SPOTLIGHT;2;2016;Michael Keaton, Mark Ruffalo, Rachel McAdams

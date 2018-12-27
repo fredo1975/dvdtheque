@@ -16,11 +16,14 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
@@ -38,22 +41,33 @@ public class BatchConfiguration{
     @Autowired
     public StepBuilderFactory stepBuilderFactory;
     @Autowired
+    @Qualifier("cleanDBTasklet")
     public Tasklet cleanDBTasklet;
     @Autowired
+    @Qualifier("rippedFlagTasklet")
     public Tasklet rippedFlagTasklet;
+    @Autowired
+    @Qualifier("theMovieDbTasklet")
+    public Tasklet theMovieDbTasklet;
     @Autowired
     Environment environment;
     @Bean
     public FilmProcessor processor() {
         return new FilmProcessor();
     }
-    
+    @Bean
+	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+		return builder.build();
+	}
 	@Bean
 	public Job importFilmJob() {
 		return jobBuilderFactory.get("importFilm").incrementer(new RunIdIncrementer()).start(cleanDB())
-				.next(checkFilmStep()).next(setRippedFlag()).build();
+				.next(checkFilmStep()).next(setRippedFlag()).next(theMovieDb()).build();
 	}
-    
+	@Bean
+    protected Step theMovieDb() {
+    	return stepBuilderFactory.get("theMovieDb").tasklet(theMovieDbTasklet).build();
+    }
     @Bean
     protected Step cleanDB() {
     	return stepBuilderFactory.get("cleanDB").tasklet(cleanDBTasklet).build();

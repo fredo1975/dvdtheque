@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import fr.fredos.dvdtheque.service.FilmService;
 import fr.fredos.dvdtheque.service.PersonneService;
-@Component
+@Component(value="cleanDBTasklet")
 public class CleanDBTasklet implements Tasklet{
 	@Autowired
 	protected PersonneService personneService;

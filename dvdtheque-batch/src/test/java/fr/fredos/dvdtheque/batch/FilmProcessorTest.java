@@ -37,12 +37,16 @@ public class FilmProcessorTest {
 	}
 	
 	@Test
+	public void launchtheMovieDbStep() throws Exception {
+		JobExecution jobExecution = jobLauncherTestUtils.launchStep("theMovieDb");
+		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+	}
+	@Test
 	@Ignore
 	public void launchCleanDBStep() throws Exception {
 		JobExecution jobExecution = jobLauncherTestUtils.launchStep("cleanDB");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
-	
 	@Test
 	@Ignore
 	public void launchSetRippedFlagStep() throws Exception {
