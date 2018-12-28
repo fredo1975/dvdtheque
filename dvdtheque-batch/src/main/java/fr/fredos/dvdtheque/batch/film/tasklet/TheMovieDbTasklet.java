@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,6 +43,10 @@ public class TheMovieDbTasklet implements Tasklet{
 	@Autowired
 	RestTemplate restTemplate;
 	private static String LISTE_DVD_POSTER_FILE_PATH="dvd.poster.file.path";
+	private static String TMDB_SEARCH_MOVIE_QUERY="themoviedb.search.movie.query";
+	private static String TMDB_API_KEY="themoviedb.api.key";
+	private static String TMDB_POSTER_PATH="themoviedb.poster.path";
+	
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		List<Film> filmList = filmService.findAllFilms();
@@ -51,12 +54,12 @@ public class TheMovieDbTasklet implements Tasklet{
 			logger.info(film.toString());
 			SearchResults searchResults;
 			try {
-				searchResults = restTemplate.getForObject("https://api.themoviedb.org/3/search/movie?api_key=aa87a44fb22d65986512188cd2ec2ca0&query="+film.getTitre(), SearchResults.class);
+				searchResults = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_MOVIE_QUERY)+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&query="+film.getTitre(), SearchResults.class);
 				logger.info(searchResults.toString());
 				Thread.sleep(500);
 				if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
 					Results results = searchResults.getResults().get(0);
-					String imageUrl = "http://image.tmdb.org/t/p/w500/"+results.getPoster_path();
+					String imageUrl = environment.getRequiredProperty(TMDB_POSTER_PATH)+results.getPoster_path();
 				    Resource directory = new FileSystemResource(environment.getRequiredProperty(LISTE_DVD_POSTER_FILE_PATH));
 				    String destinationFile = directory.getFile().getAbsolutePath()+"/"+StringUtils.replace(film.getTitre(), " ", "_")+".jpg";
 					Assert.notNull(directory, "directory must be set");

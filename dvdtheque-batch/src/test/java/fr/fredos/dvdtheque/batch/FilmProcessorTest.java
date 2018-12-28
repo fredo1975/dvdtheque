@@ -12,7 +12,6 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.batch.configuration.BatchConfiguration;
@@ -22,7 +21,6 @@ import fr.fredos.dvdtheque.batch.configuration.BatchConfiguration;
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		BatchConfiguration.class})
-@TestPropertySource("/filePath.properties")
 public class FilmProcessorTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmProcessorTest.class);
 
