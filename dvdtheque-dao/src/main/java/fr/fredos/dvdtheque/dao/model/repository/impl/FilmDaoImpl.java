@@ -120,10 +120,10 @@ public class FilmDaoImpl implements FilmDao {
 	public void cleanAllFilms() {
 		Query queryDvd = this.entityManager.createQuery("delete from Dvd");
 		int nbDvd = queryDvd.executeUpdate();
-		logger.debug(nbDvd+" dvd deleted");
+		logger.info(nbDvd+" dvd deleted");
 		Query query = this.entityManager.createQuery("delete from Film");
 		int nb = query.executeUpdate();
-		logger.debug(nb+" films deleted");
+		logger.info(nb+" films deleted");
 	}
 	public List<Film> getAllRippedFilms(){
 		Query query = this.entityManager.createQuery("from Film film where film.ripped=1");
