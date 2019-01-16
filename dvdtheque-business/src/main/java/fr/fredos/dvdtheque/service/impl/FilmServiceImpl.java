@@ -106,6 +106,7 @@ public class FilmServiceImpl implements FilmService {
 		final String titreO = StringUtils.upperCase(film.getTitreO());
 		film.setTitreO(titreO);
 	}
+	@CacheEvict(value= "filmCache")
 	@Transactional(readOnly = false)
 	public Integer saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
