@@ -72,7 +72,7 @@ public class FilmServiceImpl implements FilmService {
 		setRealisateur(f);
 		return f;
 	}
-	@CacheEvict(value= "filmCache")
+	@CacheEvict(value= "filmCache", allEntries = true)
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
