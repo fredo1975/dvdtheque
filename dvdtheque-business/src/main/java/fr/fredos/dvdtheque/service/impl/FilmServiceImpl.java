@@ -139,6 +139,7 @@ public class FilmServiceImpl implements FilmService {
 		}
 		return filmDao.findAllFilms();
 	}
+	@CacheEvict(value= "filmCache")
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
 		filmDao.cleanAllFilms();
