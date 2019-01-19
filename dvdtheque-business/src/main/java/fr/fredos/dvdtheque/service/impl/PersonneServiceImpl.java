@@ -48,13 +48,13 @@ public class PersonneServiceImpl implements PersonneService {
 		return personneDao.findAllPersonne();
 	}
 	
-	@CacheEvict(value= "personneCache")
+	@CacheEvict(value= "personneCache", allEntries = true)
 	@Transactional(readOnly = false)
 	public void savePersonne(Personne personne) {
 		personneDao.savePersonne(personne);
 	}
 	
-	@CacheEvict(value= "personneCache")
+	@CacheEvict(value= "personneCache", allEntries = true)
 	@Transactional(readOnly = false)
 	public void updatePersonne(Personne personne){
 		if(null != personne){
@@ -62,7 +62,7 @@ public class PersonneServiceImpl implements PersonneService {
 			personneDao.updatePersonne(p);
 		}
 	}
-	@CacheEvict(value= "personneDtoCache")
+	@CacheEvict(value= "personneDtoCache", allEntries = true)
 	@Transactional(readOnly = false)
 	public void deletePersonne(PersonneDto personneDto){
 		String methodName = "deletePersonne : ";

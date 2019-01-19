@@ -106,7 +106,7 @@ public class FilmServiceImpl implements FilmService {
 		final String titreO = StringUtils.upperCase(film.getTitreO());
 		film.setTitreO(titreO);
 	}
-	@CacheEvict(value= "filmCache")
+	@CacheEvict(value= "filmCache", allEntries = true)
 	@Transactional(readOnly = false)
 	public Integer saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
@@ -139,7 +139,7 @@ public class FilmServiceImpl implements FilmService {
 		}
 		return filmDao.findAllFilms();
 	}
-	@CacheEvict(value= "filmCache")
+	@CacheEvict(value= "filmCache", allEntries = true)
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
 		filmDao.cleanAllFilms();
