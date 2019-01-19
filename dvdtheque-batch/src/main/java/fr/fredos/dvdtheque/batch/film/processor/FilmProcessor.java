@@ -23,7 +23,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto>
 	public FilmDto process(FilmCsvImportFormat item) throws Exception {
 		FilmDto filmDto=new FilmDto();
 		filmDto.setAnnee(item.getAnnee());
-		filmDto.setTitre(item.getTitre());
+		filmDto.setTitre(StringUtils.upperCase(item.getTitre()));
 		//filmDto.setTitreO(item.getTitreO());
 		DvdDto dvd = new DvdDto();
 		dvd.setZone(item.getZonedvd());
