@@ -51,8 +51,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-
+		
 		<dependency>
 			<groupId>javax.el</groupId>
 			<artifactId>javax.el-api</artifactId>
@@ -100,7 +99,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.1</version>
+				<version>3.8.0</version>
 				<configuration>
 					<verbose>true</verbose>
 					<fork>true</fork>
@@ -114,6 +113,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<!-- 
 	<distributionManagement>
 		<repository>
 			<url>http://192.168.1.42:8081/repository/maven-central/</url>
@@ -122,4 +122,5 @@
 			<url>http://192.168.1.42:8081/repository/maven-central/</url>
 		</snapshotRepository>
 	</distributionManagement>
+	 -->
 </project>
