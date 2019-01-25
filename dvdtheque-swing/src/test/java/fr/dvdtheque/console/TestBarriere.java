@@ -31,7 +31,7 @@ public class TestBarriere extends AbstractTransactionalJUnit4SpringContextTests{
 		synchro.waitOne();
 		
 		logger.info("testBarriere apres waitOne() synchro.isOuverte()="+synchro.isOuverte());
-		
+		synchro.set();
 		
 		logger.info("testBarriere end");
 	}

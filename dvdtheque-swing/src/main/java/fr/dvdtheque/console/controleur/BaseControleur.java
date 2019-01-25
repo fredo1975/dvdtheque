@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.dvdtheque.console.Barriere;
-import fr.dvdtheque.console.Main;
 import fr.dvdtheque.console.Session;
 import fr.dvdtheque.console.action.InfosAction;
 import fr.dvdtheque.console.vue.IVue;
@@ -78,7 +77,7 @@ public class BaseControleur implements IControleur {
 			logger.debug(methodName + " **** actionName="+actionName);
 			
 			// on recupere la config de l'action
-			configAction = (InfosAction) actions.get(actionName);
+			configAction = actions.get(actionName);
 			if (configAction == null) {
 				// erreur de config - on s'arrete
 				throw new RuntimeException("L'action [" + actionName

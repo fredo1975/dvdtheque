@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 public class Barriere {
 	protected final Log logger = LogFactory.getLog(Barriere.class);
 	
-	// état overt - fermé de la barrière
+	// état ouvert - fermé de la barrière
 	private boolean ouverte;
 
 	public boolean isOuverte() {

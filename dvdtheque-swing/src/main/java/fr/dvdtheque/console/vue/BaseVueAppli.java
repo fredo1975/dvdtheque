@@ -219,7 +219,7 @@ public class BaseVueAppli extends BaseVueJFrame {
 	protected void executeAction(String action) {
 		String methodName = "executeAction ";
 		logger.debug(methodName + "action=" + action);
-		// fait executer [action] par le contreleur
+		// fait executer [action] par le controleur
 		this.setTitle("Dvdtheque : patientez...");
 		// action asynchrone - on gele le formulaire
 		this.setEnabled(false);
