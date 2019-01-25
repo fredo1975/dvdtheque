@@ -11,6 +11,7 @@
 	<import resource="classpath*:applicationContext-batch.xml" />
 	
 	<bean id="cleanDBTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.CleanDBTasklet"/>
+	<bean id="tmdbTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.TheMovieDbTasklet"/>
 	
 	<bean id="rippedFlagTasklet" class="fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet">
 		<property name="directoryResource">
@@ -30,8 +31,11 @@
 				<chunk reader="filmReaderCSV" writer="filmWriter" processor="filmProcessor" commit-interval="500" />
 			</tasklet>
 		</step>
-		<step id="setRippedFlag">
+		<step id="setRippedFlag" next="tmdb">
 			<tasklet ref="rippedFlagTasklet" allow-start-if-complete="true"/>
+		</step>
+		<step id="tmdb">
+			<tasklet ref="tmdbTasklet" allow-start-if-complete="true"/>
 		</step>
 	</job>
 
