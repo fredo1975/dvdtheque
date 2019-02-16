@@ -22,7 +22,7 @@ public class ActionListe extends AbstractBaseAction {
 		ArrayList<String> erreurs = session.getErreurs();
 		erreurs.clear();
 		try {
-			List<Film> lFilm = session.getFilmService().getAllFilms();
+			List<Film> lFilm = session.getFilmService().findAllFilms();
 			logger.info("lFilm.size()="+lFilm.size());
 			// on demande la liste des articles a la couche métier
 			session.setFilmList(lFilm);

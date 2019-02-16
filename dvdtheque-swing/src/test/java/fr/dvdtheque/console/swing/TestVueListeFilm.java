@@ -30,7 +30,7 @@ public class TestVueListeFilm {
 				"swing-applicationContext.xml");
 		FilmService filmService = (FilmService) ctx.getBean("filmService");
         vueListeFilm = new VueListeFilm();
-        vueListeFilm.setFilmList(filmService.getAllFilms());
+        vueListeFilm.setFilmList(filmService.findAllFilms());
 	}
 	private JPanel init() throws Exception{
 		return vueListeFilm.init();
