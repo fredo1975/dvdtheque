@@ -20,20 +20,19 @@
 		<module>dvdtheque-commons</module>
 		<module>dvdtheque-dao</module>
 		<module>dvdtheque-business</module>
+		<module>dvdtheque-tmdb-service</module>
 		<module>dvdtheque-batch</module>
 		<!-- module>dvdtheque-swing</module -->
 		<module>dvdtheque-web</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
-
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
 				<version>8.0.12</version>
 			</dependency>
-			<!-- <dependency> <groupId>c3p0</groupId> <artifactId>c3p0</artifactId> 
-				<version>0.9.1.2</version> </dependency> -->
+			
 			<dependency>
 				<groupId>commons-digester</groupId>
 				<artifactId>commons-digester</artifactId>
