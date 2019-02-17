@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.fredos.dvdtheque</groupId>
-			<artifactId>dvdtheque-business</artifactId>
+			<artifactId>dvdtheque-tmdb-service</artifactId>
 			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>

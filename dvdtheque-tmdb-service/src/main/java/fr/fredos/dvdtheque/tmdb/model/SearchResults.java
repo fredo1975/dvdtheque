@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.batch.film.tmdb;
+package fr.fredos.dvdtheque.tmdb.model;
 
 import java.util.List;
 

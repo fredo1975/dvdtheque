@@ -10,7 +10,8 @@ import org.springframework.core.env.Environment;
 
 @SpringBootApplication(scanBasePackages = {"fr.fredos.dvdtheque.batch",
 		"fr.fredos.dvdtheque.service",
-		"fr.fredos.dvdtheque.dao"},exclude = {DataSourceAutoConfiguration.class})
+		"fr.fredos.dvdtheque.dao",
+		"fr.fredos.dvdtheque.tmdb.service"},exclude = {DataSourceAutoConfiguration.class})
 public class BatchApplication {
 	@Autowired
     Environment environment;

@@ -19,12 +19,11 @@ import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.web.client.RestTemplate;
+
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
 import fr.fredos.dvdtheque.batch.film.writer.FilmWriter;
@@ -69,10 +68,7 @@ public class BatchConfiguration{
     public FilmProcessor processor() {
         return new FilmProcessor();
     }
-    @Bean
-	public RestTemplate restTemplate(RestTemplateBuilder builder) {
-		return builder.build();
-	}
+    
 	@Bean
 	public Job importFilmJob() {
 		return jobBuilderFactory.get("importFilm").incrementer(new RunIdIncrementer()).start(cleanDB())
