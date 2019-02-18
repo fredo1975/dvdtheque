@@ -57,6 +57,8 @@ public class Film implements Serializable {
 	private Set<Personne> acteurs = new HashSet<Personne>();
 	@Column(name = "RIPPED")
 	private boolean ripped;
+	@Column(name = "POSTER_PATH")
+	private String posterPath;
 	@Transient
 	private Personne realisateur;
 	@Transient
@@ -176,10 +178,17 @@ public class Film implements Serializable {
 			return false;
 		return true;
 	}
+	public String getPosterPath() {
+		return posterPath;
+	}
+	public void setPosterPath(String posterPath) {
+		this.posterPath = posterPath;
+	}
 	@Override
 	public String toString() {
 		return "Film [logger=" + logger + ", id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
 				+ ", dvd=" + dvd + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped
-				+ ", realisateur=" + realisateur + "]";
+				+ ", posterPath=" + posterPath + ", realisateur=" + realisateur + ", newActeurDtoSet=" + newActeurDtoSet
+				+ "]";
 	}
 }

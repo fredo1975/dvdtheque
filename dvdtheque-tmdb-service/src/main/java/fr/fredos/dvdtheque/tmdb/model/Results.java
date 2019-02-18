@@ -5,6 +5,8 @@ public class Results {
 	private Long id;
 	private String title;
 	private String poster_path;
+	private String release_date;
+	
 	public Long getId() {
 		return id;
 	}
@@ -23,10 +25,15 @@ public class Results {
 	public void setPoster_path(String poster_path) {
 		this.poster_path = poster_path;
 	}
+	public String getRelease_date() {
+		return release_date;
+	}
+	public void setRelease_date(String release_date) {
+		this.release_date = release_date;
+	}
 	@Override
 	public String toString() {
-		return "Results [id=" + id + ", title=" + title + ", poster_path=" + poster_path + "]";
+		return "Results [id=" + id + ", title=" + title + ", poster_path=" + poster_path + ", release_date="
+				+ release_date + "]";
 	}
-	
-	
 }

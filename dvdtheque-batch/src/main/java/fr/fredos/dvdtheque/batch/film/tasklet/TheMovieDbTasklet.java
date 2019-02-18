@@ -1,10 +1,5 @@
 package fr.fredos.dvdtheque.batch.film.tasklet;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -16,17 +11,13 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.FilmService;
-import fr.fredos.dvdtheque.service.impl.FilmServiceImpl;
 import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
+import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.model.SearchResults;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
@@ -56,22 +47,15 @@ public class TheMovieDbTasklet implements Tasklet{
 			try {
 				searchResults = tmdbServiceClient.retrieveTmdbSearchResults(film.getTitre());
 				if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
-					ImagesResults imagesResults = tmdbServiceClient.retrieveTmdbImagesResults(searchResults.getResults().get(0).getId());
+					Results res = tmdbServiceClient.filterSearchResultsByDateRelease(film.getAnnee(), searchResults.getResults());
+					ImagesResults imagesResults = tmdbServiceClient.retrieveTmdbImagesResults(res.getId());
 					if(CollectionUtils.isNotEmpty(imagesResults.getPosters())) {
 						String imageUrl = tmdbServiceClient.retrieveTmdbFrPosterPathUrl(imagesResults);
-					    Resource directory = new FileSystemResource(environment.getRequiredProperty(LISTE_DVD_POSTER_FILE_PATH));
-					    String destinationFile = directory.getFile().getAbsolutePath()+"/"+StringUtils.replace(film.getTitre(), " ", "_")+".jpg";
-						Assert.notNull(directory, "directory must be set");
-						Path path = Paths.get(destinationFile);
-						if (Files.notExists(path)) {
-							FilmServiceImpl.saveImage(imageUrl, destinationFile);
-						}
+						film.setPosterPath(imageUrl);
+						filmService.updateFilm(film);
 					}
 				}
-			} catch (RestClientException | UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (RestClientException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

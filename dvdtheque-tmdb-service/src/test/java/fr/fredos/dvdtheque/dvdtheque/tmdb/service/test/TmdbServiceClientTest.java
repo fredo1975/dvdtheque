@@ -2,7 +2,6 @@ package fr.fredos.dvdtheque.dvdtheque.tmdb.service.test;
 
 import static org.junit.Assert.assertNotNull;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 	protected Logger logger = LoggerFactory.getLogger(TmdbServiceClientTest.class);
 	@Autowired
     private TmdbServiceClient client;
-	private String titre= "broadway";
+	private String titre= "titus";
     @Autowired
 	protected FilmService filmService;
     @Autowired
@@ -45,42 +44,42 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
 			idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
-		filmService.saveNewFilm(FilmUtils.buildFilm(titre,2015,idRealisateur,idActeur1,null,null));
+		filmService.saveNewFilm(FilmUtils.buildFilm(titre,2012,idRealisateur,idActeur1,null,null));
 		Film film = filmService.findFilmByTitre(titre);
 		assertNotNull(film);
 		return film;
 	}
 	@Test
     public void retrieveTmdbSearchResultsTest() {
-		Film film = createNewFilm();
+		//Film film = createNewFilm();
+		Film film = filmService.findFilmByTitre(titre);
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
 		SearchResults searchResults = client.retrieveTmdbSearchResults(film.getTitre());
 		assertNotNull(searchResults);
 		assertNotNull(searchResults.getResults());
-		if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
-			Results res = searchResults.getResults().get(0);
-			assertNotNull(res);
-			logger.info("tmdb id"+res.getId().toString());
-		}
+		Results res = client.filterSearchResultsByDateRelease(film.getAnnee(), searchResults.getResults());
 		
+		assertNotNull(res);
+		logger.info("tmdb id"+res.getId().toString());
     }
 	@Test
     public void retrieveTmdbPosterPathTest() {
-		Film film = createNewFilm();
+		//Film film = createNewFilm();
+		Film film = filmService.findFilmByTitre(titre);
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
 		SearchResults searchResults = client.retrieveTmdbSearchResults(film.getTitre());
 		assertNotNull(searchResults);
 		assertNotNull(searchResults.getResults());
-		if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
-			Results res = searchResults.getResults().get(0);
-			assertNotNull(res);
-			logger.info("tmdb id"+res.getId().toString());
-			ImagesResults imagesResults = client.retrieveTmdbImagesResults(res.getId());
-			assertNotNull(imagesResults);
-			String posterPath = client.retrieveTmdbFrPosterPathUrl(imagesResults);
-			logger.info("posterPath="+posterPath);
-		}
+		Results res = client.filterSearchResultsByDateRelease(film.getAnnee(), searchResults.getResults());
+		assertNotNull(res);
+		logger.info("tmdb id"+res.getId().toString());
+		
+		ImagesResults imagesResults = client.retrieveTmdbImagesResults(res.getId());
+		assertNotNull(imagesResults);
+		String posterPath = client.retrieveTmdbFrPosterPathUrl(imagesResults);
+		logger.info("posterPath="+posterPath);
+		
     }
 }

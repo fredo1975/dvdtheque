@@ -289,11 +289,14 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertTrue(realList.size()>0);
 		Personne realisateur = realList.get(0);
 		film.setRealisateur(realisateur);
+		final String posterPathg = "posterPath";
+		film.setPosterPath(posterPathg);
 		filmService.updateFilm(film);
 		Film filmUpdated = filmService.findFilm(film.getId());
 		assertNotNull(filmUpdated);
 		assertEquals(StringUtils.upperCase(FilmUtils.TITRE_FILM_UPDATED), filmUpdated.getTitre());
 		assertEquals(realisateur, filmUpdated.getRealisateur());
+		assertEquals(posterPathg, filmUpdated.getPosterPath());
 	}
 	@Test
 	public void cleanAllFilms() {
