@@ -49,12 +49,12 @@ public class Film implements Serializable {
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.LAZY)
     @JoinTable(name = "REALISATEUR", joinColumns = @JoinColumn(name = "ID_FILM"),
         inverseJoinColumns = @JoinColumn(name = "ID_PERSONNE"))
-	private Set<Personne> realisateurs = new HashSet<Personne>();
+	private Set<Personne> realisateurs = new HashSet<>();
 	//@OneToMany(cascade=CascadeType.ALL,fetch = FetchType.LAZY,mappedBy ="acteurFilm.film")
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.LAZY)
     @JoinTable(name = "ACTEUR", joinColumns = @JoinColumn(name = "ID_FILM"),
         inverseJoinColumns = @JoinColumn(name = "ID_PERSONNE"))
-	private Set<Personne> acteurs = new HashSet<Personne>();
+	private Set<Personne> acteurs = new HashSet<>();
 	@Column(name = "RIPPED")
 	private boolean ripped;
 	@Column(name = "POSTER_PATH")

@@ -1,7 +1,9 @@
 package fr.fredos.dvdtheque.web.controller;
 
 import java.net.URI;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -24,6 +26,7 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.FilmService;
 import fr.fredos.dvdtheque.service.PersonneService;
+import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 @RestController
 @ComponentScan({"fr.fredos.dvdtheque.service,fr.fredos.dvdtheque.dao.model.repository"})
@@ -34,7 +37,8 @@ public class FilmController {
 	private FilmService filmService;
 	@Autowired
 	protected PersonneService personneService;
-	
+	@Autowired
+    private TmdbServiceClient tmdbServiceClient;
 	@CrossOrigin
 	@GetMapping("/films/byPersonne")
 	Personne findPersonne(@RequestParam(name="nom",required = false) String nom) {
@@ -49,6 +53,11 @@ public class FilmController {
 	@GetMapping("/films/byTitre/{titre}")
 	Film findFilmByTitre(@PathVariable String titre) {
 		return filmService.findFilmByTitre(titre);
+	}
+	@CrossOrigin
+	@GetMapping("/films/tmdb/byTitre/{titre}")
+	Set<Film> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
+		return tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre);
 	}
 	@CrossOrigin
 	@GetMapping("/films/byId/{id}")

@@ -5,18 +5,26 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Personne;
+import fr.fredos.dvdtheque.service.dto.ActeurDto;
+import fr.fredos.dvdtheque.service.dto.PersonneDto;
+import fr.fredos.dvdtheque.service.dto.RealisateurDto;
+import fr.fredos.dvdtheque.tmdb.model.Cast;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
 import fr.fredos.dvdtheque.tmdb.model.Crew;
 import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
@@ -45,7 +53,56 @@ public class TmdbServiceClient {
 			throw e;
 		}
 	}
-	
+	private Film transformTmdbFilmToDvdThequeFilm(Results results) throws ParseException {
+		Film film = new Film();
+		film.setTitre(results.getTitle());
+		film.setTitreO(results.getOriginal_title());
+		film.setAnnee(retrieveYearFromReleaseDate(results.getRelease_date()));
+		film.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
+		film.setId(Integer.valueOf(results.getId().toString()));
+		Credits credits = retrieveTmdbCredits(results.getId());
+		if(CollectionUtils.isNotEmpty(credits.getCast())) {
+			int i=0;
+			for(Cast cast : credits.getCast()) {
+				Personne personne = new Personne();
+				personne.setId(Integer.valueOf(cast.getCast_id()));
+				personne.setNom(StringUtils.upperCase(cast.getName()));
+				film.getActeurs().add(personne);
+				if(i++==5) {
+					break;
+				}
+			}
+		}
+		if(CollectionUtils.isNotEmpty(credits.getCrew())) {
+			Personne realisateur = new Personne();
+			realisateur.setNom(StringUtils.upperCase(retrieveTmdbDirector(credits)));
+			film.getRealisateurs().add(realisateur);
+		}
+		return film;
+	}
+	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(String titre) throws ParseException{
+		SearchResults searchResults = retrieveTmdbSearchResults(titre);
+		Set<Film> res = null;
+		if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
+			res = new HashSet<>(searchResults.getResults().size());
+			for(Results results : searchResults.getResults()) {
+				res.add(transformTmdbFilmToDvdThequeFilm(results));
+			}
+		}
+		return res;
+	}
+	private static int retrieveYearFromReleaseDate(String dateInStrFormat) throws ParseException {
+		DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+		Date releaseDate;
+		try {
+			releaseDate = sdf.parse(dateInStrFormat);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(releaseDate);
+			return cal.get(Calendar.YEAR);
+		} catch (ParseException e) {
+			throw e;
+		}
+	}
 	public Results filterSearchResultsByDateRelease(final Integer annee,
 			final List<Results> results) {
 		Results res = null;
@@ -54,19 +111,11 @@ public class TmdbServiceClient {
 				if(StringUtils.isEmpty(result.getRelease_date())) {
 					return false;
 				}
-				String dateInStrFormat = result.getRelease_date();
-				DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-				Date releaseDate;
 				try {
-					releaseDate = sdf.parse(dateInStrFormat);
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(releaseDate);
-					int year = cal.get(Calendar.YEAR);
-					if(year == annee.intValue()) {
+					if(retrieveYearFromReleaseDate(result.getRelease_date()) == annee.intValue()) {
 						return true;
 					}
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				return false;

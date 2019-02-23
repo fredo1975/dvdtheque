@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestClientException;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
-import fr.fredos.dvdtheque.batch.film.tasklet.TheMovieDbTasklet;
 import fr.fredos.dvdtheque.service.dto.ActeurDto;
 import fr.fredos.dvdtheque.service.dto.DvdDto;
 import fr.fredos.dvdtheque.service.dto.FilmDto;
@@ -57,7 +56,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto>
 				}
 				Credits credits = tmdbServiceClient.retrieveTmdbCredits(res.getId());
 				if(CollectionUtils.isNotEmpty(credits.getCast())) {
-					Set<ActeurDto> acteursDto = new HashSet<ActeurDto>();
+					Set<ActeurDto> acteursDto = new HashSet<>();
 					int i=0;
 					for(Cast cast : credits.getCast()) {
 						PersonneDto personne = new PersonneDto();
@@ -72,7 +71,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto>
 					pf.setActeur(acteursDto);
 				}
 				if(CollectionUtils.isNotEmpty(credits.getCrew())) {
-					Set<RealisateurDto> realisateur = new HashSet<RealisateurDto>(1);
+					Set<RealisateurDto> realisateur = new HashSet<>(1);
 					RealisateurDto realisateurDto = new RealisateurDto();
 					PersonneDto personne = new PersonneDto();
 					personne.setNom(StringUtils.upperCase(tmdbServiceClient.retrieveTmdbDirector(credits)));
@@ -80,6 +79,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto>
 					realisateur.add(realisateurDto);
 					pf.setRealisateur(realisateur.iterator().next());
 				}
+				film.setTitreO(res.getOriginal_title());
 			}
 		} catch (RestClientException e) {
 			// TODO Auto-generated catch block

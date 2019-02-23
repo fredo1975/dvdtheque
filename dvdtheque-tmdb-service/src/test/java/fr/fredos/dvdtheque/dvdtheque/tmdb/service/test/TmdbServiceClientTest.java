@@ -1,7 +1,12 @@
 package fr.fredos.dvdtheque.dvdtheque.tmdb.service.test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -58,15 +63,23 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		
     }
 	@Test
-    public void retrieveTmdbSearchResultsTest() {
+    public void retrieveTmdbResultsTest() {
 		Film film = createNewFilm();
 		//Film film = filmService.findFilmByTitre(titre);
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
 		Results res = getResultsByFilmTitre(film);
-		
 		assertNotNull(res);
-		logger.info("tmdb id"+res.getId().toString());
+		logger.info("tmdb id = "+res.getId().toString());
+    }
+	@Test
+    public void retrieveTmdbFilmListToDvdthequeFilmListTest() throws ParseException {
+		Set<Film> filmSet = client.retrieveTmdbFilmListToDvdthequeFilmList(titre);
+		assertNotNull(filmSet);
+		assertTrue(CollectionUtils.isNotEmpty(filmSet));
+		for(Film film : filmSet) {
+			logger.info("film = "+film.toString());
+		}
     }
 	@Test
     public void retrieveTmdbPosterPathTest() {
@@ -76,7 +89,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(film.getTitre());
 		Results res = getResultsByFilmTitre(film);
 		assertNotNull(res);
-		logger.info("tmdb id"+res.getId().toString());
+		logger.info("tmdb id = "+res.getId().toString());
 		
 		ImagesResults imagesResults = client.retrieveTmdbImagesResults(res.getId());
 		assertNotNull(imagesResults);

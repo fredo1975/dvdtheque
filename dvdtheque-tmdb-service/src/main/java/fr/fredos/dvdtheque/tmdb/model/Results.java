@@ -4,9 +4,9 @@ public class Results {
 
 	private Long id;
 	private String title;
+	private String original_title;
 	private String poster_path;
 	private String release_date;
-	
 	public Long getId() {
 		return id;
 	}
@@ -18,6 +18,12 @@ public class Results {
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	public String getOriginal_title() {
+		return original_title;
+	}
+	public void setOriginal_title(String original_title) {
+		this.original_title = original_title;
 	}
 	public String getPoster_path() {
 		return poster_path;
@@ -33,7 +39,7 @@ public class Results {
 	}
 	@Override
 	public String toString() {
-		return "Results [id=" + id + ", title=" + title + ", poster_path=" + poster_path + ", release_date="
-				+ release_date + "]";
+		return "Results [id=" + id + ", title=" + title + ", original_title=" + original_title + ", poster_path="
+				+ poster_path + ", release_date=" + release_date + "]";
 	}
 }
