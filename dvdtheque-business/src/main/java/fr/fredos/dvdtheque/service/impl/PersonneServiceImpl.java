@@ -72,8 +72,8 @@ public class PersonneServiceImpl implements PersonneService {
 		logger.debug(methodName + "end");
 	}
 	@Transactional(readOnly = true)
-	public Personne findPersonneByFullName(String nom,String prenom){
-		return personneDao.findPersonneByFullName(nom, prenom);
+	public Personne findPersonneByFullName(String nom){
+		return personneDao.findPersonneByFullName(nom);
 	}
 	@Transactional(readOnly = true)
 	public Personne findPersonneByName(String nom){

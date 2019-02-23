@@ -27,11 +27,11 @@ public class FilmWriter implements ItemWriter<FilmDto> {
 	
 	private static final String REQUEST_INSERT_DVD = "insert into DVD (ANNEE,ZONE,EDITION) values (?,?,?)";
 	private static final String REQUEST_SELECT_MAX_DVD = "select max(ID) from DVD";
-	private static final String REQUEST_INSERT_FILM = "insert into FILM (ANNEE,TITRE,TITRE_O,ID_DVD,RIPPED) values (?,?,?,?,?)";
+	private static final String REQUEST_INSERT_FILM = "insert into FILM (ANNEE,TITRE,TITRE_O,ID_DVD,RIPPED,POSTER_PATH) values (?,?,?,?,?,?)";
 	private static final String REQUEST_SELECT_TITRE_FILM = "select ID from FILM where TITRE=? and annee=?";
-	private static final String REQUEST_INSERT_PERSONNE = "insert into PERSONNE(NOM,PRENOM,DATE_N) values (?,?,?)";
-	private static final String REQUEST_SELECT_PERSONNE = "select * from PERSONNE where UPPER(NOM)=? and UPPER(PRENOM)=?";
-	private static final String REQUEST_SELECT_ID_PERSONNE = "select ID from PERSONNE where UPPER(NOM)=? and UPPER(PRENOM)=?";
+	private static final String REQUEST_INSERT_PERSONNE = "insert into PERSONNE(NOM,DATE_N) values (?,?)";
+	private static final String REQUEST_SELECT_PERSONNE = "select * from PERSONNE where UPPER(NOM)=?";
+	private static final String REQUEST_SELECT_ID_PERSONNE = "select ID from PERSONNE where UPPER(NOM)=?";
 	private static final String REQUEST_INSERT_ACTEUR = "insert into ACTEUR(ID_FILM,ID_PERSONNE) values (?,?)";
 	private static final String REQUEST_INSERT_REALISATEUR = "insert into REALISATEUR(ID_FILM,ID_PERSONNE) values (?,?)";
 	
@@ -39,7 +39,6 @@ public class FilmWriter implements ItemWriter<FilmDto> {
 	    public Personne mapRow(ResultSet rs, int rowNum) throws SQLException {
 	    	Personne p = new Personne();
 	        p.setNom(rs.getString("NOM"));
-	        p.setPrenom(rs.getString("PRENOM"));
 	        p.setId(rs.getInt("ID"));
 	        return p;
 	    }
@@ -47,13 +46,12 @@ public class FilmWriter implements ItemWriter<FilmDto> {
 	@Override
 	public void write(List<? extends FilmDto> items) throws Exception {
 		for(FilmDto filmDto : items){
-			logger.debug("filmDto="+filmDto.toString());
 			// DVD
 			final Object dvd [] = {filmDto.getDvd().getAnnee(),filmDto.getDvd().getZone(),filmDto.getDvd().getEdition()};
             jdbcTemplate.update(REQUEST_INSERT_DVD, dvd);
             int idMaxDvd = jdbcTemplate.queryForObject(REQUEST_SELECT_MAX_DVD, Integer.class);
             // FILM
-            final Object film [] = {filmDto.getAnnee(),filmDto.getTitre(),filmDto.getTitreO(),idMaxDvd,false};
+            final Object film [] = {filmDto.getAnnee(),filmDto.getTitre(),filmDto.getTitreO(),idMaxDvd,false,filmDto.getPosterPath()};
             jdbcTemplate.update(REQUEST_INSERT_FILM, film);
             final Object titre [] = {filmDto.getTitre(),filmDto.getAnnee()};
             int idFilm = jdbcTemplate.queryForObject(REQUEST_SELECT_TITRE_FILM, Integer.class,titre);
@@ -61,11 +59,11 @@ public class FilmWriter implements ItemWriter<FilmDto> {
             Set<ActeurDto> acteurs = pf.getActeurs();
             for(ActeurDto acteurDto : acteurs){
             	PersonneDto personne = acteurDto.getPersonne();
-            	final Object nomPrenom [] = {personne.getNom(),personne.getPrenom()};
+            	final Object nomPrenom [] = {personne.getNom()};
             	List<Personne> l = jdbcTemplate.query(REQUEST_SELECT_PERSONNE, nomPrenom,new PersonneMapper());
             	Integer acteurId = null;
             	if(CollectionUtils.isEmpty(l)){
-            		final Object personneTab [] = {personne.getNom(),personne.getPrenom(),personne.getDateN()};
+            		final Object personneTab [] = {personne.getNom(),personne.getDateN()};
                 	jdbcTemplate.update(REQUEST_INSERT_PERSONNE, personneTab);
                 	acteurId = jdbcTemplate.queryForObject(REQUEST_SELECT_ID_PERSONNE,Integer.class, nomPrenom);
             	}else{
@@ -76,11 +74,11 @@ public class FilmWriter implements ItemWriter<FilmDto> {
             }
             RealisateurDto realisateurDto = pf.getRealisateur();
             PersonneDto personneDto = realisateurDto.getPersonne();
-            final Object nomPrenom [] = {personneDto.getNom(),personneDto.getPrenom()};
+            final Object nomPrenom [] = {personneDto.getNom()};
         	Integer personneDtoId = null;
         	List<Personne> l = jdbcTemplate.query(REQUEST_SELECT_PERSONNE, nomPrenom,new PersonneMapper());
         	if(CollectionUtils.isEmpty(l)){
-        		final Object personneTab [] = {personneDto.getNom(),personneDto.getPrenom(),personneDto.getDateN()};
+        		final Object personneTab [] = {personneDto.getNom(),personneDto.getDateN()};
             	jdbcTemplate.update(REQUEST_INSERT_PERSONNE, personneTab);
             	personneDtoId = jdbcTemplate.queryForObject(REQUEST_SELECT_ID_PERSONNE,Integer.class, nomPrenom);
         	}else{
@@ -89,7 +87,5 @@ public class FilmWriter implements ItemWriter<FilmDto> {
         	final Object personneFilmTab [] = {idFilm,personneDtoId};
         	jdbcTemplate.update(REQUEST_INSERT_REALISATEUR, personneFilmTab);
 		}
-		
 	}
-
 }

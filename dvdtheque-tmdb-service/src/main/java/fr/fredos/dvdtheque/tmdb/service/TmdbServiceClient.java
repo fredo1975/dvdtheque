@@ -17,6 +17,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import fr.fredos.dvdtheque.tmdb.model.Credits;
+import fr.fredos.dvdtheque.tmdb.model.Crew;
 import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
 import fr.fredos.dvdtheque.tmdb.model.Posters;
 import fr.fredos.dvdtheque.tmdb.model.Results;
@@ -31,6 +33,7 @@ public class TmdbServiceClient {
 	private static String TMDB_API_KEY="themoviedb.api.key";
 	private static String TMDB_SEARCH_IMAGES_QUERY="themoviedb.search.images.query";
 	private static String TMDB_POSTER_PATH_URL = "themoviedb.poster.path.url";
+	
 	public TmdbServiceClient(RestTemplateBuilder restTemplateBuilder) {
         restTemplate = restTemplateBuilder.build();
     }
@@ -89,9 +92,12 @@ public class TmdbServiceClient {
 			List<Posters> posters = postersList.stream().filter(poster -> poster.getIso_639_1()!=null && poster.getIso_639_1().equalsIgnoreCase("fr")).collect(Collectors.toList());
 			if(CollectionUtils.isNotEmpty(posters)) {
 				return environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+posters.get(0).getFile_path();
-			}else {
-				return environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+postersList.get(0).getFile_path();
 			}
+			List<Posters> posters2 = postersList.stream().filter(poster -> poster.getIso_639_1()!=null && poster.getIso_639_1().equalsIgnoreCase("en")).collect(Collectors.toList());
+			if(CollectionUtils.isNotEmpty(posters2)) {
+				return environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+posters2.get(0).getFile_path();
+			}
+			return environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+postersList.get(0).getFile_path();
 		}
 		return res;
 	}
@@ -104,6 +110,25 @@ public class TmdbServiceClient {
 				return posters.get(0).getFile_path();
 			}else {
 				return postersList.get(0).getFile_path();
+			}
+		}
+		return res;
+	}
+	
+	public Credits retrieveTmdbCredits(Long idFilm) {
+		try {
+			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_IMAGES_QUERY)+idFilm+"/credits?api_key="+environment.getRequiredProperty(TMDB_API_KEY), Credits.class);
+		} catch (RestClientException e) {
+			throw e;
+		}
+	}
+	
+	public String retrieveTmdbDirector(Credits credits) {
+		String res = null;
+		if(CollectionUtils.isNotEmpty(credits.getCrew())) {
+			List<Crew> directors = credits.getCrew().stream().filter(cred -> cred.getJob().equalsIgnoreCase("Director")).collect(Collectors.toList());
+			if(CollectionUtils.isNotEmpty(directors)) {
+				return directors.iterator().next().getName();
 			}
 		}
 		return res;

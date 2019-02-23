@@ -48,12 +48,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(methodName + "start");
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 		if(idRealisateur==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 		if(idActeur1==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 			idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
@@ -74,12 +74,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		if(id==null) {
 			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 			if(idRealisateur==null) {
-				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 				idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 			}
 			Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 			if(idActeur1==null) {
-				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 				idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 			}
 			filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null));
@@ -105,12 +105,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		if(id==null) {
 			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 			if(idRealisateur==null) {
-				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 				idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 			}
 			Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 			if(idActeur1==null) {
-				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 				idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 			}
 			film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
@@ -156,9 +156,9 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		NewActeurDto newActeurDto = FilmUtils.buildNewActeurDto();
 		newActeurDtoSet.add(newActeurDto);
 		
-		Personne real = FilmUtils.buildPersonne(FilmUtils.REAL_NOM,FilmUtils.REAL_PRENOM);
+		Personne real = FilmUtils.buildPersonne(FilmUtils.REAL_NOM);
 		personneService.savePersonne(real);
-		real = personneService.findPersonneByFullName(FilmUtils.REAL_NOM,FilmUtils.REAL_PRENOM);
+		real = personneService.findPersonneByFullName(FilmUtils.REAL_NOM);
 		assertNotNull(real);
 		
 		Dvd dvd = new Dvd();
@@ -183,12 +183,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(methodName + "start");
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 		if(idRealisateur==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 		if(idActeur1==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 			idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
@@ -234,12 +234,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		if(id==null) {
 			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 			if(idRealisateur==null) {
-				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 				idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 			}
 			Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 			if(idActeur1==null) {
-				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 				idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 			}
 			film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
@@ -267,12 +267,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		if(id==null) {
 			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 			if(idRealisateur==null) {
-				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 				idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 			}
 			Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 			if(idActeur1==null) {
-				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 				idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 			}
 			film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
@@ -311,12 +311,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(methodName + "start");
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 		if(idRealisateur==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 		if(idActeur1==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 			idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
@@ -340,12 +340,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		int nbFilms = 2;
 		if(idRealisateur==null) {
 			nbFilms = 1;
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 		if(idActeur1==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 			idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
@@ -378,12 +378,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 		if(idRealisateur==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 		if(idActeur1==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 			idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
@@ -417,12 +417,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		if(id==null) {
 			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 			if(idRealisateur==null) {
-				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 				idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 			}
 			Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 			if(idActeur1==null) {
-				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+				personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 				idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 			}
 			film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);

@@ -67,12 +67,12 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private void createFilm() {
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 		if(idRealisateur==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			idRealisateur = this.jdbcTemplate.queryForObject(FilmServiceTest.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 		if(idActeur1==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 			idActeur1 = this.jdbcTemplate.queryForObject(FilmServiceTest.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
@@ -213,12 +213,12 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public void testSaveNewFilm() throws Exception {
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 		if(idRealisateur==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			idRealisateur = this.jdbcTemplate.queryForObject(FilmServiceTest.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 		if(idActeur1==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 			idActeur1 = this.jdbcTemplate.queryForObject(FilmServiceTest.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
@@ -249,7 +249,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
 				.get(SEARCH_PERSONNE_URI)
 				.param("nom", personne.getNom())
-				.param("prenom", personne.getPrenom())
 				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
@@ -262,13 +261,12 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Integer id = this.jdbcTemplate.queryForObject(FilmUtils.MAX_PERSONNE_ID_SQL, Integer.class);
 		if(id==null) {
 			// insert a personne first
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM, FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			id = this.jdbcTemplate.queryForObject(FilmUtils.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Personne personneByLoad = personneService.loadPersonne(id);
 		assertNotNull(personneByLoad);
 		personneByLoad.setNom(FilmUtils.ACT2_NOM);
-		personneByLoad.setPrenom(FilmUtils.ACT2_PRENOM);
 		ObjectMapper mapper = new ObjectMapper();
 		String personneJsonString = mapper.writeValueAsString(personneByLoad);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
@@ -279,6 +277,5 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		
 		Personne personneUpdated = personneService.loadPersonne(id);
 		assertEquals(StringUtils.upperCase(FilmUtils.ACT2_NOM), personneUpdated.getNom());
-		assertEquals(StringUtils.upperCase(FilmUtils.ACT2_PRENOM), personneUpdated.getPrenom());
 	}
 }

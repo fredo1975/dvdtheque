@@ -35,12 +35,12 @@ public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		logger.debug(methodName + "start");
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 		if(idRealisateur==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			idRealisateur = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 		if(idActeur1==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 			idActeur1 = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Film film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);

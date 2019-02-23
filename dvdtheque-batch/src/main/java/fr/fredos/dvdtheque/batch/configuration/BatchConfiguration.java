@@ -1,5 +1,7 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
@@ -34,6 +36,7 @@ import fr.fredos.dvdtheque.service.dto.FilmDto;
 @Configuration
 @EnableBatchProcessing
 public class BatchConfiguration{
+	protected Logger logger = LoggerFactory.getLogger(BatchConfiguration.class);
 	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name";
 	@Autowired
     public JobBuilderFactory jobBuilderFactory;
@@ -72,7 +75,7 @@ public class BatchConfiguration{
 	@Bean
 	public Job importFilmJob() {
 		return jobBuilderFactory.get("importFilm").incrementer(new RunIdIncrementer()).start(cleanDB())
-				.next(checkFilmStep()).next(setRippedFlag()).next(theMovieDb()).build();
+				.next(checkFilmStep()).next(setRippedFlag())/*.next(theMovieDb())*/.build();
 	}
 	@Bean
     protected Step theMovieDb() {
@@ -98,12 +101,12 @@ public class BatchConfiguration{
     }
     
     private LineMapper<FilmCsvImportFormat> createFilmCsvImportFormatLineMapper() {
-        DefaultLineMapper<FilmCsvImportFormat> studentLineMapper = new DefaultLineMapper<>();
+        DefaultLineMapper<FilmCsvImportFormat> filmLineMapper = new DefaultLineMapper<>();
         LineTokenizer filmCsvImportFormatLineTokenizer = createFilmCsvImportFormatLineTokenizer();
-        studentLineMapper.setLineTokenizer(filmCsvImportFormatLineTokenizer);
+        filmLineMapper.setLineTokenizer(filmCsvImportFormatLineTokenizer);
         FieldSetMapper<FilmCsvImportFormat> filmCsvImportFormatInformationMapper = createFilmCsvImportFormatInformationMapper();
-        studentLineMapper.setFieldSetMapper(filmCsvImportFormatInformationMapper);
-        return studentLineMapper;
+        filmLineMapper.setFieldSetMapper(filmCsvImportFormatInformationMapper);
+        return filmLineMapper;
     }
 
     private LineTokenizer createFilmCsvImportFormatLineTokenizer() {
@@ -120,11 +123,11 @@ public class BatchConfiguration{
     }
     @Bean
     protected FilmProcessor filmProcessor() {
-        return new FilmProcessor();
+    	return new FilmProcessor();
     }
     @Bean
     protected FilmWriter filmWriter() {
-        return new FilmWriter();
+    	return new FilmWriter();
     }
     @Bean
     protected Step checkFilmStep() {

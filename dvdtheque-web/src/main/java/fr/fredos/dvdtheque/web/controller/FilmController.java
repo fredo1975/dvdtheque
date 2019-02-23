@@ -37,8 +37,8 @@ public class FilmController {
 	
 	@CrossOrigin
 	@GetMapping("/films/byPersonne")
-	Personne findPersonne(@RequestParam(name="nom",required = false) String nom,@RequestParam(name="prenom",required = false) String prenom) {
-		return personneService.findPersonneByFullName(nom, prenom);
+	Personne findPersonne(@RequestParam(name="nom",required = false) String nom) {
+		return personneService.findPersonneByFullName(nom);
 	}
 	@CrossOrigin
 	@GetMapping("/films")
@@ -88,9 +88,6 @@ public class FilmController {
 		Personne personne = personneService.findByPersonneId(id);
 		if(personne==null) {
 			return ResponseEntity.notFound().build();
-		}
-		if(StringUtils.isNotEmpty(p.getPrenom())) {
-			personne.setPrenom(StringUtils.upperCase(p.getPrenom()));
 		}
 		if(StringUtils.isNotEmpty(p.getNom())) {
 			personne.setNom(StringUtils.upperCase(p.getNom()));

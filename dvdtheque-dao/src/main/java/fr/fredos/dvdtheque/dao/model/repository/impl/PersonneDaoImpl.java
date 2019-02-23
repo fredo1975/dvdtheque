@@ -80,11 +80,10 @@ public class PersonneDaoImpl implements PersonneDao{
     }
 	
 	
-	public Personne findPersonneByFullName(String nom,String prenom) {
-		StringBuilder sb = new StringBuilder("from Personne personne where personne.nom=:nom and personne.prenom=:prenom ");
+	public Personne findPersonneByFullName(String nom) {
+		StringBuilder sb = new StringBuilder("from Personne personne where personne.nom=:nom");
         Query query = this.em.createQuery(sb.toString());
         query.setParameter("nom", nom);
-        query.setParameter("prenom", prenom);
         Personne p = null;
         try {
         	p = (Personne) query.getSingleResult();

@@ -142,7 +142,7 @@ public class FilmServiceImpl implements FilmService {
 		for(Film f : l) {
 			setRealisateur(f);
 		}
-		return filmDao.findAllFilms();
+		return l;
 	}
 	@CacheEvict(value= "filmCache", allEntries = true)
 	@Transactional(readOnly = false)
@@ -181,7 +181,7 @@ public class FilmServiceImpl implements FilmService {
 			film.getNewActeurDtoSet().forEach(newActeurDto->{
 				final String nom = StringUtils.upperCase(newActeurDto.getNom());
 				final String prenom = StringUtils.upperCase(newActeurDto.getPrenom());
-				Personne p = personneService.findPersonneByFullName(nom, prenom);
+				Personne p = personneService.findPersonneByFullName(nom);
 				if(p==null) {
 					p = Personne.buildPersonneFromNewActeurDto(newActeurDto);
 					personneService.savePersonne(p);

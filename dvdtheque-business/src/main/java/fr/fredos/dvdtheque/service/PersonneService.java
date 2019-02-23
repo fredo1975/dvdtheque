@@ -19,7 +19,7 @@ public interface PersonneService {
 	
 	public void deletePersonne(Personne p);
 	
-	public Personne findPersonneByFullName(String nom,String prenom);
+	public Personne findPersonneByFullName(String nom);
 	
 	public Personne findPersonneByName(String nom);
 	

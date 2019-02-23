@@ -38,12 +38,12 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	private Film createNewFilm() {
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(MAX_REALISATEUR_ID_SQL, Integer.class);
 		if(idRealisateur==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
 		if(idActeur1==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM,FilmUtils.ACT2_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
 			idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null));
@@ -56,7 +56,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		Integer id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		if(id==null) {
 			// insert a personne first
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			
 			id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		}
@@ -70,7 +70,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		Integer id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		if(id==null) {
 			// insert a personne first
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Personne personne = personneService.findByPersonneId(id);
@@ -120,8 +120,8 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	@Test
 	public void findPersonneByFullName() throws Exception {
 		// insert a personne first
-		personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM,FilmUtils.ACT1_PRENOM));
-		Personne personne = personneService.findPersonneByFullName(FilmUtils.ACT1_NOM, FilmUtils.ACT1_PRENOM);
+		personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
+		Personne personne = personneService.findPersonneByFullName(FilmUtils.ACT1_NOM);
 		assertNotNull(personne);
 	}
 
@@ -143,9 +143,9 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	
 	@Test
 	public void savePersonne() throws Exception {
-		Personne personne = FilmUtils.buildPersonne(FilmUtils.ACT1_NOM, FilmUtils.ACT1_PRENOM);
+		Personne personne = FilmUtils.buildPersonne(FilmUtils.ACT1_NOM);
 		personneService.savePersonne(personne);
-		personne = personneService.findPersonneByFullName(FilmUtils.ACT1_NOM, FilmUtils.ACT1_PRENOM);
+		personne = personneService.findPersonneByFullName(FilmUtils.ACT1_NOM);
 		assertNotNull(personne);
 	}
 
@@ -156,7 +156,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		Integer id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		if(id==null) {
 			// insert a personne first
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM, FilmUtils.ACT1_PRENOM));
+			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
 			id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
 		}
 		Personne personneByLoad = personneService.loadPersonne(id);

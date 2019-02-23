@@ -59,7 +59,7 @@ public class FilmDaoImpl implements FilmDao {
 	}
 	@SuppressWarnings("unchecked")
     public List<Film> findAllFilms() {
-		Query query = this.entityManager.createQuery("from Film film left join fetch film.acteurs left join fetch film.realisateurs real ");
+		Query query = this.entityManager.createQuery("from Film film  ");
         Set<Film> set = new HashSet<>(query.getResultList());
         List<Film> l = new ArrayList<>(set);
         Collections.sort(l, (f1,f2)->f1.getTitre().compareTo(f2.getTitre()));

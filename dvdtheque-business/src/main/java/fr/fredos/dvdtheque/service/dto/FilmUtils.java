@@ -12,21 +12,16 @@ public class FilmUtils {
 
 	public static final String TITRE_FILM = "Lorem Ipsum";
 	public static final String TITRE_FILM_UPDATED = "Lorem Ipsum updated";
-	public static final String REAL_NOM = "toto";
-	public static final String REAL_PRENOM = "titi";
-	public static final String ACT1_NOM = "tata";
-	public static final String ACT1_PRENOM = "tutu";
-	public static final String ACT2_NOM = "toitoi";
-	public static final String ACT2_PRENOM = "tuitui";
-	public static final String ACT3_NOM = "tuotuo";
-	public static final String ACT3_PRENOM = "tmitmi";
+	public static final String REAL_NOM = "toto titi";
+	public static final String ACT1_NOM = "tata tutu";
+	public static final String ACT2_NOM = "toitoi tuitui";
+	public static final String ACT3_NOM = "tuotuo tmitmi";
 	public final static String MAX_REALISATEUR_ID_SQL = "select max(p.id) from PERSONNE p inner join REALISATEUR r on r.ID_PERSONNE=p.ID";
 	public final static String MAX_ACTEUR_ID_SQL = "select max(p.id) from PERSONNE p inner join ACTEUR a on a.ID_PERSONNE=p.ID";
 	public final static String MAX_PERSONNE_ID_SQL = "select max(id) from PERSONNE";
 	public static NewActeurDto buildNewActeurDto() {
 		NewActeurDto newActeurDto = new NewActeurDto();
 		newActeurDto.setNom(ACT1_NOM);
-		newActeurDto.setPrenom(ACT1_PRENOM);
 		return newActeurDto;
 	}
 	public static Personne buildPersonne(Integer idPersonne) {
@@ -34,10 +29,9 @@ public class FilmUtils {
 		p.setId(idPersonne);
 		return p;
 	}
-	public static Personne buildPersonne(final String nom,final String prenom) {
+	public static Personne buildPersonne(final String nom) {
 		Personne p = new Personne();
 		p.setNom(nom);
-		p.setPrenom(prenom);
 		return p;
 	}
 	

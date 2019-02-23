@@ -26,7 +26,7 @@ public class FilmDto implements Serializable {
 	private DvdDto dvd;
 	private PersonnesFilm personnesFilm;
 	private boolean ripped;
-	
+	private String posterPath;
 	/*
 	private Set<ActeurDto> acteurs = new HashSet<ActeurDto>(0); 
 	private Set<RealisateurDto> realisateurs= new HashSet<RealisateurDto>(0);
@@ -87,6 +87,12 @@ public class FilmDto implements Serializable {
 	public void setRipped(boolean ripped) {
 		this.ripped = ripped;
 	}
+	public String getPosterPath() {
+		return posterPath;
+	}
+	public void setPosterPath(String posterPath) {
+		this.posterPath = posterPath;
+	}
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).
@@ -97,6 +103,7 @@ public class FilmDto implements Serializable {
 	       append("dvd", dvd).
 	       append("personnesFilm", personnesFilm).
 	       append("ripped", ripped).
+	       append("posterPath", posterPath).
 	       toString();
 	}
 	@Override
@@ -134,6 +141,7 @@ public class FilmDto implements Serializable {
 			filmDto.getPersonnesFilm().setRealisateur(RealisateurDto.toDto(film.getRealisateurs().iterator().next()));
 		}
 		filmDto.setRipped(film.isRipped());
+		filmDto.setPosterPath(film.getPosterPath());
 		return filmDto;
 	}
 	
@@ -153,6 +161,7 @@ public class FilmDto implements Serializable {
 		realisateurs.add(PersonneDto.fromDto(this.getPersonnesFilm().getRealisateur().getPersonne()));
 		film.setRealisateurs(realisateurs);
 		film.setRipped(this.isRipped());
+		film.setPosterPath(this.getPosterPath());
 		return film;
 	}
 	
