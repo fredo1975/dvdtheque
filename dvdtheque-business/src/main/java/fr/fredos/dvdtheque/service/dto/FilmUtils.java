@@ -66,11 +66,12 @@ public class FilmUtils {
 			final Integer idAct3) {
 		Film film = new Film();
 		film.setAnnee(annee);
-		film.setRipped(false);
+		film.setRipped(true);
 		film.setTitre(titre);
 		film.setDvd(buildDvd(annee));
 		film.setRealisateurs(buildRealisateurs(idRealisateur));
 		film.setActeurs(buildActeurs(idAct1,idAct2,idAct3));
+		film.setTmdbId(new Long(100));
 		return film;
 	}
 }

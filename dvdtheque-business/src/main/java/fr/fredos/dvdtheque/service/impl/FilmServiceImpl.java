@@ -206,4 +206,8 @@ public class FilmServiceImpl implements FilmService {
 	    is.close();
 	    os.close();
 	}
+	@Override
+	public Set<Long> findAllTmdbFilms(Set<Long> tmdbIds) {
+		return filmDao.findAllTmdbFilms(tmdbIds);
+	}
 }

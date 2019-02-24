@@ -27,7 +27,7 @@ public class FilmWriter implements ItemWriter<FilmDto> {
 	
 	private static final String REQUEST_INSERT_DVD = "insert into DVD (ANNEE,ZONE,EDITION) values (?,?,?)";
 	private static final String REQUEST_SELECT_MAX_DVD = "select max(ID) from DVD";
-	private static final String REQUEST_INSERT_FILM = "insert into FILM (ANNEE,TITRE,TITRE_O,ID_DVD,RIPPED,POSTER_PATH) values (?,?,?,?,?,?)";
+	private static final String REQUEST_INSERT_FILM = "insert into FILM (ANNEE,TITRE,TITRE_O,ID_DVD,RIPPED,POSTER_PATH,TMDB_ID) values (?,?,?,?,?,?,?)";
 	private static final String REQUEST_SELECT_TITRE_FILM = "select ID from FILM where TITRE=? and annee=?";
 	private static final String REQUEST_INSERT_PERSONNE = "insert into PERSONNE(NOM,DATE_N) values (?,?)";
 	private static final String REQUEST_SELECT_PERSONNE = "select * from PERSONNE where UPPER(NOM)=?";
@@ -51,7 +51,13 @@ public class FilmWriter implements ItemWriter<FilmDto> {
             jdbcTemplate.update(REQUEST_INSERT_DVD, dvd);
             int idMaxDvd = jdbcTemplate.queryForObject(REQUEST_SELECT_MAX_DVD, Integer.class);
             // FILM
-            final Object film [] = {filmDto.getAnnee(),filmDto.getTitre(),filmDto.getTitreO(),idMaxDvd,false,filmDto.getPosterPath()};
+            final Object film [] = {filmDto.getAnnee(),
+            		filmDto.getTitre(),
+            		filmDto.getTitreO(),
+            		idMaxDvd,
+            		false,
+            		filmDto.getPosterPath(),
+            		filmDto.getTmdbId()};
             jdbcTemplate.update(REQUEST_INSERT_FILM, film);
             final Object titre [] = {filmDto.getTitre(),filmDto.getAnnee()};
             int idFilm = jdbcTemplate.queryForObject(REQUEST_SELECT_TITRE_FILM, Integer.class,titre);

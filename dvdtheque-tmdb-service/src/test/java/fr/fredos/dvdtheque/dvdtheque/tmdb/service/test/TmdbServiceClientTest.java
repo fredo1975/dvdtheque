@@ -35,6 +35,8 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 	@Autowired
     private TmdbServiceClient client;
 	private String titre= "broadway";
+	private String titreTmdb= "2001";
+	private Long tmdbId= new Long(4780);
     @Autowired
 	protected FilmService filmService;
     @Autowired
@@ -60,7 +62,6 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(searchResults);
 		assertNotNull(searchResults.getResults());
 		return client.filterSearchResultsByDateRelease(film.getAnnee(), searchResults.getResults());
-		
     }
 	@Test
     public void retrieveTmdbResultsTest() {
@@ -73,8 +74,22 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		logger.info("tmdb id = "+res.getId().toString());
     }
 	@Test
+    public void retrieveTmdbResultsByTmdbIdTest() {
+		Results res = client.retrieveTmdbSearchResultsById(tmdbId);
+		assertNotNull(res);
+		logger.info("res = "+res.toString());
+    }
+	@Test
+    public void replaceFilmTest() throws ParseException {
+		Film film = createNewFilm();
+		assertNotNull(film);
+		film = client.replaceFilm(tmdbId, film);
+		assertNotNull(film);
+		logger.info("film = "+film.toString());
+    }
+	@Test
     public void retrieveTmdbFilmListToDvdthequeFilmListTest() throws ParseException {
-		Set<Film> filmSet = client.retrieveTmdbFilmListToDvdthequeFilmList(titre);
+		Set<Film> filmSet = client.retrieveTmdbFilmListToDvdthequeFilmList(titreTmdb);
 		assertNotNull(filmSet);
 		assertTrue(CollectionUtils.isNotEmpty(filmSet));
 		for(Film film : filmSet) {
@@ -95,7 +110,6 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(imagesResults);
 		String posterPath = client.retrieveTmdbFrPosterPathUrl(imagesResults);
 		logger.info("posterPath="+posterPath);
-		
     }
 	@Test
     public void retrieveTmdbCreditsTest() {

@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.service;
 
 import java.util.List;
+import java.util.Set;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -9,6 +10,7 @@ public interface FilmService {
 	public Film findFilm(Integer id);
 	public Film findFilmWithAllObjectGraph(Integer id);
 	public List<Film> findAllFilms();
+	public Set<Long> findAllTmdbFilms(Set<Long> tmdbIds);
 	public void updateFilm(Film film);
 	public Integer saveNewFilm(Film film);
 	//public List<FilmDto> getAllFilmDtos();

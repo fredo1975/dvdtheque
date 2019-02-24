@@ -25,6 +25,9 @@
 		<!-- module>dvdtheque-swing</module -->
 		<module>dvdtheque-web</module>
 	</modules>
+	<properties>
+		<project.parent.version>2.2.0-SNAPSHOT</project.parent.version>
+	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

@@ -59,10 +59,14 @@ public class Film implements Serializable {
 	private boolean ripped;
 	@Column(name = "POSTER_PATH")
 	private String posterPath;
+	@Column(name = "TMDB_ID")
+	private Long tmdbId;
 	@Transient
 	private Personne realisateur;
 	@Transient
 	Set<NewActeurDto> newActeurDtoSet;
+	@Transient
+	private boolean alreadyInDvdtheque;
 	
 	public Film() {
 		super();
@@ -184,11 +188,23 @@ public class Film implements Serializable {
 	public void setPosterPath(String posterPath) {
 		this.posterPath = posterPath;
 	}
+	public Long getTmdbId() {
+		return tmdbId;
+	}
+	public void setTmdbId(Long tmdbId) {
+		this.tmdbId = tmdbId;
+	}
+	public boolean isAlreadyInDvdtheque() {
+		return alreadyInDvdtheque;
+	}
+	public void setAlreadyInDvdtheque(boolean alreadyInDvdtheque) {
+		this.alreadyInDvdtheque = alreadyInDvdtheque;
+	}
 	@Override
 	public String toString() {
 		return "Film [logger=" + logger + ", id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
 				+ ", dvd=" + dvd + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped
-				+ ", posterPath=" + posterPath + ", realisateur=" + realisateur + ", newActeurDtoSet=" + newActeurDtoSet
-				+ "]";
+				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", realisateur=" + realisateur
+				+ ", newActeurDtoSet=" + newActeurDtoSet + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
 	}
 }

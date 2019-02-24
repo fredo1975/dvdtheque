@@ -134,4 +134,11 @@ public class FilmDaoImpl implements FilmDao {
 		this.entityManager.remove(film);
 		this.entityManager.flush();
 	}
+	@Override
+	public Set<Long> findAllTmdbFilms(Set<Long> tmdbIds) {
+		StringBuilder sb = new StringBuilder("select film.tmdbId from Film film where film.tmdbId in (:tmdbIds) ");
+		Query q = this.entityManager.createQuery(sb.toString());
+		q.setParameter("tmdbIds", tmdbIds);
+		return new HashSet<Long>(q.getResultList());
+	}
 }

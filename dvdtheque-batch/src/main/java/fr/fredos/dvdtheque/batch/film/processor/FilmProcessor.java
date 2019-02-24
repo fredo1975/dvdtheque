@@ -29,6 +29,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto>
 	protected Logger logger = LoggerFactory.getLogger(FilmProcessor.class);
 	@Autowired
     private TmdbServiceClient tmdbServiceClient;
+	private static final int NB_ACTEURS = 6;
 	@Override
 	public FilmDto process(FilmCsvImportFormat item) throws Exception {
 		try {
@@ -49,6 +50,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto>
 			SearchResults searchResults = tmdbServiceClient.retrieveTmdbSearchResults(film.getTitre());
 			if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
 				Results res = tmdbServiceClient.filterSearchResultsByDateRelease(film.getAnnee(), searchResults.getResults());
+				film.setTmdbId(res.getId());
 				ImagesResults imagesResults = tmdbServiceClient.retrieveTmdbImagesResults(res.getId());
 				if(CollectionUtils.isNotEmpty(imagesResults.getPosters())) {
 					String imageUrl = tmdbServiceClient.retrieveTmdbFrPosterPathUrl(imagesResults);
@@ -64,7 +66,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto>
 						ActeurDto acteurDto = new ActeurDto();
 						acteurDto.setPersonne(personne);
 						acteursDto.add(acteurDto);
-						if(i++==5) {
+						if(i++==NB_ACTEURS) {
 							break;
 						}
 					}
@@ -79,7 +81,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto>
 					realisateur.add(realisateurDto);
 					pf.setRealisateur(realisateur.iterator().next());
 				}
-				film.setTitreO(res.getOriginal_title());
+				film.setTitreO(StringUtils.upperCase(res.getOriginal_title()));
 			}
 		} catch (RestClientException e) {
 			// TODO Auto-generated catch block

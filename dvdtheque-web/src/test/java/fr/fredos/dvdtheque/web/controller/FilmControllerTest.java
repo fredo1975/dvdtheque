@@ -39,6 +39,8 @@ import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.FilmService;
 import fr.fredos.dvdtheque.service.PersonneService;
 import fr.fredos.dvdtheque.service.dto.FilmUtils;
+import fr.fredos.dvdtheque.tmdb.model.Results;
+import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 
 @RunWith(SpringRunner.class)
@@ -52,6 +54,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	protected FilmService filmService;
 	@Autowired
 	protected PersonneService personneService;
+	@Autowired
+    private TmdbServiceClient client;
 	private final static String MAX_ID_SQL = "SELECT f.id, titre " + 
 			"FROM (SELECT MAX( id ) AS id FROM FILM )f INNER JOIN FILM f2 ON f2.id = f.id";
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
@@ -63,9 +67,11 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String SEARCH_ALL_ACTTEUR_URI = "/dvdtheque/acteurs";
 	private static final String SEARCH_FILM_BY_ID = "/dvdtheque/films/byId/";
 	private static final String SEARCH_TMDB_FILM_BY_TITRE = "/dvdtheque/films/tmdb/byTitre/";
+	private static final String UPDATE_TMDB_FILM_BY_TMDBID = "/dvdtheque/films/tmdb/";
 	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque//personnes";
+	private Long tmdbId= new Long(4780);
 	
-	private void createFilm() {
+	private Film createFilm() {
 		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
 		if(idRealisateur==null) {
 			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
@@ -80,6 +86,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		filmService.saveNewFilm(film);
 		film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
 		assertNotNull(film);
+		return film;
 	}
 	@Test
 	public void findAllFilms() throws Exception {
@@ -187,22 +194,25 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	@Transactional
+	public void testReplaceFilm() throws Exception {
+		Film film = createFilm();
+		ObjectMapper mapper = new ObjectMapper();
+		String filmJsonString = mapper.writeValueAsString(film);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+				.put(UPDATE_TMDB_FILM_BY_TMDBID+tmdbId,film)
+				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
+		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+		Film filmUpdated = filmService.findFilm(film.getId());
+		Results results = client.retrieveTmdbSearchResultsById(tmdbId);
+		assertEquals(StringUtils.upperCase(results.getTitle()), filmUpdated.getTitre());
+	}
+	@Test
+	@Transactional
 	public void testUpdateFilm() throws Exception {
-		createFilm();
-		Film film = retrieveIdAndTitreFilm().get(0);
-		Integer id = null;
-		if(film==null) {
-			Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
-			Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
-			film = FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null);
-			id = filmService.saveNewFilm(film);
-			film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
-			assertNotNull(film);
-			id = film.getId();
-		}else {
-			id = film.getId();
-		}
-		Film filmToUpdate = filmService.findFilm(id);
+		Film film = createFilm();
+		
+		Film filmToUpdate = filmService.findFilm(film.getId());
 		assertNotNull(filmToUpdate);
 		logger.debug("filmToUpdate="+filmToUpdate.toString());
 		filmToUpdate.setTitre(FilmUtils.TITRE_FILM_UPDATED);
@@ -217,7 +227,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
-		Film filmUpdated = filmService.findFilm(id);
+		Film filmUpdated = filmService.findFilm(film.getId());
 		assertEquals(StringUtils.upperCase(FilmUtils.TITRE_FILM_UPDATED), filmUpdated.getTitre());
 	}
 	@Test

@@ -79,7 +79,17 @@ public class FilmController {
 	List<Personne> findAllPersonne() {
 		return personneService.findAllPersonne();
 	}
-	
+	@CrossOrigin
+	@PutMapping("/films/tmdb/{tmdbId}")
+	ResponseEntity<Object> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws ParseException {
+		Film filmOptional = filmService.findFilm(film.getId());
+
+		if(filmOptional==null) {
+			return ResponseEntity.notFound().build();
+		}
+		tmdbServiceClient.replaceFilm(tmdbId, filmOptional);
+		return ResponseEntity.noContent().build();
+	}
 	@CrossOrigin
 	@PutMapping("/films/{id}")
 	ResponseEntity<Object> updateFilm(@RequestBody Film film,@PathVariable Integer id) {

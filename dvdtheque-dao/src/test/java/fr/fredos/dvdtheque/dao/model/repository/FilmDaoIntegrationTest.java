@@ -29,4 +29,5 @@ public class FilmDaoIntegrationTest {
 		logger.info("films.size()="+films.size());
 	}
 	
+	
 }
