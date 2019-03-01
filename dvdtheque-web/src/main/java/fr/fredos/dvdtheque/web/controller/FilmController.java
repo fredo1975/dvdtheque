@@ -24,8 +24,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.service.FilmService;
-import fr.fredos.dvdtheque.service.PersonneService;
+import fr.fredos.dvdtheque.service.IFilmService;
+import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 @RestController
@@ -34,9 +34,9 @@ import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 public class FilmController {
 	protected Logger logger = LoggerFactory.getLogger(FilmController.class);
 	@Autowired
-	private FilmService filmService;
+	private IFilmService filmService;
 	@Autowired
-	protected PersonneService personneService;
+	protected IPersonneService personneService;
 	@Autowired
     private TmdbServiceClient tmdbServiceClient;
 	@CrossOrigin

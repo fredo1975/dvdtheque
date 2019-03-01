@@ -13,10 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.PersonneDao;
-import fr.fredos.dvdtheque.service.PersonneService;
+import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.service.dto.PersonneDto;
 @Service("personneService")
-public class PersonneServiceImpl implements PersonneService {
+public class PersonneServiceImpl implements IPersonneService {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceImpl.class);
 	public static final String CACHE_REPL_PERSONNE = "repl-personne";
 	
@@ -50,8 +50,8 @@ public class PersonneServiceImpl implements PersonneService {
 	
 	@CacheEvict(value= "personneCache", allEntries = true)
 	@Transactional(readOnly = false)
-	public void savePersonne(Personne personne) {
-		personneDao.savePersonne(personne);
+	public Integer savePersonne(Personne personne) {
+		return personneDao.savePersonne(personne);
 	}
 	
 	@CacheEvict(value= "personneCache", allEntries = true)
@@ -95,6 +95,12 @@ public class PersonneServiceImpl implements PersonneService {
 	@Override
 	public void deletePersonne(Personne p) {
 		// TODO Auto-generated method stub
-		
+	}
+	
+	@Override
+	public Personne buildPersonne(String nom) {
+		Personne personne = new Personne();
+		personne.setNom(nom);
+		return personne;
 	}
 }

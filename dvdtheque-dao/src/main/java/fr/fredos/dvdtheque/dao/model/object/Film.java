@@ -45,16 +45,17 @@ public class Film implements Serializable {
 	@JoinColumn(name = "ID_DVD")
 	@ManyToOne(cascade=CascadeType.ALL)
 	private Dvd dvd;
+	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
+    @JoinTable(name = "ACTEUR", joinColumns = @JoinColumn(name = "ID_FILM"),
+        inverseJoinColumns = @JoinColumn(name = "ID_PERSONNE"))
+	private Set<Personne> acteurs = new HashSet<>();
 	//@OneToMany(cascade=CascadeType.ALL,fetch = FetchType.LAZY,mappedBy ="realisateurFilm.film")
-	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.LAZY)
+	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
     @JoinTable(name = "REALISATEUR", joinColumns = @JoinColumn(name = "ID_FILM"),
         inverseJoinColumns = @JoinColumn(name = "ID_PERSONNE"))
 	private Set<Personne> realisateurs = new HashSet<>();
 	//@OneToMany(cascade=CascadeType.ALL,fetch = FetchType.LAZY,mappedBy ="acteurFilm.film")
-	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.LAZY)
-    @JoinTable(name = "ACTEUR", joinColumns = @JoinColumn(name = "ID_FILM"),
-        inverseJoinColumns = @JoinColumn(name = "ID_PERSONNE"))
-	private Set<Personne> acteurs = new HashSet<>();
+	
 	@Column(name = "RIPPED")
 	private boolean ripped;
 	@Column(name = "POSTER_PATH")
@@ -138,8 +139,8 @@ public class Film implements Serializable {
 	}
 	public String getPrintRealisateur() {
 		if(!CollectionUtils.isEmpty(this.realisateurs)) {
-			Personne reamisateur = this.getRealisateurs().iterator().next();
-			return reamisateur.getPrenom()+" "+reamisateur.getNom();
+			Personne realisateur = this.getRealisateurs().iterator().next();
+			return realisateur.getNom();
 		}
 		return StringUtils.EMPTY;
 	}
@@ -147,7 +148,7 @@ public class Film implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		if(!CollectionUtils.isEmpty(this.getActeurs())) {
 			for(Personne acteur : this.getActeurs()){
-				sb.append(acteur.getPrenom()+" "+acteur.getNom()+" - ");
+				sb.append(acteur.getNom()+" - ");
 			}
 		}
 		return StringUtils.removeEnd(sb.toString(), " - ");
@@ -202,7 +203,7 @@ public class Film implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "Film [logger=" + logger + ", id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
+		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
 				+ ", dvd=" + dvd + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped
 				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", realisateur=" + realisateur
 				+ ", newActeurDtoSet=" + newActeurDtoSet + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";

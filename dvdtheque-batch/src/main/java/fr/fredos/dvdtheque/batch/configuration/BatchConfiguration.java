@@ -29,8 +29,8 @@ import org.springframework.core.io.FileSystemResource;
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
 import fr.fredos.dvdtheque.batch.film.writer.FilmWriter;
-import fr.fredos.dvdtheque.service.FilmService;
-import fr.fredos.dvdtheque.service.PersonneService;
+import fr.fredos.dvdtheque.service.IFilmService;
+import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.service.dto.FilmDto;
 
 @Configuration
@@ -55,9 +55,9 @@ public class BatchConfiguration{
 	protected Tasklet cleanDBTasklet() {
 		return new Tasklet() {
 			@Autowired
-			protected PersonneService personneService;
+			protected IPersonneService personneService;
 			@Autowired
-			protected FilmService filmService;
+			protected IFilmService filmService;
 			@Override
 			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 				personneService.cleanAllPersonnes();

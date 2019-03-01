@@ -1,9 +1,12 @@
 package fr.fredos.dvdtheque.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +19,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.service.dto.FilmUtils;
 import fr.fredos.dvdtheque.service.dto.PersonneDto;
 
 @RunWith(SpringRunner.class)
@@ -24,9 +26,9 @@ import fr.fredos.dvdtheque.service.dto.PersonneDto;
 public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceTests.class);
 	@Autowired
-	protected PersonneService personneService;
+	protected IPersonneService personneService;
 	@Autowired
-	protected FilmService filmService;
+	protected IFilmService filmService;
 
 	public static final String CACHE_PERSONNE = "repl-personne";
 	public static final String CACHE_FILM = "dist-film";
@@ -35,31 +37,20 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	public final static String MAX_REALISATEUR_ID_SQL = "select max(p.id) from PERSONNE p inner join REALISATEUR r on r.ID_PERSONNE=p.ID";
 	public final static String MAX_ACTEUR_ID_SQL = "select max(p.id) from PERSONNE p inner join ACTEUR a on a.ID_PERSONNE=p.ID";
 
-	private Film createNewFilm() {
-		Integer idRealisateur = this.jdbcTemplate.queryForObject(MAX_REALISATEUR_ID_SQL, Integer.class);
-		if(idRealisateur==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
-			idRealisateur = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
-		}
-		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
-		if(idActeur1==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
-			idActeur1 = this.jdbcTemplate.queryForObject(PersonneServiceTests.MAX_PERSONNE_ID_SQL, Integer.class);
-		}
-		filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM,2015,idRealisateur,idActeur1,null,null));
-		Film film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
+	private void assertFilmIsNotNull(Film film) {
 		assertNotNull(film);
-		return film;
+		assertNotNull(film.getId());
+		assertNotNull(film.getTitre());
+		assertNotNull(film.getAnnee());
+		assertNotNull(film.getDvd());
+		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
+		assertTrue(film.getActeurs().size()==3);
+		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
+		assertTrue(film.getRealisateurs().size()==1);
 	}
 	@Test
 	public void getPersonneVersusLoadPersonne() throws Exception {
-		Integer id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
-		if(id==null) {
-			// insert a personne first
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
-			
-			id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
-		}
+		Integer id = personneService.savePersonne(personneService.buildPersonne(FilmServiceTests.ACT1_NOM));
 		Personne personneByLoad = personneService.loadPersonne(id);
 		assertNotNull(personneByLoad);
 		logger.debug("personneByLoad=" + personneByLoad.toString());
@@ -67,40 +58,45 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 
 	@Test
 	public void findPersonne() throws Exception {
-		Integer id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
-		if(id==null) {
-			// insert a personne first
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
-			id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
-		}
+		Integer id = personneService.savePersonne(personneService.buildPersonne(FilmServiceTests.ACT1_NOM));
 		Personne personne = personneService.findByPersonneId(id);
 		assertNotNull(personne);
-		
 	}
 
 	@Test
 	public void findAllRealisateurs() {
-		Film film = createNewFilm();
-		assertNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(FilmServiceTests.TITRE_FILM, 
+				FilmServiceTests.ANNEE,
+				FilmServiceTests.REAL_NOM,
+				FilmServiceTests.ACT1_NOM,
+				FilmServiceTests.ACT2_NOM,
+				FilmServiceTests.ACT3_NOM);
+		assertFilmIsNotNull(film);
 		List<Personne> realList = personneService.findAllRealisateur();
 		assertNotNull(realList);
 	}
 	@Test
 	public void findAllActeurs() {
-		Film film = createNewFilm();
-		assertNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(FilmServiceTests.TITRE_FILM, 
+				FilmServiceTests.ANNEE,
+				FilmServiceTests.REAL_NOM,
+				FilmServiceTests.ACT1_NOM,
+				FilmServiceTests.ACT2_NOM,
+				FilmServiceTests.ACT3_NOM);
+		assertFilmIsNotNull(film);
 		List<Personne> actList = personneService.findAllActeur();
 		assertNotNull(actList);
 	}
 	@Test
 	public void findRealisateurByFilm() throws Exception {
-		Integer id = this.jdbcTemplate.queryForObject(MAX_FILM_ID_SQL, Integer.class);
-		if(id==null) {
-			Film film = createNewFilm();
-			assertNotNull(film);
-			id = film.getId();
-		}
-		Film film = filmService.findFilm(id);
+		Film film = filmService.createOrRetrieveFilm(FilmServiceTests.TITRE_FILM, 
+				FilmServiceTests.ANNEE,
+				FilmServiceTests.REAL_NOM,
+				FilmServiceTests.ACT1_NOM,
+				FilmServiceTests.ACT2_NOM,
+				FilmServiceTests.ACT3_NOM);
+		assertFilmIsNotNull(film);
+		film = filmService.findFilm(film.getId());
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
 		Personne real = personneService.findRealisateurByFilm(film);
@@ -120,32 +116,33 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	@Test
 	public void findPersonneByFullName() throws Exception {
 		// insert a personne first
-		personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
-		Personne personne = personneService.findPersonneByFullName(FilmUtils.ACT1_NOM);
+		Integer id = personneService.savePersonne(personneService.buildPersonne(FilmServiceTests.ACT1_NOM));
+		Personne personne = personneService.findPersonneByFullName(FilmServiceTests.ACT1_NOM);
 		assertNotNull(personne);
 	}
 
 	
 	@Test
 	public void findAllPersonneByFilm() throws Exception {
-		Integer id = this.jdbcTemplate.queryForObject(MAX_FILM_ID_SQL, Integer.class);
-		if(id==null) {
-			Film film = createNewFilm();
-			assertNotNull(film);
-			id = film.getId();
-		}
-		Film film = filmService.findFilm(id);
-		assertNotNull(film);
-		assertNotNull(film.getTitre());
-		
+		Film film = filmService.createOrRetrieveFilm(FilmServiceTests.TITRE_FILM, 
+				FilmServiceTests.ANNEE,
+				FilmServiceTests.REAL_NOM,
+				FilmServiceTests.ACT1_NOM,
+				FilmServiceTests.ACT2_NOM,
+				FilmServiceTests.ACT3_NOM);
+		assertFilmIsNotNull(film);
+		film = filmService.findFilm(film.getId());
+		assertFilmIsNotNull(film);
 	}
 
 	
 	@Test
 	public void savePersonne() throws Exception {
-		Personne personne = FilmUtils.buildPersonne(FilmUtils.ACT1_NOM);
-		personneService.savePersonne(personne);
-		personne = personneService.findPersonneByFullName(FilmUtils.ACT1_NOM);
+		Personne personne = personneService.buildPersonne(FilmServiceTests.ACT1_NOM);
+		Integer id = personneService.savePersonne(personne);
+		assertNotNull(id);
+		personne.setId(id);
+		personne = personneService.findPersonneByFullName(FilmServiceTests.ACT1_NOM);
 		assertNotNull(personne);
 	}
 
@@ -153,16 +150,15 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	public void updatePersonne() throws Exception {
 		String methodName = "updatePersonne : ";
 		logger.debug(methodName + "start");
-		Integer id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
-		if(id==null) {
-			// insert a personne first
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
-			id = this.jdbcTemplate.queryForObject(MAX_PERSONNE_ID_SQL, Integer.class);
-		}
+		Personne personne = personneService.buildPersonne(FilmServiceTests.ACT1_NOM);
+		Integer id = personneService.savePersonne(personne);
+		assertNotNull(id);
+		personne.setId(id);
 		Personne personneByLoad = personneService.loadPersonne(id);
 		assertNotNull(personneByLoad);
-		personneByLoad.setNom("elmafioso33");
+		personneByLoad.setNom(FilmServiceTests.ACT2_NOM);
 		personneService.updatePersonne(personneByLoad);
+		assertEquals(FilmServiceTests.ACT2_NOM, personneByLoad.getNom());
 	}
 
 	@Test

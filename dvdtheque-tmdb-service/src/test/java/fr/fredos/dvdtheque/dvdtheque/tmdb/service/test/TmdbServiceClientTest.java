@@ -17,9 +17,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.service.FilmService;
-import fr.fredos.dvdtheque.service.PersonneService;
-import fr.fredos.dvdtheque.service.dto.FilmUtils;
+import fr.fredos.dvdtheque.service.IFilmService;
+import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
 import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
 import fr.fredos.dvdtheque.tmdb.model.Results;
@@ -32,31 +31,37 @@ import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
 public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(TmdbServiceClientTest.class);
+	public static final String TITRE_FILM = "broadway";
+	public static final String TITRE_FILM_UPDATED = "Lorem Ipsum updated";
+	public static final Integer ANNEE = 2015;
+	public static final String REAL_NOM = "toto titi";
+	public static final String REAL_NOM1 = "Dan VanHarp";
+	public static final String ACT1_NOM = "tata tutu";
+	public static final String ACT2_NOM = "toitoi tuitui";
+	public static final String ACT3_NOM = "tuotuo tmitmi";
+	public static final String ACT4_NOM = "Graham Collins";
 	@Autowired
     private TmdbServiceClient client;
 	private String titre= "broadway";
 	private String titreTmdb= "2001";
 	private Long tmdbId= new Long(4780);
     @Autowired
-	protected FilmService filmService;
+	protected IFilmService filmService;
     @Autowired
-	protected PersonneService personneService;
-    private Film createNewFilm() {
-		Integer idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_REALISATEUR_ID_SQL, Integer.class);
-		if(idRealisateur==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT1_NOM));
-			idRealisateur = this.jdbcTemplate.queryForObject(FilmUtils.MAX_PERSONNE_ID_SQL, Integer.class);
-		}
-		Integer idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_ACTEUR_ID_SQL, Integer.class);
-		if(idActeur1==null) {
-			personneService.savePersonne(FilmUtils.buildPersonne(FilmUtils.ACT2_NOM));
-			idActeur1 = this.jdbcTemplate.queryForObject(FilmUtils.MAX_PERSONNE_ID_SQL, Integer.class);
-		}
-		filmService.saveNewFilm(FilmUtils.buildFilm(titre,2012,idRealisateur,idActeur1,null,null));
-		Film film = filmService.findFilmByTitre(titre);
+	protected IPersonneService personneService;
+    
+    private void assertFilmIsNotNull(Film film) {
 		assertNotNull(film);
-		return film;
+		assertNotNull(film.getId());
+		assertNotNull(film.getTitre());
+		assertNotNull(film.getAnnee());
+		assertNotNull(film.getDvd());
+		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
+		assertTrue(film.getActeurs().size()>=3);
+		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
+		assertTrue(film.getRealisateurs().size()==1);
 	}
+    
     private Results getResultsByFilmTitre(Film film) {
     	SearchResults searchResults = client.retrieveTmdbSearchResults(film.getTitre());
 		assertNotNull(searchResults);
@@ -65,10 +70,9 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void retrieveTmdbResultsTest() {
-		Film film = createNewFilm();
-		//Film film = filmService.findFilmByTitre(titre);
-		assertNotNull(film);
-		assertNotNull(film.getTitre());
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		
 		Results res = getResultsByFilmTitre(film);
 		assertNotNull(res);
 		logger.info("tmdb id = "+res.getId().toString());
@@ -81,10 +85,11 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void replaceFilmTest() throws ParseException {
-		Film film = createNewFilm();
-		assertNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		
 		film = client.replaceFilm(tmdbId, film);
-		assertNotNull(film);
+		assertFilmIsNotNull(film);
 		logger.info("film = "+film.toString());
     }
 	@Test
@@ -98,8 +103,9 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void retrieveTmdbPosterPathTest() {
-		Film film = createNewFilm();
-		//Film film = filmService.findFilmByTitre(titre);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
 		Results res = getResultsByFilmTitre(film);
@@ -113,8 +119,9 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void retrieveTmdbCreditsTest() {
-		Film film = createNewFilm();
-		//Film film = filmService.findFilmByTitre(titre);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
 		Results res = getResultsByFilmTitre(film);

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.model.SearchResults;
@@ -25,7 +25,7 @@ import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 public class TheMovieDbTasklet implements Tasklet{
 	protected Logger logger = LoggerFactory.getLogger(TheMovieDbTasklet.class);
 	@Autowired
-	protected FilmService filmService;
+	protected IFilmService filmService;
 	@Autowired
     Environment environment;
 	@Autowired

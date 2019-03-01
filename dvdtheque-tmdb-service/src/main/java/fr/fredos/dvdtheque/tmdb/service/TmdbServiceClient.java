@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.tmdb.model.Cast;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
 import fr.fredos.dvdtheque.tmdb.model.Crew;
@@ -35,7 +35,7 @@ public class TmdbServiceClient {
 	@Autowired
     Environment environment;
 	@Autowired
-	protected FilmService filmService;
+	protected IFilmService filmService;
 	private final RestTemplate restTemplate;
 	private static String TMDB_SEARCH_MOVIE_QUERY="themoviedb.search.movie.query";
 	private static String TMDB_API_KEY="themoviedb.api.key";
@@ -78,22 +78,23 @@ public class TmdbServiceClient {
 	}
 	private Film transformTmdbFilmToDvdThequeFilm(Film film,
 			final Results results,final Set<Long> tmdbFilmAlreadyInDvdthequeSet) throws ParseException {
+		Film transformedfilm = new Film();
+		if(film != null && film.getId() != null) {
+			transformedfilm.setId(film.getId());
+		}
 		if(film == null) {
-			film = new Film();
-			film.setId(Integer.valueOf(results.getId().toString()));
-			if(tmdbFilmAlreadyInDvdthequeSet.contains(results.getId())) {
-				film.setAlreadyInDvdtheque(true);
-			}
+			transformedfilm.setId(Integer.valueOf(results.getId().toString()));
 		}
-		film.setTitre(results.getTitle());
-		film.setTitreO(results.getOriginal_title());
+		if(tmdbFilmAlreadyInDvdthequeSet.contains(results.getId())) {
+			transformedfilm.setAlreadyInDvdtheque(true);
+		}
+		transformedfilm.setTitre(results.getTitle());
+		transformedfilm.setTitreO(results.getOriginal_title());
+		if(film != null && film.getDvd() != null) {
+			transformedfilm.setDvd(film.getDvd());
+		}
 		if(StringUtils.isNotEmpty(results.getRelease_date())) {
-			film.setAnnee(retrieveYearFromReleaseDate(results.getRelease_date()));
-		}
-		ImagesResults imagesResults = retrieveTmdbImagesResults(results.getId());
-		if(CollectionUtils.isNotEmpty(imagesResults.getPosters())) {
-			String imageUrl = retrieveTmdbFrPosterPathUrl(imagesResults);
-			film.setPosterPath(imageUrl);
+			transformedfilm.setAnnee(retrieveYearFromReleaseDate(results.getRelease_date()));
 		}
 		try {
 			Thread.sleep(400);
@@ -101,7 +102,18 @@ public class TmdbServiceClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		film.setTmdbId(results.getId());
+		ImagesResults imagesResults = retrieveTmdbImagesResults(results.getId());
+		if(CollectionUtils.isNotEmpty(imagesResults.getPosters())) {
+			String imageUrl = retrieveTmdbFrPosterPathUrl(imagesResults);
+			transformedfilm.setPosterPath(imageUrl);
+		}
+		try {
+			Thread.sleep(400);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		transformedfilm.setTmdbId(results.getId());
 		Credits credits = retrieveTmdbCredits(results.getId());
 		if(CollectionUtils.isNotEmpty(credits.getCast())) {
 			int i=0;
@@ -109,7 +121,7 @@ public class TmdbServiceClient {
 				Personne personne = new Personne();
 				personne.setId(Integer.valueOf(cast.getCast_id()));
 				personne.setNom(StringUtils.upperCase(cast.getName()));
-				film.getActeurs().add(personne);
+				transformedfilm.getActeurs().add(personne);
 				if(i++==NB_ACTEURS) {
 					break;
 				}
@@ -118,9 +130,9 @@ public class TmdbServiceClient {
 		if(CollectionUtils.isNotEmpty(credits.getCrew())) {
 			Personne realisateur = new Personne();
 			realisateur.setNom(StringUtils.upperCase(retrieveTmdbDirector(credits)));
-			film.getRealisateurs().add(realisateur);
+			transformedfilm.getRealisateurs().add(realisateur);
 		}
-		return film;
+		return transformedfilm;
 	}
 	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{
 		SearchResults searchResults = retrieveTmdbSearchResults(titre);
@@ -173,7 +185,7 @@ public class TmdbServiceClient {
 	
 	public ImagesResults retrieveTmdbImagesResults(final Long idFilm) {
 		try {
-			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_IMAGES_QUERY)+idFilm+"?api_key="+environment.getRequiredProperty(TMDB_API_KEY), ImagesResults.class);
+			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_IMAGES_QUERY)+idFilm+"/images?api_key="+environment.getRequiredProperty(TMDB_API_KEY), ImagesResults.class);
 		} catch (RestClientException e) {
 			throw e;
 		}

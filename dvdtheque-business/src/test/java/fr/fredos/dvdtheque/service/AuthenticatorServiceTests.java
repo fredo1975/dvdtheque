@@ -26,7 +26,7 @@ public class AuthenticatorServiceTests extends
 	protected AuthenticatorDao authenticatorDao;
 	
 	@Autowired
-	protected AuthenticatorService authenticatorService;
+	protected IAuthenticatorService authenticatorService;
 	
 	@Test
 	public void tryAuthenticatorSuccessLogin() throws Exception{

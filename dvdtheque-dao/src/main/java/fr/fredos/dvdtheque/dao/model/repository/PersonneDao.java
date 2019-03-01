@@ -18,7 +18,7 @@ public interface PersonneDao {
 	public Personne findPersonneByFullName(String nom);
 	public Personne findPersonneByName(String nom);
     public List<Personne> findAllPersonneByFilm(Film film);
-	public void savePersonne(Personne p);
+	public Integer savePersonne(Personne p);
 	public void updatePersonne(Personne p);
 	public void deletePersonne(Personne p);
 	public void cleanAllPersons();

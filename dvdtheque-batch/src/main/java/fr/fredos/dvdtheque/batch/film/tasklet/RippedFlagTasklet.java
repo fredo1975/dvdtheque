@@ -18,13 +18,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.IFilmService;
 @Component(value="rippedFlagTasklet")
 public class RippedFlagTasklet implements Tasklet{
 	protected Logger logger = LoggerFactory.getLogger(RippedFlagTasklet.class);
 	private static String LISTE_DVD_FILE_PATH="dvd.file.path";
 	@Autowired
-	protected FilmService filmService;
+	protected IFilmService filmService;
 	@Autowired
     Environment environment;
 	

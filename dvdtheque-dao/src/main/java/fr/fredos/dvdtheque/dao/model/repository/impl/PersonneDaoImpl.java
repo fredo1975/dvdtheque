@@ -118,8 +118,10 @@ public class PersonneDaoImpl implements PersonneDao{
 		persList.addAll(f.getRealisateurs());
         return persList;
     }
-	public void savePersonne(Personne p){
+	public Integer savePersonne(Personne p){
 		this.em.persist(p);
+		this.em.flush();
+		return p.getId();
 	}
 	
 	public void updatePersonne(Personne p){
