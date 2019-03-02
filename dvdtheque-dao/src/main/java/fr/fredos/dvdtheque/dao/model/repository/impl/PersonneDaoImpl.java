@@ -63,7 +63,7 @@ public class PersonneDaoImpl implements PersonneDao{
 		return l;
 	}
     public List<Personne> findAllPersonne() {
-		Query q = this.em.createQuery("from Personne personne order by personne.prenom,personne.nom ASC");
+		Query q = this.em.createQuery("from Personne personne order by personne.nom ASC");
 		return q.getResultList();
     }
 	

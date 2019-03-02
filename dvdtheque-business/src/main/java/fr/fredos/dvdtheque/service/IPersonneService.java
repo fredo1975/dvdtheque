@@ -19,6 +19,6 @@ public interface IPersonneService {
 	public void cleanAllPersonnes();
 	public List<Personne> findAllRealisateur();
 	public List<Personne> findAllActeur();
-	
+	public Personne createOrRetrievePersonne(String nom);
 	public Personne buildPersonne(String nom);
 }

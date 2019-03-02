@@ -103,4 +103,15 @@ public class PersonneServiceImpl implements IPersonneService {
 		personne.setNom(nom);
 		return personne;
 	}
+	
+	@Override
+	public Personne createOrRetrievePersonne(String nom) {
+		Personne p = findPersonneByFullName(nom);
+		if(p == null) {
+			p = buildPersonne(nom);
+			Integer id = savePersonne(p);
+			p.setId(id);
+		}
+		return p;
+	}
 }

@@ -198,7 +198,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.put(UPDATE_TMDB_FILM_BY_TMDBID+tmdbId,film)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
-		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Is.is(film.getId())));;
 		Film filmUpdated = filmService.findFilm(film.getId());
 		Results results = client.retrieveTmdbSearchResultsById(tmdbId);
 		assertEquals(StringUtils.upperCase(results.getTitle()), filmUpdated.getTitre());

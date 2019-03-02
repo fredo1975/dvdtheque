@@ -97,7 +97,7 @@ public class FilmServiceImpl implements IFilmService {
 		if(!CollectionUtils.isEmpty(film.getRealisateurs())) {
 			Set<Personne> realisateurs = new HashSet<>();
 			for(Personne realisateur : film.getRealisateurs()) {
-				realisateurs.add(personneService.findPersonneByFullName(realisateur.getNom()));
+				realisateurs.add(personneService.createOrRetrievePersonne(realisateur.getNom()));
 			}
 			film.getRealisateurs().clear();
 			film.setRealisateurs(realisateurs);
@@ -115,13 +115,14 @@ public class FilmServiceImpl implements IFilmService {
 		if(!CollectionUtils.isEmpty(film.getActeurs())) {
 			Set<Personne> acteurs = new HashSet<>();
 			for(Personne acteur : film.getActeurs()) {
-				acteurs.add(personneService.findPersonneByFullName(acteur.getNom()));
+				acteurs.add(personneService.createOrRetrievePersonne(acteur.getNom()));
 			}
 			film.getActeurs().clear();
 			film.setActeurs(acteurs);
 		}
 		//handleNewActeurDtoSet(film);
 	}
+	
 	private void upperCaseTitre(Film film) {
 		final String titre = StringUtils.upperCase(film.getTitre());
 		film.setTitre(titre);

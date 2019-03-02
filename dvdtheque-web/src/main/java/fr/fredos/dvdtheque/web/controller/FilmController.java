@@ -81,14 +81,14 @@ public class FilmController {
 	}
 	@CrossOrigin
 	@PutMapping("/films/tmdb/{tmdbId}")
-	ResponseEntity<Object> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws ParseException {
+	ResponseEntity<Film> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws ParseException {
 		Film filmOptional = filmService.findFilm(film.getId());
 
 		if(filmOptional==null) {
 			return ResponseEntity.notFound().build();
 		}
-		tmdbServiceClient.replaceFilm(tmdbId, filmOptional);
-		return ResponseEntity.noContent().build();
+		Film replacedFilm = tmdbServiceClient.replaceFilm(tmdbId, filmOptional);
+		return ResponseEntity.ok(replacedFilm);
 	}
 	@CrossOrigin
 	@PutMapping("/films/{id}")
