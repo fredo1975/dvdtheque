@@ -92,13 +92,6 @@ public class Personne implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "id="+id+" prenom="+prenom+" nom="+nom;
-	}
-	
-	public static final Personne buildPersonneFromNewActeurDto(NewActeurDto newActeurDto) {
-		Personne p = new Personne();
-		p.setNom(StringUtils.upperCase(newActeurDto.getNom()));
-		p.setPrenom(StringUtils.upperCase(newActeurDto.getPrenom()));
-		return p;
+		return "id="+id+" nom="+nom;
 	}
 }

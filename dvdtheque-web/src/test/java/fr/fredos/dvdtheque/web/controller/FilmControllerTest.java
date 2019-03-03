@@ -259,7 +259,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public void testFindPersonne() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
-		Personne personne = personneService.findPersonneByFullName(REAL_NOM);
+		Personne personne = personneService.findPersonneByName(REAL_NOM);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
 				.get(SEARCH_PERSONNE_URI)
 				.param("nom", personne.getNom())
@@ -274,7 +274,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
 		
-		Personne personne = personneService.findPersonneByFullName(ACT1_NOM);
+		Personne personne = personneService.findPersonneByName(ACT1_NOM);
 		assertNotNull(personne);
 		personne.setNom(ACT2_NOM);
 		ObjectMapper mapper = new ObjectMapper();

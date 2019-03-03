@@ -79,20 +79,6 @@ public class PersonneDaoImpl implements PersonneDao{
         return query.getResultList();
     }
 	
-	
-	public Personne findPersonneByFullName(String nom) {
-		StringBuilder sb = new StringBuilder("from Personne personne where personne.nom=:nom");
-        Query query = this.em.createQuery(sb.toString());
-        query.setParameter("nom", nom);
-        Personne p = null;
-        try {
-        	p = (Personne) query.getSingleResult();
-        }catch(NoResultException nre) {
-        	logger.error(nre.getMessage());
-        }
-        return p;
-    }
-	
 	public Personne findPersonneByName(String nom) {
 		StringBuilder sb = new StringBuilder("from Personne personne where personne.nom=:nom ");
         Query query = this.em.createQuery(sb.toString());
@@ -101,7 +87,7 @@ public class PersonneDaoImpl implements PersonneDao{
         try {
         	p = (Personne) query.getSingleResult();
         }catch(NoResultException nre) {
-        	logger.error(nre.getMessage());
+        	logger.debug("personne name="+nom+" not found");
         }
         return p;
     }

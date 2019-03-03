@@ -13,8 +13,8 @@
         </encoder>
     </appender>
 
-    <!--<logger name="org.hibernate" level="debug"/> -->
-    <logger name="fr.fredos.dvdtheque" level="info"/>
+    <logger name="org.hibernate" level="debug"/>
+    <logger name="fr.fredos.dvdtheque" level="debug"/>
 
     <root level="info">
         <appender-ref ref="console"/>

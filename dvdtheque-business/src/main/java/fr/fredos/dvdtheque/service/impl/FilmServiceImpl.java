@@ -65,21 +65,15 @@ public class FilmServiceImpl implements IFilmService {
 	}
 	@Transactional(readOnly = true,noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })
 	public Film findFilmByTitre(String titre){
-		Film film = filmDao.findFilmByTitre(titre);
-		setRealisateur(film);
-		return film;
+		return filmDao.findFilmByTitre(titre);
 	}
 	@Transactional(readOnly = true)
 	public Film findFilmWithAllObjectGraph(Integer id)  {
-		Film film = filmDao.findFilmWithAllObjectGraph(id);
-		setRealisateur(film);
-		return film;
+		return filmDao.findFilmWithAllObjectGraph(id);
 	}
 	@Transactional(readOnly = true)
 	public Film findFilm(Integer id) {
-		Film f = filmDao.findFilm(id);
-		setRealisateur(f);
-		return f;
+		return filmDao.findFilm(id);
 	}
 	@CacheEvict(value= "filmCache", allEntries = true)
 	@Transactional(readOnly = false)
@@ -134,7 +128,7 @@ public class FilmServiceImpl implements IFilmService {
 	public Integer saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
 		handleActeurs(film);
-		handleRealisateur(film);
+		handleRealisateurs(film);
 		upperCaseTitre(film);
 		return filmDao.saveNewFilm(film);
 	}
@@ -144,23 +138,11 @@ public class FilmServiceImpl implements IFilmService {
 		film.getRealisateurs().clear();
 		film.getRealisateurs().add(personneService.getPersonne(realisateurs.iterator().next().getId()));
 	}
-	/**
-	 * 
-	 * @param film
-	 */
-	private void setRealisateur(Film film) {
-		if(film.getRealisateurs()!=null && !CollectionUtils.isEmpty(film.getRealisateurs())) {
-			film.setRealisateur(film.getRealisateurs().iterator().next());
-		}
-	}
+	
 	@Transactional(readOnly = false)
 	@Cacheable(value= "filmCache")
 	public List<Film> findAllFilms() {
-		List<Film> l = filmDao.findAllFilms();
-		for(Film f : l) {
-			setRealisateur(f);
-		}
-		return l;
+		return filmDao.findAllFilms();
 	}
 	@CacheEvict(value= "filmCache", allEntries = true)
 	@Transactional(readOnly = false)
@@ -169,18 +151,11 @@ public class FilmServiceImpl implements IFilmService {
 	}
 	@Transactional(readOnly = true)
 	public List<Film> getAllRippedFilms(){
-		List<Film> filmList = filmDao.getAllRippedFilms();
-		for(Film f : filmList) {
-			setRealisateur(f);
-		}
-		return filmList;
+		return filmDao.getAllRippedFilms();
 	}
 	@Override
 	public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {
 		List<Film> filmList = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
-		for(Film f : filmList) {
-			setRealisateur(f);
-		}
 		filmList.sort(Comparator.comparing(Film::getPrintRealisateur).thenComparing(Film::getTitre));
 		return filmList;
 	}
@@ -190,24 +165,6 @@ public class FilmServiceImpl implements IFilmService {
 		film = filmDao.findFilm(film.getId());
 		filmDao.removeFilm(film);
 	}
-	/**
-	 * film could contains new acteurs not persisted yet
-	 * @param film
-	 */
-	private void handleNewActeurDtoSet(Film film) {
-		if(!CollectionUtils.isEmpty(film.getNewActeurDtoSet())) {
-			film.getNewActeurDtoSet().forEach(newActeurDto->{
-				final String nom = StringUtils.upperCase(newActeurDto.getNom());
-				Personne p = personneService.findPersonneByFullName(nom);
-				if(p==null) {
-					p = Personne.buildPersonneFromNewActeurDto(newActeurDto);
-					personneService.savePersonne(p);
-					film.getActeurs().add(p);
-				}
-			});
-		}
-	}
-	
 	public static void saveImage(String imageUrl, String destinationFile) throws IOException {
 	    URL url = new URL(imageUrl);
 	    InputStream is = url.openStream();

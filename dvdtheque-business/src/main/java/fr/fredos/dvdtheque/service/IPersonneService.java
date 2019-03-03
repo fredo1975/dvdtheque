@@ -12,7 +12,6 @@ public interface IPersonneService {
 	public Integer savePersonne(Personne personne);
 	public void updatePersonne(Personne p);
 	public void deletePersonne(Personne p);
-	public Personne findPersonneByFullName(String nom);
 	public Personne findPersonneByName(String nom);
 	public Personne getPersonne(Integer id);
 	public Personne loadPersonne(Integer id);

@@ -20,11 +20,10 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.WhereJoinTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
-
-import fr.fredos.dvdtheque.common.dto.NewActeurDto;
 
 @Entity
 @Table(name = "FILM")
@@ -45,16 +44,18 @@ public class Film implements Serializable {
 	@JoinColumn(name = "ID_DVD")
 	@ManyToOne(cascade=CascadeType.ALL)
 	private Dvd dvd;
+	
+	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
+    @JoinTable(name = "REALISATEUR", joinColumns = {@JoinColumn(name = "ID_FILM", referencedColumnName="ID")},
+        inverseJoinColumns = {@JoinColumn(name = "ID_PERSONNE", referencedColumnName="ID")})
+	//@WhereJoinTable(clause="mapping_type=2")
+	private Set<Personne> realisateurs = new HashSet<>();
+	
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
     @JoinTable(name = "ACTEUR", joinColumns = @JoinColumn(name = "ID_FILM"),
         inverseJoinColumns = @JoinColumn(name = "ID_PERSONNE"))
+	//@WhereJoinTable(clause="mapping_type=1")
 	private Set<Personne> acteurs = new HashSet<>();
-	//@OneToMany(cascade=CascadeType.ALL,fetch = FetchType.LAZY,mappedBy ="realisateurFilm.film")
-	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
-    @JoinTable(name = "REALISATEUR", joinColumns = @JoinColumn(name = "ID_FILM"),
-        inverseJoinColumns = @JoinColumn(name = "ID_PERSONNE"))
-	private Set<Personne> realisateurs = new HashSet<>();
-	//@OneToMany(cascade=CascadeType.ALL,fetch = FetchType.LAZY,mappedBy ="acteurFilm.film")
 	
 	@Column(name = "RIPPED")
 	private boolean ripped;
@@ -62,10 +63,7 @@ public class Film implements Serializable {
 	private String posterPath;
 	@Column(name = "TMDB_ID")
 	private Long tmdbId;
-	@Transient
-	private Personne realisateur;
-	@Transient
-	Set<NewActeurDto> newActeurDtoSet;
+	
 	@Transient
 	private boolean alreadyInDvdtheque;
 	
@@ -113,27 +111,23 @@ public class Film implements Serializable {
 	public void setDvd(Dvd dvd) {
 		this.dvd = dvd;
 	}
-	public Set<Personne> getActeurs() {
-		return acteurs;
-	}
-	public void setActeurs(Set<Personne> acteurs) {
-		this.acteurs = acteurs;
-	}
 	public Set<Personne> getRealisateurs() {
 		return realisateurs;
 	}
 	public void setRealisateurs(Set<Personne> realisateurs) {
 		this.realisateurs = realisateurs;
 	}
+	public Set<Personne> getActeurs() {
+		return acteurs;
+	}
+	public void setActeurs(Set<Personne> acteurs) {
+		this.acteurs = acteurs;
+	}
+	
 	public boolean isRipped() {
 		return ripped;
 	}
-	public Personne getRealisateur() {
-		return realisateur;
-	}
-	public void setRealisateur(Personne realisateur) {
-		this.realisateur = realisateur;
-	}
+	
 	public void setRipped(boolean ripped) {
 		this.ripped = ripped;
 	}
@@ -154,12 +148,6 @@ public class Film implements Serializable {
 		return StringUtils.removeEnd(sb.toString(), " - ");
 	}
 	
-	public Set<NewActeurDto> getNewActeurDtoSet() {
-		return newActeurDtoSet;
-	}
-	public void setNewActeurDtoSet(Set<NewActeurDto> newActeurDtoSet) {
-		this.newActeurDtoSet = newActeurDtoSet;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -204,8 +192,9 @@ public class Film implements Serializable {
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
-				+ ", dvd=" + dvd + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped
-				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", realisateur=" + realisateur
-				+ ", newActeurDtoSet=" + newActeurDtoSet + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
+				+ ", dvd=" + dvd + ", acteurs=" + acteurs + ", realisateurs=" + realisateurs + ", ripped=" + ripped
+				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", alreadyInDvdtheque=" + alreadyInDvdtheque
+				+ "]";
 	}
+	
 }

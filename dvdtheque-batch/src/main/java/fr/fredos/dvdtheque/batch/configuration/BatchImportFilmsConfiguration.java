@@ -11,18 +11,12 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
-import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
-import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-import org.springframework.batch.item.file.transform.FieldExtractor;
-import org.springframework.batch.item.file.transform.LineAggregator;
 import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +29,14 @@ import org.springframework.core.io.FileSystemResource;
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
 import fr.fredos.dvdtheque.batch.film.writer.FilmWriter;
+import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
-import fr.fredos.dvdtheque.service.dto.FilmDto;
 
 @Configuration
 @EnableBatchProcessing
-public class BatchConfiguration{
-	protected Logger logger = LoggerFactory.getLogger(BatchConfiguration.class);
+public class BatchImportFilmsConfiguration{
+	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
 	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name";
 	@Autowired
     public JobBuilderFactory jobBuilderFactory;
@@ -51,9 +45,6 @@ public class BatchConfiguration{
     @Autowired
     @Qualifier("rippedFlagTasklet")
     public Tasklet rippedFlagTasklet;
-    @Autowired
-    @Qualifier("theMovieDbTasklet")
-    public Tasklet theMovieDbTasklet;
     @Autowired
     Environment environment;
     String[] headerTab = new String[]{"realisateur", "titre", "zonedvd","annee","acteurs"};
@@ -81,25 +72,23 @@ public class BatchConfiguration{
     
 	@Bean
 	public Job importFilmsJob() {
-		return jobBuilderFactory.get("importFilms").incrementer(new RunIdIncrementer()).start(cleanDB())
-				.next(checkFilmStep()).next(setRippedFlag()).build();
+		return jobBuilderFactory.get("importFilms").incrementer(new RunIdIncrementer()).start(cleanDBStep())
+				.next(importFilmsStep()).next(setRippedFlagStep()).build();
 	}
+	/*
 	@Bean
 	public Job exportFilmsJob() {
 		return jobBuilderFactory.get("exportFilms").incrementer(new RunIdIncrementer()).start(cleanDB())
 				.next(checkFilmStep()).next(setRippedFlag()).build();
-	}
-	@Bean
-    protected Step theMovieDb() {
-    	return stepBuilderFactory.get("theMovieDb").tasklet(theMovieDbTasklet).build();
+	}*/
+	
+    @Bean
+    protected Step cleanDBStep() {
+    	return stepBuilderFactory.get("cleanDBStep").tasklet(cleanDBTasklet()).build();
     }
     @Bean
-    protected Step cleanDB() {
-    	return stepBuilderFactory.get("cleanDB").tasklet(cleanDBTasklet()).build();
-    }
-    @Bean
-    protected Step setRippedFlag() {
-    	return stepBuilderFactory.get("setRippedFlag").tasklet(rippedFlagTasklet).build();
+    protected Step setRippedFlagStep() {
+    	return stepBuilderFactory.get("rippedFlagStep").tasklet(rippedFlagTasklet).build();
     }
     /*
     @Bean
@@ -173,9 +162,9 @@ public class BatchConfiguration{
     	return new FilmWriter();
     }
     @Bean
-    protected Step checkFilmStep() {
-        return stepBuilderFactory.get("checkFilm")
-                .<FilmCsvImportFormat, FilmDto>chunk(500)
+    protected Step importFilmsStep() {
+        return stepBuilderFactory.get("importFilmsStep")
+                .<FilmCsvImportFormat, Film>chunk(500)
                 .reader(reader())
                 .processor(filmProcessor())
                 .writer(filmWriter())

@@ -71,10 +71,7 @@ public class PersonneServiceImpl implements IPersonneService {
 		personneDao.deletePersonne(p);
 		logger.debug(methodName + "end");
 	}
-	@Transactional(readOnly = true)
-	public Personne findPersonneByFullName(String nom){
-		return personneDao.findPersonneByFullName(nom);
-	}
+	
 	@Transactional(readOnly = true)
 	public Personne findPersonneByName(String nom){
 		return personneDao.findPersonneByName(nom);
@@ -106,7 +103,7 @@ public class PersonneServiceImpl implements IPersonneService {
 	
 	@Override
 	public Personne createOrRetrievePersonne(String nom) {
-		Personne p = findPersonneByFullName(nom);
+		Personne p = findPersonneByName(nom);
 		if(p == null) {
 			p = buildPersonne(nom);
 			Integer id = savePersonne(p);

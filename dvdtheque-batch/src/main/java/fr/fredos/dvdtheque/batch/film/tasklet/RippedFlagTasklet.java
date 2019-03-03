@@ -36,6 +36,7 @@ public class RippedFlagTasklet implements Tasklet{
 		File dir = directory.getFile();
 		Assert.notNull(directory, "directory must be set");
 
+		/*
         File[] files = dir.listFiles();
         for (int i = 0; i < files.length; i++) {
         	String name = files[i].getName();
@@ -51,7 +52,7 @@ public class RippedFlagTasklet implements Tasklet{
         			//logger.error(titre+" not found");
         		}
         	}
-        }
+        }*/
 		return RepeatStatus.FINISHED;
 	}
 	

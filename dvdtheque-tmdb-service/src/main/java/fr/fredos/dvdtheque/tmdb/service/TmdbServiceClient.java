@@ -128,9 +128,12 @@ public class TmdbServiceClient {
 			}
 		}
 		if(CollectionUtils.isNotEmpty(credits.getCrew())) {
-			Personne realisateur = new Personne();
-			realisateur.setNom(StringUtils.upperCase(retrieveTmdbDirector(credits)));
-			transformedfilm.getRealisateurs().add(realisateur);
+			List<Crew> crew = retrieveTmdbDirectors(credits);
+			for(Crew c : crew) {
+				Personne realisateur = new Personne();
+				realisateur.setNom(StringUtils.upperCase(c.getName()));
+				transformedfilm.getRealisateurs().add(realisateur);
+			}
 		}
 		return transformedfilm;
 	}
@@ -228,14 +231,7 @@ public class TmdbServiceClient {
 		}
 	}
 	
-	public String retrieveTmdbDirector(final Credits credits) {
-		String res = null;
-		if(CollectionUtils.isNotEmpty(credits.getCrew())) {
-			List<Crew> directors = credits.getCrew().stream().filter(cred -> cred.getJob().equalsIgnoreCase("Director")).collect(Collectors.toList());
-			if(CollectionUtils.isNotEmpty(directors)) {
-				return directors.iterator().next().getName();
-			}
-		}
-		return res;
+	public List<Crew> retrieveTmdbDirectors(final Credits credits) {
+		return credits.getCrew().stream().filter(cred -> cred.getJob().equalsIgnoreCase("Director")).collect(Collectors.toList());
 	}
 }

@@ -55,14 +55,12 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		assertNotNull(personneByLoad);
 		logger.debug("personneByLoad=" + personneByLoad.toString());
 	}
-
 	@Test
 	public void findPersonne() throws Exception {
 		Integer id = personneService.savePersonne(personneService.buildPersonne(FilmServiceTests.ACT1_NOM));
 		Personne personne = personneService.findByPersonneId(id);
 		assertNotNull(personne);
 	}
-
 	@Test
 	public void findAllRealisateurs() {
 		Film film = filmService.createOrRetrieveFilm(FilmServiceTests.TITRE_FILM, 
@@ -102,7 +100,6 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		Personne real = personneService.findRealisateurByFilm(film);
 		assertNotNull(real);
 	}
-
 	@Test
 	public void findAllPersonne() throws Exception {
 		List<Personne> personneList = personneService.findAllPersonne();
@@ -112,16 +109,13 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 			assertNotNull(p);
 		}
 	}
-
 	@Test
 	public void findPersonneByFullName() throws Exception {
 		// insert a personne first
 		Integer id = personneService.savePersonne(personneService.buildPersonne(FilmServiceTests.ACT1_NOM));
-		Personne personne = personneService.findPersonneByFullName(FilmServiceTests.ACT1_NOM);
+		Personne personne = personneService.findPersonneByName(FilmServiceTests.ACT1_NOM);
 		assertNotNull(personne);
 	}
-
-	
 	@Test
 	public void findAllPersonneByFilm() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(FilmServiceTests.TITRE_FILM, 
@@ -134,18 +128,15 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		film = filmService.findFilm(film.getId());
 		assertFilmIsNotNull(film);
 	}
-
-	
 	@Test
 	public void savePersonne() throws Exception {
 		Personne personne = personneService.buildPersonne(FilmServiceTests.ACT1_NOM);
 		Integer id = personneService.savePersonne(personne);
 		assertNotNull(id);
 		personne.setId(id);
-		personne = personneService.findPersonneByFullName(FilmServiceTests.ACT1_NOM);
+		personne = personneService.findPersonneByName(FilmServiceTests.ACT1_NOM);
 		assertNotNull(personne);
 	}
-
 	@Test
 	public void updatePersonne() throws Exception {
 		String methodName = "updatePersonne : ";
@@ -160,7 +151,6 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		personneService.updatePersonne(personneByLoad);
 		assertEquals(FilmServiceTests.ACT2_NOM, personneByLoad.getNom());
 	}
-
 	@Test
 	public void cleanAllPersonne() throws Exception {
 		String methodName = "cleanAllPersonne : ";
@@ -168,7 +158,6 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		personneService.cleanAllPersonnes();
 		logger.debug(methodName + "end");
 	}
-
 	@Test
 	@Ignore
 	public void deletePersonne() throws Exception {

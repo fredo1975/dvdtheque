@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -20,6 +21,7 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
+import fr.fredos.dvdtheque.tmdb.model.Crew;
 import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.model.SearchResults;
@@ -42,7 +44,6 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 	public static final String ACT4_NOM = "Graham Collins";
 	@Autowired
     private TmdbServiceClient client;
-	private String titre= "broadway";
 	private String titreTmdb= "2001";
 	private Long tmdbId= new Long(4780);
     @Autowired
@@ -132,8 +133,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(credits.getCrew());
 		logger.info("credits.getCast()="+credits.getCast());
 		logger.info("credits.getCrew()="+credits.getCrew());
-		logger.info("directors="+client.retrieveTmdbDirector(credits));
-		client.retrieveTmdbDirector(credits);
-		
+		logger.info("directors="+client.retrieveTmdbDirectors(credits));
+		assertTrue(CollectionUtils.isNotEmpty(client.retrieveTmdbDirectors(credits)));
     }
 }

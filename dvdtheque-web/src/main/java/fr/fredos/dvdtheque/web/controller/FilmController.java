@@ -42,7 +42,7 @@ public class FilmController {
 	@CrossOrigin
 	@GetMapping("/films/byPersonne")
 	Personne findPersonne(@RequestParam(name="nom",required = false) String nom) {
-		return personneService.findPersonneByFullName(nom);
+		return personneService.findPersonneByName(nom);
 	}
 	@CrossOrigin
 	@GetMapping("/films")

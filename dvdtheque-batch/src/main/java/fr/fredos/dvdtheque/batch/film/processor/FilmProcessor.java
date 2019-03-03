@@ -1,51 +1,52 @@
 package fr.fredos.dvdtheque.batch.film.processor;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.client.RestClientException;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
-import fr.fredos.dvdtheque.service.dto.ActeurDto;
-import fr.fredos.dvdtheque.service.dto.DvdDto;
-import fr.fredos.dvdtheque.service.dto.FilmDto;
-import fr.fredos.dvdtheque.service.dto.PersonneDto;
-import fr.fredos.dvdtheque.service.dto.PersonnesFilm;
-import fr.fredos.dvdtheque.service.dto.RealisateurDto;
+import fr.fredos.dvdtheque.dao.model.object.Dvd;
+import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.tmdb.model.Cast;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
+import fr.fredos.dvdtheque.tmdb.model.Crew;
 import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.model.SearchResults;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
-public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto> {
+public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 	protected Logger logger = LoggerFactory.getLogger(FilmProcessor.class);
 	@Autowired
     private TmdbServiceClient tmdbServiceClient;
-	private static final int NB_ACTEURS = 6;
+	private static String NB_ACTEURS="batch.save.nb.acteurs";
+	
+	@Autowired
+    Environment environment;
 	@Override
-	public FilmDto process(FilmCsvImportFormat item) throws Exception {
+	public Film process(FilmCsvImportFormat item) throws Exception {
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		FilmDto film=new FilmDto();
+		Film film=new Film();
 		film.setAnnee(item.getAnnee());
 		film.setTitre(StringUtils.upperCase(item.getTitre()));
-		//filmDto.setTitreO(item.getTitreO());
-		DvdDto dvd = new DvdDto();
+		//film.setTitreO(item.getTitreO());
+		Dvd dvd = new Dvd();
 		dvd.setZone(item.getZonedvd());
 		film.setDvd(dvd);
-		PersonnesFilm pf = new PersonnesFilm();
 		try {
 			SearchResults searchResults = tmdbServiceClient.retrieveTmdbSearchResults(film.getTitre());
 			if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
@@ -58,28 +59,25 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto>
 				}
 				Credits credits = tmdbServiceClient.retrieveTmdbCredits(res.getId());
 				if(CollectionUtils.isNotEmpty(credits.getCast())) {
-					Set<ActeurDto> acteursDto = new HashSet<>();
 					int i=0;
 					for(Cast cast : credits.getCast()) {
-						PersonneDto personne = new PersonneDto();
+						Personne personne = new Personne();
 						personne.setNom(StringUtils.upperCase(cast.getName()));
-						ActeurDto acteurDto = new ActeurDto();
-						acteurDto.setPersonne(personne);
-						acteursDto.add(acteurDto);
-						if(i++==NB_ACTEURS) {
+						//personne.setId(Integer.parseInt(cast.getCast_id()));
+						film.getActeurs().add(personne);
+						if(i++==Integer.parseInt(environment.getRequiredProperty(NB_ACTEURS))) {
 							break;
 						}
 					}
-					pf.setActeur(acteursDto);
 				}
 				if(CollectionUtils.isNotEmpty(credits.getCrew())) {
-					Set<RealisateurDto> realisateur = new HashSet<>(1);
-					RealisateurDto realisateurDto = new RealisateurDto();
-					PersonneDto personne = new PersonneDto();
-					personne.setNom(StringUtils.upperCase(tmdbServiceClient.retrieveTmdbDirector(credits)));
-					realisateurDto.setPersonne(personne);
-					realisateur.add(realisateurDto);
-					pf.setRealisateur(realisateur.iterator().next());
+					List<Crew> crew = tmdbServiceClient.retrieveTmdbDirectors(credits);
+					for(Crew c : crew) {
+						Personne realisateur = new Personne();
+						realisateur.setNom(StringUtils.upperCase(c.getName()));
+						//realisateur.setId(RandomUtils.nextInt());
+						film.getRealisateurs().add(realisateur);
+					}
 				}
 				film.setTitreO(StringUtils.upperCase(res.getOriginal_title()));
 			}
@@ -87,9 +85,8 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto>
 			// TODO Auto-generated catch block
 			throw e;
 		}
-		film.setPersonnesFilm(pf);
 		film.setRipped(false);
-		//logger.info(film.toString());
+		logger.debug(film.toString());
 		return film;
 	}
 }
