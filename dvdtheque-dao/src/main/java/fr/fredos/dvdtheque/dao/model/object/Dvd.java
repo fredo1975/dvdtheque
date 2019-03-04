@@ -21,17 +21,17 @@ public class Dvd implements Serializable {
 	private Log logger = LogFactory.getLog(this.getClass());
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private java.lang.Integer id;
+	private Long id;
 	@Column(name = "ANNEE")
 	private Integer annee;
 	@Column(name = "ZONE")
 	private Integer zone;
 	@Column(name = "EDITION")
 	private String edition;
-	public java.lang.Integer getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(java.lang.Integer _id) {
+	public void setId(Long _id) {
 		this.id = _id;
 	}
 	public Integer getAnnee() {

@@ -27,14 +27,13 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	@Column(name = "USERNAME")
 	@NotNull
 	private String userName;
 	@Column(name = "PASSWORD")
 	@NotNull
 	private String password;
-
 	@Column(name = "EMAIL")
 	@NotNull
 	private String email;
@@ -51,10 +50,16 @@ public class User implements Serializable {
 	public User() {
 		super();
 	}
-	public Integer getId() {
+	public User(@NotNull String firstName, @NotNull String lastName) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
+	public Long getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getUserName() {

@@ -61,7 +61,7 @@ public class FilmController {
 	}
 	@CrossOrigin
 	@GetMapping("/films/byId/{id}")
-	Film findFilmById(@PathVariable Integer id) {
+	Film findFilmById(@PathVariable Long id) {
 		return filmService.findFilm(id);
 	}
 	@CrossOrigin
@@ -92,7 +92,7 @@ public class FilmController {
 	}
 	@CrossOrigin
 	@PutMapping("/films/{id}")
-	ResponseEntity<Object> updateFilm(@RequestBody Film film,@PathVariable Integer id) {
+	ResponseEntity<Object> updateFilm(@RequestBody Film film,@PathVariable Long id) {
 		Film filmOptional = filmService.findFilm(id);
 
 		if(filmOptional==null) {
@@ -103,7 +103,7 @@ public class FilmController {
 	}
 	@CrossOrigin
 	@PutMapping("/personnes/byId/{id}")
-	ResponseEntity<Object> updatePersonne(@RequestBody Personne p,@PathVariable Integer id) {
+	ResponseEntity<Object> updatePersonne(@RequestBody Personne p,@PathVariable Long id) {
 		Personne personne = personneService.findByPersonneId(id);
 		if(personne==null) {
 			return ResponseEntity.notFound().build();
@@ -118,7 +118,7 @@ public class FilmController {
 	@CrossOrigin
 	@PostMapping("/films")
 	ResponseEntity<Object> saveFilm(@RequestBody Film film) {
-		Integer id = filmService.saveNewFilm(film);
+		Long id = filmService.saveNewFilm(film);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(id).toUri();
 		return ResponseEntity.created(location).build();

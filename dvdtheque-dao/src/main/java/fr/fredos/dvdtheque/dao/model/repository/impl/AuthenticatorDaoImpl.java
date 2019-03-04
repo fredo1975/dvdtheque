@@ -1,5 +1,8 @@
 package fr.fredos.dvdtheque.dao.model.repository.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -9,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import fr.fredos.dvdtheque.dao.model.object.Role;
 import fr.fredos.dvdtheque.dao.model.object.User;
 import fr.fredos.dvdtheque.dao.model.repository.AuthenticatorDao;
 @Repository("authenticatorDao")
@@ -28,6 +32,12 @@ public class AuthenticatorDaoImpl implements AuthenticatorDao{
 		}catch(NoResultException e) {
 			logger.warn(e.getMessage());
 		}
+		return user;
+	}
+
+	@Override
+	public User saveUser(User user) {
+		this.entityManager.persist(user);
 		return user;
 	}
 }

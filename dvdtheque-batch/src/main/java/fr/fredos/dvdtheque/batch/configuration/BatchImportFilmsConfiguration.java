@@ -58,7 +58,6 @@ public class BatchImportFilmsConfiguration{
 			protected IFilmService filmService;
 			@Override
 			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-				personneService.cleanAllPersonnes();
 				filmService.cleanAllFilms();
 				return RepeatStatus.FINISHED;
 			}

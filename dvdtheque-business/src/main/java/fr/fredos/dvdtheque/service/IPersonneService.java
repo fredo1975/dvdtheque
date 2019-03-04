@@ -6,18 +6,19 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 
 public interface IPersonneService {
-	public Personne findByPersonneId(Integer id);
+	public Personne findByPersonneId(Long id);
 	public Personne findRealisateurByFilm(Film film);
 	public List<Personne> findAllPersonne();
-	public Integer savePersonne(Personne personne);
+	public Long savePersonne(Personne personne);
 	public void updatePersonne(Personne p);
 	public void deletePersonne(Personne p);
 	public Personne findPersonneByName(String nom);
-	public Personne getPersonne(Integer id);
-	public Personne loadPersonne(Integer id);
+	public Personne getPersonne(Long id);
+	public Personne loadPersonne(Long id);
 	public void cleanAllPersonnes();
 	public List<Personne> findAllRealisateur();
 	public List<Personne> findAllActeur();
 	public Personne createOrRetrievePersonne(String nom);
 	public Personne buildPersonne(String nom);
+	public Long createPersonne(final String nom);
 }

@@ -23,7 +23,7 @@ public class PersonneDto implements Serializable,Comparable<PersonneDto> {
 		this.prenom = prenom;
 	}
 
-	public PersonneDto(Integer id, String nom, String prenom, Date dateN,
+	public PersonneDto(Long id, String nom, String prenom, Date dateN,
 			Pays pays) {
 		super();
 		this.id = id;
@@ -33,17 +33,17 @@ public class PersonneDto implements Serializable,Comparable<PersonneDto> {
 		this.pays = pays;
 	}
 
-	private java.lang.Integer id;
+	private Long id;
 	// fields
 	private String nom;
 	private String prenom;
 	private Date dateN;
 	private Pays pays;
 
-	public java.lang.Integer getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(java.lang.Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getNom() {

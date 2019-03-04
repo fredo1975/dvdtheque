@@ -83,7 +83,7 @@ public class TmdbServiceClient {
 			transformedfilm.setId(film.getId());
 		}
 		if(film == null) {
-			transformedfilm.setId(Integer.valueOf(results.getId().toString()));
+			transformedfilm.setId(results.getId());
 		}
 		if(tmdbFilmAlreadyInDvdthequeSet.contains(results.getId())) {
 			transformedfilm.setAlreadyInDvdtheque(true);
@@ -119,7 +119,7 @@ public class TmdbServiceClient {
 			int i=0;
 			for(Cast cast : credits.getCast()) {
 				Personne personne = new Personne();
-				personne.setId(Integer.valueOf(cast.getCast_id()));
+				personne.setId(Long.valueOf(cast.getCast_id()));
 				personne.setNom(StringUtils.upperCase(cast.getName()));
 				transformedfilm.getActeurs().add(personne);
 				if(i++==NB_ACTEURS) {

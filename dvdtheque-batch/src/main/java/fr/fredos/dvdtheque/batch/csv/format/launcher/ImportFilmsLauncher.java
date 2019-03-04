@@ -18,13 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 //@Component
-public class FilmCsvImportLauncher {
-	private static final Logger LOGGER = LoggerFactory.getLogger(FilmCsvImportLauncher.class);
+public class ImportFilmsLauncher {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ImportFilmsLauncher.class);
 	private final Job job;
     private final JobLauncher jobLauncher;
     
     //@Autowired
-    FilmCsvImportLauncher(@Qualifier("importFilmsJob") Job job, JobLauncher jobLauncher) {
+    ImportFilmsLauncher(@Qualifier("importFilmsJob") Job job, JobLauncher jobLauncher) {
         this.job = job;
         this.jobLauncher = jobLauncher;
     }

@@ -30,6 +30,7 @@ CREATE TABLE ACTEUR (
   ID IDENTITY NOT NULL PRIMARY KEY,
   ID_PERSONNE int NOT NULL ,
   ID_FILM int NOT NULL,
+  TYPE_P int NOT NULL,
   constraint ACTEUR_PERSONNE_FK foreign key (ID_PERSONNE) references PERSONNE(ID),
   constraint ACTEUR_FILM_FK foreign key (ID_FILM) references FILM(ID)
   
@@ -39,6 +40,7 @@ CREATE TABLE REALISATEUR (
   ID IDENTITY NOT NULL PRIMARY KEY,
   ID_PERSONNE int NOT NULL ,
   ID_FILM int NOT NULL,
+  TYPE_P int NOT NULL,
   constraint REALISATEUR_PERSONNE_FK foreign key (ID_PERSONNE) references PERSONNE(ID),
   constraint REALISATEUR_FILM_FK foreign key (ID_FILM) references FILM(ID)
 );

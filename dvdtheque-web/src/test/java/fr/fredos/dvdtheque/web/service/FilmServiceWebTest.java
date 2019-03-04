@@ -62,13 +62,10 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 	
 	@Test
 	public void findAllFilms() throws Exception{
-		String methodName = "findAllFilms : ";
-		logger.debug(methodName + "start");
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
 		List<Film> filmList = filmService.findAllFilms();
 		assertNotNull(filmList);
-		logger.debug(methodName + "filmList ="+filmList.toString());
-		logger.debug(methodName + "end");
+		logger.debug("filmList ="+filmList.toString());
 	}
 }

@@ -18,7 +18,7 @@ public class FilmDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 	protected final Log logger = LogFactory.getLog(getClass());
 	// primary key
-	private java.lang.Integer id;
+	private Long id;
 	// fields
 	private Integer annee;
 	private String titre;
@@ -36,7 +36,7 @@ public class FilmDto implements Serializable {
 		super();
 		personnesFilm = new PersonnesFilm();
 	}
-	public FilmDto(Integer id, Integer annee, String titre, String titreO) {
+	public FilmDto(Long id, Integer annee, String titre, String titreO) {
 		super();
 		this.id = id;
 		this.annee = annee;
@@ -44,10 +44,10 @@ public class FilmDto implements Serializable {
 		this.titreO = titreO;
 		personnesFilm = new PersonnesFilm();
 	}
-	public java.lang.Integer getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(java.lang.Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public Integer getAnnee() {

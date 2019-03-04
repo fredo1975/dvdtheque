@@ -13,8 +13,8 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-@Entity
-@Table(name = "TYPE")
+//@Entity
+//@Table(name = "TYPE")
 public class Type implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Transient

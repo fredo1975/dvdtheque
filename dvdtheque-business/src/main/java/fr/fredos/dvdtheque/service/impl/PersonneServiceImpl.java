@@ -23,16 +23,16 @@ public class PersonneServiceImpl implements IPersonneService {
 	@Autowired
 	private PersonneDao personneDao;
 	@Transactional(readOnly = true)
-	public Personne findByPersonneId(Integer id){
+	public Personne findByPersonneId(Long id){
 		return personneDao.findByPersonneId(id);
 	}
 	@Transactional(readOnly = true)
-	public Personne getPersonne(Integer id){
+	public Personne getPersonne(Long id){
 		Personne personne = personneDao.getPersonne(id);
 		return personne;
 	}
 	@Transactional(readOnly = true)
-	public Personne loadPersonne(Integer id){
+	public Personne loadPersonne(Long id){
 		Personne personne = personneDao.loadPersonne(id);
 		return personne;
 	}
@@ -50,7 +50,7 @@ public class PersonneServiceImpl implements IPersonneService {
 	
 	@CacheEvict(value= "personneCache", allEntries = true)
 	@Transactional(readOnly = false)
-	public Integer savePersonne(Personne personne) {
+	public Long savePersonne(Personne personne) {
 		return personneDao.savePersonne(personne);
 	}
 	
@@ -106,9 +106,14 @@ public class PersonneServiceImpl implements IPersonneService {
 		Personne p = findPersonneByName(nom);
 		if(p == null) {
 			p = buildPersonne(nom);
-			Integer id = savePersonne(p);
+			Long id = savePersonne(p);
 			p.setId(id);
 		}
 		return p;
+	}
+	
+	@Override
+	public Long createPersonne(final String nom) {
+		return savePersonne(buildPersonne(nom));
 	}
 }

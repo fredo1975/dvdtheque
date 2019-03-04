@@ -9,8 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-@Entity
-@Table(name = "PAYS")
+//@Entity
+//@Table(name = "PAYS")
 public class Pays implements Serializable {
 
 	private static final long serialVersionUID = 1L;

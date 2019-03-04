@@ -14,11 +14,11 @@ public class FilmFilterCriteriaDto {
 	private String titre;
 	private Integer annee;
 	private Set<FilmFilterCriteriaType> filmFilterCriteriaTypeSet;
-	private Integer selectedRealisateur;
-	private Integer selectedActeur;
+	private Long selectedRealisateur;
+	private Long selectedActeur;
 	private Boolean selectedRipped;
 	
-	public FilmFilterCriteriaDto(String titre, Integer annee, Integer selectedRealisateur, Integer selectedActeur,
+	public FilmFilterCriteriaDto(String titre, Integer annee, Long selectedRealisateur, Long selectedActeur,
 			Boolean selectedRipped) {
 		super();
 		this.titre = titre;
@@ -63,10 +63,10 @@ public class FilmFilterCriteriaDto {
 	public void setAnnee(Integer annee) {
 		this.annee = annee;
 	}
-	public Integer getSelectedRealisateur() {
+	public Long getSelectedRealisateur() {
 		return selectedRealisateur;
 	}
-	public void setSelectedRealisateur(Integer selectedRealisateur) {
+	public void setSelectedRealisateur(Long selectedRealisateur) {
 		this.selectedRealisateur = selectedRealisateur;
 	}
 	public Set<FilmFilterCriteriaType> getFilmFilterCriteriaTypeSet() {
@@ -79,10 +79,10 @@ public class FilmFilterCriteriaDto {
 		}
 		filmFilterCriteriaTypeSet.add(filmFilterCriteriaType);
 	}
-	public Integer getSelectedActeur() {
+	public Long getSelectedActeur() {
 		return selectedActeur;
 	}
-	public void setSelectedActeur(Integer selectedActeur) {
+	public void setSelectedActeur(Long selectedActeur) {
 		this.selectedActeur = selectedActeur;
 	}
 	public Boolean getSelectedRipped() {

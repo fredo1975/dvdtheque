@@ -24,15 +24,15 @@ public class PersonneDaoImpl implements PersonneDao{
 	protected Logger logger = LoggerFactory.getLogger(PersonneDao.class);
 	@PersistenceContext
     private EntityManager em;
-	public Personne findByPersonneId(Integer id)  {
+	public Personne findByPersonneId(Long id)  {
 		Personne p = this.em.find(Personne.class, id);
 		return p;
 	}
-	public Personne getPersonne(Integer id)  {
+	public Personne getPersonne(Long id)  {
 		Personne p = this.em.find(Personne.class, id);
 		return p;
 	}
-	public Personne loadPersonne(Integer id)  {
+	public Personne loadPersonne(Long id)  {
 		Personne p = this.em.find(Personne.class, id);
 		return p;
 	}
@@ -104,7 +104,7 @@ public class PersonneDaoImpl implements PersonneDao{
 		persList.addAll(f.getRealisateurs());
         return persList;
     }
-	public Integer savePersonne(Personne p){
+	public Long savePersonne(Personne p){
 		this.em.persist(p);
 		this.em.flush();
 		return p.getId();

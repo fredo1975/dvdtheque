@@ -16,6 +16,7 @@ import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
+import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.tmdb.model.Cast;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
 import fr.fredos.dvdtheque.tmdb.model.Crew;
@@ -29,7 +30,8 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 	@Autowired
     private TmdbServiceClient tmdbServiceClient;
 	private static String NB_ACTEURS="batch.save.nb.acteurs";
-	
+	@Autowired
+	protected IPersonneService personneService;
 	@Autowired
     Environment environment;
 	@Override
@@ -59,11 +61,9 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 				}
 				Credits credits = tmdbServiceClient.retrieveTmdbCredits(res.getId());
 				if(CollectionUtils.isNotEmpty(credits.getCast())) {
-					int i=0;
-					for(Cast cast : credits.getCast()) {
-						Personne personne = new Personne();
-						personne.setNom(StringUtils.upperCase(cast.getName()));
-						//personne.setId(Integer.parseInt(cast.getCast_id()));
+					int i=1;
+					for(Cast c : credits.getCast()) {
+						Personne personne = personneService.createOrRetrievePersonne(StringUtils.upperCase(c.getName()));
 						film.getActeurs().add(personne);
 						if(i++==Integer.parseInt(environment.getRequiredProperty(NB_ACTEURS))) {
 							break;
@@ -73,9 +73,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 				if(CollectionUtils.isNotEmpty(credits.getCrew())) {
 					List<Crew> crew = tmdbServiceClient.retrieveTmdbDirectors(credits);
 					for(Crew c : crew) {
-						Personne realisateur = new Personne();
-						realisateur.setNom(StringUtils.upperCase(c.getName()));
-						//realisateur.setId(RandomUtils.nextInt());
+						Personne realisateur = personneService.createOrRetrievePersonne(StringUtils.upperCase(c.getName()));
 						film.getRealisateurs().add(realisateur);
 					}
 				}

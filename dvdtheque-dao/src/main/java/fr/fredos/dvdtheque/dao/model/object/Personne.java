@@ -8,21 +8,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-
-import org.apache.commons.lang.StringUtils;
-
-import fr.fredos.dvdtheque.common.dto.NewActeurDto;
 @Entity
 @Table(name = "PERSONNE")
 public class Personne implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private java.lang.Integer id;
+	private Long id;
 	@Column(name = "NOM")
 	@Size(min = 1, max = 45)
 	private String nom;
@@ -31,16 +26,17 @@ public class Personne implements Serializable {
 	private String prenom;
 	@Column(name = "DATE_N")
 	private Date dateN;
-	@JoinColumn(name = "ID_PAYS")
-	@ManyToOne
+	//@JoinColumn(name = "ID_PAYS")
+	//@ManyToOne
+	@Transient
 	private Pays pays;
 	public Personne() {
 		super();
 	}
-	public java.lang.Integer getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(java.lang.Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getNom() {
@@ -67,11 +63,12 @@ public class Personne implements Serializable {
 	public void setPays(Pays pays) {
 		this.pays = pays;
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
 		return result;
 	}
 	@Override
@@ -83,10 +80,10 @@ public class Personne implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Personne other = (Personne) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (nom == null) {
+			if (other.nom != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!nom.equals(other.nom))
 			return false;
 		return true;
 	}

@@ -28,6 +28,4 @@ public class FilmDaoIntegrationTest {
 		assertNotNull(films);
 		logger.info("films.size()="+films.size());
 	}
-	
-	
 }

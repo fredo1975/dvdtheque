@@ -2,6 +2,7 @@ package fr.fredos.dvdtheque.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
@@ -33,6 +34,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceTests.class);
 	public static final String TITRE_FILM = "Lorem Ipsum";
 	public static final String TITRE_FILM_UPDATED = "Lorem Ipsum updated";
+	public static final String TITRE_FILM_REUPDATED = "Lorem Ipsum reupdated";
 	public static final Integer ANNEE = 2015;
 	public static final String REAL_NOM = "toto titi";
 	public static final String REAL_NOM1 = "Dan VanHarp";
@@ -70,8 +72,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(methodName + "start");
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
-		film = filmService.findFilmByTitre(TITRE_FILM);
-		assertFilmIsNotNull(film);
+		Film retrievedFilm = filmService.findFilmByTitre(TITRE_FILM);
+		assertFilmIsNotNull(retrievedFilm);
 		logger.debug(methodName + "end");
 	}
 	@Test
@@ -80,9 +82,14 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(methodName + "start");
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
-		logger.debug(methodName + "film ="+film.toString());
-		for(Personne acteur : film.getActeurs()){
+		Film retrievedFilm = filmService.findFilmWithAllObjectGraph(film.getId());
+		assertFilmIsNotNull(retrievedFilm);
+		logger.debug(methodName + "retrievedFilm ="+retrievedFilm.toString());
+		for(Personne acteur : retrievedFilm.getActeurs()){
 			logger.debug(methodName + " acteur="+acteur.toString());
+		}
+		for(Personne realisateur : retrievedFilm.getRealisateurs()){
+			logger.debug(methodName + " realisateur="+realisateur.toString());
 		}
 		logger.debug(methodName + "end");
 	}
@@ -90,24 +97,32 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public void findFilm() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
-		
 		film = filmService.findFilm(film.getId());
 		assertFilmIsNotNull(film);
-		
 	}
 	@Test
-	public void findAllFilm() throws Exception {
+	public void findAllFilms() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
+		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film2);
+		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film3);
 		StopWatch watch = new StopWatch();
 		watch.start();
 		List<Film> films = filmService.findAllFilms();
 		assertNotNull(films);
 		assertTrue(CollectionUtils.isNotEmpty(films));
+		assertTrue(films.size()==3);
+		for(Film f : films) {
+			logger.info(film.toString());
+		}
 		watch.stop();
+		logger.info(watch.prettyPrint());
+		filmService.cleanAllFilms();
 	}
 	@Test
-	public void findAllTmdbFilm() throws Exception {
+	public void findAllTmdbFilms() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
 		Set<Long> tmdbIds = new HashSet<>();
@@ -118,7 +133,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		
 	}
 	@Test
-	public void findAllRippedFilm() throws Exception {
+	public void findAllRippedFilms() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
 		List<Film> films = filmService.getAllRippedFilms();
@@ -137,7 +152,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		film.setTitre(TITRE_FILM_UPDATED);
 		Personne real = personneService.buildPersonne(REAL_NOM1);
 		assertNotNull(real);
-		Integer idreal = personneService.savePersonne(real);
+		Long idreal = personneService.savePersonne(real);
 		assertNotNull(idreal);
 		real.setId(idreal);
 		film.getRealisateurs().clear();
@@ -145,7 +160,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		
 		Personne act = personneService.buildPersonne(ACT4_NOM);
 		assertNotNull(act);
-		Integer idAct = personneService.savePersonne(act);
+		Long idAct = personneService.savePersonne(act);
 		assertNotNull(idAct);
 		act.setId(idAct);
 		film.getActeurs().clear();
@@ -166,7 +181,14 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public void cleanAllFilms() {
 		String methodName = "cleanAllFilms : ";
 		logger.debug(methodName + "start");
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film2);
+		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film3);
 		filmService.cleanAllFilms();
+		assertTrue(CollectionUtils.isEmpty(filmService.findAllFilms()));
 		logger.debug(methodName + "end");
 	}
 	@Test
@@ -191,7 +213,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
 		
-		Integer selectedActeurId = film.getActeurs().iterator().next().getId();
+		Long selectedActeurId = film.getActeurs().iterator().next().getId();
 		logger.debug("selectedActeurId="+selectedActeurId);
 		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(null,null,null,selectedActeurId,null);
 		List<Film> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
@@ -239,32 +261,19 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public void removeFilmDao() {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
-		
 		Personne real = film.getRealisateurs().iterator().next();
 		assertNotNull(real);
 		filmDao.removeFilm(film);
-		Personne realisateur = personneService.findByPersonneId(real.getId());
-		assertNotNull(realisateur);
+		Film removedFilm = filmService.findFilmByTitre(film.getTitre());
+		assertNull(removedFilm);
 	}
-	/*
+	
 	@Test(expected = java.lang.Exception.class)
 	public void removeFilmService() {
-		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
-		Film film = null;
-		if(id==null) {
-			filmService.saveNewFilm(FilmUtils.buildFilm(FilmUtils.TITRE_FILM));
-			film = filmService.findFilmByTitre(FilmUtils.TITRE_FILM);
-		}else {
-			film = filmService.findFilm(id);
-		}
-		assertNotNull(film);
-		Personne real = film.getRealisateur();
-		assertNotNull(real);
-		
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
 		filmService.removeFilm(film);
-		Film deletedFilmDto = filmService.findFilm(id);
-		assertNull(deletedFilmDto);
-		Personne realDto = personneService.findByPersonneId(real.getId());
-		assertNotNull(realDto);
-	}*/
+		Film deletedFilm = filmService.findFilm(film.getId());
+		assertNull(deletedFilm);
+	}
 }

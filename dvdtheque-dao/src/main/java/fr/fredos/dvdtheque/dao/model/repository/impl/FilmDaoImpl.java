@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -28,32 +30,39 @@ public class FilmDaoImpl implements FilmDao {
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}
-	public Film findFilm(Integer id){
+	public Film findFilm(Long id){
 		Query q = this.entityManager.createQuery("from Film film join fetch film.realisateurs real where film.id = :id");
 		q.setParameter("id", id);
 		return (Film)q.getSingleResult();
 	}
 	public Film findFilmByTitre(String titre){
-		Query q = this.entityManager.createQuery("from Film film where film.titre = :titre");
+		Query q = this.entityManager.createQuery("from Film where titre = UPPER(:titre)");
 		q.setParameter("titre", titre);
-		return (Film)q.getSingleResult();
+		try {
+			return (Film)q.getSingleResult();
+		}catch(NoResultException nre) {
+			
+		}catch(NonUniqueResultException nre) {
+			
+		}
+		return null;
 	}
-	public Film findFilmWithAllObjectGraph(Integer id){
-		Query q = this.entityManager.createQuery("select f from Film f left join f.acteurs acteur where f.id = :id ");
+	public Film findFilmWithAllObjectGraph(Long id){
+		Query q = this.entityManager.createQuery("from Film where id = :id ");
 		q.setParameter("id", id);
 		return (Film)q.getSingleResult();
 	}
-	public Integer saveNewFilm(Film film){
+	public Long saveNewFilm(Film film){
 		this.entityManager.persist(film);
-		this.entityManager.flush();
+		//this.entityManager.flush();
 		return film.getId();
 	}
 	public void updateFilm(Film film){
 		this.entityManager.merge(film);
-		this.entityManager.flush();
+		//this.entityManager.flush();
 		//return filmResult;
 	}
-	public Integer saveDvd(Dvd dvd){
+	public Long saveDvd(Dvd dvd){
 		this.entityManager.persist(dvd);
 		return dvd.getId();
 	}
@@ -118,12 +127,17 @@ public class FilmDaoImpl implements FilmDao {
 		return new ArrayList<Film>(new HashSet<Film>(query.getResultList()));
     }
 	public void cleanAllFilms() {
-		Query queryDvd = this.entityManager.createQuery("delete from Dvd");
-		int nbDvd = queryDvd.executeUpdate();
-		logger.info(nbDvd+" dvd deleted");
+		/*
 		Query query = this.entityManager.createQuery("delete from Film");
 		int nb = query.executeUpdate();
 		logger.info(nb+" films deleted");
+		Query queryDvd = this.entityManager.createQuery("delete from Dvd");
+		int nbDvd = queryDvd.executeUpdate();
+		logger.info(nbDvd+" dvd deleted");*/
+		
+		for(Film film : findAllFilms()) {
+			removeFilm(film);
+		}
 	}
 	public List<Film> getAllRippedFilms(){
 		Query query = this.entityManager.createQuery("from Film film where film.ripped=1");
@@ -132,7 +146,7 @@ public class FilmDaoImpl implements FilmDao {
 	
 	public void removeFilm(Film film) {
 		this.entityManager.remove(film);
-		this.entityManager.flush();
+		//this.entityManager.flush();
 	}
 	@Override
 	public Set<Long> findAllTmdbFilms(Set<Long> tmdbIds) {

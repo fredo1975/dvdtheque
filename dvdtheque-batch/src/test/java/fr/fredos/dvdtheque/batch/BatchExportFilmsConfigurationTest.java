@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.batch;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,5 +15,10 @@ public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public void init() {
 		jobLauncherTestUtils = new JobLauncherTestUtils();
 		jobLauncherTestUtils.setJob(exportFilmsJob);
+	}
+	
+	@Test
+	public void launchStep() throws Exception {
+		
 	}
 }

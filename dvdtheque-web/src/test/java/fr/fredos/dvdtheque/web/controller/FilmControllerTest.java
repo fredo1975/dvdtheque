@@ -6,9 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.Charset;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -54,8 +53,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	protected IPersonneService personneService;
 	@Autowired
     private TmdbServiceClient client;
-	private final static String MAX_ID_SQL = "SELECT f.id, titre " + 
-			"FROM (SELECT MAX( id ) AS id FROM FILM )f INNER JOIN FILM f2 ON f2.id = f.id";
+	
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	private static final String UPDATE_FILM_URI = "/dvdtheque/films/";
@@ -87,7 +85,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
-		assertTrue(film.getActeurs().size()==3);
+		assertTrue(film.getActeurs().size()>=3);
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue(film.getRealisateurs().size()==1);
 	}
@@ -108,6 +106,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 					.andExpect(MockMvcResultMatchers.status().isOk())
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
 			assertNotNull(resultActions);
+			assertFilmIsNotNull(filmToTest);
 		}
 	}
 	@Test
@@ -117,11 +116,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		film.setTitre(titre);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_TMDB_FILM_BY_TITRE+titre)
 				.contentType(MediaType.APPLICATION_JSON);
-		ResultActions resultActions = mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is("Broadway Idiot")));
+		ResultActions resultActions = mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
 		assertNotNull(resultActions);
 	}
-	
 	@Test
 	public void findById() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
@@ -131,7 +128,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		ResultActions resultActions = mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
 		assertNotNull(resultActions);
-		
 	}
 	@Test
 	public void findAllRealisateurs() throws Exception {
@@ -147,7 +143,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_URI)
 					.contentType(MediaType.APPLICATION_JSON))
 					.andExpect(MockMvcResultMatchers.status().isOk())
-					.andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(realisateur.getId())));
+					.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(realisateur.getNom())));
 			assertNotNull(resultActions);
 		}
 	}
@@ -165,7 +161,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_PERSONNE_URI)
 					.contentType(MediaType.APPLICATION_JSON))
 					.andExpect(MockMvcResultMatchers.status().isOk())
-					.andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(personne.getId())));
+					.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(personne.getNom())));
 			assertNotNull(resultActions);
 		}
 	}
@@ -183,7 +179,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_URI)
 					.contentType(MediaType.APPLICATION_JSON))
 					.andExpect(MockMvcResultMatchers.status().isOk())
-					.andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(acteur.getId())));
+					.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(acteur.getNom())));
 			assertNotNull(resultActions);
 		}
 	}
@@ -199,8 +195,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Is.is(film.getId())));;
+		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
 		Film filmUpdated = filmService.findFilm(film.getId());
+		assertFilmIsNotNull(filmUpdated);
 		Results results = client.retrieveTmdbSearchResultsById(tmdbId);
 		assertEquals(StringUtils.upperCase(results.getTitle()), filmUpdated.getTitre());
 		assertEquals(POSTER_PATH, filmUpdated.getPosterPath());
@@ -229,12 +226,20 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	@Transactional
 	public void testSaveNewFilm() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
 		Film filmToSave = new Film();
 		filmToSave.setTitre(TITRE_FILM_UPDATED);
-		filmToSave.setActeurs(film.getActeurs());
-		filmToSave.setRealisateurs(film.getRealisateurs());
+		Set<Personne> acteurs = new HashSet<>();
+		Personne acteur1 = personneService.buildPersonne(ACT1_NOM);
+		acteurs.add(acteur1);
+		Personne acteur2 = personneService.buildPersonne(ACT2_NOM);
+		acteurs.add(acteur2);
+		Personne acteur3 = personneService.buildPersonne(ACT3_NOM);
+		acteurs.add(acteur3);
+		filmToSave.setActeurs(acteurs);
+		Personne real = personneService.buildPersonne(REAL_NOM);
+		Set<Personne> reals = new HashSet<>();
+		reals.add(real);
+		filmToSave.setRealisateurs(reals);
 		filmToSave.setAnnee(1987);
 		Dvd dvd = new Dvd();
 		dvd.setAnnee(1978);
@@ -266,14 +271,13 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Is.is(personne.getId())));
+		.andExpect(MockMvcResultMatchers.jsonPath("$.nom", Is.is(personne.getNom())));
 	}
 	@Test
 	@Transactional
 	public void testUpdatePersonne() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
 		assertFilmIsNotNull(film);
-		
 		Personne personne = personneService.findPersonneByName(ACT1_NOM);
 		assertNotNull(personne);
 		personne.setNom(ACT2_NOM);
@@ -284,7 +288,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.contentType(MediaType.APPLICATION_JSON).content(personneJsonString);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
-		
 		Personne personneUpdated = personneService.loadPersonne(personne.getId());
 		assertEquals(StringUtils.upperCase(ACT2_NOM), personneUpdated.getNom());
 	}

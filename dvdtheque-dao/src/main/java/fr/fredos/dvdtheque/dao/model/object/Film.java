@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -20,7 +19,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.WhereJoinTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -33,7 +31,7 @@ public class Film implements Serializable {
 	protected Logger logger = LoggerFactory.getLogger(Film.class);
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private java.lang.Integer id;
+	private Long id;
 	@Column(name = "ANNEE")
 	private Integer annee;
 	@Column(name = "TITRE")
@@ -44,47 +42,37 @@ public class Film implements Serializable {
 	@JoinColumn(name = "ID_DVD")
 	@ManyToOne(cascade=CascadeType.ALL)
 	private Dvd dvd;
-	
-	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
-    @JoinTable(name = "REALISATEUR", joinColumns = {@JoinColumn(name = "ID_FILM", referencedColumnName="ID")},
-        inverseJoinColumns = {@JoinColumn(name = "ID_PERSONNE", referencedColumnName="ID")})
-	//@WhereJoinTable(clause="mapping_type=2")
+	@OneToMany(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
 	private Set<Personne> realisateurs = new HashSet<>();
-	
-	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
-    @JoinTable(name = "ACTEUR", joinColumns = @JoinColumn(name = "ID_FILM"),
-        inverseJoinColumns = @JoinColumn(name = "ID_PERSONNE"))
-	//@WhereJoinTable(clause="mapping_type=1")
+	@OneToMany(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
 	private Set<Personne> acteurs = new HashSet<>();
-	
 	@Column(name = "RIPPED")
 	private boolean ripped;
 	@Column(name = "POSTER_PATH")
 	private String posterPath;
 	@Column(name = "TMDB_ID")
 	private Long tmdbId;
-	
 	@Transient
 	private boolean alreadyInDvdtheque;
 	
 	public Film() {
 		super();
 	}
-	public Film(Integer id) {
+	public Film(Long id) {
 		super();
 		this.id = id;
 	}
-	public Film(Integer id, Integer annee, String titre, String titreO) {
+	public Film(Long id, Integer annee, String titre, String titreO) {
 		super();
 		this.id = id;
 		this.annee = annee;
 		this.titre = titre;
 		this.titreO = titreO;
 	}
-	public java.lang.Integer getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(java.lang.Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public Integer getAnnee() {
@@ -196,5 +184,4 @@ public class Film implements Serializable {
 				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", alreadyInDvdtheque=" + alreadyInDvdtheque
 				+ "]";
 	}
-	
 }

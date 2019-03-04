@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -37,8 +36,6 @@ public class FilmServiceImpl implements IFilmService {
 	private static final String REALISATEUR_MESSAGE_WARNING = "Film should contains one producer";
 	private static final String ACTEURS_MESSAGE_WARNING = "Film should contains actors";
 	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private FilmDao filmDao;
 	@Autowired
@@ -68,55 +65,19 @@ public class FilmServiceImpl implements IFilmService {
 		return filmDao.findFilmByTitre(titre);
 	}
 	@Transactional(readOnly = true)
-	public Film findFilmWithAllObjectGraph(Integer id)  {
+	public Film findFilmWithAllObjectGraph(Long id)  {
 		return filmDao.findFilmWithAllObjectGraph(id);
 	}
 	@Transactional(readOnly = true)
-	public Film findFilm(Integer id) {
+	public Film findFilm(Long id) {
 		return filmDao.findFilm(id);
 	}
 	@CacheEvict(value= "filmCache", allEntries = true)
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
-		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
-		handleActeurs(film);
-		handleRealisateurs(film);
 		upperCaseTitre(film);
 		filmDao.updateFilm(film);
 	}
-	private void handleRealisateurs(Film film) {
-		if(CollectionUtils.isEmpty(film.getRealisateurs())) {
-			Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
-		}
-		if(!CollectionUtils.isEmpty(film.getRealisateurs())) {
-			Set<Personne> realisateurs = new HashSet<>();
-			for(Personne realisateur : film.getRealisateurs()) {
-				realisateurs.add(personneService.createOrRetrievePersonne(realisateur.getNom()));
-			}
-			film.getRealisateurs().clear();
-			film.setRealisateurs(realisateurs);
-		}
-	}
-	
-	/**
-	 * attach to session existing acteurs and persist new acteurs
-	 * @param film
-	 */
-	private void handleActeurs(Film film) {
-		if(CollectionUtils.isEmpty(film.getActeurs())) {
-			Assert.notEmpty(film.getActeurs(), ACTEURS_MESSAGE_WARNING);
-		}
-		if(!CollectionUtils.isEmpty(film.getActeurs())) {
-			Set<Personne> acteurs = new HashSet<>();
-			for(Personne acteur : film.getActeurs()) {
-				acteurs.add(personneService.createOrRetrievePersonne(acteur.getNom()));
-			}
-			film.getActeurs().clear();
-			film.setActeurs(acteurs);
-		}
-		//handleNewActeurDtoSet(film);
-	}
-	
 	private void upperCaseTitre(Film film) {
 		final String titre = StringUtils.upperCase(film.getTitre());
 		film.setTitre(titre);
@@ -125,18 +86,10 @@ public class FilmServiceImpl implements IFilmService {
 	}
 	@CacheEvict(value= "filmCache", allEntries = true)
 	@Transactional(readOnly = false)
-	public Integer saveNewFilm(Film film) {
+	public Long saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
-		handleActeurs(film);
-		handleRealisateurs(film);
 		upperCaseTitre(film);
 		return filmDao.saveNewFilm(film);
-	}
-	private void handleRealisateur(Film film) {
-		Set<Personne> realisateurs = new HashSet<>();
-		realisateurs.add(film.getRealisateurs().iterator().next());
-		film.getRealisateurs().clear();
-		film.getRealisateurs().add(personneService.getPersonne(realisateurs.iterator().next().getId()));
 	}
 	
 	@Transactional(readOnly = false)
@@ -147,7 +100,9 @@ public class FilmServiceImpl implements IFilmService {
 	@CacheEvict(value= "filmCache", allEntries = true)
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
+		
 		filmDao.cleanAllFilms();
+		//personneService.cleanAllPersonnes();
 	}
 	@Transactional(readOnly = true)
 	public List<Film> getAllRippedFilms(){
@@ -233,7 +188,11 @@ public class FilmServiceImpl implements IFilmService {
 			final String act1Nom,
 			final String act2Nom,
 			final String act3Nom) {
-		return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom);
+		Film film = findFilmByTitre(titre);
+		if(film == null) {
+			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom);
+		}
+		return film;
 	}
 	private Film createFilm(final String titre,
 			final Integer annee,
@@ -245,22 +204,13 @@ public class FilmServiceImpl implements IFilmService {
 		Personne acteur1 = null;
 		Personne acteur2 = null;
 		Personne acteur3 = null;
-		Integer idRealisateur = createPersonne(realNom);
-		realisateur = personneService.findByPersonneId(idRealisateur);
-		Integer idActeur1 = createPersonne(act1Nom);
-		acteur1 = personneService.findByPersonneId(idActeur1);
-		Integer idActeur2 = createPersonne(act2Nom);
-		acteur2 = personneService.findByPersonneId(idActeur2);
-		Integer idActeur3 = createPersonne(act3Nom);
-		acteur3 = personneService.findByPersonneId(idActeur3);
+		realisateur = personneService.createOrRetrievePersonne(realNom);
+		acteur1 = personneService.createOrRetrievePersonne(act1Nom);
+		acteur2 = personneService.createOrRetrievePersonne(act2Nom);
+		acteur3 = personneService.createOrRetrievePersonne(act3Nom);
 		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3);
-		Integer idFilm = saveNewFilm(film);
+		Long idFilm = saveNewFilm(film);
 		film.setId(idFilm);
 		return film;
 	}
-	
-	private Integer createPersonne(final String nom) {
-		return personneService.savePersonne(personneService.buildPersonne(nom));
-	}
-	/** TEST PURPOSE **/
 }
