@@ -17,11 +17,18 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
+import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 
-
+@SpringBootTest(classes = { BatchImportFilmsConfiguration.class,
+		RippedFlagTasklet.class,
+		fr.fredos.dvdtheque.dao.Application.class,
+		fr.fredos.dvdtheque.service.ServiceApplication.class,
+		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
 public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	
 	@Autowired
@@ -47,7 +54,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 	@Test
-	public void launchJob() throws Exception {
+	public void launchImportFilmsJob() throws Exception {
 		Calendar c = Calendar.getInstance();
 		JobParametersBuilder builder = new JobParametersBuilder();
 		builder.addDate("TIMESTAMP", c.getTime());

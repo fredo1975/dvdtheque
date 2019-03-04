@@ -28,10 +28,9 @@ import org.springframework.core.io.FileSystemResource;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
-import fr.fredos.dvdtheque.batch.film.writer.FilmWriter;
+import fr.fredos.dvdtheque.batch.film.writer.DbFilmWriter;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
-import fr.fredos.dvdtheque.service.IPersonneService;
 
 @Configuration
 @EnableBatchProcessing
@@ -39,21 +38,19 @@ public class BatchImportFilmsConfiguration{
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
 	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name";
 	@Autowired
-    public JobBuilderFactory jobBuilderFactory;
+	protected JobBuilderFactory jobBuilderFactory;
     @Autowired
-    public StepBuilderFactory stepBuilderFactory;
+    protected StepBuilderFactory stepBuilderFactory;
     @Autowired
     @Qualifier("rippedFlagTasklet")
-    public Tasklet rippedFlagTasklet;
+    protected Tasklet rippedFlagTasklet;
     @Autowired
-    Environment environment;
+    protected Environment environment;
     String[] headerTab = new String[]{"realisateur", "titre", "zonedvd","annee","acteurs"};
     
     @Bean
 	protected Tasklet cleanDBTasklet() {
 		return new Tasklet() {
-			@Autowired
-			protected IPersonneService personneService;
 			@Autowired
 			protected IFilmService filmService;
 			@Override
@@ -74,12 +71,6 @@ public class BatchImportFilmsConfiguration{
 		return jobBuilderFactory.get("importFilms").incrementer(new RunIdIncrementer()).start(cleanDBStep())
 				.next(importFilmsStep()).next(setRippedFlagStep()).build();
 	}
-	/*
-	@Bean
-	public Job exportFilmsJob() {
-		return jobBuilderFactory.get("exportFilms").incrementer(new RunIdIncrementer()).start(cleanDB())
-				.next(checkFilmStep()).next(setRippedFlag()).build();
-	}*/
 	
     @Bean
     protected Step cleanDBStep() {
@@ -89,37 +80,6 @@ public class BatchImportFilmsConfiguration{
     protected Step setRippedFlagStep() {
     	return stepBuilderFactory.get("rippedFlagStep").tasklet(rippedFlagTasklet).build();
     }
-    /*
-    @Bean
-    public ItemWriter<FilmCsvImportFormat> databaseCsvItemWriter() {
-        FlatFileItemWriter<FilmCsvImportFormat> csvFileWriter = new FlatFileItemWriter<>();
- 
-        String exportFileHeader = "NAME;EMAIL_ADDRESS;PACKAGE";
-        StringHeaderWriter headerWriter = new StringHeaderWriter(exportFileHeader);
-        csvFileWriter.setHeaderCallback(headerWriter);
- 
-        String exportFilePath = "/tmp/students.csv";
-        csvFileWriter.setResource(new FileSystemResource(exportFilePath));
- 
-        LineAggregator<FilmCsvImportFormat> lineAggregator = createStudentLineAggregator();
-        csvFileWriter.setLineAggregator(lineAggregator);
- 
-        return csvFileWriter;
-    }
-    private LineAggregator<FilmCsvImportFormat> createStudentLineAggregator() {
-        DelimitedLineAggregator<FilmCsvImportFormat> lineAggregator = new DelimitedLineAggregator<>();
-        lineAggregator.setDelimiter(";");
- 
-        FieldExtractor<FilmCsvImportFormat> fieldExtractor = createStudentFieldExtractor();
-        lineAggregator.setFieldExtractor(fieldExtractor);
- 
-        return lineAggregator;
-    }
-    private FieldExtractor<FilmCsvImportFormat> createStudentFieldExtractor() {
-        BeanWrapperFieldExtractor<FilmCsvImportFormat> extractor = new BeanWrapperFieldExtractor<>();
-        extractor.setNames(new String[] {"name", "emailAddress", "purchasedPackage"});
-        return extractor;
-    }*/
     
     @Bean
     public FlatFileItemReader<FilmCsvImportFormat> reader() {
@@ -157,8 +117,8 @@ public class BatchImportFilmsConfiguration{
     	return new FilmProcessor();
     }
     @Bean
-    protected FilmWriter filmWriter() {
-    	return new FilmWriter();
+    protected DbFilmWriter filmWriter() {
+    	return new DbFilmWriter();
     }
     @Bean
     protected Step importFilmsStep() {

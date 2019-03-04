@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 
-public class FilmWriter implements ItemWriter<Film> {
-	protected Logger logger = LoggerFactory.getLogger(FilmWriter.class);
+public class DbFilmWriter implements ItemWriter<Film> {
+	protected Logger logger = LoggerFactory.getLogger(DbFilmWriter.class);
 	@Autowired
 	protected IFilmService filmService;
 	

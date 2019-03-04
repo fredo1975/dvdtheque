@@ -7,20 +7,12 @@ import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
-import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.service.IFilmService;
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { BatchImportFilmsConfiguration.class,
-		RippedFlagTasklet.class,
-		fr.fredos.dvdtheque.dao.Application.class,
-		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
 @ActiveProfiles("local")
 public abstract class AbstractBatchFilmsConfigurationTest {
 	@Autowired

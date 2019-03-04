@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.service;
 
 import java.util.List;
+import java.util.Set;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
@@ -21,4 +22,5 @@ public interface IPersonneService {
 	public Personne createOrRetrievePersonne(String nom);
 	public Personne buildPersonne(String nom);
 	public Long createPersonne(final String nom);
+	public String printPersonnes(final Set<Personne> personnes, final String separator);
 }
