@@ -91,7 +91,6 @@ public class FilmServiceImpl implements IFilmService {
 		upperCaseTitre(film);
 		return filmDao.saveNewFilm(film);
 	}
-	
 	@Transactional(readOnly = false)
 	@Cacheable(value= "filmCache")
 	public List<Film> findAllFilms() {
@@ -109,6 +108,7 @@ public class FilmServiceImpl implements IFilmService {
 		return filmDao.getAllRippedFilms();
 	}
 	@Override
+	@Transactional(readOnly = true)
 	public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {
 		List<Film> filmList = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
 		filmList.sort(Comparator.comparing(Film::getPrintRealisateur).thenComparing(Film::getTitre));
@@ -136,19 +136,33 @@ public class FilmServiceImpl implements IFilmService {
 	    os.close();
 	}
 	@Override
-	public Set<Long> findAllTmdbFilms(Set<Long> tmdbIds) {
+	@Transactional(readOnly = true)
+	public Set<Long> findAllTmdbFilms(final Set<Long> tmdbIds) {
 		return filmDao.findAllTmdbFilms(tmdbIds);
 	}
-	
-	
-	/** TEST PURPOSE **/
-	private Dvd buildDvd(Integer annee) {
+	@Override
+	@Transactional(readOnly = true)
+	public Dvd buildDvd(final Integer annee,final Integer zone,final String edition) {
 		Dvd dvd = new Dvd();
-		dvd.setAnnee(annee);
-		dvd.setEdition("edition");
+		if(annee != null) {
+			dvd.setAnnee(annee);
+		}
+		if(zone != null) {
+			dvd.setZone(zone);
+		}else {
+			dvd.setZone(1);
+		}
+		if(StringUtils.isEmpty(edition)) {
+			dvd.setEdition("edition");
+		}else {
+			dvd.setEdition(edition);
+		}
 		dvd.setZone(1);
 		return dvd;
 	}
+	
+	/** TEST PURPOSE **/
+	
 	private Set<Personne> buildActeurs(final Personne act1,final Personne act2,final Personne act3){
 		Set<Personne> acteurs = new HashSet<>();
 		acteurs.add(act1);
@@ -176,7 +190,7 @@ public class FilmServiceImpl implements IFilmService {
 		film.setRipped(true);
 		film.setTitre(titre);
 		film.setTitreO(titre);
-		film.setDvd(buildDvd(annee));
+		film.setDvd(buildDvd(annee,null,null));
 		film.setRealisateurs(buildRealisateurs(realisateur));
 		film.setActeurs(buildActeurs(act1,act2,act3));
 		film.setTmdbId(new Long(100));

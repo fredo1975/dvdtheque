@@ -105,6 +105,7 @@ public class PersonneServiceImpl implements IPersonneService {
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public Personne createOrRetrievePersonne(String nom) {
 		Personne p = findPersonneByName(nom);
 		if(p == null) {

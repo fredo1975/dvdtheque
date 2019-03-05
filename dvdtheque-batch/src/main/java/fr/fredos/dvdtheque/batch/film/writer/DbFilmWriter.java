@@ -17,7 +17,9 @@ public class DbFilmWriter implements ItemWriter<Film> {
 	@Override
 	public void write(List<? extends Film> items) throws Exception {
 		for(Film film : items){
-			filmService.saveNewFilm(film);
+			if(film != null) {
+				filmService.saveNewFilm(film);
+			}
 		}
 	}
 }

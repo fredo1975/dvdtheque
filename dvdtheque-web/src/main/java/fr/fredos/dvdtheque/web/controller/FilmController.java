@@ -101,6 +101,22 @@ public class FilmController {
 		filmService.updateFilm(film);
 		return ResponseEntity.noContent().build();
 	}
+	
+	@CrossOrigin
+	@PutMapping("/films/save/{tmdbId}")
+	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId) {
+		Film savedFilm;
+		try {
+			savedFilm = tmdbServiceClient.saveTmbdFilm(tmdbId);
+			if(savedFilm==null) {
+				return ResponseEntity.notFound().build();
+			}
+			return ResponseEntity.ok(savedFilm);
+		} catch (ParseException e) {
+			logger.error(e.getMessage());
+		}
+		return ResponseEntity.badRequest().build();
+	}
 	@CrossOrigin
 	@PutMapping("/personnes/byId/{id}")
 	ResponseEntity<Object> updatePersonne(@RequestBody Personne p,@PathVariable Long id) {
@@ -115,6 +131,7 @@ public class FilmController {
 		logger.info(personne.toString());
 		return ResponseEntity.noContent().build();
 	}
+	/*
 	@CrossOrigin
 	@PostMapping("/films")
 	ResponseEntity<Object> saveFilm(@RequestBody Film film) {
@@ -122,5 +139,5 @@ public class FilmController {
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(id).toUri();
 		return ResponseEntity.created(location).build();
-	}
+	}*/
 }

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -19,9 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.IFilmService;
+import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.tmdb.model.Cast;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
 import fr.fredos.dvdtheque.tmdb.model.Crew;
@@ -36,12 +39,14 @@ public class TmdbServiceClient {
     Environment environment;
 	@Autowired
 	protected IFilmService filmService;
+	@Autowired
+	protected IPersonneService personneService;
 	private final RestTemplate restTemplate;
 	private static String TMDB_SEARCH_MOVIE_QUERY="themoviedb.search.movie.query";
 	private static String TMDB_API_KEY="themoviedb.api.key";
 	private static String TMDB_SEARCH_IMAGES_QUERY="themoviedb.search.images.query";
 	private static String TMDB_POSTER_PATH_URL = "themoviedb.poster.path.url";
-	private static final int NB_ACTEURS = 6;
+	private static String NB_ACTEURS="batch.save.nb.acteurs";
 	public TmdbServiceClient(RestTemplateBuilder restTemplateBuilder) {
         restTemplate = restTemplateBuilder.build();
     }
@@ -53,9 +58,28 @@ public class TmdbServiceClient {
 	 */
 	public Film replaceFilm(final Long tmdbId,final Film film) throws ParseException {
 		Results results = retrieveTmdbSearchResultsById(tmdbId);
-		Film toUpdateFilm = transformTmdbFilmToDvdThequeFilm(film,results, new HashSet<Long>());
+		Film toUpdateFilm = transformTmdbFilmToDvdThequeFilm(film,results, new HashSet<Long>(), true);
 		filmService.updateFilm(toUpdateFilm);
 		return toUpdateFilm;
+	}
+	/**
+	 * we're creating a film from a TMDB film
+	 * @param tmdbId
+	 * @return
+	 * @throws ParseException
+	 */
+	public Film saveTmbdFilm(final Long tmdbId) throws ParseException {
+		Results results = retrieveTmdbSearchResultsById(tmdbId);
+		if(results != null) {
+			Film filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);
+			filmToSave.setId(null);
+			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), null, null);
+			filmToSave.setDvd(dvd);
+			Long id = filmService.saveNewFilm(filmToSave);
+			filmToSave.setId(id);
+			return filmToSave;
+		}
+		return null;
 	}
 	/**
 	 * we're retrieving in TMDB the film with id tmdbId
@@ -76,8 +100,19 @@ public class TmdbServiceClient {
 			throw e;
 		}
 	}
-	private Film transformTmdbFilmToDvdThequeFilm(Film film,
-			final Results results,final Set<Long> tmdbFilmAlreadyInDvdthequeSet) throws ParseException {
+	/**
+	 * create a dvdtheque Film based on a TMBD film
+	 * @param film
+	 * @param results
+	 * @param tmdbFilmAlreadyInDvdthequeSet
+	 * @param persistPersonne TODO
+	 * @return
+	 * @throws ParseException
+	 */
+	public Film transformTmdbFilmToDvdThequeFilm(Film film,
+			final Results results,
+			final Set<Long> tmdbFilmAlreadyInDvdthequeSet,
+			final boolean persistPersonne) throws ParseException {
 		Film transformedfilm = new Film();
 		if(film != null && film.getId() != null) {
 			transformedfilm.setId(film.getId());
@@ -85,11 +120,11 @@ public class TmdbServiceClient {
 		if(film == null) {
 			transformedfilm.setId(results.getId());
 		}
-		if(tmdbFilmAlreadyInDvdthequeSet.contains(results.getId())) {
+		if(CollectionUtils.isNotEmpty(tmdbFilmAlreadyInDvdthequeSet) && tmdbFilmAlreadyInDvdthequeSet.contains(results.getId())) {
 			transformedfilm.setAlreadyInDvdtheque(true);
 		}
-		transformedfilm.setTitre(results.getTitle());
-		transformedfilm.setTitreO(results.getOriginal_title());
+		transformedfilm.setTitre(StringUtils.upperCase(results.getTitle()));
+		transformedfilm.setTitreO(StringUtils.upperCase(results.getOriginal_title()));
 		if(film != null && film.getDvd() != null) {
 			transformedfilm.setDvd(film.getDvd());
 		}
@@ -116,13 +151,17 @@ public class TmdbServiceClient {
 		transformedfilm.setTmdbId(results.getId());
 		Credits credits = retrieveTmdbCredits(results.getId());
 		if(CollectionUtils.isNotEmpty(credits.getCast())) {
-			int i=0;
+			int i=1;
 			for(Cast cast : credits.getCast()) {
-				Personne personne = new Personne();
-				personne.setId(Long.valueOf(cast.getCast_id()));
-				personne.setNom(StringUtils.upperCase(cast.getName()));
+				Personne personne = null;
+				if(!persistPersonne) {
+					personne = personneService.buildPersonne(StringUtils.upperCase(cast.getName()));
+					personne.setId(Long.valueOf(cast.getCast_id()));
+				}else {
+					personne = personneService.createOrRetrievePersonne(StringUtils.upperCase(cast.getName()));
+				}
 				transformedfilm.getActeurs().add(personne);
-				if(i++==NB_ACTEURS) {
+				if(i++==Integer.parseInt(environment.getRequiredProperty(NB_ACTEURS))) {
 					break;
 				}
 			}
@@ -130,8 +169,13 @@ public class TmdbServiceClient {
 		if(CollectionUtils.isNotEmpty(credits.getCrew())) {
 			List<Crew> crew = retrieveTmdbDirectors(credits);
 			for(Crew c : crew) {
-				Personne realisateur = new Personne();
-				realisateur.setNom(StringUtils.upperCase(c.getName()));
+				Personne realisateur = null;
+				if(!persistPersonne) {
+					realisateur = personneService.buildPersonne(StringUtils.upperCase(c.getName()));
+					realisateur.setId(RandomUtils.nextLong());
+				}else {
+					realisateur = personneService.createOrRetrievePersonne(StringUtils.upperCase(c.getName()));
+				}
 				transformedfilm.getRealisateurs().add(realisateur);
 			}
 		}
@@ -145,7 +189,7 @@ public class TmdbServiceClient {
 			Set<Long> tmdbIds = searchResults.getResults().stream().map(r -> r.getId()).collect(Collectors.toSet());
 			Set<Long> tmdbFilmAlreadyInDvdthequeSet = filmService.findAllTmdbFilms(tmdbIds);
 			for(Results results : searchResults.getResults()) {
-				res.add(transformTmdbFilmToDvdThequeFilm(null,results,tmdbFilmAlreadyInDvdthequeSet));
+				res.add(transformTmdbFilmToDvdThequeFilm(null,results,tmdbFilmAlreadyInDvdthequeSet, false));
 			}
 		}
 		return res;

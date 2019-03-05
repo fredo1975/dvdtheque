@@ -64,10 +64,11 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String SEARCH_FILM_BY_ID = "/dvdtheque/films/byId/";
 	private static final String SEARCH_TMDB_FILM_BY_TITRE = "/dvdtheque/films/tmdb/byTitre/";
 	private static final String UPDATE_TMDB_FILM_BY_TMDBID = "/dvdtheque/films/tmdb/";
-	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque//personnes";
+	private static final String SAVE_FILM_URI = "/dvdtheque/films/save/";
+	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque/personnes";
 	private Long tmdbId= new Long(4780);
 	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/xghbwWlA9uW4bjkUCtUDaIeOvQ4.jpg";
-	
+	public static final String TITRE_FILM_TMBD_ID_4780 = "OBSESSION";
 	public static final String TITRE_FILM = "Lorem Ipsum";
 	public static final String TITRE_FILM_UPDATED = "Lorem Ipsum updated";
 	public static final Integer ANNEE = 2015;
@@ -226,38 +227,15 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	@Transactional
 	public void testSaveNewFilm() throws Exception {
-		Film filmToSave = new Film();
-		filmToSave.setTitre(TITRE_FILM_UPDATED);
-		Set<Personne> acteurs = new HashSet<>();
-		Personne acteur1 = personneService.buildPersonne(ACT1_NOM);
-		acteurs.add(acteur1);
-		Personne acteur2 = personneService.buildPersonne(ACT2_NOM);
-		acteurs.add(acteur2);
-		Personne acteur3 = personneService.buildPersonne(ACT3_NOM);
-		acteurs.add(acteur3);
-		filmToSave.setActeurs(acteurs);
-		Personne real = personneService.buildPersonne(REAL_NOM);
-		Set<Personne> reals = new HashSet<>();
-		reals.add(real);
-		filmToSave.setRealisateurs(reals);
-		filmToSave.setAnnee(1987);
-		Dvd dvd = new Dvd();
-		dvd.setAnnee(1978);
-		dvd.setEdition("ds");
-		dvd.setZone(1);
-		filmToSave.setDvd(dvd);
-		filmToSave.setPosterPath("posterPath");
-		filmToSave.setTmdbId(100l);
-		ObjectMapper mapper = new ObjectMapper();
-		String filmJsonString = mapper.writeValueAsString(filmToSave);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-				.post(UPDATE_FILM_URI,filmToSave)
-				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
+				.put(SAVE_FILM_URI+tmdbId)
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
-		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
-		Film filmSaved = filmService.findFilmByTitre(TITRE_FILM_UPDATED);
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(TITRE_FILM_TMBD_ID_4780)));
+		Film filmSaved = filmService.findFilmByTitre(TITRE_FILM_TMBD_ID_4780);
 		assertFilmIsNotNull(filmSaved);
-		assertEquals(StringUtils.upperCase(TITRE_FILM_UPDATED),filmSaved.getTitre());
+		assertEquals(StringUtils.upperCase(TITRE_FILM_TMBD_ID_4780),filmSaved.getTitre());
 	}
 	@Test
 	@Transactional

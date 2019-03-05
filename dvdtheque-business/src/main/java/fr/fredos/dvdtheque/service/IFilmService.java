@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
+import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 
 public interface IFilmService {
@@ -26,4 +27,5 @@ public interface IFilmService {
 			final String act1Nom,
 			final String act2Nom,
 			final String act3Nom);
+	public Dvd buildDvd(final Integer annee,final Integer zone,final String edition);
 }
