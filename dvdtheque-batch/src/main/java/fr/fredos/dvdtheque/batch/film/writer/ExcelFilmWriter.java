@@ -2,11 +2,6 @@ package fr.fredos.dvdtheque.batch.film.writer;
 
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -40,30 +35,6 @@ public class ExcelFilmWriter implements ItemWriter<Film>{
     	for(int i=0;i<headerTab.length;i++) {
     		addCell(headerTab[i]);
     	}
-    	
-    	
-    	/*
-        CellStyle cs = this.sheet.createCellStyle();
-        cs.setWrapText(true);
-        cs.setAlignment(HorizontalAlignment.LEFT);
-    
-        HSSFRow r = s.createRow(row);
-        r.setRowStyle(cs);
-    
-        SXSSFCell c = r.createCell(0);
-        c.setCellValue("Author");
-        s.setColumnWidth(0, poiWidth(18.0));
-        c = r.createCell(1);
-        c.setCellValue("Book Name");
-        s.setColumnWidth(1, poiWidth(24.0));
-        c = r.createCell(2);
-        c.setCellValue("ISBN");
-        s.setColumnWidth(2, poiWidth(18.0));
-        c = r.createCell(3);
-        c.setCellValue("Price");
-        s.setColumnWidth(3, poiWidth(18.0));
-    
-        row++;*/
     }
     private void writeBook(Film film) {
         addRow();

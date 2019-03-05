@@ -36,7 +36,7 @@ import fr.fredos.dvdtheque.service.IFilmService;
 @EnableBatchProcessing
 public class BatchImportFilmsConfiguration{
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
-	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name";
+	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
 	@Autowired
 	protected JobBuilderFactory jobBuilderFactory;
     @Autowired

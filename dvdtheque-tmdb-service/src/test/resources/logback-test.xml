@@ -6,7 +6,6 @@
 			<pattern>%d %5p %40.40c:%4L - %m%n</pattern>
 		</encoder>
 	</appender>
-	<logger name="org.hibernate" level="info"/>
 	<logger name="org.springframework" level="info"/>
 	<root level="info">
 		<appender-ref ref="console" />

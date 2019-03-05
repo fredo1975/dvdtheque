@@ -14,13 +14,15 @@ spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5Dialect
 
 hibernate.hbm2ddl.auto=validate
 
+spring.main.web-application-type=none
+
 spring.batch.initialize-schema=always
 spring.batch.job.enabled=true
 
 batch.save.nb.acteurs=6
 
-csv.dvd.file.name=E:/dev/liste_dvd/ListeDVD.csv
-excel.dvd.file.name.export=E:/dev/github/dvdtheque/dvdtheque-batch/src/test/resources/ListeDVDExport.xlsx
+csv.dvd.file.name.import=E:/dev/liste_dvd/ListeDVD.csv
+excel.dvd.file.name.export=E:/dev/liste_dvd/ListeDVDExport.xlsx
 dvd.file.path=//DISKSTATION/films
 
 themoviedb.search.movie.query=https://api.themoviedb.org/3/search/movie

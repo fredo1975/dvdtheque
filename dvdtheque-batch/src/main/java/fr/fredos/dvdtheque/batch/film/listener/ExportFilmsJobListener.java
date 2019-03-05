@@ -15,7 +15,6 @@ public class ExportFilmsJobListener implements JobExecutionListener {
 	protected Logger logger = LoggerFactory.getLogger(ExportFilmsJobListener.class);
 	private final SXSSFWorkbook workbook;
     private final FileOutputStream outputStream;
-    public static final String LISTE_DVD_FILE_NAME_EXPORT = "csv.dvd.file.name.import";
     
     public ExportFilmsJobListener(SXSSFWorkbook workbook,FileOutputStream outputStream) throws IOException {
         this.workbook = workbook;

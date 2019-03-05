@@ -7,6 +7,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -43,10 +44,13 @@ public class BatchExportFilmsConfiguration {
 		return jobBuilderFactory.get("exportFilms")
 				.incrementer(new RunIdIncrementer())
 				.start(exportFilmsStep(workBook))
-				.listener(new ExportFilmsJobListener(workBook,outputStream))
+				.listener(listener(workBook,outputStream))
 				.build();
 	}
-    
+    @Bean
+	public JobExecutionListener listener(SXSSFWorkbook workBook,FileOutputStream outputStream) throws IOException {
+		return new ExportFilmsJobListener(workBook,outputStream);
+	}
     @Bean
     protected ListItemReader<Film> dbFilmReader() {
     	return new ListItemReader<>(filmService.findAllFilms());
