@@ -1,0 +1,1 @@
+java -jar dvdtheque-batch-2.2.1-SNAPSHOT.jar --spring.batch.job.names=exportFilms --spring.profiles.active=prod
