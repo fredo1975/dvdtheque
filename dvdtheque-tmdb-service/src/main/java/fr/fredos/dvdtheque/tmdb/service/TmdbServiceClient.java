@@ -149,6 +149,7 @@ public class TmdbServiceClient {
 			e.printStackTrace();
 		}
 		transformedfilm.setTmdbId(results.getId());
+		transformedfilm.setOverview(StringUtils.substring(results.getOverview(), 0, 499));
 		Credits credits = retrieveTmdbCredits(results.getId());
 		if(CollectionUtils.isNotEmpty(credits.getCast())) {
 			int i=1;

@@ -52,6 +52,8 @@ public class Film implements Serializable {
 	private String posterPath;
 	@Column(name = "TMDB_ID")
 	private Long tmdbId;
+	@Column(name = "OVERVIEW",length=500)
+	private String overview;
 	@Transient
 	private boolean alreadyInDvdtheque;
 	
@@ -111,11 +113,15 @@ public class Film implements Serializable {
 	public void setActeurs(Set<Personne> acteurs) {
 		this.acteurs = acteurs;
 	}
-	
 	public boolean isRipped() {
 		return ripped;
 	}
-	
+	public String getOverview() {
+		return overview;
+	}
+	public void setOverview(String overview) {
+		this.overview = overview;
+	}
 	public void setRipped(boolean ripped) {
 		this.ripped = ripped;
 	}
@@ -179,9 +185,9 @@ public class Film implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
-				+ ", dvd=" + dvd + ", acteurs=" + acteurs + ", realisateurs=" + realisateurs + ", ripped=" + ripped
-				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", alreadyInDvdtheque=" + alreadyInDvdtheque
-				+ "]";
+		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
+				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped + ", posterPath="
+				+ posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", alreadyInDvdtheque="
+				+ alreadyInDvdtheque + "]";
 	}
 }

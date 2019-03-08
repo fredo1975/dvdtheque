@@ -51,18 +51,27 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     @Autowired
 	protected IPersonneService personneService;
     
+    private void assertResultsIsNotNull(Results res) {
+		assertNotNull(res);
+		assertNotNull(res.getId());
+		assertNotNull(res.getOriginal_title());
+		assertNotNull(res.getPoster_path());
+		assertNotNull(res.getTitle());
+		assertNotNull(res.getRelease_date());
+		assertNotNull(res.getOverview());
+	}
     private void assertFilmIsNotNull(Film film) {
 		assertNotNull(film);
 		assertNotNull(film.getId());
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
+		assertNotNull(film.getOverview());
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
 		assertTrue(film.getActeurs().size()>=3);
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue(film.getRealisateurs().size()==1);
 	}
-    
     private Results getResultsByFilmTitre(Film film) {
     	SearchResults searchResults = client.retrieveTmdbSearchResults(film.getTitre());
 		assertNotNull(searchResults);
@@ -75,13 +84,14 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertFilmIsNotNull(film);
 		
 		Results res = getResultsByFilmTitre(film);
-		assertNotNull(res);
+		assertResultsIsNotNull(res);
+		
 		logger.info("tmdb id = "+res.getId().toString());
     }
 	@Test
     public void retrieveTmdbResultsByTmdbIdTest() {
 		Results res = client.retrieveTmdbSearchResultsById(tmdbId);
-		assertNotNull(res);
+		assertResultsIsNotNull(res);
 		logger.info("res = "+res.toString());
     }
 	@Test
@@ -115,7 +125,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
 		Results res = getResultsByFilmTitre(film);
-		assertNotNull(res);
+		assertResultsIsNotNull(res);
 		logger.info("tmdb id = "+res.getId().toString());
 		
 		ImagesResults imagesResults = client.retrieveTmdbImagesResults(res.getId());
@@ -131,7 +141,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
 		Results res = getResultsByFilmTitre(film);
-		assertNotNull(res);
+		assertResultsIsNotNull(res);
 		
 		Credits credits = client.retrieveTmdbCredits(res.getId());
 		assertNotNull(credits.getCast());

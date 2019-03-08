@@ -194,6 +194,7 @@ public class FilmServiceImpl implements IFilmService {
 		film.setRealisateurs(buildRealisateurs(realisateur));
 		film.setActeurs(buildActeurs(act1,act2,act3));
 		film.setTmdbId(new Long(100));
+		film.setOverview("Overview");
 		return film;
 	}
 	@Override

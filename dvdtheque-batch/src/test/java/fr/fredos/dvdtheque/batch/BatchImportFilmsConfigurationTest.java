@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.batch;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
@@ -42,6 +43,19 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public static final String ACT2_NOM = "Laura Dern";
 	public static final String ACT3_NOM = "Dennis Hopper";
 	public static final String ACT4_NOM = "Isabella Rossellini";
+	
+	private void assertFilmIsNotNull(Film film) {
+		assertNotNull(film);
+		assertNotNull(film.getId());
+		assertNotNull(film.getTitre());
+		assertNotNull(film.getAnnee());
+		assertNotNull(film.getDvd());
+		assertNotNull(film.getOverview());
+		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
+		assertTrue(film.getActeurs().size()==7);
+		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
+		assertTrue(film.getRealisateurs().size()==1);
+	}
 	@Before
 	public void init() {
 		jobLauncherTestUtils = new JobLauncherTestUtils();
@@ -82,6 +96,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()==7);
 			}
+			assertFilmIsNotNull(film);
 		}
 		assertTrue(blueVelvetExists);
 		assertTrue(taxiDriverExists);
