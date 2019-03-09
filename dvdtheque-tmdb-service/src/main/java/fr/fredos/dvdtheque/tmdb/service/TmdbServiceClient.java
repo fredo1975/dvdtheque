@@ -88,14 +88,14 @@ public class TmdbServiceClient {
 	 */
 	public Results retrieveTmdbSearchResultsById(final Long tmdbId) {
 		try {
-			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_IMAGES_QUERY)+tmdbId+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY), Results.class);
+			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_IMAGES_QUERY)+tmdbId+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&language=fr", Results.class);
 		} catch (RestClientException e) {
 			throw e;
 		}
 	}
 	public SearchResults retrieveTmdbSearchResults(final String titre) {
 		try {
-			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_MOVIE_QUERY)+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&query="+titre, SearchResults.class);
+			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_MOVIE_QUERY)+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&query="+titre+"&language=fr", SearchResults.class);
 		} catch (RestClientException e) {
 			throw e;
 		}
@@ -137,11 +137,13 @@ public class TmdbServiceClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		/*
 		ImagesResults imagesResults = retrieveTmdbImagesResults(results.getId());
 		if(CollectionUtils.isNotEmpty(imagesResults.getPosters())) {
 			String imageUrl = retrieveTmdbFrPosterPathUrl(imagesResults);
 			transformedfilm.setPosterPath(imageUrl);
-		}
+		}*/
+		transformedfilm.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
 		try {
 			Thread.sleep(400);
 		} catch (InterruptedException e) {

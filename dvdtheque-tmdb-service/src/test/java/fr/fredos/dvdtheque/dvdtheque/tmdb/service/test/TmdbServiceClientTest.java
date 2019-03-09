@@ -117,6 +117,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 			logger.info("film = "+film.toString());
 		}
     }
+	/*
 	@Test
     public void retrieveTmdbPosterPathTest() {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
@@ -132,7 +133,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(imagesResults);
 		String posterPath = client.retrieveTmdbFrPosterPathUrl(imagesResults);
 		logger.info("posterPath="+posterPath);
-    }
+    }*/
 	@Test
     public void retrieveTmdbCreditsTest() {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
