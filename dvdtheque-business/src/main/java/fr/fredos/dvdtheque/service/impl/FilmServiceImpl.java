@@ -35,7 +35,7 @@ public class FilmServiceImpl implements IFilmService {
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceImpl.class);
 	private static final String REALISATEUR_MESSAGE_WARNING = "Film should contains one producer";
 	private static final String ACTEURS_MESSAGE_WARNING = "Film should contains actors";
-	
+	public static final String CACHE_FILM = "filmCache";
 	@Autowired
 	private FilmDao filmDao;
 	@Autowired
@@ -72,7 +72,7 @@ public class FilmServiceImpl implements IFilmService {
 	public Film findFilm(Long id) {
 		return filmDao.findFilm(id);
 	}
-	@CacheEvict(value= "filmCache", allEntries = true)
+	@CacheEvict(value= CACHE_FILM, allEntries = true)
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
 		upperCaseTitre(film);
@@ -84,7 +84,7 @@ public class FilmServiceImpl implements IFilmService {
 		final String titreO = StringUtils.upperCase(film.getTitreO());
 		film.setTitreO(titreO);
 	}
-	@CacheEvict(value= "filmCache", allEntries = true)
+	@CacheEvict(value= CACHE_FILM, allEntries = true)
 	@Transactional(readOnly = false)
 	public Long saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
@@ -96,10 +96,9 @@ public class FilmServiceImpl implements IFilmService {
 	public List<Film> findAllFilms() {
 		return filmDao.findAllFilms();
 	}
-	@CacheEvict(value= "filmCache", allEntries = true)
+	@CacheEvict(value= CACHE_FILM, allEntries = true)
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
-		
 		filmDao.cleanAllFilms();
 		//personneService.cleanAllPersonnes();
 	}
@@ -115,6 +114,7 @@ public class FilmServiceImpl implements IFilmService {
 		return filmList;
 	}
 	@Override
+	@CacheEvict(value= CACHE_FILM, allEntries = true)
 	@Transactional(readOnly = false)
 	public void removeFilm(Film film) {
 		film = filmDao.findFilm(film.getId());
@@ -197,6 +197,7 @@ public class FilmServiceImpl implements IFilmService {
 		film.setOverview("Overview");
 		return film;
 	}
+	//@Cacheable(value= "filmCache")
 	@Override
 	public Film createOrRetrieveFilm(final String titre,final Integer annee,
 			final String realNom,

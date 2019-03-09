@@ -21,7 +21,9 @@ import fr.fredos.dvdtheque.service.dto.PersonneDto;
 @Service("personneService")
 public class PersonneServiceImpl implements IPersonneService {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceImpl.class);
-	public static final String CACHE_REPL_PERSONNE = "repl-personne";
+	private static final String CACHE_PERSONNE = "personneCache";
+	private static final String CACHE_REALISATEUR = "realCache";
+	private static final String CACHE_ACTEUR = "actCache";
 	
 	@Autowired
 	private PersonneDao personneDao;
@@ -45,19 +47,19 @@ public class PersonneServiceImpl implements IPersonneService {
 		realisateur = personneDao.findRealisateurByFilm(film);
 		return realisateur;
 	}
-	@Cacheable(value= "personneCache")
+	@Cacheable(value= CACHE_PERSONNE)
 	@Transactional(readOnly = true)
 	public List<Personne> findAllPersonne(){
 		return personneDao.findAllPersonne();
 	}
 	
-	@CacheEvict(value= "personneCache", allEntries = true)
+	@CacheEvict(value= CACHE_PERSONNE, allEntries = true)
 	@Transactional(readOnly = false)
 	public Long savePersonne(Personne personne) {
 		return personneDao.savePersonne(personne);
 	}
 	
-	@CacheEvict(value= "personneCache", allEntries = true)
+	@CacheEvict(value= CACHE_PERSONNE, allEntries = true)
 	@Transactional(readOnly = false)
 	public void updatePersonne(Personne personne){
 		if(null != personne){
@@ -85,10 +87,12 @@ public class PersonneServiceImpl implements IPersonneService {
 		personneDao.cleanAllPersons();
 	}
 	@Override
+	@Cacheable(value= CACHE_REALISATEUR)
 	public List<Personne> findAllRealisateur() {
 		return personneDao.findAllRealisateur();
 	}
 	@Override
+	@Cacheable(value= CACHE_ACTEUR)
 	public List<Personne> findAllActeur() {
 		return personneDao.findAllActeur();
 	}
@@ -106,6 +110,7 @@ public class PersonneServiceImpl implements IPersonneService {
 	
 	@Override
 	@Transactional(readOnly = false)
+	//@Cacheable(value= CACHE_PERSONNE)
 	public Personne createOrRetrievePersonne(String nom) {
 		Personne p = findPersonneByName(nom);
 		if(p == null) {

@@ -77,6 +77,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		List<Personne> realList = personneService.findAllRealisateur();
 		assertNotNull(realList);
 		assertTrue(CollectionUtils.isNotEmpty(realList));
+		assertTrue(realList.size()==1);
 	}
 	@Test
 	public void findAllActeurs() {
@@ -90,6 +91,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		List<Personne> actList = personneService.findAllActeur();
 		assertNotNull(actList);
 		assertTrue(CollectionUtils.isNotEmpty(actList));
+		assertTrue(actList.size()==3);
 	}
 	@Test
 	public void findRealisateurByFilm() throws Exception {
