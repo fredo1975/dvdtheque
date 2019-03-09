@@ -4,20 +4,12 @@ public class FilmCsvImportFormat {
 	public FilmCsvImportFormat() {
 		super();
 	}
-	public FilmCsvImportFormat(String realisateur, String titre, Integer zonedvd, Integer annee, String acteurs) {
-		super();
-		this.realisateur = realisateur;
-		this.titre = titre;
-		this.zonedvd = zonedvd;
-		this.annee = annee;
-		this.acteurs = acteurs;
-	}
 	private String realisateur;
 	private String titre;
 	private Integer zonedvd;
 	private Integer annee;
 	private String acteurs;
-	
+	private String ripped;
 	public String getRealisateur() {
 		return realisateur;
 	}
@@ -48,9 +40,15 @@ public class FilmCsvImportFormat {
 	public void setActeurs(String acteurs) {
 		this.acteurs = acteurs;
 	}
+	public String getRipped() {
+		return ripped;
+	}
+	public void setRipped(String ripped) {
+		this.ripped = ripped;
+	}
 	@Override
 	public String toString() {
 		return "FilmCsvImportFormat [realisateur=" + realisateur + ", titre=" + titre + ", zonedvd=" + zonedvd
-				+ ", annee=" + annee + ", acteurs=" + acteurs + "]";
+				+ ", annee=" + annee + ", acteurs=" + acteurs + ", ripped=" + ripped + "]";
 	}
 }

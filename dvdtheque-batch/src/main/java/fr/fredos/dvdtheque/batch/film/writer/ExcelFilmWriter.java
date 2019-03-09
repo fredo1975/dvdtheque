@@ -22,7 +22,7 @@ public class ExcelFilmWriter implements ItemWriter<Film>{
     private Integer currentRowNumber;
     private Integer currentColumnNumber;
     private SXSSFRow row;
-    String[] headerTab = new String[]{"Realisateur", "Titre", "Zonedvd","Annee","Acteurs"};
+    String[] headerTab = new String[]{"Realisateur", "Titre", "Zonedvd","Annee","Acteurs","Rippé"};
     public ExcelFilmWriter(SXSSFWorkbook workbook) {
         this.sheet = workbook.createSheet("Films");
         this.currentRowNumber = 0;
@@ -43,6 +43,7 @@ public class ExcelFilmWriter implements ItemWriter<Film>{
         addCell(film.getDvd().getZone().toString());
         addCell(film.getAnnee().toString());
         addCell(personneService.printPersonnes(film.getActeurs(),","));
+        addCell(film.isRipped()?"oui":"non");
     }
 
     private void addRow() {

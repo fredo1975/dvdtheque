@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.batch;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -36,6 +37,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public Job importFilmsJob;
 	public static final String TITRE_FILM_BLUE_VELVET = "BLUE VELVET";
 	public static final String TITRE_FILM_TAXI_DRIVER = "TAXI DRIVER";
+	public static final String TITRE_FILM_ERASERHEAD = "ERASERHEAD";
 	public static final Integer ANNEE_BLUE_VELVET = 1986;
 	public static final String REAL_NOM = "DAVID LYNCH";
 	public static final String REAL_NOM2 = "MARTIN SCORSESE";
@@ -79,6 +81,8 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		assertTrue(films.size()==9);
 		boolean blueVelvetExists = false;
 		boolean taxiDriverExists = false;
+		boolean eraserHeadExists = false;
+		
 		for(Film film : films) {
 			if(TITRE_FILM_BLUE_VELVET.equals(film.getTitre())) {
 				blueVelvetExists = true;
@@ -87,6 +91,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()==7);
+				assertTrue(film.isRipped());
 			}
 			if(TITRE_FILM_TAXI_DRIVER.equals(film.getTitre())) {
 				taxiDriverExists = true;
@@ -95,10 +100,21 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()==7);
+				assertTrue(film.isRipped());
+			}
+			if(TITRE_FILM_ERASERHEAD.equals(film.getTitre())) {
+				eraserHeadExists = true;
+				Personne real = film.getRealisateurs().iterator().next();
+				assertTrue(REAL_NOM.equals(real.getNom()));
+				Set<Personne> acteurs = film.getActeurs();
+				assertTrue(CollectionUtils.isNotEmpty(acteurs));
+				assertTrue(acteurs.size()==7);
+				assertFalse(film.isRipped());
 			}
 			assertFilmIsNotNull(film);
 		}
 		assertTrue(blueVelvetExists);
 		assertTrue(taxiDriverExists);
+		assertTrue(eraserHeadExists);
 	}
 }

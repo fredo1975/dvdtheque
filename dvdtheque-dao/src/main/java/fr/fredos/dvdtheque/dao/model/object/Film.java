@@ -42,9 +42,9 @@ public class Film implements Serializable {
 	@JoinColumn(name = "ID_DVD")
 	@ManyToOne(cascade=CascadeType.ALL)
 	private Dvd dvd;
-	@OneToMany(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
+	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	private Set<Personne> realisateurs = new HashSet<>();
-	@OneToMany(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
+	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	private Set<Personne> acteurs = new HashSet<>();
 	@Column(name = "RIPPED")
 	private boolean ripped;
@@ -56,7 +56,6 @@ public class Film implements Serializable {
 	private String overview;
 	@Transient
 	private boolean alreadyInDvdtheque;
-	
 	public Film() {
 		super();
 	}
@@ -132,16 +131,6 @@ public class Film implements Serializable {
 		}
 		return StringUtils.EMPTY;
 	}
-	public String getPrintActeurs() {
-		StringBuilder sb = new StringBuilder();
-		if(!CollectionUtils.isEmpty(this.getActeurs())) {
-			for(Personne acteur : this.getActeurs()){
-				sb.append(acteur.getNom()+" - ");
-			}
-		}
-		return StringUtils.removeEnd(sb.toString(), " - ");
-	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

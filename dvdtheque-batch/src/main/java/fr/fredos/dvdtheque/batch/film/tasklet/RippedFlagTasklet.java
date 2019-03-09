@@ -23,6 +23,7 @@ import fr.fredos.dvdtheque.service.IFilmService;
 public class RippedFlagTasklet implements Tasklet{
 	protected Logger logger = LoggerFactory.getLogger(RippedFlagTasklet.class);
 	private static String LISTE_DVD_FILE_PATH="dvd.file.path";
+	private static String RIPPEDFLAGTASKLET_FROM_FILE="rippedFlagTasklet.from.file";
 	@Autowired
 	protected IFilmService filmService;
 	@Autowired
@@ -32,28 +33,33 @@ public class RippedFlagTasklet implements Tasklet{
 	private String fileExtension;*/
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		Resource directory = new FileSystemResource(environment.getRequiredProperty(LISTE_DVD_FILE_PATH));
-		File dir = directory.getFile();
-		Assert.notNull(directory, "directory must be set");
+		boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
+		if(!loadFromFile) {
+			Resource directory = new FileSystemResource(environment.getRequiredProperty(LISTE_DVD_FILE_PATH));
+			File dir = directory.getFile();
+			Assert.notNull(directory, "directory must be set");
 
-        File[] files = dir.listFiles();
-        for (int i = 0; i < files.length; i++) {
-        	String name = files[i].getName();
-        	String extension = StringUtils.substringAfter(name, ".");
-        	if(extension.equalsIgnoreCase("mkv")) {
-        		String titre = StringUtils.substringBefore(name, ".");
-        		try {
-        			Film film = filmService.findFilmByTitre(titre);
-        			if(film != null) {
-        				film.setRipped(true);
-            			filmService.updateFilm(film);
-            			logger.debug(film.toString());
-        			}
-        		}catch(EmptyResultDataAccessException e) {
-        			//logger.error(titre+" not found");
-        		}
-        	}
-        }
+	        File[] files = dir.listFiles();
+	        for (int i = 0; i < files.length; i++) {
+	        	String name = files[i].getName();
+	        	String extension = StringUtils.substringAfter(name, ".");
+	        	if(extension.equalsIgnoreCase("mkv")) {
+	        		String titre = StringUtils.substringBefore(name, ".");
+	        		try {
+	        			Film film = filmService.findFilmByTitre(titre);
+	        			if(film != null) {
+	        				film.setRipped(true);
+	            			filmService.updateFilm(film);
+	            			logger.debug(film.toString());
+	        			}
+	        		}catch(EmptyResultDataAccessException e) {
+	        			//logger.error(titre+" not found");
+	        		}
+	        	}
+	        }
+		}else {
+			logger.info("nothing to do");
+		}
 		return RepeatStatus.FINISHED;
 	}
 	
