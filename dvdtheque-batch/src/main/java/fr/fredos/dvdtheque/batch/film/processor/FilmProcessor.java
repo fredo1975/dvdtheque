@@ -1,128 +1,65 @@
 package fr.fredos.dvdtheque.batch.film.processor;
 
 import java.util.HashSet;
-import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
-import fr.fredos.dvdtheque.dto.ActeurDto;
-import fr.fredos.dvdtheque.dto.DvdDto;
-import fr.fredos.dvdtheque.dto.FilmDto;
-import fr.fredos.dvdtheque.dto.PersonneDto;
-import fr.fredos.dvdtheque.dto.PersonnesFilm;
-import fr.fredos.dvdtheque.dto.RealisateurDto;
-import fr.fredos.dvdtheque.enums.TypePersonne;
+import fr.fredos.dvdtheque.dao.model.object.Dvd;
+import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.service.IFilmService;
+import fr.fredos.dvdtheque.tmdb.model.Results;
+import fr.fredos.dvdtheque.tmdb.model.SearchResults;
+import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
-public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,FilmDto> {
-	
-	private PersonneDto currentRealisateur;
-
+public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
+	protected Logger logger = LoggerFactory.getLogger(FilmProcessor.class);
+	@Autowired
+    private TmdbServiceClient tmdbServiceClient;
+	@Autowired
+	protected IFilmService filmService;
+	@Autowired
+    Environment environment;
+	private static String RIPPEDFLAGTASKLET_FROM_FILE="rippedFlagTasklet.from.file";
 	@Override
-	public FilmDto process(FilmCsvImportFormat item) throws Exception {
-		FilmDto filmDto=new FilmDto();
-		filmDto.setAnnee(item.getAnnee());
-		filmDto.setTitre(item.getTitre());
-		//filmDto.setTitreO(item.getTitreO());
-		DvdDto dvd = new DvdDto();
-		dvd.setZone(item.getZonedvd());
-		filmDto.setDvd(dvd);
-		PersonnesFilm pf = new PersonnesFilm();
-		String acteurs = item.getActeurs();
-		Set<ActeurDto> acteursDto = new HashSet<ActeurDto>();
-		if(!StringUtils.isEmpty(acteurs)){
-			Set<PersonneDto> set = parsePersonneItem(acteurs, TypePersonne.ACTEUR);
-			for(PersonneDto acteur : set){
-				ActeurDto acteurDto = new ActeurDto();
-				acteurDto.setPersonne(acteur);
-				acteursDto.add(acteurDto);
+	public Film process(FilmCsvImportFormat item) throws Exception {
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Film filmToSave = null;
+		SearchResults searchResults = tmdbServiceClient.retrieveTmdbSearchResults(item.getTitre());
+		if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
+			Results res = tmdbServiceClient.filterSearchResultsByDateRelease(item.getAnnee(), searchResults.getResults());
+			if(res != null) {
+				filmToSave = tmdbServiceClient.transformTmdbFilmToDvdThequeFilm(null, res, new HashSet<>(), true);
 			}
 		}
-		Set<RealisateurDto> realisateur = new HashSet<RealisateurDto>(1);
-		if(StringUtils.isEmpty(item.getRealisateur())){
-			RealisateurDto realisateurDto = new RealisateurDto();
-			realisateurDto.setPersonne(currentRealisateur);
-			realisateur.add(realisateurDto);
-		}else{
-			Set<PersonneDto> set = parsePersonneItem(item.getRealisateur(), TypePersonne.REALISATEUR);
-			for(PersonneDto real : set){
-				RealisateurDto realisateurDto = new RealisateurDto();
-				realisateurDto.setPersonne(real);
-				realisateur.add(realisateurDto);
+		if(filmToSave != null) {
+			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null);
+			filmToSave.setDvd(dvd);
+			//filmToSave.setTitreFromExcelFile(StringUtils.upperCase(item.getTitre()));
+			boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
+			if(!loadFromFile) {
+				filmToSave.setRipped(false);
+			}else {
+				if(StringUtils.isEmpty(item.getRipped())) {
+					filmToSave.setRipped(false);
+				}else {
+					filmToSave.setRipped(item.getRipped().equalsIgnoreCase("oui")?true:false);
+				}
 			}
+			filmToSave.setId(null);
+			logger.debug(filmToSave.toString());
+			return filmToSave;
 		}
-		pf.setRealisateur(realisateur.iterator().next());
-		pf.setActeur(acteursDto);
-		filmDto.setPersonnesFilm(pf);
-		filmDto.setRipped(false);
-		return filmDto;
+		return null;
 	}
-
-	private Set<PersonneDto> parsePersonneItem(String acteurs, TypePersonne typePersonne){
-		String[] tabPersonne = StringUtils.split(acteurs, ',');
-		Set<PersonneDto> personnesDto = new HashSet<PersonneDto>(tabPersonne.length);
-		for(int i=0;i<tabPersonne.length;i++){
-			PersonneDto personne = new PersonneDto();
-			//ActeurDto acteur = new ActeurDto();
-			String[] tab = StringUtils.split(tabPersonne[i], ' ');
-			if(tab.length>1){
-				if(tab.length==2){
-					String nom = StringUtils.trim(tab[1]);
-					String prenom = StringUtils.trim(tab[0]);
-					personne.setNom(StringUtils.upperCase(nom));
-					personne.setPrenom(StringUtils.upperCase(prenom));
-				}
-				if(tab.length==3){
-					String nom1 = StringUtils.trim(tab[1]);
-					String nom2 = StringUtils.trim(tab[2]);
-					String prenom = StringUtils.trim(tab[0]);
-					personne.setNom(StringUtils.upperCase(nom1)+" "+StringUtils.upperCase(nom2));
-					personne.setPrenom(StringUtils.upperCase(prenom));
-				}
-				if(tab.length==4){
-					String nom1 = StringUtils.trim(tab[1]);
-					String nom2 = StringUtils.trim(tab[2]);
-					String nom3 = StringUtils.trim(tab[3]);
-					String prenom = StringUtils.trim(tab[0]);
-					personne.setNom(StringUtils.upperCase(nom1)+" "+StringUtils.upperCase(nom2)+" "+StringUtils.upperCase(nom3));
-					personne.setPrenom(StringUtils.upperCase(prenom));
-				}
-				if(tab.length>4){
-					String[] tab2 = StringUtils.split(tabPersonne[i], '&');
-					String[] tab3 = StringUtils.split(tab2[0], ' ');
-					String[] tab4 = StringUtils.split(tab2[1], ' ');
-					String nom1 = StringUtils.trim(tab3[1]);
-					String nom2 = StringUtils.trim(tab4[1]);
-					String prenom1 = StringUtils.trim(tab3[0]);
-					String prenom2 = StringUtils.trim(tab4[0]);
-					personne.setNom(StringUtils.upperCase(nom1));
-					personne.setPrenom(StringUtils.upperCase(prenom1));
-					PersonneDto personne2 = new PersonneDto();
-					personne2.setNom(StringUtils.upperCase(nom2));
-					personne2.setPrenom(StringUtils.upperCase(prenom2));
-					personnesDto.add(personne2);
-				}
-			}else{
-				String nom = StringUtils.trim(tab[0]);
-				personne.setNom(StringUtils.upperCase(nom));
-				personne.setPrenom("");
-			}
-			personnesDto.add(personne);
-			if(typePersonne.equals(TypePersonne.REALISATEUR)){
-				this.setCurrentRealisateur(personne);
-			}
-		}
-		return personnesDto;
-	}
-
-	public PersonneDto getCurrentRealisateur() {
-		return currentRealisateur;
-	}
-
-	public void setCurrentRealisateur(PersonneDto currentRealisateur) {
-		this.currentRealisateur = currentRealisateur;
-	}
-
-	
 }

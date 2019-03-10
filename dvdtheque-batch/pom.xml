@@ -4,9 +4,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>dvdtheque</artifactId>
 		<groupId>fr.fredos.dvdtheque</groupId>
-		<version>1.0-SNAPSHOT</version>
+		<artifactId>dvdtheque</artifactId>
+		<version>2.2.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>dvdtheque-batch</artifactId>
 	<name>dvdtheque-batch</name>
@@ -14,96 +14,37 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.fredos.dvdtheque</groupId>
-			<artifactId>dvdtheque-business</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<artifactId>dvdtheque-tmdb-service</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-		</dependency>
-
-		<!-- Spring Batch -->
-		<dependency>
-			<groupId>org.springframework.batch</groupId>
-			<artifactId>spring-batch-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-context</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-beans</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-aop</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.batch</groupId>
-			<artifactId>spring-batch-infrastructure</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-context</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-beans</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.batch</groupId>
-			<artifactId>spring-batch-test</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-maven-plugin</artifactId>
+			<artifactId>spring-boot-starter-integration</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-context</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-beans</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-aop</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-expression</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-			</exclusions>
+			<artifactId>spring-integration-feed</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-file</artifactId>
 		</dependency>
-		
+
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-batch</artifactId>
 		</dependency>
-		
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -111,24 +52,11 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
+<!-- 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
-				<configuration>
-					<verbose>true</verbose>
-					<fork>true</fork>
-					<executable><!-- path-to-javac -->
-					</executable>
-					<compilerVersion>1.8</compilerVersion>
-				</configuration>
-			</plugin>
-			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.1.0</version>
 				<configuration>
 					<archive>
 						<manifest>
@@ -142,7 +70,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.1.1</version>
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
@@ -171,9 +98,10 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.5.3</version>
 						<configuration>
-							<descriptor>src/assembly/local-properties.xml</descriptor>
+							<descriptors>
+								<descriptor>src/assembly/local-properties.xml</descriptor>
+							</descriptors>
 						</configuration>
 						<executions>
 							<execution>
@@ -189,14 +117,16 @@
 			</build>
 		</profile>
 		<profile>
-			<id>prod</id>
+			<id>local-bin</id>
 			<build>
 				<plugins>
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
 						<version>2.5.3</version>
 						<configuration>
-							<descriptor>src/assembly/local-bin.xml</descriptor>
+							<descriptors>
+								<descriptor>src/assembly/local-bin.xml</descriptor>
+							</descriptors>
 						</configuration>
 						<executions>
 							<execution>
@@ -219,7 +149,9 @@
 						<artifactId>maven-assembly-plugin</artifactId>
 						<version>2.5.3</version>
 						<configuration>
-							<descriptor>src/assembly/prod-properties.xml</descriptor>
+							<descriptors>
+								<descriptor>src/assembly/prod-properties.xml</descriptor>
+							</descriptors>
 						</configuration>
 						<executions>
 							<execution>
@@ -242,7 +174,9 @@
 						<artifactId>maven-assembly-plugin</artifactId>
 						<version>2.5.3</version>
 						<configuration>
-							<descriptor>src/assembly/prod-bin.xml</descriptor>
+							<descriptors>
+								<descriptor>src/assembly/prod-bin.xml</descriptor>
+							</descriptors>
 						</configuration>
 						<executions>
 							<execution>
@@ -265,7 +199,9 @@
 						<artifactId>maven-assembly-plugin</artifactId>
 						<version>2.5.3</version>
 						<configuration>
-							<descriptor>src/assembly/context.xml</descriptor>
+							<descriptors>
+								<descriptor>src/assembly/context.xml</descriptor>
+							</descriptors>
 						</configuration>
 						<executions>
 							<execution>
@@ -281,7 +217,6 @@
 			</build>
 		</profile>
 	</profiles>
-	<!-- 
 	<distributionManagement>
 		<repository>
 			<url>http://192.168.1.42:8081/repository/maven-central/</url>

@@ -3,431 +3,277 @@ package fr.fredos.dvdtheque.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
-import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
-import fr.fredos.dvdtheque.dto.ActeurDto;
-import fr.fredos.dvdtheque.dto.FilmDto;
-import fr.fredos.dvdtheque.dto.PersonneDto;
-import fr.fredos.dvdtheque.dto.PersonnesFilm;
-import fr.fredos.dvdtheque.dto.RealisateurDto;
 
-@ContextConfiguration(locations={"classpath:business-config.xml"})
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class})
 public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTests {
+	protected Logger logger = LoggerFactory.getLogger(FilmServiceTests.class);
+	public static final String TITRE_FILM = "Lorem Ipsum";
+	public static final String TITRE_FILM_UPDATED = "Lorem Ipsum updated";
+	public static final String TITRE_FILM_REUPDATED = "Lorem Ipsum reupdated";
+	public static final Integer ANNEE = 2015;
+	public static final String REAL_NOM = "toto titi";
+	public static final String REAL_NOM1 = "Dan VanHarp";
+	public static final String ACT1_NOM = "tata tutu";
+	public static final String ACT2_NOM = "toitoi tuitui";
+	public static final String ACT3_NOM = "tuotuo tmitmi";
+	public static final String ACT4_NOM = "Graham Collins";
+	
 	@Autowired
 	protected FilmDao filmDao;
-	protected Logger logger = LoggerFactory.getLogger(FilmServiceTests.class);
 	@Autowired
-	protected FilmService filmService;
+	protected IFilmService filmService;
 	@Autowired
-	protected PersonneService personneService;
-	private final static String MAX_ID_SQL = "select max(id) from FILM";
+	protected IPersonneService personneService;
 	
+	private void assertFilmIsNotNull(Film film) {
+		assertNotNull(film);
+		assertNotNull(film.getId());
+		assertNotNull(film.getTitre());
+		assertNotNull(film.getAnnee());
+		assertNotNull(film.getDvd());
+		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
+		assertTrue(film.getActeurs().size()==3);
+		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
+		assertTrue(film.getRealisateurs().size()==1);
+	}
+	@Test
+	public void saveFilm() {
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+	}
 	@Test
 	public void findFilmByTitre() throws Exception{
 		String methodName = "findFilmByTitre : ";
 		logger.debug(methodName + "start");
-		String titre = "Titre";
-		FilmDto film = FilmTestUtils.buildFilmDto(titre);
-		film = filmService.saveNewFilm(film);
-		film = filmService.findFilmByTitre(titre);
-		assertNotNull(film);
-		assertNotNull(film.getTitre());
-		
-		//FilmDto filmNotFound = filmService.findFilmByTitre("blade runne");
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		Film retrievedFilm = filmService.findFilmByTitre(TITRE_FILM);
+		assertFilmIsNotNull(retrievedFilm);
 		logger.debug(methodName + "end");
 	}
 	@Test
 	public void findFilmWithAllObjectGraph() throws Exception{
 		String methodName = "findFilmWithAllObjectGraph : ";
 		logger.debug(methodName + "start");
-		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
-		if(id==null) {
-			FilmDto film = filmService.saveNewFilm(FilmTestUtils.buildFilmDto(FilmTestUtils.TITRE_FILM));
-			assertNotNull(film);
-			id = film.getId();
-		}
-		FilmDto film = filmService.findFilmWithAllObjectGraph(id);
-		assertNotNull(film);
-		assertNotNull(film.getTitre());
-		logger.debug(methodName + "film ="+film.toString());
-		assertNotNull(film.getPersonnesFilm().getActeurs());
-		for(ActeurDto acteur : film.getPersonnesFilm().getActeurs()){
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		Film retrievedFilm = filmService.findFilmWithAllObjectGraph(film.getId());
+		assertFilmIsNotNull(retrievedFilm);
+		logger.debug(methodName + "retrievedFilm ="+retrievedFilm.toString());
+		for(Personne acteur : retrievedFilm.getActeurs()){
 			logger.debug(methodName + " acteur="+acteur.toString());
+		}
+		for(Personne realisateur : retrievedFilm.getRealisateurs()){
+			logger.debug(methodName + " realisateur="+realisateur.toString());
 		}
 		logger.debug(methodName + "end");
 	}
 	@Test
 	public void findFilm() throws Exception {
-		String methodName = "findFilm : ";
-		logger.debug(methodName + "start");
-		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
-		if(id==null) {
-			FilmDto film = filmService.saveNewFilm(FilmTestUtils.buildFilmDto(FilmTestUtils.TITRE_FILM));
-			assertNotNull(film);
-			id = film.getId();
-		}
-		FilmDto film = filmService.findFilm(id);
-		assertNotNull(film);
-		assertNotNull(film.getTitre());
-		logger.debug(methodName + "film ="+film.toString());
-		assertNotNull(film.getPersonnesFilm().getRealisateur());
-		logger.debug(methodName + "Realisateur ="+film.getPersonnesFilm().getRealisateur().toString());
-		
-		assertNotNull(film.getPersonnesFilm().getActeurs());
-		for(ActeurDto acteur : film.getPersonnesFilm().getActeurs()){
-			logger.debug(methodName + " acteur="+acteur.toString());
-		}
-		logger.debug(methodName + "end");
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		film = filmService.findFilm(film.getId());
+		assertFilmIsNotNull(film);
 	}
 	@Test
-	public void findAllFilm() throws Exception {
-		String methodName = "findAllFilm : ";
-		logger.debug(methodName + "start");
+	public void findAllFilms() throws Exception {
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film2);
+		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film3);
 		StopWatch watch = new StopWatch();
 		watch.start();
 		List<Film> films = filmService.findAllFilms();
-		/*
-		for(Film film : films){
-			assertNotNull(film);
-			assertNotNull(film.getTitre());
-			logger.info(methodName + "film ="+film.toString());
-		}
-		*/
 		assertNotNull(films);
+		assertTrue(CollectionUtils.isNotEmpty(films));
+		assertTrue(films.size()==3);
+		for(Film f : films) {
+			logger.info(film.toString());
+		}
 		watch.stop();
-		logger.debug(watch.prettyPrint());
-		logger.debug(methodName + "end");
+		logger.info(watch.prettyPrint());
+		filmService.cleanAllFilms();
 	}
 	@Test
-	public void findAllRippedFilm() throws Exception {
-		String methodName = "findAllRippedFilm : ";
-		logger.debug(methodName + "start");
+	public void findAllTmdbFilms() throws Exception {
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		Set<Long> tmdbIds = new HashSet<>();
+		tmdbIds.add(film.getTmdbId());
+		Set<Long> films = filmService.findAllTmdbFilms(tmdbIds);
+		assertNotNull(films);
+		assertTrue(CollectionUtils.isNotEmpty(films));
+		
+	}
+	@Test
+	public void findAllRippedFilms() throws Exception {
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
 		List<Film> films = filmService.getAllRippedFilms();
-		logger.info(methodName + "######### size ="+films.size());
-		for(Film film : films){
-			assertNotNull(film);
-			assertNotNull(film.getTitre());
-			//logger.info(methodName + "######### film ="+film.toString());
+		assertTrue(CollectionUtils.isNotEmpty(films));
+		for(Film f : films){
+			assertNotNull(f);
 		}
-		logger.debug(methodName + "end");
-	}
-	@Test
-	public void getAllFilmDtos() {
-		String methodName = "getAllFilm : ";
-		logger.debug(methodName + "start");
-		StopWatch watch = new StopWatch();
-		watch.start();
-		List<FilmDto> films = filmService.getAllFilmDtos();
-		assertNotNull(films);
-		for(FilmDto film : films){
-			assertNotNull(film);
-			assertNotNull(film.getTitre());
-			//logger.info(methodName + "film ="+film.toString());
-			//logger.info(methodName + "Realisateur ="+film.getPrintRealisateur());
-		}
-		watch.stop();
-		logger.debug(watch.prettyPrint());
-		
-		StopWatch cachedWatch = new StopWatch();
-		cachedWatch.start();
-		films = filmService.getAllFilmDtos();
-		cachedWatch.stop();
-		logger.debug(cachedWatch.prettyPrint());
-		
-		StopWatch cachedWatch2 = new StopWatch();
-		cachedWatch2.start();
-		films = filmService.getAllFilmDtos();
-		cachedWatch2.stop();
-		logger.debug(cachedWatch2.prettyPrint());
-		
-		logger.debug(methodName + "end");
-	}
-	@Test
-	public void getAllFilm() {
-		String methodName = "getAllFilm : ";
-		logger.debug(methodName + "start");
-		StopWatch watch = new StopWatch();
-		watch.start();
-		List<Film> films = filmService.getAllFilms();
-		/*
-		for(Film film : films){
-			assertNotNull(film);
-			assertNotNull(film.getTitre());
-			logger.info(methodName + "film ="+film.toString());
-			logger.info(methodName + "Realisateur ="+film.getRealisateurs().iterator().next());
-		}*/
-		assertNotNull(films);
-		watch.stop();
-		logger.debug(watch.prettyPrint());
-		logger.debug(methodName + "end");
-	}
-	private PersonneDto buildPersonneDto(String prenom,String nom){
-		PersonneDto p = new PersonneDto();
-		p.setNom(nom);
-		p.setPrenom(prenom);
-		return p;
 	}
 	
 	@Test
 	@Transactional
-	public void saveNewFilmWithNewPersons() {
-		String methodName = "saveNewFilmWithNewPersons : ";
-		logger.debug(methodName + "start");
-		String prenom = "fredo";
-		String nom = "elbedo";
-		PersonneDto personneDto = buildPersonneDto(prenom,nom);
-		Personne acteur = PersonneDto.fromDto(personneDto);
-		acteur = personneService.savePersonne(acteur);
-		
-		String prenomAct1 = "acteur1";
-		String nomAct1 = "acteur1";
-		PersonneDto personneAct1Dto = buildPersonneDto(prenomAct1,nomAct1);
-		Personne real = PersonneDto.fromDto(personneAct1Dto);
-		real = personneService.savePersonne(real);
-		assertNotNull(real);
-		
-		Dvd dvd = new Dvd();
-		dvd.setZone(new Integer(2));
-		dvd.setAnnee(2002);
-		dvd.setEdition("edition");
-		Film film = new Film();
-		film.setTitre("test1");
-		film.setAnnee(2002);
-		film.setDvd(dvd);
-		
-		film.getRealisateurs().add(real);
-		film.getActeurs().add(acteur);
-		filmService.saveNewFilm(film);
-		logger.debug(methodName + "end");
-	}
-	@Test
-	@Transactional
-	public void saveNewFilmWithExistingPersons() {
-		String methodName = "saveNewFilmWithExistingPersons : ";
-		logger.debug(methodName + "start");
-		
-		FilmDto f = FilmTestUtils.buildFilmDto(FilmTestUtils.TITRE_FILM);
-		f = filmService.saveNewFilm(f);
-		assertNotNull(f);
-		assertNotNull(f.getPersonnesFilm().getRealisateur().getPersonne().getId());
-		Integer idReal = f.getPersonnesFilm().getRealisateur().getPersonne().getId();
-		assertNotNull(idReal);
-		Personne real = new Personne();
-		real.setId(idReal);
-		assertNotNull(f.getPersonnesFilm().getActeurs().iterator());
-		Integer idAct = f.getPersonnesFilm().getActeurs().iterator().next().getPersonne().getId();
-		assertNotNull(idAct);
-		Personne acteur = new Personne();
-		acteur.setId(idAct);
-		
-		Dvd dvd = new Dvd();
-		dvd.setZone(new Integer(2));
-		dvd.setAnnee(2002);
-		dvd.setEdition("edition");
-		Film film = new Film();
-		film.setTitre("test1");
-		film.setAnnee(2002);
-		film.setDvd(dvd);
-		
-		film.getRealisateurs().add(real);
-		film.getActeurs().add(acteur);
-		Film result = filmService.updateFilm(film);
-		assertNotNull(result);
-		logger.debug(methodName + "end");
-	}
-	@Test
-	@Transactional
 	public void updateFilm(){
-		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
-		if(id==null) {
-			FilmDto film = filmService.saveNewFilm(FilmTestUtils.buildFilmDto(FilmTestUtils.TITRE_FILM));
-			assertNotNull(film);
-			id = film.getId();
-		}
-		FilmDto film = filmService.findFilm(id);
-		assertNotNull(film);
-		logger.debug("film="+film.toString());
-		film.setTitre("fake titre");
-		ActeurDto ac = null;
-		for(ActeurDto p : film.getPersonnesFilm().getActeurs()){
-			logger.debug("p.getPersonne().toString()="+p.getPersonne().toString());
-			ac = p;
-		}
-		film.getPersonnesFilm().getActeurs().remove(ac);
-		Film f = film.fromDto();
-		filmService.updateFilm(f);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
 		
-	}
-	@Test
-	public void getAllFilmsByDao(){
-		String methodName = "getAllFilmsByDao : ";
-		logger.debug(methodName + "start");
-		List<Film> films = filmDao.findAllFilms();
-		assertNotNull(films);
+		film.setTitre(TITRE_FILM_UPDATED);
+		Personne real = personneService.buildPersonne(REAL_NOM1);
+		assertNotNull(real);
+		Long idreal = personneService.savePersonne(real);
+		assertNotNull(idreal);
+		real.setId(idreal);
+		film.getRealisateurs().clear();
+		film.getRealisateurs().add(real);
 		
-		for(Film film : films){
-			logger.debug(methodName + "film = "+film.toString());
-			Set<Personne> realisateurs = film.getRealisateurs();
-			for(Personne real : realisateurs){
-				logger.debug(methodName + "real = "+real.toString());
-			}
-		}
-		logger.debug(methodName + "films.size() = "+films.size());
-		logger.debug(methodName + "end");
-	}
-	@Test
-	public void getAllFilmsByService(){
-		String methodName = "getAllFilmsByService : ";
-		logger.debug(methodName + "start");
-		List<Film> films = filmService.getAllFilms();
-		assertNotNull(films);
+		Personne act = personneService.buildPersonne(ACT4_NOM);
+		assertNotNull(act);
+		Long idAct = personneService.savePersonne(act);
+		assertNotNull(idAct);
+		act.setId(idAct);
+		film.getActeurs().clear();
+		film.getActeurs().add(act);
 		
-		for(Film film : films){
-			logger.debug(methodName + "film = "+film.toString());
-			Set<Personne> realisateurs = film.getRealisateurs();
-			for(Personne real : realisateurs){
-				logger.debug(methodName + "real = "+real.toString());
-			}
-		}
-		logger.debug(methodName + "films.size() = "+films.size());
+		final String posterPath = "posterPath";
+		film.setPosterPath(posterPath);
+		filmService.updateFilm(film);
+		Film filmUpdated = filmService.findFilm(film.getId());
 		
-		List<Film> films2 = filmService.getAllFilms();
-		assertNotNull(films2);
-		logger.debug(methodName + "end");
+		assertNotNull(filmUpdated);
+		assertEquals(StringUtils.upperCase(TITRE_FILM_UPDATED), filmUpdated.getTitre());
+		assertEquals(REAL_NOM1, filmUpdated.getRealisateurs().iterator().next().getNom());
+		assertEquals(ACT4_NOM, filmUpdated.getActeurs().iterator().next().getNom());
+		assertEquals(posterPath, filmUpdated.getPosterPath());
 	}
 	@Test
 	public void cleanAllFilms() {
 		String methodName = "cleanAllFilms : ";
 		logger.debug(methodName + "start");
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film2);
+		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film3);
 		filmService.cleanAllFilms();
+		assertTrue(CollectionUtils.isEmpty(filmService.findAllFilms()));
 		logger.debug(methodName + "end");
 	}
 	@Test
-	public void findAllFilmsByCriteriaTtireService() {
+	public void findAllFilmsByCriteriaTitreService() {
 		String methodName = "findAllFilmsByCriteriaTtireService : ";
 		logger.debug(methodName + "start");
-		FilmDto f = filmService.saveNewFilm(FilmTestUtils.buildFilmDto(FilmTestUtils.TITRE_FILM));
-		assertNotNull(f);
-		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(StringUtils.left(FilmTestUtils.TITRE_FILM, 5),null,null,null,null);
-		List<FilmDto> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		
+		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(StringUtils.left(TITRE_FILM, 5),null,null,null,null);
+		List<Film> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
 		assertNotNull(films);
-		for(FilmDto film : films){
-			logger.debug(film.toString());
+		for(Film f : films){
+			logger.debug(f.toString());
 		}
 		assertEquals(1, films.size());
-		assertEquals(FilmTestUtils.TITRE_FILM,films.get(0).getTitre());
+		assertEquals(StringUtils.upperCase(TITRE_FILM),films.get(0).getTitre());
 		logger.debug(methodName + "end");
 	}
 	@Test
 	public void findAllFilmsByCriteriaActeursService() {
-		String methodName = "findAllFilmsByCriteriaActeursService : ";
-		logger.debug(methodName + "start");
-		FilmDto f = filmService.saveNewFilm(FilmTestUtils.buildFilmDto(FilmTestUtils.TITRE_FILM));
-		assertNotNull(f);
-		assertNotNull(f.getPersonnesFilm().getActeurs().iterator());
-		Integer selectedActeurId = f.getPersonnesFilm().getActeurs().iterator().next().getPersonne().getId();
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		
+		Long selectedActeurId = film.getActeurs().iterator().next().getId();
 		logger.debug("selectedActeurId="+selectedActeurId);
 		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(null,null,null,selectedActeurId,null);
-		List<FilmDto> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
+		List<Film> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
 		assertNotNull(films);
-		for(FilmDto film : films){
-			logger.debug(film.toString());
+		for(Film f2 : films){
+			logger.debug(f2.toString());
 		}
 		assertEquals(1, films.size());
-		FilmDto filmDto = films.get(0);
-		assertNotNull(filmDto);
-		assertNotNull(filmDto.getPersonnesFilm());
-		PersonnesFilm pf = filmDto.getPersonnesFilm();
-		Set<ActeurDto> acteurSet = pf.getActeurs();
-		assertNotNull(acteurSet);
-		Optional<ActeurDto> op = acteurSet.stream().filter(acteurDto -> acteurDto.getPersonne().getId().equals(selectedActeurId)).findAny();
-		ActeurDto acteurDto = op.get();
-		assertNotNull(acteurDto);
-		assertEquals(selectedActeurId, acteurDto.getPersonne().getId());
-		//Optional<Integer> acteurIdOptional = Set.stream().filter(films.get(0).getPersonnesFilm().getActeurs() -> x.));
-		logger.debug(methodName + "end");
+		Film f2 = films.get(0);
+		assertNotNull(f2);
+		assertNotNull(f2.getActeurs());
+		Optional<Personne> op = f2.getActeurs().stream().filter(acteurDto -> acteurDto.getId().equals(selectedActeurId)).findAny();
+		Personne acteur = op.get();
+		assertNotNull(acteur);
+		assertEquals(selectedActeurId, acteur.getId());
 	}
 	@Test
 	public void findAllFilmsByCriteriaDao() {
 		String methodName = "findAllFilmsByCriteria : ";
 		logger.debug(methodName + "start");
 		
-		FilmDto f = filmService.saveNewFilm(FilmTestUtils.buildFilmDto(FilmTestUtils.TITRE_FILM));
-		assertNotNull(f);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		
 		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto("Lorem",null,null,null,null);
 		List<Film> films = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
 		assertNotNull(films);
-		for(Film film : films){
-			logger.debug(film.toString());
+		for(Film f2 : films){
+			logger.debug(f2.toString());
 		}
 		assertEquals(1, films.size());
-		Film film = films.get(0);
-		assertEquals(FilmTestUtils.TITRE_FILM,film.getTitre());
-		Set<Personne> realisateurSet = film.getRealisateurs();
+		Film f2 = films.get(0);
+		assertEquals(StringUtils.upperCase(TITRE_FILM),f2.getTitre());
+		Set<Personne> realisateurSet = f2.getRealisateurs();
 		assertNotNull(realisateurSet);
 		assertEquals(1,realisateurSet.size());
 		Personne realisateur = realisateurSet.iterator().next();
 		assertNotNull(realisateur);
-		assertEquals(FilmTestUtils.REAL_NOM,realisateur.getNom());
-		assertEquals(FilmTestUtils.REAL_PRENOM,realisateur.getPrenom());
+		Personne real = personneService.findRealisateurByFilm(film);
+		assertEquals(real.getNom(),realisateur.getNom());
+		assertEquals(real.getPrenom(),realisateur.getPrenom());
 		logger.debug(methodName + "end");
 	}
 	@Test
 	public void removeFilmDao() {
-		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
-		if(id==null) {
-			FilmDto film = filmService.saveNewFilm(FilmTestUtils.buildFilmDto(FilmTestUtils.TITRE_FILM));
-			assertNotNull(film);
-			id = film.getId();
-		}
-		FilmDto filmDto = filmService.findFilm(id);
-		assertNotNull(filmDto);
-		assertNotNull(filmDto.fromDto());
-		assertNotNull(filmDto.fromDto().getId());
-		Film film = filmDao.findFilm(filmDto.fromDto().getId());
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
 		Personne real = film.getRealisateurs().iterator().next();
 		assertNotNull(real);
 		filmDao.removeFilm(film);
-		PersonneDto realDto = personneService.findByPersonneId(real.getId());
-		assertNotNull(realDto);
+		Film removedFilm = filmService.findFilmByTitre(film.getTitre());
+		assertNull(removedFilm);
 	}
+	
 	@Test(expected = java.lang.Exception.class)
 	public void removeFilmService() {
-		Integer id = this.jdbcTemplate.queryForObject(MAX_ID_SQL, Integer.class);
-		if(id==null) {
-			FilmDto film = filmService.saveNewFilm(FilmTestUtils.buildFilmDto(FilmTestUtils.TITRE_FILM));
-			assertNotNull(film);
-			id = film.getId();
-		}
-		FilmDto filmDto = filmService.findFilm(id);
-		assertNotNull(filmDto);
-		RealisateurDto real = filmDto.getPersonnesFilm().getRealisateur();
-		assertNotNull(real);
-		filmService.removeFilm(filmDto);
-		FilmDto deletedFilmDto = filmService.findFilm(id);
-		assertNull(deletedFilmDto);
-		PersonneDto realDto = personneService.findByPersonneId(real.getPersonne().getId());
-		assertNotNull(realDto);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		assertFilmIsNotNull(film);
+		filmService.removeFilm(film);
+		Film deletedFilm = filmService.findFilm(film.getId());
+		assertNull(deletedFilm);
 	}
 }

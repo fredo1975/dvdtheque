@@ -13,7 +13,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import fr.dvdtheque.console.vue.VueListeFilm;
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.IFilmService;
 
 public class TestVueListeFilm {
 	protected Logger logger = LoggerFactory.getLogger(TestVueListeFilm.class);
@@ -28,9 +28,9 @@ public class TestVueListeFilm {
 	TestVueListeFilm(){
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"swing-applicationContext.xml");
-		FilmService filmService = (FilmService) ctx.getBean("filmService");
+		IFilmService filmService = (IFilmService) ctx.getBean("filmService");
         vueListeFilm = new VueListeFilm();
-        vueListeFilm.setFilmList(filmService.getAllFilms());
+        vueListeFilm.setFilmList(filmService.findAllFilms());
 	}
 	private JPanel init() throws Exception{
 		return vueListeFilm.init();

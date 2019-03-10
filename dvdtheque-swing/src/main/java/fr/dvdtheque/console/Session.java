@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.object.User;
-import fr.fredos.dvdtheque.service.AuthenticatorService;
-import fr.fredos.dvdtheque.service.FilmService;
-import fr.fredos.dvdtheque.service.PersonneService;
+import fr.fredos.dvdtheque.service.IAuthenticatorService;
+import fr.fredos.dvdtheque.service.IFilmService;
+import fr.fredos.dvdtheque.service.IPersonneService;
 
 public class Session {
 	protected final Log logger = LogFactory.getLog(Session.class);
@@ -33,21 +33,21 @@ public class Session {
 	private List<Film> filmList;
 	private Integer filmId;
 	@Autowired
-	protected FilmService filmService;
+	protected IFilmService filmService;
 	@Autowired
-	protected AuthenticatorService authenticatorService;
+	protected IAuthenticatorService authenticatorService;
 	@Autowired
-	protected PersonneService personneService;
+	protected IPersonneService personneService;
 	//private TypePersonneFilmService typePersonneFilmService;
 	private User user = null;
 	private String userName = null;
 	private String mdp = null;
 	private List<Personne> personneList;
 	
-	public FilmService getFilmService() {
+	public IFilmService getFilmService() {
 		return filmService;
 	}
-	public AuthenticatorService getAuthenticatorService() {
+	public IAuthenticatorService getAuthenticatorService() {
 		return authenticatorService;
 	}
 	
@@ -159,7 +159,7 @@ public class Session {
 	public void setFilmList(List<Film> filmList) {
 		this.filmList = filmList;
 	}
-	public PersonneService getPersonneService() {
+	public IPersonneService getPersonneService() {
 		return personneService;
 	}
 }

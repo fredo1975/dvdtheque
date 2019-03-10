@@ -10,51 +10,57 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dto.FilmDto;
-import fr.fredos.dvdtheque.service.FilmService;
-
+import fr.fredos.dvdtheque.service.IFilmService;
+@Component(value="rippedFlagTasklet")
 public class RippedFlagTasklet implements Tasklet{
 	protected Logger logger = LoggerFactory.getLogger(RippedFlagTasklet.class);
-	private Resource directory;
+	private static String LISTE_DVD_FILE_PATH="dvd.file.path";
+	private static String RIPPEDFLAGTASKLET_FROM_FILE="rippedFlagTasklet.from.file";
 	@Autowired
-	protected FilmService filmService;
+	protected IFilmService filmService;
+	@Autowired
+    Environment environment;
+	
 	/*@Value( "${file.extension}" )
 	private String fileExtension;*/
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		File dir = directory.getFile();
-        Assert.state(dir.isDirectory());
+		boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
+		if(!loadFromFile) {
+			Resource directory = new FileSystemResource(environment.getRequiredProperty(LISTE_DVD_FILE_PATH));
+			File dir = directory.getFile();
+			Assert.notNull(directory, "directory must be set");
 
-        File[] files = dir.listFiles();
-        for (int i = 0; i < files.length; i++) {
-        	String name = files[i].getName();
-        	String extension = StringUtils.substringAfter(name, ".");
-        	if(extension.equalsIgnoreCase("mkv")) {
-        		String titre = StringUtils.substringBefore(name, ".");
-        		try {
-        			FilmDto film = filmService.findFilmByTitre(titre);
-        			film.setRipped(true);
-        			Film f = film.fromDto();
-        			filmService.updateFilm(f);
-        			logger.debug(film.toString());
-        		}catch(EmptyResultDataAccessException e) {
-        			//logger.error(titre+" not found");
-        		}
-        	}
-        }
+	        File[] files = dir.listFiles();
+	        for (int i = 0; i < files.length; i++) {
+	        	String name = files[i].getName();
+	        	String extension = StringUtils.substringAfter(name, ".");
+	        	if(extension.equalsIgnoreCase("mkv")) {
+	        		String titre = StringUtils.substringBefore(name, ".");
+	        		try {
+	        			Film film = filmService.findFilmByTitre(titre);
+	        			if(film != null) {
+	        				film.setRipped(true);
+	            			filmService.updateFilm(film);
+	            			logger.debug(film.toString());
+	        			}
+	        		}catch(EmptyResultDataAccessException e) {
+	        			//logger.error(titre+" not found");
+	        		}
+	        	}
+	        }
+		}else {
+			logger.info("nothing to do");
+		}
 		return RepeatStatus.FINISHED;
 	}
 	
-	public void setDirectoryResource(Resource directory) {
-        this.directory = directory;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(directory, "directory must be set");
-    }
 }

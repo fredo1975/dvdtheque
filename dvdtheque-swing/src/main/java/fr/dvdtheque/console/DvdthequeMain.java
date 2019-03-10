@@ -144,7 +144,7 @@ public class DvdthequeMain extends JFrame {
 		initPanel.add(bodyPanel);
 		mainPanel.add(initPanel);
 		
-		List<Film> filmList = session.getFilmService().getAllFilms();
+		List<Film> filmList = session.getFilmService().findAllFilms();
 		
 		if(CollectionUtils.isNotEmpty(filmList)){
 			vueListeFilm.setFilmList(filmList);

@@ -13,8 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @Entity
@@ -22,13 +22,12 @@ import org.slf4j.LoggerFactory;
 public class Role implements Serializable {
 	@Transient
 	protected Logger logger = LoggerFactory.getLogger(Role.class);
-	private int hashCode = Integer.MIN_VALUE;
 	private static final long serialVersionUID = 1L;
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	@Column(name = "NAME")
-    @NotEmpty
+	@NotNull
 	private String name;
 	@OneToMany(cascade = CascadeType.ALL, targetEntity=User.class, fetch = FetchType.LAZY)
 	private Set<User> users;
@@ -68,8 +67,8 @@ public class Role implements Serializable {
         result = 37 * result + ( getId() == null ? 0 : this.getId().hashCode() );
         return result;
     }
-    @Override
-    public String toString(){
-    	return "Role [id=" + id + ", name=" + name + ", hashCode=" + hashCode + "]";
-    }
+	@Override
+	public String toString() {
+		return "Role [logger=" + logger + ", id=" + id + ", name=" + name + ", users=" + users + "]";
+	}
 }

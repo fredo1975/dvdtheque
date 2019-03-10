@@ -55,7 +55,7 @@ import fr.dvdtheque.console.transferable.PersonneTransferable;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.dto.PersonneDto;
+import fr.fredos.dvdtheque.service.dto.PersonneDto;
 
 public class VueFilm extends BaseVueAppli {
 	/**

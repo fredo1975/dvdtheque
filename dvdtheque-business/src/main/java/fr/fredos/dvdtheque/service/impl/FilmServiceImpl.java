@@ -1,46 +1,45 @@
 package fr.fredos.dvdtheque.service.impl;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.Assert;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
+import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
-import fr.fredos.dvdtheque.dto.FilmDto;
-import fr.fredos.dvdtheque.service.FilmService;
+import fr.fredos.dvdtheque.service.IFilmService;
+import fr.fredos.dvdtheque.service.IPersonneService;
+import fr.fredos.dvdtheque.service.dto.FilmDto;
 @Service("filmService")
-public class FilmServiceImpl implements FilmService {
+public class FilmServiceImpl implements IFilmService {
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceImpl.class);
-	public static final String CACHE_DIST_FILM = "dist-film";
+	private static final String REALISATEUR_MESSAGE_WARNING = "Film should contains one producer";
+	private static final String ACTEURS_MESSAGE_WARNING = "Film should contains actors";
+	public static final String CACHE_FILM = "filmCache";
 	@Autowired
 	private FilmDao filmDao;
-
-	public void setFilmDao(FilmDao filmDao) {
-		this.filmDao = filmDao;
-	}
-	@Cacheable(value= "filmCache")
-	@Transactional(readOnly = true)
-	public List<Film> getAllFilms() {
-		List<Film> filmList = null;
-		try {
-			filmList = filmDao.findAllFilms();
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return filmList;
-	}
+	@Autowired
+	private IPersonneService personneService;
 	@Cacheable(value= "filmDtoCache")
 	@Transactional(readOnly = true)
 	public List<FilmDto> getAllFilmDtos() {
@@ -58,143 +57,176 @@ public class FilmServiceImpl implements FilmService {
 		} catch (Exception e) {
 			logger.error(e.getCause().getMessage());
 		}
-		filmDtoList.sort(Comparator.comparing(FilmDto::getPrintRealisateur).thenComparing(FilmDto::getTitre));
+		filmDtoList.sort(Comparator.comparing(FilmDto::getTitre));
 		return filmDtoList;
 	}
 	@Transactional(readOnly = true,noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })
-	public FilmDto findFilmByTitre(String titre){
-		Film film = null;
-		FilmDto filmDto = null;
-		try {
-			film = filmDao.findFilmByTitre(titre);
-			if (null != film) {
-				filmDto = FilmDto.toDto(film);
-			}
-
-		} catch (Exception e) {
-			logger.error("",e);
-			throw e;
-		}
-		if (null != filmDto) {
-			logger.debug("end film=" + filmDto.toString());
-		}
-		
-		return filmDto;
+	public Film findFilmByTitre(String titre){
+		return filmDao.findFilmByTitre(titre);
 	}
 	@Transactional(readOnly = true)
-	public FilmDto findFilmWithAllObjectGraph(Integer id)  {
-		Film film = null;
-		FilmDto filmDto = null;
-		film = filmDao.findFilmWithAllObjectGraph(id);
-		if (null != film) {
-			filmDto = FilmDto.toDto(film);
-		}
-		if (null != filmDto) {
-			logger.debug("film=" + filmDto.toString());
-		}
-		
-		return filmDto;
+	public Film findFilmWithAllObjectGraph(Long id)  {
+		return filmDao.findFilmWithAllObjectGraph(id);
 	}
-
 	@Transactional(readOnly = true)
-	public FilmDto findFilm(Integer id) {
-		Film film = null;
-		FilmDto filmDto = null;
-		film = filmDao.findFilm(id);
-		if (null != film) {
-			filmDto = FilmDto.toDto(film);
-		}
-		if (null != filmDto) {
-			logger.debug("end film=" + filmDto.toString());
-		}
-		return filmDto;
+	public Film findFilm(Long id) {
+		return filmDao.findFilm(id);
 	}
-	@CacheEvict(value= "filmCache")
+	@CacheEvict(value= CACHE_FILM, allEntries = true)
 	@Transactional(readOnly = false)
-	public Film updateFilm(Film film){
-		return filmDao.updateFilm(film);
+	public void updateFilm(Film film){
+		upperCaseTitre(film);
+		filmDao.updateFilm(film);
+	}
+	private void upperCaseTitre(Film film) {
+		final String titre = StringUtils.upperCase(film.getTitre());
+		film.setTitre(titre);
+		final String titreO = StringUtils.upperCase(film.getTitreO());
+		film.setTitreO(titreO);
+	}
+	@CacheEvict(value= CACHE_FILM, allEntries = true)
+	@Transactional(readOnly = false)
+	public Long saveNewFilm(Film film) {
+		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
+		upperCaseTitre(film);
+		return filmDao.saveNewFilm(film);
 	}
 	@Transactional(readOnly = false)
-	public FilmDto saveNewFilm(FilmDto filmDto) {
-		String methodName = "saveNewFilm: ";
-		//logger.debug(methodName + "start filmDto=" + filmDto.toString());
-		Film filmRes = filmDto.fromDto();
-		filmDao.saveNewFilm(filmRes);
-		//logger.debug(methodName + "end");
-		return FilmDto.toDto(filmRes);
-	}
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRED,isolation=Isolation.DEFAULT)
-	public void saveNewFilm(Film film){
-		filmDao.saveNewFilm(film);
-	}
-	/*
-	@Transactional(readOnly = false)
-	public DvdDto saveDvd(DvdDto dvdDto) throws Exception {
-		DvdDto dvdDtoRes = null;
-		try {
-			Dvd dvd = buildDvd();
-			filmDao.saveDvd(DvdDto.fromDto(dvdDto));
-			dvdDtoRes = DvdDto.toDto(dvd);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			throw new Exception(e);
-		}
-		return dvdDtoRes;
-	}
-
-	private Dvd buildDvd() {
-		Dvd dvd = new Dvd();
-		return dvd;
-	}*/
-
-	/*
-	private Film buildFilm(Integer id, FilmDto filmDto) {
-		Film film = new Film();
-		BeanUtils.copyProperties(filmDto, film);
-		film.setId(filmDto.getId());
-		film.setAnnee(filmDto.getAnnee());
-
-		Set<Realisateur> realisateur = new HashSet<Realisateur>();
-		realisateur.add(RealisateurDto.fromDto(filmDto.getPersonnesFilm().getRealisateur(), film));
-		//film.setRealisateurs(realisateur);
-		Set<Acteur> acteurs = new HashSet<Acteur>();
-		for (ActeurDto acteurDto : filmDto.getPersonnesFilm().getActeurs()) {
-			acteurs.add(ActeurDto.fromDto(acteurDto, film));
-		}
-		//film.setActeurs(acteurs);
-		return film;
-	}*/
-	
-	@Transactional(readOnly = false)
+	@Cacheable(value= "filmCache")
 	public List<Film> findAllFilms() {
 		return filmDao.findAllFilms();
 	}
+	@CacheEvict(value= CACHE_FILM, allEntries = true)
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
 		filmDao.cleanAllFilms();
+		//personneService.cleanAllPersonnes();
 	}
 	@Transactional(readOnly = true)
 	public List<Film> getAllRippedFilms(){
 		return filmDao.getAllRippedFilms();
 	}
 	@Override
-	public List<FilmDto> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {
-		List<FilmDto> filmDtoList = new ArrayList<>();
+	@Transactional(readOnly = true)
+	public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {
 		List<Film> filmList = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
-		logger.debug("####################   filmList.size()="+filmList.size());
-		if(!CollectionUtils.isEmpty(filmList)){
-			for(Film film : filmList) {
-				FilmDto filmDto = FilmDto.toDto(film);
-				filmDtoList.add(filmDto);
-			}
-		}
-		filmDtoList.sort(Comparator.comparing(FilmDto::getPrintRealisateur).thenComparing(FilmDto::getTitre));
-		return filmDtoList;
+		filmList.sort(Comparator.comparing(Film::getPrintRealisateur).thenComparing(Film::getTitre));
+		return filmList;
 	}
 	@Override
+	@CacheEvict(value= CACHE_FILM, allEntries = true)
 	@Transactional(readOnly = false)
-	public void removeFilm(FilmDto filmDto) {
-		Film film = filmDao.findFilm(filmDto.fromDto().getId());
+	public void removeFilm(Film film) {
+		film = filmDao.findFilm(film.getId());
 		filmDao.removeFilm(film);
+	}
+	public static void saveImage(String imageUrl, String destinationFile) throws IOException {
+	    URL url = new URL(imageUrl);
+	    InputStream is = url.openStream();
+	    OutputStream os = new FileOutputStream(destinationFile);
+
+	    byte[] b = new byte[2048];
+	    int length;
+
+	    while ((length = is.read(b)) != -1) {
+	        os.write(b, 0, length);
+	    }
+
+	    is.close();
+	    os.close();
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public Set<Long> findAllTmdbFilms(final Set<Long> tmdbIds) {
+		return filmDao.findAllTmdbFilms(tmdbIds);
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public Dvd buildDvd(final Integer annee,final Integer zone,final String edition) {
+		Dvd dvd = new Dvd();
+		if(annee != null) {
+			dvd.setAnnee(annee);
+		}
+		if(zone != null) {
+			dvd.setZone(zone);
+		}else {
+			dvd.setZone(1);
+		}
+		if(StringUtils.isEmpty(edition)) {
+			dvd.setEdition("edition");
+		}else {
+			dvd.setEdition(edition);
+		}
+		dvd.setZone(1);
+		return dvd;
+	}
+	
+	/** TEST PURPOSE **/
+	
+	private Set<Personne> buildActeurs(final Personne act1,final Personne act2,final Personne act3){
+		Set<Personne> acteurs = new HashSet<>();
+		acteurs.add(act1);
+		if(act2!=null) {
+			acteurs.add(act2);
+		}
+		if(act3!=null) {
+			acteurs.add(act3);
+		}
+		return acteurs;
+	}
+	private Set<Personne> buildRealisateurs(final Personne realisateur){
+		Set<Personne> realisateurs = new HashSet<>();
+		realisateurs.add(realisateur);
+		return realisateurs;
+	}
+	private Film buildFilm(final String titre,
+			final Integer annee,
+			final Personne realisateur,
+			final Personne act1,
+			final Personne act2,
+			final Personne act3) {
+		Film film = new Film();
+		film.setAnnee(annee);
+		film.setRipped(true);
+		film.setTitre(titre);
+		film.setTitreO(titre);
+		film.setDvd(buildDvd(annee,null,null));
+		film.setRealisateurs(buildRealisateurs(realisateur));
+		film.setActeurs(buildActeurs(act1,act2,act3));
+		film.setTmdbId(new Long(100));
+		film.setOverview("Overview");
+		return film;
+	}
+	//@Cacheable(value= "filmCache")
+	@Override
+	public Film createOrRetrieveFilm(final String titre,final Integer annee,
+			final String realNom,
+			final String act1Nom,
+			final String act2Nom,
+			final String act3Nom) {
+		Film film = findFilmByTitre(titre);
+		if(film == null) {
+			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom);
+		}
+		return film;
+	}
+	private Film createFilm(final String titre,
+			final Integer annee,
+			final String realNom,
+			final String act1Nom,
+			final String act2Nom,
+			final String act3Nom) {
+		Personne realisateur = null;
+		Personne acteur1 = null;
+		Personne acteur2 = null;
+		Personne acteur3 = null;
+		realisateur = personneService.createOrRetrievePersonne(realNom);
+		acteur1 = personneService.createOrRetrievePersonne(act1Nom);
+		acteur2 = personneService.createOrRetrievePersonne(act2Nom);
+		acteur3 = personneService.createOrRetrievePersonne(act3Nom);
+		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3);
+		Long idFilm = saveNewFilm(film);
+		film.setId(idFilm);
+		return film;
 	}
 }
