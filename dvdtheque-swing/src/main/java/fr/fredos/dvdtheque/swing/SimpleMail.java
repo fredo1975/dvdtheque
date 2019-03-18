@@ -1,4 +1,4 @@
-package fr.dvdtheque.console;
+package fr.fredos.dvdtheque.swing;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

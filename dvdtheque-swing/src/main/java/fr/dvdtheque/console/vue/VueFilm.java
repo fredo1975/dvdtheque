@@ -49,13 +49,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.dvdtheque.console.SpringUtilities;
 import fr.dvdtheque.console.table.RealisateurEntry;
 import fr.dvdtheque.console.transferable.PersonneTransferable;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.dto.PersonneDto;
+import fr.fredos.dvdtheque.swing.SpringUtilities;
 
 public class VueFilm extends BaseVueAppli {
 	/**
@@ -267,11 +267,10 @@ public class VueFilm extends BaseVueAppli {
 		int fieldNum = 0;
 		Dimension scollerDim = new Dimension(250, 400);
 		try {
-			List<PersonneDto> personneDtoList = getSession().getPersonneService().findAllPersonne();
+			List<Personne> personneDtoList = getSession().getPersonneService().findAllPersonne();
 			if (CollectionUtils.isNotEmpty(personneDtoList)) {
 				DefaultListModel<Personne> personneListModel = new DefaultListModel<Personne>();
-				for (PersonneDto personneDto : personneDtoList) {
-					Personne personne = PersonneDto.fromDto(personneDto);
+				for (Personne personne : personneDtoList) {
 					personneListModel.addElement(personne);
 				}
 				personneJList = new JList<Personne>(personneListModel);
@@ -323,13 +322,13 @@ public class VueFilm extends BaseVueAppli {
 		Dimension scollerDim = new Dimension(250, 600);
 		List<Personne> actList = new ArrayList<Personne>();
 		DefaultListModel<Personne> acteurListModel = null;
-		Map<Integer, RealisateurEntry> realisateurEntryMap = null;
+		Map<Long, RealisateurEntry> realisateurEntryMap = null;
 		Map<Personne, Integer> acteurIndiceMap = null;
 		if (film == null) {
-			realisateurEntryMap = new HashMap<Integer, RealisateurEntry>(1);
+			realisateurEntryMap = new HashMap<>(1);
 			acteurIndiceMap = new HashMap<Personne, Integer>();
 		} else {
-			realisateurEntryMap = new HashMap<Integer, RealisateurEntry>(film.getRealisateurs().size());
+			realisateurEntryMap = new HashMap<>(film.getRealisateurs().size());
 			acteurIndiceMap = new HashMap<Personne, Integer>(film.getActeurs().size());
 		}
 
@@ -406,8 +405,8 @@ public class VueFilm extends BaseVueAppli {
 			acteursJList.setTransferHandler(new ToActeurTransferHandler(TransferHandler.MOVE));
 			acteursJList.setDropMode(DropMode.INSERT);
 
-			for (PersonneDto personneDto : getSession().getPersonneService().findAllPersonne()) {
-				RealisateurEntry realisateurEntry = new RealisateurEntry(PersonneDto.fromDto(personneDto));
+			for (Personne personne : getSession().getPersonneService().findAllPersonne()) {
+				RealisateurEntry realisateurEntry = new RealisateurEntry(personne);
 				filmRealisateurComboBox.addItem(realisateurEntry);
 			}
 			fields[fieldNum++] = filmRealisateurComboBox;
@@ -671,7 +670,7 @@ public class VueFilm extends BaseVueAppli {
 		selectedPersonne.setPrenom(updatePrenomField.getText());
 		selectedPersonne.setNom(updateNomField.getText());
 		PersonneDto personneDto = PersonneDto.toDto(selectedPersonne);
-		PersonneDto res = getSession().getPersonneService().updatePersonne(personneDto);
+		getSession().getPersonneService().updatePersonne(selectedPersonne);
 		DefaultListModel<Personne> dm = (DefaultListModel<Personne>) personneJList.getModel();
 		dm.removeElementAt(index);
 		dm.add(index, PersonneDto.fromDto(personneDto));
@@ -679,10 +678,13 @@ public class VueFilm extends BaseVueAppli {
 
 	void jButtonAddPersonne_actionPerformed(ActionEvent e) throws Exception {
 		addedPersonneLabel.setVisible(true);
-		PersonneDto personneDto = new PersonneDto(addPrenomField.getText(), addNomField.getText());
-		PersonneDto resultPersonneDto = getSession().getPersonneService().savePersonne(personneDto);
+		//Personne personne = new Personne(addPrenomField.getText(), addNomField.getText());
+		Personne personne = new Personne();
+		
+		Long personneId = getSession().getPersonneService().savePersonne(personne);
+		personne.setId(personneId);
 		DefaultListModel<Personne> dm = (DefaultListModel<Personne>) personneJList.getModel();
-		dm.addElement(PersonneDto.fromDto(resultPersonneDto));
+		dm.addElement(personne);
 	}
 }
 

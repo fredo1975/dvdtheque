@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.dvdtheque.console.Session;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.swing.Session;
 
 public class ActionListe extends AbstractBaseAction {
 	protected final Log logger = LogFactory.getLog(ActionListe.class);

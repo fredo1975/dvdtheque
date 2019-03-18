@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import fr.fredos.dvdtheque.swing.Barriere;
 @ContextConfiguration(locations={"classpath:swing-applicationContext-test.xml"})
 @DirtiesContext
 public class TestBarriere extends AbstractTransactionalJUnit4SpringContextTests{

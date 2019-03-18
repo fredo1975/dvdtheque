@@ -18,7 +18,7 @@ import javax.swing.SpringLayout;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.dvdtheque.console.SpringUtilities;
+import fr.fredos.dvdtheque.swing.SpringUtilities;
 
 public class VueTryLogin extends JDialog {
 	/**

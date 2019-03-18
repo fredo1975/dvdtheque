@@ -1,4 +1,4 @@
-package fr.dvdtheque.console;
+package fr.fredos.dvdtheque.swing;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

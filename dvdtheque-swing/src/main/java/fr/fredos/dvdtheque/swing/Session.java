@@ -1,4 +1,4 @@
-package fr.dvdtheque.console;
+package fr.fredos.dvdtheque.swing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class Session {
 	private String message;
 	private Film film;
 	private List<Film> filmList;
-	private Integer filmId;
+	private Long filmId;
 	@Autowired
 	protected IFilmService filmService;
 	@Autowired
@@ -50,15 +50,6 @@ public class Session {
 	public IAuthenticatorService getAuthenticatorService() {
 		return authenticatorService;
 	}
-	
-	/*
-	public TypePersonneFilmService getTypePersonneFilmService() {
-		return typePersonneFilmService;
-	}
-	public void setTypePersonneFilmService(
-			TypePersonneFilmService typePersonneFilmService) {
-		this.typePersonneFilmService = typePersonneFilmService;
-	}*/
 	public User getUser() {
 		return user;
 	}
@@ -147,10 +138,10 @@ public class Session {
 	public void setFilm(Film film) {
 		this.film = film;
 	}
-	public Integer getFilmId() {
+	public Long getFilmId() {
 		return filmId;
 	}
-	public void setFilmId(Integer filmId) {
+	public void setFilmId(Long filmId) {
 		this.filmId = filmId;
 	}
 	public List<Film> getFilmList() {

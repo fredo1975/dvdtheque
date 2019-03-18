@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
-import fr.dvdtheque.console.Session;
+import fr.fredos.dvdtheque.swing.Session;
 
 
 public class MaVue extends BaseVueJFrame {

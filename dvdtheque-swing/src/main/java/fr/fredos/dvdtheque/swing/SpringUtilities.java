@@ -1,4 +1,4 @@
-package fr.dvdtheque.console;
+package fr.fredos.dvdtheque.swing;
 
 import java.awt.Component;
 import java.awt.Container;

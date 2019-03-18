@@ -3,7 +3,7 @@ package fr.dvdtheque.console.controleur;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.dvdtheque.console.Session;
+import fr.fredos.dvdtheque.swing.Session;
 
 public class Controleur extends BaseControleur {
 	protected final Log logger = LogFactory.getLog(Controleur.class);

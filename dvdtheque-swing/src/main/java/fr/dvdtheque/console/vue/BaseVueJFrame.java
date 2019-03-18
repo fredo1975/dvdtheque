@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.dvdtheque.console.Barriere;
+import fr.fredos.dvdtheque.swing.Barriere;
 
 public class BaseVueJFrame extends JFrame implements IVue, Runnable {
 	/**

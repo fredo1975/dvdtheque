@@ -1,6 +1,6 @@
 package fr.dvdtheque.console.action;
 
-import fr.dvdtheque.console.Session;
+import fr.fredos.dvdtheque.swing.Session;
 
 public abstract class AbstractBaseAction implements IAction {
 	// la session commune aux actions et vues

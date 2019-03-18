@@ -20,8 +20,8 @@ import javax.swing.KeyStroke;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.dvdtheque.console.Session;
 import fr.dvdtheque.console.factory.ImageFactory;
+import fr.fredos.dvdtheque.swing.Session;
 
 public class BaseVueAppli extends BaseVueJFrame {
 	/**

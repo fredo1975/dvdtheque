@@ -1,4 +1,4 @@
-package fr.dvdtheque.console;
+package fr.fredos.dvdtheque.swing;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -163,6 +163,7 @@ public class DvdthequeMain extends JFrame {
 	}
 
 	private void buildMenu() {
+		/*
 		jMenuItemQuitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1,
 				ActionEvent.ALT_MASK));
 		jMenuItemQuitter.getAccessibleContext().setAccessibleDescription(
@@ -195,6 +196,7 @@ public class DvdthequeMain extends JFrame {
 		// this.setExtendedState(JFrame.NORMAL);
 		// formulaire d�gel�
 		this.setEnabled(true);
+		*/
 	}
 	public String getImagePath() {
 		return imagePath;
@@ -235,7 +237,7 @@ public class DvdthequeMain extends JFrame {
 	}
 
 }
-
+/*
 class BaseVueAppli_jMenuItemQuitter_actionAdapter implements
 		java.awt.event.ActionListener {
 	DvdthequeMain adaptee;
@@ -273,4 +275,4 @@ class BaseVueAppli_jMenuItemLogout_actionAdapter implements
 	public void actionPerformed(ActionEvent e) {
 		adaptee.jMenuItemLogout_actionPerformed(e);
 	}
-}
+}*/

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.dvdtheque.console.Session;
+import fr.fredos.dvdtheque.swing.Session;
 
 public class ActionNewFilm extends AbstractBaseAction{
 	protected final Log logger = LogFactory.getLog(ActionNewFilm.class);

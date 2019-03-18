@@ -5,10 +5,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.dvdtheque.console.Barriere;
-import fr.dvdtheque.console.Session;
 import fr.dvdtheque.console.action.InfosAction;
 import fr.dvdtheque.console.vue.IVue;
+import fr.fredos.dvdtheque.swing.Barriere;
+import fr.fredos.dvdtheque.swing.Session;
 
 public class BaseControleur implements IControleur {
 	protected final Log logger = LogFactory.getLog(BaseControleur.class);
