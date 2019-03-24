@@ -21,7 +21,6 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
-import fr.fredos.dvdtheque.service.impl.FilmServiceImpl;
 
 
 @RunWith(SpringRunner.class)

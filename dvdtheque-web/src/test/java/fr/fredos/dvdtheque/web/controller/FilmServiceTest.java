@@ -23,7 +23,6 @@ import org.springframework.util.StopWatch;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
-import fr.fredos.dvdtheque.service.impl.FilmServiceImpl;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class,fr.fredos.dvdtheque.web.controller.WebApplication.class})
