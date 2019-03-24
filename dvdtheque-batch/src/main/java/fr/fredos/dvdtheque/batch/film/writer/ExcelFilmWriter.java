@@ -46,7 +46,7 @@ public class ExcelFilmWriter implements ItemWriter<Film>{
         addCell(film.getAnnee().toString());
         addCell(personneService.printPersonnes(film.getActeurs(),","));
         addCell(film.isRipped()?"oui":"non");
-        if(film.isRipped()) {
+        if(film.isRipped() && film.getDvd().getDateRip() != null) {
         	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             addCell(sdf.format(film.getDvd().getDateRip()));
         }else {
