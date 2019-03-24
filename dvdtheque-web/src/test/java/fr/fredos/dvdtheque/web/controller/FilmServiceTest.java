@@ -1,11 +1,15 @@
 package fr.fredos.dvdtheque.web.controller;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -19,6 +23,7 @@ import org.springframework.util.StopWatch;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
+import fr.fredos.dvdtheque.service.impl.FilmServiceImpl;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class,fr.fredos.dvdtheque.web.controller.WebApplication.class})
@@ -37,12 +42,18 @@ public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 	public static final String ACT2_NOM = "toitoi tuitui";
 	public static final String ACT3_NOM = "tuotuo tmitmi";
 	public static final String ACT4_NOM = "Graham Collins";
+	public static final int RIP_DATE = -10;
+	private Date createRipDate() {
+		Calendar cal = Calendar.getInstance();
+		return DateUtils.addDays(cal.getTime(), RIP_DATE);
+	}
 	private void assertFilmIsNotNull(Film film) {
 		assertNotNull(film);
 		assertNotNull(film.getId());
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
+		assertEquals(filmService.clearDate(createRipDate()),film.getDvd().getDateRip());
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
 		assertTrue(film.getActeurs().size()==3);
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
@@ -50,7 +61,7 @@ public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 	}
 	@Test
 	public void findAllFilm() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		film = filmService.findFilmByTitre(TITRE_FILM);
 		assertNotNull(film);

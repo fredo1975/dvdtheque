@@ -14,8 +14,8 @@ import javax.swing.JTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.dvdtheque.console.table.FilmTableModel;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.swing.model.FilmTableModel;
 
 public class VueListeFilm extends JPanel {
 	/**

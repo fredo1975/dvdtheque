@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.dao.model.object;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
@@ -28,6 +31,9 @@ public class Dvd implements Serializable {
 	private Integer zone;
 	@Column(name = "EDITION")
 	private String edition;
+	@Column(name = "DATE_RIP")
+	@Temporal(TemporalType.DATE)
+	private Date dateRip;
 	public Long getId() {
 		return id;
 	}
@@ -51,6 +57,12 @@ public class Dvd implements Serializable {
 	}
 	public void setEdition(String _edition) {
 		this.edition = _edition;
+	}
+	public Date getDateRip() {
+		return dateRip;
+	}
+	public void setDateRip(Date dateRip) {
+		this.dateRip = dateRip;
 	}
 	public Dvd() {
 		super();
@@ -80,7 +92,7 @@ public class Dvd implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "Dvd [id=" + id + ", annee=" + annee + ", zone=" + zone + ", edition=" + edition
-				+ "]";
+		return "Dvd [logger=" + logger + ", id=" + id + ", annee=" + annee + ", zone=" + zone + ", edition=" + edition
+				+ ", dateRip=" + dateRip + "]";
 	}
 }

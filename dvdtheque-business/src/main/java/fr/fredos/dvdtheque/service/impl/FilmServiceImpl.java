@@ -6,13 +6,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,7 @@ public class FilmServiceImpl implements IFilmService {
 	private static final String REALISATEUR_MESSAGE_WARNING = "Film should contains one producer";
 	private static final String ACTEURS_MESSAGE_WARNING = "Film should contains actors";
 	public static final String CACHE_FILM = "filmCache";
+	
 	@Autowired
 	private FilmDao filmDao;
 	@Autowired
@@ -76,6 +80,13 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
 		upperCaseTitre(film);
+		if(film.isRipped()) {
+			if(film.getDvd().getDateRip() == null) {
+				film.getDvd().setDateRip(new Date());
+			}
+		}else {
+			film.getDvd().setDateRip(null);
+		}
 		filmDao.updateFilm(film);
 	}
 	private void upperCaseTitre(Film film) {
@@ -141,8 +152,18 @@ public class FilmServiceImpl implements IFilmService {
 		return filmDao.findAllTmdbFilms(tmdbIds);
 	}
 	@Override
+	public Date clearDate(Date dateToClear) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dateToClear);
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.HOUR, 0);
+		return cal.getTime();
+	}
+	@Override
 	@Transactional(readOnly = true)
-	public Dvd buildDvd(final Integer annee,final Integer zone,final String edition) {
+	public Dvd buildDvd(final Integer annee,final Integer zone,final String edition, Date ripDate) {
 		Dvd dvd = new Dvd();
 		if(annee != null) {
 			dvd.setAnnee(annee);
@@ -158,6 +179,9 @@ public class FilmServiceImpl implements IFilmService {
 			dvd.setEdition(edition);
 		}
 		dvd.setZone(1);
+		if(ripDate!=null) {
+			dvd.setDateRip(clearDate(ripDate));
+		}
 		return dvd;
 	}
 	
@@ -184,13 +208,14 @@ public class FilmServiceImpl implements IFilmService {
 			final Personne realisateur,
 			final Personne act1,
 			final Personne act2,
-			final Personne act3) {
+			final Personne act3,
+			final Date ripDate) {
 		Film film = new Film();
 		film.setAnnee(annee);
 		film.setRipped(true);
 		film.setTitre(titre);
 		film.setTitreO(titre);
-		film.setDvd(buildDvd(annee,null,null));
+		film.setDvd(buildDvd(annee,null,null, ripDate));
 		film.setRealisateurs(buildRealisateurs(realisateur));
 		film.setActeurs(buildActeurs(act1,act2,act3));
 		film.setTmdbId(new Long(100));
@@ -203,10 +228,11 @@ public class FilmServiceImpl implements IFilmService {
 			final String realNom,
 			final String act1Nom,
 			final String act2Nom,
-			final String act3Nom) {
+			final String act3Nom, 
+			final Date ripDate) {
 		Film film = findFilmByTitre(titre);
 		if(film == null) {
-			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom);
+			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom, ripDate);
 		}
 		return film;
 	}
@@ -215,7 +241,8 @@ public class FilmServiceImpl implements IFilmService {
 			final String realNom,
 			final String act1Nom,
 			final String act2Nom,
-			final String act3Nom) {
+			final String act3Nom,
+			final Date ripDate) {
 		Personne realisateur = null;
 		Personne acteur1 = null;
 		Personne acteur2 = null;
@@ -224,7 +251,7 @@ public class FilmServiceImpl implements IFilmService {
 		acteur1 = personneService.createOrRetrievePersonne(act1Nom);
 		acteur2 = personneService.createOrRetrievePersonne(act2Nom);
 		acteur3 = personneService.createOrRetrievePersonne(act3Nom);
-		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3);
+		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3, ripDate);
 		Long idFilm = saveNewFilm(film);
 		film.setId(idFilm);
 		return film;

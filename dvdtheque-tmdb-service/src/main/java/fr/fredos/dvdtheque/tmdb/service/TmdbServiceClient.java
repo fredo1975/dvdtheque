@@ -73,7 +73,7 @@ public class TmdbServiceClient {
 		if(results != null) {
 			Film filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);
 			filmToSave.setId(null);
-			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), null, null);
+			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), null, null, null);
 			filmToSave.setDvd(dvd);
 			Long id = filmService.saveNewFilm(filmToSave);
 			filmToSave.setId(id);

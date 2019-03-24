@@ -1,6 +1,8 @@
 package fr.fredos.dvdtheque.batch.film.tasklet;
 
 import java.io.File;
+import java.util.Calendar;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -38,10 +40,12 @@ public class RippedFlagTasklet implements Tasklet{
 			Resource directory = new FileSystemResource(environment.getRequiredProperty(LISTE_DVD_FILE_PATH));
 			File dir = directory.getFile();
 			Assert.notNull(directory, "directory must be set");
-
 	        File[] files = dir.listFiles();
 	        for (int i = 0; i < files.length; i++) {
 	        	String name = files[i].getName();
+	        	long millis = files[i].lastModified();
+	        	Calendar cal = Calendar.getInstance(Locale.FRANCE);
+	        	cal.setTimeInMillis(millis);
 	        	String extension = StringUtils.substringAfter(name, ".");
 	        	if(extension.equalsIgnoreCase("mkv")) {
 	        		String titre = StringUtils.substringBefore(name, ".");
@@ -49,6 +53,7 @@ public class RippedFlagTasklet implements Tasklet{
 	        			Film film = filmService.findFilmByTitre(titre);
 	        			if(film != null) {
 	        				film.setRipped(true);
+	        				film.getDvd().setDateRip(cal.getTime());
 	            			filmService.updateFilm(film);
 	            			logger.debug(film.toString());
 	        			}

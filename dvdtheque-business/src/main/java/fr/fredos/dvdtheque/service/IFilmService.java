@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -9,7 +10,7 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 
 public interface IFilmService {
 	public static final String CACHE_DIST_FILM = "dist-film";
-
+	public Date clearDate(Date dateToClear);
 	public Film findFilm(Long id);
 	public Film findFilmWithAllObjectGraph(Long id);
 	public List<Film> findAllFilms();
@@ -26,6 +27,6 @@ public interface IFilmService {
 			final String realNom,
 			final String act1Nom,
 			final String act2Nom,
-			final String act3Nom);
-	public Dvd buildDvd(final Integer annee,final Integer zone,final String edition);
+			final String act3Nom, Date ripDate);
+	public Dvd buildDvd(final Integer annee,final Integer zone,final String edition, Date ripDate);
 }

@@ -16,7 +16,6 @@ import fr.fredos.dvdtheque.swing.view.listener.ViewListener;
 
 public class MenuBarView extends AbstractViewListenerHolder{
 	protected final Log logger = LogFactory.getLog(MenuBarView.class);
-	private JFrame frame;
 	private JMenuBar jMenuBar1 = new JMenuBar();
 	private JMenu jMenu1 = new JMenu("Actions");
 	private JMenuItem jMenuItemLogin = new JMenuItem("Login");
@@ -24,11 +23,10 @@ public class MenuBarView extends AbstractViewListenerHolder{
 	private JMenuItem jMenuItemQuitter = new JMenuItem("Quitter");
 	
 	public MenuBarView(final JFrame frame) {
-		this.frame = frame;
-		buildMenu();
+		buildMenu(frame);
     }
 	
-	private void buildMenu() {
+	private void buildMenu(final JFrame frame) {
 		jMenuItemQuitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		jMenuItemQuitter.getAccessibleContext().setAccessibleDescription("This doesn't really do anything");
 		jMenuItemQuitter.setActionCommand("quitter");
@@ -49,7 +47,6 @@ public class MenuBarView extends AbstractViewListenerHolder{
 		jMenu1.add(jMenuItemLogout);
 		jMenu1.add(jMenuItemQuitter);
 		jMenuBar1.add(jMenu1);
-		this.frame.setJMenuBar(jMenuBar1);
-		
+		frame.setJMenuBar(jMenuBar1);
 	}
 }

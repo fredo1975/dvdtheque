@@ -13,8 +13,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.dvdtheque.console.table.FilmTabCellRenderer;
-import fr.dvdtheque.console.table.FilmTableModel;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.swing.model.FilmTableModel;
 
 public class VueListe extends BaseVueAppli {
 	private static final long serialVersionUID = 1L;

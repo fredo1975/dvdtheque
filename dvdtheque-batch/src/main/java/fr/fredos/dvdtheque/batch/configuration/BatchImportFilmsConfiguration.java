@@ -46,7 +46,7 @@ public class BatchImportFilmsConfiguration{
     protected Tasklet rippedFlagTasklet;
     @Autowired
     protected Environment environment;
-    String[] headerTab = new String[]{"realisateur", "titre", "zonedvd","annee","acteurs","ripped"};
+    String[] headerTab = new String[]{"realisateur", "titre", "zonedvd","annee","acteurs","ripped","ripdate"};
     
     @Bean
 	protected Tasklet cleanDBTasklet() {

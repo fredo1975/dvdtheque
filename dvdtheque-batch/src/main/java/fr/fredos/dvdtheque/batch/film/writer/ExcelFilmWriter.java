@@ -1,5 +1,7 @@
 package fr.fredos.dvdtheque.batch.film.writer;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.poi.xssf.streaming.SXSSFCell;
@@ -22,7 +24,7 @@ public class ExcelFilmWriter implements ItemWriter<Film>{
     private Integer currentRowNumber;
     private Integer currentColumnNumber;
     private SXSSFRow row;
-    String[] headerTab = new String[]{"Realisateur", "Titre", "Zonedvd","Annee","Acteurs","Rippé"};
+    String[] headerTab = new String[]{"Realisateur", "Titre", "Zonedvd","Annee","Acteurs","Rippé","RIP Date"};
     public ExcelFilmWriter(SXSSFWorkbook workbook) {
         this.sheet = workbook.createSheet("Films");
         this.currentRowNumber = 0;
@@ -44,6 +46,12 @@ public class ExcelFilmWriter implements ItemWriter<Film>{
         addCell(film.getAnnee().toString());
         addCell(personneService.printPersonnes(film.getActeurs(),","));
         addCell(film.isRipped()?"oui":"non");
+        if(film.isRipped()) {
+        	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            addCell(sdf.format(film.getDvd().getDateRip()));
+        }else {
+        	addCell("");
+        }
     }
 
     private void addRow() {

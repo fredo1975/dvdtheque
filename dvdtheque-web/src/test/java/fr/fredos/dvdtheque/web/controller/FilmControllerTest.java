@@ -6,12 +6,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.Charset;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +39,7 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
+import fr.fredos.dvdtheque.service.impl.FilmServiceImpl;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
@@ -78,13 +82,20 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public static final String ACT2_NOM = "toitoi tuitui";
 	public static final String ACT3_NOM = "tuotuo tmitmi";
 	public static final String ACT4_NOM = "Graham Collins";
-	
-	private void assertFilmIsNotNull(Film film) {
+	public static final int RIP_DATE = -10;
+	private Date createRipDate() {
+		Calendar cal = Calendar.getInstance();
+		return DateUtils.addDays(cal.getTime(), RIP_DATE);
+	}
+	private void assertFilmIsNotNull(Film film,boolean dateRipNull) {
 		assertNotNull(film);
 		assertNotNull(film.getId());
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
+		if(!dateRipNull) {
+			assertEquals(filmService.clearDate(createRipDate()),film.getDvd().getDateRip());
+		}
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
 		assertTrue(film.getActeurs().size()>=3);
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
@@ -92,8 +103,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findAllFilms() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,false);
 		List<Film> allFilms = filmService.findAllFilms();
 		assertNotNull(allFilms);
 		if(CollectionUtils.isNotEmpty(allFilms)) {
@@ -107,7 +118,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 					.andExpect(MockMvcResultMatchers.status().isOk())
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
 			assertNotNull(resultActions);
-			assertFilmIsNotNull(filmToTest);
+			assertFilmIsNotNull(filmToTest,false);
 		}
 	}
 	@Test
@@ -122,8 +133,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findById() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,false);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_FILM_BY_ID+film.getId())
 				.contentType(MediaType.APPLICATION_JSON);
 		ResultActions resultActions = mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk())
@@ -132,8 +143,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findAllRealisateurs() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,false);
 		List<Personne> allRealisateur = personneService.findAllRealisateur();
 		assertNotNull(allRealisateur);
 		if(CollectionUtils.isNotEmpty(allRealisateur)) {
@@ -150,8 +161,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findAllPersonne() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,false);
 		List<Personne> allPersonne = personneService.findAllPersonne();
 		assertNotNull(allPersonne);
 		if(CollectionUtils.isNotEmpty(allPersonne)) {
@@ -168,8 +179,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findAllActeurs() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,false);
 		List<Personne> allActeur = personneService.findAllActeur();
 		assertNotNull(allActeur);
 		if(CollectionUtils.isNotEmpty(allActeur)) {
@@ -187,8 +198,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	@Transactional
 	public void testReplaceFilm() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,true);
 		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(film);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
@@ -198,7 +209,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
 		Film filmUpdated = filmService.findFilm(film.getId());
-		assertFilmIsNotNull(filmUpdated);
+		assertFilmIsNotNull(filmUpdated,true);
 		Results results = client.retrieveTmdbSearchResultsById(tmdbId);
 		assertEquals(StringUtils.upperCase(results.getTitle()), filmUpdated.getTitre());
 		assertEquals(POSTER_PATH, filmUpdated.getPosterPath());
@@ -206,8 +217,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	@Transactional
 	public void testUpdateFilm() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,false);
 		Film filmToUpdate = filmService.findFilm(film.getId());
 		assertNotNull(filmToUpdate);
 		logger.debug("filmToUpdate="+filmToUpdate.toString());
@@ -234,14 +245,14 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(TITRE_FILM_TMBD_ID_4780)));
 		Film filmSaved = filmService.findFilmByTitre(TITRE_FILM_TMBD_ID_4780);
-		assertFilmIsNotNull(filmSaved);
+		assertFilmIsNotNull(filmSaved,true);
 		assertEquals(StringUtils.upperCase(TITRE_FILM_TMBD_ID_4780),filmSaved.getTitre());
 	}
 	@Test
 	@Transactional
 	public void testFindPersonne() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,false);
 		Personne personne = personneService.findPersonneByName(REAL_NOM);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
 				.get(SEARCH_PERSONNE_URI)
@@ -254,8 +265,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	@Transactional
 	public void testUpdatePersonne() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,false);
 		Personne personne = personneService.findPersonneByName(ACT1_NOM);
 		assertNotNull(personne);
 		personne.setNom(ACT2_NOM);

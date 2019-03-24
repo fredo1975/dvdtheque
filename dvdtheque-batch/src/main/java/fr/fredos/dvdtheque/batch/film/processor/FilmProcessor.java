@@ -1,5 +1,7 @@
 package fr.fredos.dvdtheque.batch.film.processor;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -43,7 +46,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			}
 		}
 		if(filmToSave != null) {
-			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null);
+			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null);
 			filmToSave.setDvd(dvd);
 			//filmToSave.setTitreFromExcelFile(StringUtils.upperCase(item.getTitre()));
 			boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
@@ -54,6 +57,10 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 					filmToSave.setRipped(false);
 				}else {
 					filmToSave.setRipped(item.getRipped().equalsIgnoreCase("oui")?true:false);
+					if(item.getRipped().equalsIgnoreCase("oui") && StringUtils.isNotEmpty(item.getRipDate())) {
+						DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+						filmToSave.getDvd().setDateRip(sdf.parse(item.getRipDate()));
+					}
 				}
 			}
 			filmToSave.setId(null);

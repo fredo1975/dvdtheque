@@ -1,13 +1,16 @@
 package fr.fredos.dvdtheque.dvdtheque.tmdb.service.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -21,8 +24,6 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
-import fr.fredos.dvdtheque.tmdb.model.Crew;
-import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.model.SearchResults;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
@@ -42,6 +43,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 	public static final String ACT2_NOM = "toitoi tuitui";
 	public static final String ACT3_NOM = "tuotuo tmitmi";
 	public static final String ACT4_NOM = "Graham Collins";
+	public static final int RIP_DATE = -10;
 	@Autowired
     private TmdbServiceClient client;
 	private String titreTmdb= "2001";
@@ -60,12 +62,19 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(res.getRelease_date());
 		assertNotNull(res.getOverview());
 	}
-    private void assertFilmIsNotNull(Film film) {
+    private Date createRipDate() {
+		Calendar cal = Calendar.getInstance();
+		return DateUtils.addDays(cal.getTime(), RIP_DATE);
+	}
+    private void assertFilmIsNotNull(Film film,boolean dateRipNull) {
 		assertNotNull(film);
 		assertNotNull(film.getId());
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
+		if(!dateRipNull) {
+			assertEquals(filmService.clearDate(createRipDate()),film.getDvd().getDateRip());
+		}
 		assertNotNull(film.getOverview());
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
 		assertTrue(film.getActeurs().size()>=3);
@@ -80,8 +89,8 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void retrieveTmdbResultsTest() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,false);
 		
 		Results res = getResultsByFilmTitre(film);
 		assertResultsIsNotNull(res);
@@ -96,16 +105,16 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void replaceFilmTest() throws ParseException {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, null);
+		assertFilmIsNotNull(film,true);
 		film = client.replaceFilm(tmdbId, film);
-		assertFilmIsNotNull(film);
+		assertFilmIsNotNull(film,true);
 		logger.info("film = "+film.toString());
     }
 	@Test
     public void savetmdbFilmTest() throws ParseException {
 		Film film = client.saveTmbdFilm(tmdbId);
-		assertFilmIsNotNull(film);
+		assertFilmIsNotNull(film,true);
 		logger.info("film = "+film.toString());
     }
 	@Test
@@ -136,8 +145,8 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }*/
 	@Test
     public void retrieveTmdbCreditsTest() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,false);
 		
 		assertNotNull(film);
 		assertNotNull(film.getTitre());

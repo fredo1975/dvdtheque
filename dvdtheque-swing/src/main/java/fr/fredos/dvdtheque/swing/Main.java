@@ -10,14 +10,21 @@ import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 import fr.dvdtheque.console.factory.ImageFactory;
+import fr.fredos.dvdtheque.swing.views.FilmListPresenter;
+import fr.fredos.dvdtheque.swing.views.FilmListView;
 import fr.fredos.dvdtheque.swing.views.MenuBarPresenter;
 import fr.fredos.dvdtheque.swing.views.MenuBarView;
 
@@ -26,41 +33,40 @@ public class Main extends JFrame {
 	private static final long serialVersionUID = 1418739757443185022L;
 	protected final Log logger = LogFactory.getLog(Main.class);
 	private String imagePath = "/img/header.JPG";
-	
+
 	private static ConfigurableApplicationContext ctx;
+
 	public Main() throws Exception {
 		initUI();
 	}
 
 	private void initUI() throws Exception {
 		setTitle("Dvdtheque");
-		setSize(1024, 768);
+		UIManager.setLookAndFeel(new MetalLookAndFeel());
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		setSize(new Double(screenSize.getWidth()).intValue(), new Double(screenSize.getHeight()).intValue());
 		setLocationRelativeTo(null);
 		// pack();
-		buildComponents();
-		buildViewsAndPresenters();
+		
+		final JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
+		this.add(mainPanel);
+		buildComponents(mainPanel);
+		buildViewsAndPresenters(mainPanel);
+		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
-	private void buildViewsAndPresenters(){
-		final MenuBarView view = new MenuBarView(this);
-        new MenuBarPresenter(view);
+	private void buildViewsAndPresenters(final JPanel mainPanel) {
+		final MenuBarView menuBarView = new MenuBarView(this);
+		new MenuBarPresenter(menuBarView);
+		final FilmListView filmListView = new FilmListView(mainPanel);
+		FilmTableModel filmTableModel = new FilmTableModel();
+		new FilmListPresenter(filmListView);
 	}
-	// Initialiser le composant
-	private void buildComponents() throws Exception {
-		String methodName = "buildComponents ";
-		logger.info(methodName + "start System.getProperty(user.dir)=" + System.getProperty("user.dir"));
-		logger.info(methodName + "start System.getProperty(java.class.path)=" + System.getProperty("java.class.path"));
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension frameSize = this.getSize();
-		logger.info(methodName + "screenSize=" + screenSize);
-		logger.info(methodName + "frameSize=" + frameSize);
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
+
+	private void buildComponents(final JPanel mainPanel) throws Exception {
 		initHeader(mainPanel);
-		this.add(mainPanel);
-		
-		logger.info(methodName + "end");
 	}
 
 	protected void initHeader(JPanel mainPanel) {
@@ -77,7 +83,6 @@ public class Main extends JFrame {
 		mainPanel.add(pan);
 	}
 
-	
 	private void createLayout(JComponent... arg) {
 		Container pane = getContentPane();
 		GroupLayout gl = new GroupLayout(pane);
@@ -93,5 +98,10 @@ public class Main extends JFrame {
 			Main ex = ctx.getBean(Main.class);
 			ex.setVisible(true);
 		});
+	}
+
+	@Bean
+	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+		return builder.build();
 	}
 }

@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -42,7 +45,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public static final String ACT2_NOM = "toitoi tuitui";
 	public static final String ACT3_NOM = "tuotuo tmitmi";
 	public static final String ACT4_NOM = "Graham Collins";
-	
+	public static final int RIP_DATE = -10;
 	@Autowired
 	protected FilmDao filmDao;
 	@Autowired
@@ -56,21 +59,28 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
+		assertNotNull(film.getDvd().getDateRip());
+		assertEquals(filmService.clearDate(createRipDate()),film.getDvd().getDateRip());
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
 		assertTrue(film.getActeurs().size()==3);
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue(film.getRealisateurs().size()==1);
+		
+	}
+	private Date createRipDate() {
+		Calendar cal = Calendar.getInstance();
+		return DateUtils.addDays(cal.getTime(), RIP_DATE);
 	}
 	@Test
 	public void saveFilm() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 	}
 	@Test
 	public void findFilmByTitre() throws Exception{
 		String methodName = "findFilmByTitre : ";
 		logger.debug(methodName + "start");
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		Film retrievedFilm = filmService.findFilmByTitre(TITRE_FILM);
 		assertFilmIsNotNull(retrievedFilm);
@@ -80,7 +90,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public void findFilmWithAllObjectGraph() throws Exception{
 		String methodName = "findFilmWithAllObjectGraph : ";
 		logger.debug(methodName + "start");
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		Film retrievedFilm = filmService.findFilmWithAllObjectGraph(film.getId());
 		assertFilmIsNotNull(retrievedFilm);
@@ -95,18 +105,18 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	public void findFilm() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		film = filmService.findFilm(film.getId());
 		assertFilmIsNotNull(film);
 	}
 	@Test
 	public void findAllFilms() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
-		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film2);
-		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film3);
 		StopWatch watch = new StopWatch();
 		watch.start();
@@ -123,7 +133,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	public void findAllTmdbFilms() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		Set<Long> tmdbIds = new HashSet<>();
 		tmdbIds.add(film.getTmdbId());
@@ -134,7 +144,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	public void findAllRippedFilms() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		List<Film> films = filmService.getAllRippedFilms();
 		assertTrue(CollectionUtils.isNotEmpty(films));
@@ -146,7 +156,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	@Test
 	@Transactional
 	public void updateFilm(){
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		
 		film.setTitre(TITRE_FILM_UPDATED);
@@ -181,11 +191,11 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public void cleanAllFilms() {
 		String methodName = "cleanAllFilms : ";
 		logger.debug(methodName + "start");
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
-		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film2);
-		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film3);
 		filmService.cleanAllFilms();
 		assertTrue(CollectionUtils.isEmpty(filmService.findAllFilms()));
@@ -195,7 +205,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public void findAllFilmsByCriteriaTitreService() {
 		String methodName = "findAllFilmsByCriteriaTtireService : ";
 		logger.debug(methodName + "start");
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		
 		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(StringUtils.left(TITRE_FILM, 5),null,null,null,null);
@@ -210,7 +220,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	public void findAllFilmsByCriteriaActeursService() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		
 		Long selectedActeurId = film.getActeurs().iterator().next().getId();
@@ -235,7 +245,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		String methodName = "findAllFilmsByCriteria : ";
 		logger.debug(methodName + "start");
 		
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		
 		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto("Lorem",null,null,null,null);
@@ -259,7 +269,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	public void removeFilmDao() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		Personne real = film.getRealisateurs().iterator().next();
 		assertNotNull(real);
@@ -270,7 +280,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	
 	@Test(expected = java.lang.Exception.class)
 	public void removeFilmService() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film);
 		filmService.removeFilm(film);
 		Film deletedFilm = filmService.findFilm(film.getId());
