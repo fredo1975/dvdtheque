@@ -56,7 +56,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-	private static final String UPDATE_FILM_URI = "/dvdtheque/films/";
+	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
 	private static final String UPDATE_PERSONNE_URI = "/dvdtheque/personnes/byId/";
 	private static final String SEARCH_PERSONNE_URI = "/dvdtheque/films/byPersonne";
 	private static final String SEARCH_ALL_REALISATEUR_URI = "/dvdtheque/realisateurs";
@@ -106,10 +106,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		if(CollectionUtils.isNotEmpty(allFilms)) {
 			assertTrue(allFilms.size()>0);
 			Film filmToTest = allFilms.get(0);
-			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/dvdtheque/films")
+			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_FILMS_URI)
 					.contentType(MediaType.APPLICATION_JSON);
 			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
-			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films")
+			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI)
 					.contentType(MediaType.APPLICATION_JSON))
 					.andExpect(MockMvcResultMatchers.status().isOk())
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
@@ -223,7 +223,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-				.put(UPDATE_FILM_URI+film.getId(),filmToUpdate)
+				.put(GET_ALL_FILMS_URI+film.getId(),filmToUpdate)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());

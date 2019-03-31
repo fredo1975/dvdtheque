@@ -26,7 +26,7 @@ public class ImageFactory {
 		super();
 		this.panel = panel;
 	}
-	public static JPanel getHeaderPan(){
+	public JPanel getHeaderPan(){
 		JPanel jPanel = new HeaderPanel(image);
 		jPanel.setPreferredSize(new Dimension(770,200));
 		return jPanel;

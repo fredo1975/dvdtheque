@@ -17,28 +17,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestTemplate;
 
 import fr.dvdtheque.console.factory.ImageFactory;
-import fr.fredos.dvdtheque.swing.views.FilmListPresenter;
+import fr.fredos.dvdtheque.swing.model.FilmTableModel;
 import fr.fredos.dvdtheque.swing.views.FilmListView;
 import fr.fredos.dvdtheque.swing.views.MenuBarPresenter;
 import fr.fredos.dvdtheque.swing.views.MenuBarView;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "fr.fredos.dvdtheque.swing")
 public class Main extends JFrame {
 	private static final long serialVersionUID = 1418739757443185022L;
 	protected final Log logger = LogFactory.getLog(Main.class);
-	private String imagePath = "/img/header.JPG";
+	private String IMAGE_PATH = "/img/header.JPG";
 
 	private static ConfigurableApplicationContext ctx;
-
-	public Main() throws Exception {
-		initUI();
-	}
 
 	private void initUI() throws Exception {
 		setTitle("Dvdtheque");
@@ -61,8 +54,9 @@ public class Main extends JFrame {
 		final MenuBarView menuBarView = new MenuBarView(this);
 		new MenuBarPresenter(menuBarView);
 		final FilmListView filmListView = new FilmListView(mainPanel);
-		FilmTableModel filmTableModel = new FilmTableModel();
-		new FilmListPresenter(filmListView);
+		FilmTableModel filmTableModel = (FilmTableModel) ctx.getBean("filmTableModel");
+		filmTableModel.buildFilmFilmList();
+		//new FilmListPresenter(filmListView);
 	}
 
 	private void buildComponents(final JPanel mainPanel) throws Exception {
@@ -78,8 +72,7 @@ public class Main extends JFrame {
 			}
 		};
 		pan.setLayout(new BoxLayout(pan, BoxLayout.PAGE_AXIS));
-		ImageFactory imageFactory = new ImageFactory((JPanel) this.getContentPane(), imagePath);
-		pan.add(imageFactory.getHeaderPan());
+		pan.add(new ImageFactory((JPanel) this.getContentPane(), IMAGE_PATH).getHeaderPan());
 		mainPanel.add(pan);
 	}
 
@@ -97,11 +90,12 @@ public class Main extends JFrame {
 		EventQueue.invokeLater(() -> {
 			Main ex = ctx.getBean(Main.class);
 			ex.setVisible(true);
+			try {
+				ex.initUI();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		});
-	}
-
-	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder builder) {
-		return builder.build();
 	}
 }
