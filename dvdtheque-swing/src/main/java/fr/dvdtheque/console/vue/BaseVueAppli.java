@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.dvdtheque.console.factory.ImageFactory;
-import fr.fredos.dvdtheque.swing.Session;
 
 public class BaseVueAppli extends BaseVueJFrame {
 	/**
@@ -43,7 +42,7 @@ public class BaseVueAppli extends BaseVueJFrame {
 	public static final String koPath="/img/ko.png";
 	
 	// session de l'application commune aux vues et actions
-	private Session session;
+	
 	private Dimension screenSize;
 	private Dimension frameSize;
 	private String imagePath = "/img/header.JPG";
@@ -53,12 +52,7 @@ public class BaseVueAppli extends BaseVueJFrame {
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
 	}
-	public Session getSession() {
-		return session;
-	}
-	public void setSession(Session session) {
-		this.session = session;
-	}
+	
 	public Dimension getScreenSize() {
 		return screenSize;
 	}
@@ -195,11 +189,11 @@ public class BaseVueAppli extends BaseVueJFrame {
 		// logger.info(methodName + "session.isEtatMenuListe()="+
 		// session.isEtatMenuListe());
 		// le menu
-		jMenuItemLogin.setVisible(session.isEtatMenuLogin());
-		jMenuItemLogout.setVisible(session.isEtatMenuLogout());
-		jMenuItemListeFilm.setVisible(session.isEtatMenuListe());
-		jMenuItemQuitter.setVisible(session.isEtatMenuQuitter());
-		jMenuItemNouveauFilm.setVisible(session.isEtatMenuNouveauFilm());
+		jMenuItemLogin.setVisible(true);
+		jMenuItemLogout.setVisible(true);
+		jMenuItemListeFilm.setVisible(true);
+		jMenuItemQuitter.setVisible(true);
+		jMenuItemNouveauFilm.setVisible(true);
 		jMenu1.add(jMenuItemLogout);
 		jMenu1.add(jMenuItemLogin);
 		jMenu1.add(jMenuItemListeFilm);

@@ -77,7 +77,7 @@ public class VueLogout extends BaseVueAppli {
 	public void affiche() {
 		String methodName = "affiche ";
 		logger.info(methodName + "start");
-		jLabel1.setText(getSession().getMessage());
+		//jLabel1.setText(getSession().getMessage());
 		jMenuItemNouveauFilm.setVisible(false);
 		super.affiche();
 		logger.info(methodName + "end");

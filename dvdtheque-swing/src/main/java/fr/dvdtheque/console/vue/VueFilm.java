@@ -158,7 +158,7 @@ public class VueFilm extends BaseVueAppli {
 			panel.add(jButtonBackToList);
 			panel.add(updatedLabel);
 		} catch (Exception e) {
-			getSession().getErreurs().add(e.getMessage());
+			//getSession().getErreurs().add(e.getMessage());
 			e.printStackTrace();
 		}
 		logger.info(methodName + "end");
@@ -208,7 +208,7 @@ public class VueFilm extends BaseVueAppli {
 																						// ypad
 		} catch (Exception e) {
 			e.printStackTrace();
-			getSession().getErreurs().add(e.getMessage());
+			//getSession().getErreurs().add(e.getMessage());
 		}
 		localPanel.add(localPanel1);
 		jButtonAddPersonne.addActionListener(new VueInfos_jButtonAddPersonne_actionAdapter(this));
@@ -244,7 +244,7 @@ public class VueFilm extends BaseVueAppli {
 																						// ypad
 		} catch (Exception e) {
 			e.printStackTrace();
-			getSession().getErreurs().add(e.getMessage());
+			//getSession().getErreurs().add(e.getMessage());
 		}
 		localPanel_.add(localPanel2);
 		localPanel_.add(jButtonUpdatePersonne);
@@ -267,7 +267,7 @@ public class VueFilm extends BaseVueAppli {
 		int fieldNum = 0;
 		Dimension scollerDim = new Dimension(250, 400);
 		try {
-			List<Personne> personneDtoList = getSession().getPersonneService().findAllPersonne();
+			/*List<Personne> personneDtoList = getSession().getPersonneService().findAllPersonne();
 			if (CollectionUtils.isNotEmpty(personneDtoList)) {
 				DefaultListModel<Personne> personneListModel = new DefaultListModel<Personne>();
 				for (Personne personne : personneDtoList) {
@@ -290,7 +290,7 @@ public class VueFilm extends BaseVueAppli {
 				personneJList.setDragEnabled(true);
 				personneJList.setTransferHandler(new FromPersonneTransferHandler(personneJList));
 				personneJList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			}
+			}*/
 			JScrollPane listScrollPane = new JScrollPane(personneJList);
 			listScrollPane.setPreferredSize(scollerDim);
 			fields[fieldNum++] = listScrollPane;
@@ -304,7 +304,7 @@ public class VueFilm extends BaseVueAppli {
 																											// ypad
 		} catch (Exception e) {
 			e.printStackTrace();
-			getSession().getErreurs().add(e.getMessage());
+			//getSession().getErreurs().add(e.getMessage());
 		}
 		logger.info(methodName + "end");
 		return panel;
@@ -349,7 +349,7 @@ public class VueFilm extends BaseVueAppli {
 		acteurListModel = new DefaultListModel<Personne>();
 		try {
 			filmRealisateurComboBox = new JComboBox<RealisateurEntry>();
-			if (null != getSession().getFilm()) {
+			//if (null != getSession().getFilm()) {
 				Set<Personne> realisateurs = film.getRealisateurs();
 				if (CollectionUtils.isNotEmpty(realisateurs) && realisateurs.size() == 1) {
 					Personne realisateur = realisateurs.iterator().next();
@@ -369,7 +369,7 @@ public class VueFilm extends BaseVueAppli {
 						acteurListModel.addElement(acteur);
 					}
 				}
-			}
+			//}
 			acteursJList = new JList(acteurListModel);
 			acteursJList.clearSelection();
 			acteursJList.addMouseListener(new MouseAdapter() {
@@ -405,10 +405,10 @@ public class VueFilm extends BaseVueAppli {
 			acteursJList.setTransferHandler(new ToActeurTransferHandler(TransferHandler.MOVE));
 			acteursJList.setDropMode(DropMode.INSERT);
 
-			for (Personne personne : getSession().getPersonneService().findAllPersonne()) {
-				RealisateurEntry realisateurEntry = new RealisateurEntry(personne);
-				filmRealisateurComboBox.addItem(realisateurEntry);
-			}
+			//for (Personne personne : getSession().getPersonneService().findAllPersonne()) {
+				//RealisateurEntry realisateurEntry = new RealisateurEntry(personne);
+				//filmRealisateurComboBox.addItem(realisateurEntry);
+			//}
 			fields[fieldNum++] = filmRealisateurComboBox;
 			if (null != film && null != film.getAnnee()) {
 				filmYearComboBox.setSelectedIndex(cal.get(Calendar.YEAR) - film.getAnnee());
@@ -455,7 +455,7 @@ public class VueFilm extends BaseVueAppli {
 					GAP, GAP / 2);// xpad, ypad
 		} catch (Exception e) {
 			e.printStackTrace();
-			getSession().getErreurs().add(e.getMessage());
+			//getSession().getErreurs().add(e.getMessage());
 		}
 		logger.debug(methodName + "end");
 		return panel;
@@ -571,6 +571,7 @@ public class VueFilm extends BaseVueAppli {
 			panFilmIntermediate.setAlignmentX(Component.CENTER_ALIGNMENT);
 			panFilm.removeAll();
 			panFilm.updateUI();
+			/*
 			if (null != getSession().getFilm()) {
 				film = getSession().getFilm();
 				acteurList = new ArrayList<Personne>(film.getActeurs());
@@ -601,13 +602,13 @@ public class VueFilm extends BaseVueAppli {
 					buttonUpdateFilmPanel.add(jButtonAddFilm);
 					panFilm.add(buttonUpdateFilmPanel);
 				}
-			}
+			}*/
 			panFilm.setOpaque(true);
 			panel.add(panFilm);
 			// panel.add(buttonListPanel);
 			this.getContentPane().add(panel);
 		} catch (Exception e) {
-			getSession().getErreurs().add(e.getMessage());
+			//getSession().getErreurs().add(e.getMessage());
 			e.printStackTrace();
 		}
 		super.affiche();
@@ -636,7 +637,7 @@ public class VueFilm extends BaseVueAppli {
 		}else{
 			film.setRipped(false);
 		}
-		getSession().getFilmService().updateFilm(film);
+		//getSession().getFilmService().updateFilm(film);
 		updatedLabel.setVisible(true);
 	}
 	
@@ -659,7 +660,7 @@ public class VueFilm extends BaseVueAppli {
 			acteurs.add(dm.getElementAt(i));
 		}
 		film.setActeurs(acteurs);
-		getSession().getFilmService().updateFilm(film);
+		//getSession().getFilmService().updateFilm(film);
 		updatedLabel.setVisible(true);
 	}
 
@@ -670,7 +671,7 @@ public class VueFilm extends BaseVueAppli {
 		selectedPersonne.setPrenom(updatePrenomField.getText());
 		selectedPersonne.setNom(updateNomField.getText());
 		PersonneDto personneDto = PersonneDto.toDto(selectedPersonne);
-		getSession().getPersonneService().updatePersonne(selectedPersonne);
+		//getSession().getPersonneService().updatePersonne(selectedPersonne);
 		DefaultListModel<Personne> dm = (DefaultListModel<Personne>) personneJList.getModel();
 		dm.removeElementAt(index);
 		dm.add(index, PersonneDto.fromDto(personneDto));
@@ -681,8 +682,8 @@ public class VueFilm extends BaseVueAppli {
 		//Personne personne = new Personne(addPrenomField.getText(), addNomField.getText());
 		Personne personne = new Personne();
 		
-		Long personneId = getSession().getPersonneService().savePersonne(personne);
-		personne.setId(personneId);
+		//Long personneId = getSession().getPersonneService().savePersonne(personne);
+		//personne.setId(personneId);
 		DefaultListModel<Personne> dm = (DefaultListModel<Personne>) personneJList.getModel();
 		dm.addElement(personne);
 	}
