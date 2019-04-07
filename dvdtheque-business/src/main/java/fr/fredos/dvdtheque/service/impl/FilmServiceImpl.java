@@ -121,7 +121,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = true)
 	public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {
 		List<Film> filmList = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
-		filmList.sort(Comparator.comparing(Film::getPrintRealisateur).thenComparing(Film::getTitre));
+		filmList.sort(Comparator.comparing(Film::getTitre));
 		return filmList;
 	}
 	@Override

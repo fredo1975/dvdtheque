@@ -1,8 +1,8 @@
-package fr.fredos.dvdtheque.dvdtheque.tmdb.service.test;
+package fr.fredos.dvdtheque.dvdtheque.rest.client.service.test;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.LinkedHashMap;
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestClientException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
@@ -32,11 +36,19 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	protected FilmRestService filmRestService;
 	
 	@Test
-	public void findAllFilmsRestService() {
+	public void findAllFilmsRestService() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		List<Film> dbFilmList = filmService.findAllFilms();
 		assertNotNull(dbFilmList);
-		
+		List<Film> l = filmRestService.findAllFilms();
+		/*
 		List<LinkedHashMap<String, Object>> restFilmList = filmRestService.findAllFilms();
 		assertNotNull(restFilmList);
+		assertTrue(CollectionUtils.isNotEmpty(restFilmList));
+		for(LinkedHashMap<String, Object> map : restFilmList) {
+			assertTrue(MapUtils.isNotEmpty(map));
+			for(Map.Entry<String, Object> entry : map.entrySet()) {
+				logger.info(entry.getKey()+" "+entry.getValue());
+			}
+		}*/
 	}
 }

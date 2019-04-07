@@ -118,7 +118,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		}
 	}
 	@Test
-	public void findAllTmdbFilms() throws Exception {
+	public void findTmdbFilmByTitre() throws Exception {
 		String titre = "Broadway";
 		Film film = new Film();
 		film.setTitre(titre);

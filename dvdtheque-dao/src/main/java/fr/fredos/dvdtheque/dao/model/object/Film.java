@@ -18,10 +18,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "FILM")
@@ -124,13 +122,7 @@ public class Film implements Serializable {
 	public void setRipped(boolean ripped) {
 		this.ripped = ripped;
 	}
-	public String getPrintRealisateur() {
-		if(!CollectionUtils.isEmpty(this.realisateurs)) {
-			Personne realisateur = this.getRealisateurs().iterator().next();
-			return realisateur.getNom();
-		}
-		return StringUtils.EMPTY;
-	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.swing.model;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +11,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.swing.Main;
-import fr.fredos.dvdtheque.swing.service.FilmRestService;
+import fr.fredos.dvdtheque.tmdb.service.FilmRestService;
 
 @Component
 public class FilmTableModel extends AbstractTableModel {
@@ -42,29 +46,10 @@ public class FilmTableModel extends AbstractTableModel {
 		}*/
 	}
 	
-	public void buildFilmFilmList() {
+	public void buildFilmFilmList() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		//this.filmList = filmRestService.findAllFilms();
-		List<LinkedHashMap<String, Object>> filmAllListResult = filmRestService.findAllFilms();
+		List<Film> filmAllListResult = filmRestService.findAllFilms();
 		data = new Object[filmAllListResult.size()][2];
-		int i=0;
-		for(LinkedHashMap<String, Object> linked : filmAllListResult) {
-			for(Map.Entry<String, Object> entry : linked.entrySet()) {
-				String key = entry.getKey();
-				Object val = entry.getValue();
-				logger.info("key="+key+" val="+val);
-				/*data[i][0] = film.getPosterPath();
-				data[i][1] = film.isRipped();
-				*/
-				
-			}
-			String posterPath = (String) linked.get("posterPath");
-			boolean ripped = (boolean) linked.get("ripped");
-			logger.info("posterPath="+posterPath+" ripped="+ripped);
-			data[i][0] = posterPath;
-			data[i][1] = ripped;
-			i++;
-		}
-		
 		
 		/*
 		// on parcourt la liste des articles
