@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	protected FilmRestService filmRestService;
 	
 	@Test
+	@Ignore
 	public void findAllFilmsRestService() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		List<Film> dbFilmList = filmService.findAllFilms();
 		assertNotNull(dbFilmList);
