@@ -2,6 +2,7 @@ package fr.fredos.dvdtheque.swing.views;
 
 import java.awt.Dimension;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -11,8 +12,8 @@ import org.apache.commons.logging.LogFactory;
 
 public class FilmListView extends AbstractViewListenerHolder{
 	protected final Log logger = LogFactory.getLog(FilmListView.class);
-	public FilmListView(final JPanel mainPanel) {
-		initFirstTab(mainPanel);
+	public FilmListView(final JFrame frame) {
+		//initFirstTab(mainPanel);
     }
 	protected void initFirstTab(final JPanel mainPanel) {
 		String[] columnNames = { "First Name", "Last Name", "Sport", "# of Years", "Vegetarian" };

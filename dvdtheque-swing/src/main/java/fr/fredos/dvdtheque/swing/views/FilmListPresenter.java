@@ -1,29 +1,21 @@
 package fr.fredos.dvdtheque.swing.views;
 
-import java.awt.event.ActionEvent;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import fr.fredos.dvdtheque.swing.model.FilmTableModel;
-import fr.fredos.dvdtheque.swing.view.listener.ViewListener;
+import fr.fredos.dvdtheque.swing.view.listener.FilmListViewListener;
 
-public class FilmListPresenter implements ViewListener {
-	private final FilmListView filmListView;
-    private final FilmTableModel filmTableModel;
+public class FilmListPresenter implements FilmListViewListener {
+	protected final Log logger = LogFactory.getLog(FilmListPresenter.class);
+	private final FilmListView view;
+    //private final FilmTableModel filmTableModel;
     
-    public FilmListPresenter(final FilmListView view, final FilmTableModel model) {
-        this.filmListView = view;
-        view.addListener(this);
-        this.filmTableModel = model;
+    public FilmListPresenter(final FilmListView view) {
+        this.view = view;
+        this.view.addFilmListViewListener(this);
     }
-	@Override
-	public void onFilmListMenuChoosed(ActionEvent evt) {
-		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void onQuitMenuChoosed(ActionEvent evt) {
-		// TODO Auto-generated method stub
-
-	}
-
+    protected void buildFilmList() {
+    	logger.info("building the film list ...");
+    }
 }

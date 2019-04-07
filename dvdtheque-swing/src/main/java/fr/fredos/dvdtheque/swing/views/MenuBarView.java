@@ -12,13 +12,15 @@ import javax.swing.KeyStroke;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.fredos.dvdtheque.swing.view.listener.ViewListener;
+import fr.fredos.dvdtheque.swing.view.listener.FilmListViewListener;
+import fr.fredos.dvdtheque.swing.view.listener.MenuViewListener;
 
 public class MenuBarView extends AbstractViewListenerHolder{
 	protected final Log logger = LogFactory.getLog(MenuBarView.class);
 	private JMenuBar jMenuBar1 = new JMenuBar();
 	private JMenu jMenu1 = new JMenu("Actions");
 	private JMenuItem jMenuItemLogin = new JMenuItem("Login");
+	private JMenuItem jMenuItemFilmList = new JMenuItem("Liste des films");
 	private JMenuItem jMenuItemLogout = new JMenuItem("Logout");
 	private JMenuItem jMenuItemQuitter = new JMenuItem("Quitter");
 	
@@ -27,8 +29,9 @@ public class MenuBarView extends AbstractViewListenerHolder{
     }
 	
 	private void buildMenu(final JFrame frame) {
+		jMenuItemFilmList.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		jMenuItemQuitter.setActionCommand("liste");
 		jMenuItemQuitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		jMenuItemQuitter.getAccessibleContext().setAccessibleDescription("This doesn't really do anything");
 		jMenuItemQuitter.setActionCommand("quitter");
 		jMenuItemLogin.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		jMenuItemLogin.setActionCommand("login");
@@ -36,7 +39,11 @@ public class MenuBarView extends AbstractViewListenerHolder{
 		jMenuItemLogout.setActionCommand("logout");
 		
 		jMenuItemQuitter.addActionListener((event) -> {
-            notifyListeners(ViewListener::onQuitMenuChoosed, event);
+            notifyMenuListeners(MenuViewListener::onQuitMenuChoosed, event);
+        });
+		
+		jMenuItemFilmList.addActionListener((event) -> {
+			notifyMenuListeners(MenuViewListener::onFilmListMenuChoosed, event);
         });
 		
 		jMenuItemLogin.setVisible(true);
@@ -44,6 +51,7 @@ public class MenuBarView extends AbstractViewListenerHolder{
 		jMenuItemQuitter.setVisible(true);
 		
 		jMenu1.add(jMenuItemLogin);
+		jMenu1.add(jMenuItemFilmList);
 		jMenu1.add(jMenuItemLogout);
 		jMenu1.add(jMenuItemQuitter);
 		jMenuBar1.add(jMenu1);

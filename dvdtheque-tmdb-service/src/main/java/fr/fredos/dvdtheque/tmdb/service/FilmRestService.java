@@ -30,8 +30,6 @@ public class FilmRestService {
 	
 	public List<Film> findAllFilms() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		final String jsonResult = this.restTemplate.getForObject(environment.getRequiredProperty(GET_ALL_FILMS_URI), String.class);
-		final List<Film> filmList = objectMapper.readValue(jsonResult, new TypeReference<List<Film>>(){});
-		return filmList;
+		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(GET_ALL_FILMS_URI), String.class), new TypeReference<List<Film>>(){});
 	}
 }

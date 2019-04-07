@@ -5,24 +5,28 @@ import java.awt.event.ActionEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.fredos.dvdtheque.swing.view.listener.ViewListener;
+import fr.fredos.dvdtheque.swing.view.listener.MenuViewListener;
 
-public class MenuBarPresenter implements ViewListener{
+public class MenuBarPresenter implements MenuViewListener{
 	protected final Log logger = LogFactory.getLog(MenuBarPresenter.class);
 	private final MenuBarView view;
+	private final FilmListPresenter filmListPresenter;
 
-    public MenuBarPresenter(final MenuBarView view) {
+    public MenuBarPresenter(final MenuBarView view, final FilmListPresenter filmListPresenter) {
         this.view = view;
-        this.view.addListener(this);
+        this.view.addMenuViewListener(this);
+        this.filmListPresenter = filmListPresenter;
     }
-	@Override
-	public void onFilmListMenuChoosed(ActionEvent evt) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 	@Override
 	public void onQuitMenuChoosed(ActionEvent evt) {
 		logger.info("Application terminée...");
 	    System.exit(0);
+	}
+
+	@Override
+	public void onFilmListMenuChoosed(ActionEvent evt) {
+		logger.info("building the film list ...");
+		filmListPresenter.buildFilmList();
 	}
 }

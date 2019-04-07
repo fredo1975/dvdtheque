@@ -1,14 +1,11 @@
 package fr.fredos.dvdtheque.swing;
 
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.io.IOException;
 
 import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -26,18 +23,22 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.dvdtheque.console.factory.ImageFactory;
 import fr.fredos.dvdtheque.swing.model.FilmTableModel;
+import fr.fredos.dvdtheque.swing.views.FilmListPresenter;
 import fr.fredos.dvdtheque.swing.views.FilmListView;
 import fr.fredos.dvdtheque.swing.views.MenuBarPresenter;
 import fr.fredos.dvdtheque.swing.views.MenuBarView;
 
-@SpringBootApplication(scanBasePackages = "fr.fredos.dvdtheque.swing")
+@SpringBootApplication(scanBasePackages = {"fr.fredos.dvdtheque.batch",
+		"fr.fredos.dvdtheque.service",
+		"fr.fredos.dvdtheque.dao",
+		"fr.fredos.dvdtheque.tmdb.service",
+		"fr.fredos.dvdtheque.swing"})
 public class Main extends JFrame {
 	private static final long serialVersionUID = 1418739757443185022L;
 	protected final Log logger = LogFactory.getLog(Main.class);
 	private String IMAGE_PATH = "/img/header.JPG";
-
-	private static ConfigurableApplicationContext ctx;
-
+	private JPanel mainPanel;
+	
 	private void initUI() throws Exception {
 		setTitle("Dvdtheque");
 		UIManager.setLookAndFeel(new MetalLookAndFeel());
@@ -46,22 +47,26 @@ public class Main extends JFrame {
 		setLocationRelativeTo(null);
 		// pack();
 		
-		final JPanel mainPanel = new JPanel();
+		this.mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
 		this.add(mainPanel);
 		buildComponents(mainPanel);
-		buildViewsAndPresenters(mainPanel);
+		buildViewsAndPresenters();
 		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
-	private void buildViewsAndPresenters(final JPanel mainPanel) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
+	private void buildViewsAndPresenters() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
+		final FilmListView filmListView  = new FilmListView(this);
 		final MenuBarView menuBarView = new MenuBarView(this);
-		new MenuBarPresenter(menuBarView);
-		final FilmListView filmListView = new FilmListView(mainPanel);
-		FilmTableModel filmTableModel = (FilmTableModel) ctx.getBean("filmTableModel");
+		new MenuBarPresenter(menuBarView,new FilmListPresenter(filmListView));
+		
+	}
+	private void buildFilmListViewAndPresenter(final JPanel mainPanel) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
+		//final FilmListView filmListView = new FilmListView(mainPanel);
+		/*FilmTableModel filmTableModel = (FilmTableModel) ctx.getBean("filmTableModel");
 		filmTableModel.buildFilmFilmList();
-		//new FilmListPresenter(filmListView);
+		new FilmListPresenter(filmListView,filmTableModel);*/
 	}
 
 	private void buildComponents(final JPanel mainPanel) throws Exception {
@@ -81,17 +86,8 @@ public class Main extends JFrame {
 		mainPanel.add(pan);
 	}
 
-	private void createLayout(JComponent... arg) {
-		Container pane = getContentPane();
-		GroupLayout gl = new GroupLayout(pane);
-		pane.setLayout(gl);
-		gl.setAutoCreateContainerGaps(true);
-		gl.setHorizontalGroup(gl.createSequentialGroup().addComponent(arg[0]));
-		gl.setVerticalGroup(gl.createSequentialGroup().addComponent(arg[0]));
-	}
-
 	public static void main(String[] args) {
-		ctx = new SpringApplicationBuilder(Main.class).headless(false).run(args);
+		final ConfigurableApplicationContext ctx = new SpringApplicationBuilder(Main.class).headless(false).run(args);
 		EventQueue.invokeLater(() -> {
 			Main ex = ctx.getBean(Main.class);
 			ex.setVisible(true);

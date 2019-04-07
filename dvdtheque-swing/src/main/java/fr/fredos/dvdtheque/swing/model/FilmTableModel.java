@@ -1,15 +1,14 @@
 package fr.fredos.dvdtheque.swing.model;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -33,32 +32,19 @@ public class FilmTableModel extends AbstractTableModel {
 	
 	public FilmTableModel() {
 		super();
-		/*
-		this.films = filmRestService.findAllFilms();
-		// on dimensionne le tableau des donnees
-		data = new Object[films.size()][2];
-		// on parcourt la liste des articles
-		Film film = null;
-		for (int i = 0; i < films.size(); i++) {
-			film = (Film) films.get(i);
-			data[i][0] = film.getPosterPath();
-			data[i][1] = film.isRipped();
-		}*/
 	}
 	
 	public void buildFilmFilmList() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		//this.filmList = filmRestService.findAllFilms();
 		List<Film> filmAllListResult = filmRestService.findAllFilms();
 		data = new Object[filmAllListResult.size()][2];
-		
-		/*
 		// on parcourt la liste des articles
-		
-		for(LinkedHashMap<String,Film> LinkedHashMapFilm : this.filmList) {
+		int i=0;
+		for(Film film : filmAllListResult) {
 			data[i][0] = film.getPosterPath();
 			data[i][1] = film.isRipped();
 			i++;
-		}*/
+		}
 	}
 	public int getColumnCount() {
 		return columnNames.length;
