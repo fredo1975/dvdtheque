@@ -1,9 +1,14 @@
 package fr.fredos.dvdtheque.swing.views;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.web.client.RestClientException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.swing.view.listener.MenuViewListener;
 
@@ -25,7 +30,7 @@ public class MenuBarPresenter implements MenuViewListener{
 	}
 
 	@Override
-	public void onFilmListMenuChoosed(ActionEvent evt) {
+	public void onFilmListMenuChoosed(ActionEvent evt) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		logger.info("building the film list ...");
 		filmListPresenter.buildFilmList();
 	}

@@ -8,7 +8,6 @@ import javax.swing.table.AbstractTableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -18,7 +17,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.tmdb.service.FilmRestService;
 
-@Component
 public class FilmTableModel extends AbstractTableModel {
 	protected final Log logger = LogFactory.getLog(FilmTableModel.class);
 	private static final long serialVersionUID = 1L;
@@ -30,11 +28,7 @@ public class FilmTableModel extends AbstractTableModel {
 	@Autowired
 	private FilmRestService filmRestService;
 	
-	public FilmTableModel() {
-		super();
-	}
-	
-	public void buildFilmFilmList() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
+	public void buildFilmList() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		//this.filmList = filmRestService.findAllFilms();
 		List<Film> filmAllListResult = filmRestService.findAllFilms();
 		data = new Object[filmAllListResult.size()][2];

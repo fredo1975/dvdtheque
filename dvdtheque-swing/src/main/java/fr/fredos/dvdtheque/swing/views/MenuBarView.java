@@ -2,6 +2,7 @@ package fr.fredos.dvdtheque.swing.views;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -11,6 +12,7 @@ import javax.swing.KeyStroke;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.web.client.RestClientException;
 
 import fr.fredos.dvdtheque.swing.view.listener.FilmListViewListener;
 import fr.fredos.dvdtheque.swing.view.listener.MenuViewListener;
@@ -43,7 +45,14 @@ public class MenuBarView extends AbstractViewListenerHolder{
         });
 		
 		jMenuItemFilmList.addActionListener((event) -> {
-			notifyMenuListeners(MenuViewListener::onFilmListMenuChoosed, event);
+			notifyMenuListeners((t, u) -> {
+				try {
+					t.onFilmListMenuChoosed(u);
+				} catch (RestClientException | IllegalStateException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}, event);
         });
 		
 		jMenuItemLogin.setVisible(true);
