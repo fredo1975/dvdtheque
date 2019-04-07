@@ -4,6 +4,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
+import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -18,6 +19,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.web.client.RestClientException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.dvdtheque.console.factory.ImageFactory;
 import fr.fredos.dvdtheque.swing.model.FilmTableModel;
@@ -50,7 +55,7 @@ public class Main extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
-	private void buildViewsAndPresenters(final JPanel mainPanel) {
+	private void buildViewsAndPresenters(final JPanel mainPanel) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		final MenuBarView menuBarView = new MenuBarView(this);
 		new MenuBarPresenter(menuBarView);
 		final FilmListView filmListView = new FilmListView(mainPanel);
