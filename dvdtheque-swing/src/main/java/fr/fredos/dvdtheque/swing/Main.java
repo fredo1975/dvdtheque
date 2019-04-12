@@ -38,7 +38,7 @@ public class Main extends JFrame {
 	protected final Log logger = LogFactory.getLog(Main.class);
 	private String IMAGE_PATH = "/img/header.JPG";
 	private JPanel mainPanel;
-	
+	static ConfigurableApplicationContext ctx;
 	private void initUI() throws Exception {
 		setTitle("Dvdtheque");
 		UIManager.setLookAndFeel(new MetalLookAndFeel());
@@ -60,6 +60,8 @@ public class Main extends JFrame {
 		final FilmListView filmListView  = new FilmListView(this);
 		final MenuBarView menuBarView = new MenuBarView(this);
 		new MenuBarPresenter(menuBarView,new FilmListPresenter(filmListView));
+		FilmTableModel filmTableModel = (FilmTableModel) ctx.getBean("filmTableModel");
+		filmTableModel.buildFilmList();
 		
 	}
 	private void buildFilmListViewAndPresenter(final JPanel mainPanel) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
@@ -67,6 +69,7 @@ public class Main extends JFrame {
 		/*FilmTableModel filmTableModel = (FilmTableModel) ctx.getBean("filmTableModel");
 		filmTableModel.buildFilmFilmList();
 		new FilmListPresenter(filmListView,filmTableModel);*/
+		
 	}
 
 	private void buildComponents(final JPanel mainPanel) throws Exception {
@@ -87,7 +90,7 @@ public class Main extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		final ConfigurableApplicationContext ctx = new SpringApplicationBuilder(Main.class).headless(false).run(args);
+		ctx = new SpringApplicationBuilder(Main.class).headless(false).run(args);
 		EventQueue.invokeLater(() -> {
 			Main ex = ctx.getBean(Main.class);
 			ex.setVisible(true);

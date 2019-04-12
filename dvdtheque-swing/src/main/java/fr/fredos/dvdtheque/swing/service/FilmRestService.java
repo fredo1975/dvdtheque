@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.tmdb.service;
+package fr.fredos.dvdtheque.swing.service;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
-
 @Service
 public class FilmRestService {
 	private static final String GET_ALL_FILMS_URI = "dvdtheque.web.rest.findAllFilms";

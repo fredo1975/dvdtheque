@@ -8,14 +8,13 @@ import javax.swing.table.AbstractTableModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.tmdb.service.FilmRestService;
+import fr.fredos.dvdtheque.swing.service.FilmRestService;
 
 public class FilmTableModel extends AbstractTableModel {
 	protected final Log logger = LogFactory.getLog(FilmTableModel.class);

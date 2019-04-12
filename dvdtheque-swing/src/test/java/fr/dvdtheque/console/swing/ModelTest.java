@@ -2,6 +2,7 @@ package fr.dvdtheque.console.swing;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -21,13 +22,15 @@ import fr.fredos.dvdtheque.swing.model.FilmTableModel;
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
-		fr.fredos.dvdtheque.swing.SwingConfig.class})
+		fr.fredos.dvdtheque.swing.SwingConfig.class,
+		fr.fredos.dvdtheque.swing.service.FilmRestService.class})
 public class ModelTest extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(ModelTest.class);
 	@Autowired
 	protected FilmTableModel filmTableModel;
 	
 	@Test
+	@Ignore
 	public void filmTableModel() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		filmTableModel.buildFilmList();
 		

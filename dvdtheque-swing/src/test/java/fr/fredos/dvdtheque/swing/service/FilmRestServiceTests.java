@@ -24,12 +24,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
-import fr.fredos.dvdtheque.tmdb.service.FilmRestService;
+import fr.fredos.dvdtheque.swing.model.FilmTableModel;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
+		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
+		fr.fredos.dvdtheque.swing.SwingConfig.class,
+		fr.fredos.dvdtheque.swing.service.FilmRestService.class})
 public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(FilmRestServiceTests.class);
 	@Autowired
@@ -38,7 +40,8 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	protected IPersonneService personneService;
 	@Autowired
 	protected FilmRestService filmRestService;
-	
+	@Autowired
+    private FilmTableModel filmTableModel;
 	@Test
 	@Ignore
 	public void findAllFilmsRestService() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
