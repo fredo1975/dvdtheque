@@ -24,7 +24,8 @@ public class TestLoading2 {
 		f.setVisible(true);
 		btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				final SpinnerDialog spinnerDialog = new SpinnerDialog(f);
+				final SpinnerDialog spinnerDialog = new SpinnerDialog();
+				spinnerDialog.setFrame(f);
 				SwingWorker<?, ?> worker = new SwingWorker<Void, Integer>() {
 					protected Void doInBackground() throws InterruptedException {
 						for (int x = 0; x <= 100; x += 10) {

@@ -50,7 +50,7 @@ public abstract class AbstractViewListenerHolder {
 		// Iterate through the list, notifying each listener, java8 style
 		this.filmListListeners.forEach((listener) -> {
 
-			// Calls the funcion described by the object consumer.
+			// Calls the function described by the object consumer.
 			consumer.accept(listener, data);
 
 		});
@@ -71,12 +71,12 @@ public abstract class AbstractViewListenerHolder {
 	}
 
 	// Subscribe a MenuViewListener
-	protected void addMenuViewListener(final MenuViewListener listener) {
+	public void addMenuViewListener(final MenuViewListener listener) {
 		menuListeners.add(listener);
 	}
 
 	// Subscribe a FilmListViewListener
-	protected void addFilmListViewListener(final FilmListViewListener listener) {
+	public void addFilmListViewListener(final FilmListViewListener listener) {
 		filmListListeners.add(listener);
 	}
 }

@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -65,6 +66,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	}
 	
 	@Test
+	@Ignore
 	public void launchCleanDBStep() throws Exception {
 		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchStep("cleanDBStep");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());

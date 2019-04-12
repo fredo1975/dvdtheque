@@ -12,7 +12,10 @@ import javax.swing.JPanel;
 
 public class SpinnerDialog {
 	private JDialog d;
-	public SpinnerDialog(final JFrame f) {
+	
+	private JFrame f;
+
+	public SpinnerDialog() {
 		d = new JDialog();
 		ClassLoader cldr = TestLoading2.class.getClassLoader();
 	    URL url = cldr.getResource("img/ajax-loader.gif");
@@ -23,7 +26,7 @@ public class SpinnerDialog {
 		p1.add(new JLabel("loading ...", loading, JLabel.CENTER));
 		d.getContentPane().add(p1);
 		d.setSize(130, 100);
-		d.setLocationRelativeTo(f);
+		d.setLocationRelativeTo(this.f);
 		d.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		d.setModal(true);
 		d.getRootPane().setOpaque(false);
@@ -36,5 +39,8 @@ public class SpinnerDialog {
 	}
 	public void setVisible() {
 		d.setVisible(true);
+	}
+	public void setFrame(JFrame f) {
+		this.f = f;
 	}
 }

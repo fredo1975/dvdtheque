@@ -3,7 +3,6 @@ package fr.fredos.dvdtheque.swing;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
-import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -13,20 +12,12 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.web.client.RestClientException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.dvdtheque.console.factory.ImageFactory;
-import fr.fredos.dvdtheque.swing.model.FilmTableModel;
-import fr.fredos.dvdtheque.swing.views.FilmListPresenter;
-import fr.fredos.dvdtheque.swing.views.FilmListView;
-import fr.fredos.dvdtheque.swing.views.MenuBarPresenter;
-import fr.fredos.dvdtheque.swing.views.MenuBarView;
 
 @SpringBootApplication(scanBasePackages = {"fr.fredos.dvdtheque.batch",
 		"fr.fredos.dvdtheque.service",
@@ -37,47 +28,32 @@ public class Main extends JFrame {
 	private static final long serialVersionUID = 1418739757443185022L;
 	protected final Log logger = LogFactory.getLog(Main.class);
 	private String IMAGE_PATH = "/img/header.JPG";
-	private JPanel mainPanel;
+	//private JPanel mainPanel;
+	private Dimension screenSize;
 	static ConfigurableApplicationContext ctx;
+	@Autowired
+	JPanel headerJPanel;
+	@Autowired
+	private JPanel contentPane;
 	private void initUI() throws Exception {
 		setTitle("Dvdtheque");
 		UIManager.setLookAndFeel(new MetalLookAndFeel());
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		setSize(new Double(screenSize.getWidth()).intValue(), new Double(screenSize.getHeight()).intValue());
-		setLocationRelativeTo(null);
+		this.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		setSize(new Double(this.screenSize.getWidth()).intValue(), new Double(this.screenSize.getHeight()).intValue()-50);
+		//setLocationRelativeTo(null);
 		// pack();
+		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
+		this.add(contentPane);
+		headerJPanel.setLayout(new BoxLayout(headerJPanel, BoxLayout.PAGE_AXIS));
 		
-		this.mainPanel = new JPanel();
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
-		this.add(mainPanel);
-		buildComponents(mainPanel);
-		buildViewsAndPresenters();
-		
+		initHeader();
+		contentPane.add(headerJPanel);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
-	private void buildViewsAndPresenters() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		final FilmListView filmListView  = new FilmListView(this);
-		final MenuBarView menuBarView = new MenuBarView(this);
-		new MenuBarPresenter(menuBarView,new FilmListPresenter(filmListView));
-		FilmTableModel filmTableModel = (FilmTableModel) ctx.getBean("filmTableModel");
-		filmTableModel.buildFilmList();
-		
-	}
-	private void buildFilmListViewAndPresenter(final JPanel mainPanel) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		//final FilmListView filmListView = new FilmListView(mainPanel);
-		/*FilmTableModel filmTableModel = (FilmTableModel) ctx.getBean("filmTableModel");
-		filmTableModel.buildFilmFilmList();
-		new FilmListPresenter(filmListView,filmTableModel);*/
-		
-	}
-
-	private void buildComponents(final JPanel mainPanel) throws Exception {
-		initHeader(mainPanel);
-	}
-
-	protected void initHeader(JPanel mainPanel) {
+	protected void initHeader() {
 		JPanel pan = new JPanel() {
+			private static final long serialVersionUID = 1L;
 			// Don't allow us to stretch vertically.
 			public Dimension getMaximumSize() {
 				Dimension pref = getPreferredSize();
@@ -86,20 +62,27 @@ public class Main extends JFrame {
 		};
 		pan.setLayout(new BoxLayout(pan, BoxLayout.PAGE_AXIS));
 		pan.add(new ImageFactory((JPanel) this.getContentPane(), IMAGE_PATH).getHeaderPan());
-		mainPanel.add(pan);
+		headerJPanel.add(pan);
 	}
 
 	public static void main(String[] args) {
 		ctx = new SpringApplicationBuilder(Main.class).headless(false).run(args);
 		EventQueue.invokeLater(() -> {
-			Main ex = ctx.getBean(Main.class);
-			ex.setVisible(true);
+			Main main = ctx.getBean(Main.class);
+			main.setVisible(true);
 			try {
-				ex.initUI();
+				main.initUI();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
+	}
+
+	public Dimension getScreenSize() {
+		return screenSize;
+	}
+	public void setScreenSize(Dimension screenSize) {
+		this.screenSize = screenSize;
 	}
 }
