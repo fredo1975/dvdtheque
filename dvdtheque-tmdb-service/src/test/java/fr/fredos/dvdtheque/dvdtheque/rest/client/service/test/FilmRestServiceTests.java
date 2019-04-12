@@ -37,6 +37,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	protected FilmRestService filmRestService;
 	
 	@Test
+	@Ignore
 	public void findAllFilmsRestService() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		List<Film> dbFilmList = filmService.findAllFilms();
 		assertNotNull(dbFilmList);
