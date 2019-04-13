@@ -10,6 +10,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 public interface MenuViewListener {
 	public void onQuitMenuChoosed(ActionEvent evt);
-
+	public void onAddFilm(ActionEvent evt);
 	public void onFilmListMenuChoosed(ActionEvent evt) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException;
 }

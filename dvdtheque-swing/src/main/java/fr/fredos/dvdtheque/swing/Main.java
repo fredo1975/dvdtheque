@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
@@ -8,6 +9,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.apache.commons.logging.Log;
@@ -35,23 +37,25 @@ public class Main extends JFrame {
 	JPanel headerJPanel;
 	@Autowired
 	private JPanel contentPane;
+	@Autowired
+	private JPanel subPanel;
 	private void initUI() throws Exception {
 		setTitle("Dvdtheque");
 		UIManager.setLookAndFeel(new MetalLookAndFeel());
 		this.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setSize(new Double(this.screenSize.getWidth()).intValue(), new Double(this.screenSize.getHeight()).intValue()-50);
-		//setLocationRelativeTo(null);
-		// pack();
+		
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 		this.add(contentPane);
-		headerJPanel.setLayout(new BoxLayout(headerJPanel, BoxLayout.PAGE_AXIS));
-		
 		initHeader();
 		contentPane.add(headerJPanel);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		contentPane.add(subPanel, BorderLayout.CENTER);
+		this.setVisible(true);
 	}
 
 	protected void initHeader() {
+		headerJPanel.setLayout(new BoxLayout(headerJPanel, BoxLayout.PAGE_AXIS));
 		JPanel pan = new JPanel() {
 			private static final long serialVersionUID = 1L;
 			// Don't allow us to stretch vertically.
@@ -66,6 +70,21 @@ public class Main extends JFrame {
 	}
 
 	public static void main(String[] args) {
+		/* Use an appropriate Look and Feel */
+		try {
+			// UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+		} catch (UnsupportedLookAndFeelException ex) {
+			ex.printStackTrace();
+		} catch (IllegalAccessException ex) {
+			ex.printStackTrace();
+		} catch (InstantiationException ex) {
+			ex.printStackTrace();
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+		/* Turn off metal's use of bold fonts */
+		UIManager.put("swing.boldMetal", Boolean.FALSE);
 		ctx = new SpringApplicationBuilder(Main.class).headless(false).run(args);
 		EventQueue.invokeLater(() -> {
 			Main main = ctx.getBean(Main.class);

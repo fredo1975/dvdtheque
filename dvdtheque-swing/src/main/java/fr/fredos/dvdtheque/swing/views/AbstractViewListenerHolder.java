@@ -12,6 +12,9 @@ public abstract class AbstractViewListenerHolder {
 	protected final List<MenuViewListener> menuListeners;
 	protected final List<FilmListViewListener> filmListListeners;
 
+	public final static int IMAGE_HEIGHT_SIZE = 400;
+	public final static int IMAGE_WIDTH_SIZE = 250;
+	
 	public AbstractViewListenerHolder() {
 		this.menuListeners = new ArrayList<>();
 		this.filmListListeners = new ArrayList<>();

@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.swing.views;
 
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.io.IOException;
 
@@ -16,11 +17,13 @@ import org.springframework.web.client.RestClientException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import fr.dvdtheque.console.table.FilmTabCellRenderer;
 import fr.fredos.dvdtheque.swing.Main;
 import fr.fredos.dvdtheque.swing.model.FilmTableModel;
 
 public class FilmListView extends AbstractViewListenerHolder{
 	protected final Log logger = LogFactory.getLog(FilmListView.class);
+	final static String FILM_LIST_VIEW_PANEL = "Card with Film list";
 	@Autowired
 	private JTable filmListJTable;
 	@Autowired
@@ -28,33 +31,34 @@ public class FilmListView extends AbstractViewListenerHolder{
 	@Autowired
 	private Main main;
 	@Autowired
-	private JPanel contentPane;
 	private JPanel subPanel;
+	@Autowired
+	private JPanel filmListViewPanel;
 	private JScrollPane scrollPane;
 	
 	@PostConstruct
 	protected void init() {
 		filmListJTable.setModel(filmTableModel);
-		filmListJTable.setPreferredScrollableViewportSize(new Dimension(800, 200));
-		filmListJTable.setFillsViewportHeight(true);
-		filmListJTable.setRowHeight(800);
+		/*
+		try{
+			Double w = new Double(main.getScreenSize().getWidth())/1.2;
+			Double h = new Double(main.getScreenSize().getHeight())/1.5;
+			scrollPane.setPreferredSize(new Dimension(w.intValue(),h.intValue()));
+		}catch(Exception e){
+			e.printStackTrace();
+		}*/
+		filmListJTable.setRowHeight(IMAGE_HEIGHT_SIZE);
+		filmListJTable.getColumnModel().getColumn(filmListJTable.getColumnCount()-1).setCellRenderer(new FilmTabCellRenderer());
+		filmListJTable.getColumnModel().getColumn(filmListJTable.getColumnCount()-1).setMaxWidth(20);
+		filmListJTable.getColumnModel().getColumn(0).setMaxWidth(IMAGE_WIDTH_SIZE);
 		scrollPane = new JScrollPane(filmListJTable);
-		subPanel = new JPanel();
+		subPanel.add(filmListViewPanel,FILM_LIST_VIEW_PANEL);
 	}
 	public void printFilmTableList() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		filmTableModel.buildFilmList();
-		
-		try{
-			Double w = new Double(main.getScreenSize().getWidth());
-			Double h = new Double(main.getScreenSize().getHeight());
-			scrollPane.setPreferredSize(new Dimension(w.intValue()/2,h.intValue()/2));
-		}catch(Exception e){
-			//getSession().getErreurs().add(e.getMessage());
-			e.printStackTrace();
-		}
-		subPanel.add(scrollPane);
-		contentPane.remove(subPanel);
-		contentPane.add(subPanel);
-		contentPane.revalidate();
+		filmListViewPanel.add(scrollPane);
+		CardLayout cl = (CardLayout)(subPanel.getLayout());
+        cl.show(subPanel, FILM_LIST_VIEW_PANEL);
+        subPanel.revalidate();
 	}
 }

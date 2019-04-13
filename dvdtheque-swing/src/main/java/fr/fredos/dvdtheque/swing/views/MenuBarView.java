@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.swing.views;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -24,10 +25,9 @@ import fr.fredos.dvdtheque.swing.view.listener.MenuViewListener;
 public class MenuBarView extends AbstractViewListenerHolder{
 	protected final Log logger = LogFactory.getLog(MenuBarView.class);
 	private JMenuBar jMenuBar1 = new JMenuBar();
-	private JMenu jMenu1 = new JMenu("Actions");
-	private JMenuItem jMenuItemLogin = new JMenuItem("Login");
+	private JMenu jMenu1 = new JMenu("Menu");
+	private JMenuItem jMenuItemAddFilm = new JMenuItem("Ajouter un film");
 	private JMenuItem jMenuItemFilmList = new JMenuItem("Liste des films");
-	private JMenuItem jMenuItemLogout = new JMenuItem("Logout");
 	private JMenuItem jMenuItemQuitter = new JMenuItem("Quitter");
 	@Autowired
 	private Main main;
@@ -39,18 +39,23 @@ public class MenuBarView extends AbstractViewListenerHolder{
 	}
 	private void buildMenu() {
 		jMenuItemFilmList.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		jMenuItemQuitter.setActionCommand("liste");
+		jMenuItemQuitter.setActionCommand("list");
 		jMenuItemQuitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		jMenuItemQuitter.setActionCommand("quitter");
-		jMenuItemLogin.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		jMenuItemLogin.setActionCommand("login");
-		jMenuItemLogout.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		jMenuItemLogout.setActionCommand("logout");
+		jMenuItemQuitter.setActionCommand("quit");
+		jMenuItemAddFilm.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		jMenuItemAddFilm.setActionCommand("Ajouter un film");
+		jMenuItemAddFilm.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		jMenuItemAddFilm.setActionCommand("add");
 		
 		jMenuItemQuitter.addActionListener((event) -> {
             notifyMenuListeners(MenuViewListener::onQuitMenuChoosed, event);
         });
-		
+		jMenuItemAddFilm.addActionListener((event) -> {
+			EventQueue.invokeLater(() -> {
+				notifyMenuListeners(MenuViewListener::onAddFilm, event);
+			});
+            
+        });
 		jMenuItemFilmList.addActionListener((event) -> {
 			spinnerDialog.setFrame(main);
 			SwingWorker<?, ?> worker = new SwingWorker<Void, Integer>() {
@@ -78,14 +83,11 @@ public class MenuBarView extends AbstractViewListenerHolder{
 			worker.execute();
 			spinnerDialog.setVisible();
         });
-		
-		jMenuItemLogin.setVisible(true);
-		jMenuItemLogout.setVisible(true);
+		jMenuItemAddFilm.setVisible(true);
 		jMenuItemQuitter.setVisible(true);
-		
-		jMenu1.add(jMenuItemLogin);
+		jMenuItemFilmList.setVisible(true);
+		jMenu1.add(jMenuItemAddFilm);
 		jMenu1.add(jMenuItemFilmList);
-		jMenu1.add(jMenuItemLogout);
 		jMenu1.add(jMenuItemQuitter);
 		jMenuBar1.add(jMenu1);
 		main.setJMenuBar(jMenuBar1);

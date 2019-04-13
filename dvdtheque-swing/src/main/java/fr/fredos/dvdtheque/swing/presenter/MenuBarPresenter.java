@@ -22,6 +22,8 @@ public class MenuBarPresenter implements MenuViewListener{
 	private MenuBarView menuBarView;
 	@Autowired
 	private FilmListPresenter filmListPresenter;
+	@Autowired
+	private FilmAddPresenter filmAddPresenter;
 	
 	@PostConstruct
 	protected void init() {
@@ -38,5 +40,11 @@ public class MenuBarPresenter implements MenuViewListener{
 	public void onFilmListMenuChoosed(ActionEvent evt) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		logger.info("onFilmListMenuChoosed ...");
 		filmListPresenter.printFilmTableList();
+	}
+
+	@Override
+	public void onAddFilm(ActionEvent evt) {
+		logger.info("onAddFilm ...");
+		filmAddPresenter.printFilmAddScreen();
 	}
 }
