@@ -19,7 +19,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import fr.dvdtheque.console.factory.ImageFactory;
+import fr.dvdtheque.console.image.utils.ImageFactory;
 
 @SpringBootApplication(scanBasePackages = {"fr.fredos.dvdtheque.batch",
 		"fr.fredos.dvdtheque.service",

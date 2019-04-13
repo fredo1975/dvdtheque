@@ -20,7 +20,7 @@ import javax.swing.KeyStroke;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.dvdtheque.console.factory.ImageFactory;
+import fr.dvdtheque.console.image.utils.ImageFactory;
 
 public class BaseVueAppli extends BaseVueJFrame {
 	/**

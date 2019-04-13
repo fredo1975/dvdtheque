@@ -35,9 +35,6 @@ public class MenuBarView extends AbstractViewListenerHolder{
 	private SpinnerDialog spinnerDialog;
 	@PostConstruct
 	protected void init() {
-		this.buildMenu();
-	}
-	private void buildMenu() {
 		jMenuItemFilmList.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		jMenuItemQuitter.setActionCommand("list");
 		jMenuItemQuitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
@@ -77,7 +74,6 @@ public class MenuBarView extends AbstractViewListenerHolder{
 
 				protected void done() {
 					spinnerDialog.dispose();
-					//btn.setText("Do Some Long Task");
 				}
 			};
 			worker.execute();
@@ -92,4 +88,5 @@ public class MenuBarView extends AbstractViewListenerHolder{
 		jMenuBar1.add(jMenu1);
 		main.setJMenuBar(jMenuBar1);
 	}
+	
 }

@@ -39,7 +39,7 @@ public class MenuBarPresenter implements MenuViewListener{
 	@Override
 	public void onFilmListMenuChoosed(ActionEvent evt) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		logger.info("onFilmListMenuChoosed ...");
-		filmListPresenter.printFilmTableList();
+		filmListPresenter.handleFilmTableList();
 	}
 
 	@Override

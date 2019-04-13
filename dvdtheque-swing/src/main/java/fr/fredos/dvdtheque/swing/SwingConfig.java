@@ -2,13 +2,16 @@ package fr.fredos.dvdtheque.swing;
 
 import java.awt.CardLayout;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import fr.fredos.dvdtheque.swing.model.FilmTableModel;
+import fr.fredos.dvdtheque.swing.model.TmdbFilmTableModel;
 import fr.fredos.dvdtheque.swing.presenter.FilmAddPresenter;
 import fr.fredos.dvdtheque.swing.presenter.FilmListPresenter;
 import fr.fredos.dvdtheque.swing.presenter.MenuBarPresenter;
@@ -22,6 +25,10 @@ public class SwingConfig {
     public FilmTableModel filmTableModel() {
         return new FilmTableModel();
     }
+	@Bean
+    public TmdbFilmTableModel tmdbFilmTableModel() {
+		return new TmdbFilmTableModel();
+	}
 	@Bean
     public FilmListPresenter filmListPresenter() {
         return new FilmListPresenter();
@@ -43,27 +50,31 @@ public class SwingConfig {
 		return new SpinnerDialog();
 	}
 	@Bean
-	JTable filmListJTable() {
+	public JTable filmListJTable() {
 		return new JTable();
 	}
 	@Bean
-	JPanel headerJPanel() {
+	public JTable tmdbFilmListJTable() {
+		return new JTable();
+	}
+	@Bean
+	public JPanel headerJPanel() {
 		return new JPanel();
 	}
 	@Bean
-	JPanel contentPane() {
+	public JPanel contentPane() {
 		return new JPanel();
 	}
 	@Bean
-	JPanel subPanel() {
+	public JPanel subPanel() {
 		return new JPanel(new CardLayout());
 	}
 	@Bean
-	JPanel filmListViewPanel() {
+	public JPanel filmListViewPanel() {
 		return new JPanel();
 	}
 	@Bean
-	JPanel filmAddViewPanel() {
+	public JPanel filmAddViewPanel() {
 		return new JPanel();
 	}
 	@Bean
@@ -74,4 +85,17 @@ public class SwingConfig {
     public FilmAddView filmAddView() {
         return new FilmAddView();
     }
+	
+	@Bean
+	public JLabel nbrFilmsJLabel() {
+        return new JLabel();
+    }
+	@Bean
+	public JLabel nbrTmdbFilmsJLabel() {
+        return new JLabel();
+    }
+	@Bean
+	public JTextField tmdbSearchTextField() {
+		return new JTextField(50);
+	}
 }

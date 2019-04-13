@@ -1,4 +1,4 @@
-package fr.dvdtheque.console.factory;
+package fr.dvdtheque.console.image.utils;
 
 import java.awt.Dimension;
 import java.awt.Image;

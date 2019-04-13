@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import fr.fredos.dvdtheque.swing.view.listener.FilmAddViewListener;
 import fr.fredos.dvdtheque.swing.view.listener.FilmListViewListener;
 import fr.fredos.dvdtheque.swing.view.listener.MenuViewListener;
 
@@ -11,13 +12,15 @@ public abstract class AbstractViewListenerHolder {
 	// A list of listeners subscribed to this view
 	protected final List<MenuViewListener> menuListeners;
 	protected final List<FilmListViewListener> filmListListeners;
+	protected final List<FilmAddViewListener> filmAddListeners;
 
 	public final static int IMAGE_HEIGHT_SIZE = 400;
 	public final static int IMAGE_WIDTH_SIZE = 250;
-	
+
 	public AbstractViewListenerHolder() {
 		this.menuListeners = new ArrayList<>();
 		this.filmListListeners = new ArrayList<>();
+		this.filmAddListeners = new ArrayList<>();
 	}
 
 	/**
@@ -59,18 +62,14 @@ public abstract class AbstractViewListenerHolder {
 		});
 	}
 
-	// Iterate through the list, notifying each listener individualy
-	protected void notifyListenersOnButtonClicked() {
-		for (final MenuViewListener listener : menuListeners) {
-			// listener.onButtonClicked();
-		}
-	}
+	protected <T> void notifyFilmAddListeners(final BiConsumer<FilmAddViewListener, T> consumer, final T data) {
+		// Iterate through the list, notifying each listener, java8 style
+		this.filmAddListeners.forEach((listener) -> {
 
-	// Iterate through the list, notifying each listener individualy
-	protected void notifyListenersOnMenuQuitClicked() {
-		for (final MenuViewListener listener : menuListeners) {
-			// listener.onButtonClicked();
-		}
+			// Calls the function described by the object consumer.
+			consumer.accept(listener, data);
+
+		});
 	}
 
 	// Subscribe a MenuViewListener
@@ -81,5 +80,10 @@ public abstract class AbstractViewListenerHolder {
 	// Subscribe a FilmListViewListener
 	public void addFilmListViewListener(final FilmListViewListener listener) {
 		filmListListeners.add(listener);
+	}
+
+	// Subscribe a FilmAddViewListener
+	public void addFilmAddViewListener(final FilmAddViewListener listener) {
+		filmAddListeners.add(listener);
 	}
 }

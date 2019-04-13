@@ -1,10 +1,12 @@
 package fr.fredos.dvdtheque.swing.views;
 
-import java.awt.CardLayout;
-import java.awt.Dimension;
+import java.awt.Color;
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -18,27 +20,25 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.dvdtheque.console.table.FilmTabCellRenderer;
-import fr.fredos.dvdtheque.swing.Main;
 import fr.fredos.dvdtheque.swing.model.FilmTableModel;
 
 public class FilmListView extends AbstractViewListenerHolder{
 	protected final Log logger = LogFactory.getLog(FilmListView.class);
-	final static String FILM_LIST_VIEW_PANEL = "Card with Film list";
+	private JScrollPane scrollPane;
 	@Autowired
 	private JTable filmListJTable;
 	@Autowired
 	private FilmTableModel filmTableModel;
 	@Autowired
-	private Main main;
-	@Autowired
-	private JPanel subPanel;
-	@Autowired
 	private JPanel filmListViewPanel;
-	private JScrollPane scrollPane;
+	@Autowired
+	private JLabel nbrFilmsJLabel;
 	
 	@PostConstruct
 	protected void init() {
 		filmListJTable.setModel(filmTableModel);
+		filmListViewPanel.setLayout(new BoxLayout(filmListViewPanel, BoxLayout.Y_AXIS));
+		filmListViewPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 		/*
 		try{
 			Double w = new Double(main.getScreenSize().getWidth())/1.2;
@@ -52,13 +52,10 @@ public class FilmListView extends AbstractViewListenerHolder{
 		filmListJTable.getColumnModel().getColumn(filmListJTable.getColumnCount()-1).setMaxWidth(20);
 		filmListJTable.getColumnModel().getColumn(0).setMaxWidth(IMAGE_WIDTH_SIZE);
 		scrollPane = new JScrollPane(filmListJTable);
-		subPanel.add(filmListViewPanel,FILM_LIST_VIEW_PANEL);
+		filmListViewPanel.add(nbrFilmsJLabel);
 	}
-	public void printFilmTableList() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		filmTableModel.buildFilmList();
+	public void addScrollPaneToFilmListViewPanel() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		filmListViewPanel.add(scrollPane);
-		CardLayout cl = (CardLayout)(subPanel.getLayout());
-        cl.show(subPanel, FILM_LIST_VIEW_PANEL);
-        subPanel.revalidate();
 	}
+	
 }

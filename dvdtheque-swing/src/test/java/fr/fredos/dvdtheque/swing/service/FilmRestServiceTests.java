@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.core.Is;
@@ -71,6 +72,14 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 		List<Film> filmList = filmRestService.findAllFilms();
 		assertNotNull(filmList);
 		assertTrue(CollectionUtils.isNotEmpty(filmList));
-		
+	}
+	
+	@Test
+	//@Ignore
+	public void findTmdbFilmByTitre() throws Exception {
+		final String titre = "camping";
+		Set<Film> filmSet = filmRestService.findTmdbFilmByTitre(titre);
+		assertNotNull(filmSet);
+		assertTrue(CollectionUtils.isNotEmpty(filmSet));
 	}
 }
