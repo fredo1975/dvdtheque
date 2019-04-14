@@ -54,6 +54,7 @@ public class FilmAddPresenter implements FilmAddViewListener{
     	tmdbSearchTextField.setText("replicant");
     	tmdbFilmTableModel.clearFilmSet();
     	nbrTmdbFilmsJLabel.setText(null);
+    	//filmAddView.removeScrollPaneToTmdbFilmListViewPanel();
     	CardLayout cl = (CardLayout)(subPanel.getLayout());
         cl.show(subPanel, FILM_ADD_VIEW_PANEL);
     }

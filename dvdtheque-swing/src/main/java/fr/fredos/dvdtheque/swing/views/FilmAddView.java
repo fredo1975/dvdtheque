@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.swing.views;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -17,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneLayout;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
@@ -45,13 +47,13 @@ public class FilmAddView extends AbstractViewListenerHolder{
 	private TmdbFilmTableModel tmdbFilmTableModel;
 	@Autowired
 	private JLabel nbrTmdbFilmsJLabel;
-	
+	JPanel addPanel2;
 	@PostConstruct
 	protected void init() {
 		filmAddViewPanel.setLayout(new BoxLayout(filmAddViewPanel,BoxLayout.Y_AXIS));
-		filmAddViewPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-		JPanel addPanel = new JPanel(new FlowLayout());
-		addPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+		filmAddViewPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
+		JPanel addPanel = new JPanel(new FlowLayout(1,0,5));
+		addPanel.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 		addPanel.add(tmdbSearchTextField);
 		JButton searchButton = new JButton("Chercher sur TMBD");
 		searchButton.addActionListener(new ActionListener() {
@@ -84,11 +86,15 @@ public class FilmAddView extends AbstractViewListenerHolder{
             }
         });
 		addPanel.add(searchButton);
-		//addPanel.setPreferredSize(new Dimension(200,50));
-		addPanel.setMaximumSize(new Dimension(900,100));
-		
+		//addPanel.setPreferredSize(new Dimension(500,100));
+		addPanel.setMaximumSize(new Dimension(700,30));
+		addPanel.setAlignmentX( Component.CENTER_ALIGNMENT );
 		filmAddViewPanel.add(addPanel);
-		filmAddViewPanel.add(nbrTmdbFilmsJLabel);
+		JPanel labelPanel = new JPanel(new FlowLayout(1,0,5));
+		labelPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+		labelPanel.setMaximumSize(new Dimension(200,30));
+		labelPanel.add(nbrTmdbFilmsJLabel);
+		filmAddViewPanel.add(labelPanel);
 		tmdbFilmListJTable.setModel(tmdbFilmTableModel);
 		
 		//filmAddViewPanel.setLayout(new BoxLayout(filmAddViewPanel, BoxLayout.Y_AXIS));
@@ -105,12 +111,19 @@ public class FilmAddView extends AbstractViewListenerHolder{
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-2).setMaxWidth(50);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-1).setMaxWidth(100);
 		scrollPane = new JScrollPane(tmdbFilmListJTable);
-		
+		scrollPane.setLayout(new ScrollPaneLayout());
+		scrollPane.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+		addPanel2 = new JPanel(new FlowLayout(1,0,5));
+		addPanel2.add(scrollPane);
+		addPanel2.setMaximumSize(new Dimension(800,500));
+		addPanel2.setAlignmentX( Component.CENTER_ALIGNMENT );
+		//filmAddViewPanel.add(addPanel2);
 	}
 	public void addScrollPaneToTmdbFilmListViewPanel() {
-		filmAddViewPanel.add(scrollPane);
+		filmAddViewPanel.add(addPanel2);
 	}
 	public void removeScrollPaneToTmdbFilmListViewPanel() {
-		filmAddViewPanel.remove(scrollPane);
+		filmAddViewPanel.remove(addPanel2);
+		filmAddViewPanel.revalidate();
 	}
 }

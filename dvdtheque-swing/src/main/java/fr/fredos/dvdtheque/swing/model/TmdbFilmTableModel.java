@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.util.Set;
 
 import javax.swing.Icon;
-import javax.swing.JLabel;
 import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -34,7 +33,6 @@ public class TmdbFilmTableModel extends AbstractTableModel {
 			data[i][3] = buildPersonneLabel(film.getRealisateurs());
 			data[i][4] = buildPersonneLabel(film.getActeurs());
 			data[i][5] = film.getAnnee();
-			//data[i][1] = film.getAnnee();
 			i++;
 		}
 	}
@@ -42,6 +40,7 @@ public class TmdbFilmTableModel extends AbstractTableModel {
 		if(CollectionUtils.isNotEmpty(this.filmSet)) {
 			this.filmSet.clear();
 		}
+		//data = new Object[filmSet.size()][0];
 	}
 	
 	private String buildPersonneLabel(final Set<Personne> personnes) {
@@ -54,7 +53,10 @@ public class TmdbFilmTableModel extends AbstractTableModel {
 	}
 	@Override
 	public int getRowCount() {
-		return filmSet.size();
+		if(CollectionUtils.isNotEmpty(this.filmSet)) {
+			return filmSet.size();
+		}
+		return 0;
 	}
 
 	@Override

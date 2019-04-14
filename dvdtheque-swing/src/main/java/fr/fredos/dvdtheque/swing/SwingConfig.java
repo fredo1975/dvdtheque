@@ -1,7 +1,9 @@
 package fr.fredos.dvdtheque.swing;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -63,11 +65,16 @@ public class SwingConfig {
 	}
 	@Bean
 	public JPanel contentPane() {
-		return new JPanel();
+		JPanel contentPane = new JPanel();
+		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+		contentPane.setOpaque(true);
+		contentPane.add(headerJPanel());
+		contentPane.add(subPanel(), BorderLayout.CENTER);
+		return contentPane;
 	}
 	@Bean
 	public JPanel subPanel() {
-		return new JPanel(new CardLayout());
+		return new JPanel(new CardLayout(0,0));
 	}
 	@Bean
 	public JPanel filmListViewPanel() {

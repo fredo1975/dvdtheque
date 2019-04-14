@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.swing.views;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
@@ -51,6 +52,8 @@ public class FilmListView extends AbstractViewListenerHolder{
 		filmListJTable.getColumnModel().getColumn(filmListJTable.getColumnCount()-1).setCellRenderer(new FilmTabCellRenderer());
 		filmListJTable.getColumnModel().getColumn(filmListJTable.getColumnCount()-1).setMaxWidth(20);
 		filmListJTable.getColumnModel().getColumn(0).setMaxWidth(IMAGE_WIDTH_SIZE);
+		filmListJTable.setPreferredScrollableViewportSize(new Dimension(500, 70));
+		filmListJTable.setFillsViewportHeight(true);
 		scrollPane = new JScrollPane(filmListJTable);
 		filmListViewPanel.add(nbrFilmsJLabel);
 	}

@@ -17,7 +17,7 @@ public class SpinnerDialog {
 
 	public SpinnerDialog() {
 		d = new JDialog();
-		ClassLoader cldr = TestLoading2.class.getClassLoader();
+		ClassLoader cldr = SpinnerDialog.class.getClassLoader();
 	    URL url = cldr.getResource("img/ajax-loader.gif");
 	    
 	    ImageIcon loading = new ImageIcon(url);

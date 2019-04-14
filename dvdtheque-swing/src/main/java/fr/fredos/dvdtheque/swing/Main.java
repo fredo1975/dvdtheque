@@ -1,10 +1,12 @@
 package fr.fredos.dvdtheque.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -37,24 +39,21 @@ public class Main extends JFrame {
 	JPanel headerJPanel;
 	@Autowired
 	private JPanel contentPane;
-	@Autowired
-	private JPanel subPanel;
+	
 	private void initUI() throws Exception {
 		setTitle("Dvdtheque");
 		UIManager.setLookAndFeel(new MetalLookAndFeel());
 		this.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setSize(new Double(this.screenSize.getWidth()).intValue(), new Double(this.screenSize.getHeight()).intValue()-50);
 		
-		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
-		this.add(contentPane);
 		initHeader();
-		contentPane.add(headerJPanel);
+		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		contentPane.add(subPanel, BorderLayout.CENTER);
+		this.add(contentPane);
 		this.setVisible(true);
 	}
-
-	protected void initHeader() {
+	
+	private void initHeader() {
 		headerJPanel.setLayout(new BoxLayout(headerJPanel, BoxLayout.PAGE_AXIS));
 		JPanel pan = new JPanel() {
 			private static final long serialVersionUID = 1L;
