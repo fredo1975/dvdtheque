@@ -92,7 +92,6 @@ public class SwingConfig {
     public FilmAddView filmAddView() {
         return new FilmAddView();
     }
-	
 	@Bean
 	public JLabel nbrFilmsJLabel() {
         return new JLabel();

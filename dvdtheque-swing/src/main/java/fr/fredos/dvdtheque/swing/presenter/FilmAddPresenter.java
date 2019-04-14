@@ -53,10 +53,12 @@ public class FilmAddPresenter implements FilmAddViewListener{
     	logger.info("printFilmAddScreen ...");
     	tmdbSearchTextField.setText("replicant");
     	tmdbFilmTableModel.clearFilmSet();
-    	nbrTmdbFilmsJLabel.setText(null);
+    	//nbrTmdbFilmsJLabel.setText(null);
+    	nbrTmdbFilmsJLabel.setVisible(false);
     	//filmAddView.removeScrollPaneToTmdbFilmListViewPanel();
     	CardLayout cl = (CardLayout)(subPanel.getLayout());
         cl.show(subPanel, FILM_ADD_VIEW_PANEL);
+        subPanel.revalidate();
     }
 
 	@Override
@@ -69,6 +71,7 @@ public class FilmAddPresenter implements FilmAddViewListener{
 			logger.info("onSearchButtonClicked films="+films.toString());
 			tmdbFilmTableModel.populateFilmSet(films);
 			nbrTmdbFilmsJLabel.setText("Nombre de films : "+String.valueOf(tmdbFilmTableModel.getRowCount()));
+			nbrTmdbFilmsJLabel.setVisible(true);
 			filmAddView.addScrollPaneToTmdbFilmListViewPanel();
 		}
 	}
