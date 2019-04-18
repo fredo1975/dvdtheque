@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -103,5 +104,9 @@ public class SwingConfig {
 	@Bean
 	public JTextField tmdbSearchTextField() {
 		return new JTextField(50);
+	}
+	@Bean
+	protected JButton addTmdbFilmButton() {
+		return new JButton("Ajouter");
 	}
 }

@@ -13,12 +13,13 @@ import javax.annotation.PostConstruct;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneLayout;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.logging.Log;
@@ -26,6 +27,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestClientException;
 
+import fr.dvdtheque.console.table.ButtonEditor;
+import fr.dvdtheque.console.table.ButtonRenderer;
 import fr.fredos.dvdtheque.swing.Main;
 import fr.fredos.dvdtheque.swing.SpinnerDialog;
 import fr.fredos.dvdtheque.swing.model.TmdbFilmTableModel;
@@ -48,6 +51,7 @@ public class FilmAddView extends AbstractViewListenerHolder{
 	@Autowired
 	private JLabel nbrTmdbFilmsJLabel;
 	JPanel addPanel2;
+	
 	@PostConstruct
 	protected void init() {
 		filmAddViewPanel.setLayout(new BoxLayout(filmAddViewPanel,BoxLayout.Y_AXIS));
@@ -57,7 +61,7 @@ public class FilmAddView extends AbstractViewListenerHolder{
 		JPanel addPanel = new JPanel(new FlowLayout(1,0,5));
 		addPanel.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 		addPanel.add(tmdbSearchTextField);
-		JButton searchButton = new JButton("Chercher sur TMBD");
+		JButton searchButton = new JButton("Chercher le film à ajouter");
 		searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -88,8 +92,7 @@ public class FilmAddView extends AbstractViewListenerHolder{
             }
         });
 		addPanel.add(searchButton);
-		//addPanel.setPreferredSize(new Dimension(500,100));
-		addPanel.setMaximumSize(new Dimension(700,30));
+		addPanel.setMaximumSize(new Dimension(800,30));
 		addPanel.setAlignmentX( Component.CENTER_ALIGNMENT );
 		
 		filmAddViewPanel.add(addPanel);
@@ -104,19 +107,21 @@ public class FilmAddView extends AbstractViewListenerHolder{
 		tmdbFilmListJTable.setModel(tmdbFilmTableModel);
 		
 		//filmAddViewPanel.setLayout(new BoxLayout(filmAddViewPanel, BoxLayout.Y_AXIS));
-		
+		//tmdbFilmListJTable.setDefaultRenderer(String.class,new TmdbFilmTabCellRenderer());
 		tmdbFilmListJTable.setRowHeight(IMAGE_HEIGHT_SIZE);
 		tmdbFilmListJTable.setPreferredScrollableViewportSize(new Dimension(1300, 1000));
-		tmdbFilmListJTable.setFillsViewportHeight(true);
-		//tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-1).setCellRenderer(new FilmTabCellRenderer());
-		//tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-1).setMaxWidth(20);
+		//tmdbFilmListJTable.setFillsViewportHeight(true);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-tmdbFilmListJTable.getColumnCount()).setPreferredWidth(IMAGE_WIDTH_SIZE);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-6).setPreferredWidth(250);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-5).setPreferredWidth(250);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-4).setPreferredWidth(250);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-3).setPreferredWidth(250);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-2).setPreferredWidth(50);
-		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-1).setPreferredWidth(50);
+		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-1).setPreferredWidth(100);
+		
+		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-1).setCellRenderer(new ButtonRenderer());
+		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-1).setCellEditor(new ButtonEditor(new JCheckBox()));
+		
 		scrollPane = new JScrollPane(tmdbFilmListJTable);
 		//scrollPane.setPreferredSize(new Dimension(1200,1000));
 		//scrollPane.setBorder(BorderFactory.createLineBorder(Color.YELLOW));

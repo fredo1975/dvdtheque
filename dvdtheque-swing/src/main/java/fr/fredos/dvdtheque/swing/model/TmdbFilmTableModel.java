@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.util.Set;
 
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.collections.CollectionUtils;

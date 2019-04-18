@@ -30,9 +30,9 @@ public class SpinnerDialog {
 		d.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		d.setModal(true);
 		d.getRootPane().setOpaque(false);
-		d.getContentPane ().setBackground (new Color (0, 0, 0, 0));
+		d.getContentPane ().setBackground (new Color (0, 0, 0, 1));
 		d.setUndecorated(true);
-		d.setBackground (new Color (0, 0, 0, 0));
+		d.setBackground (new Color (0, 0, 0, 1));
 	}
 	public void dispose() {
 		d.dispose();
