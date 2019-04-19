@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.core.Is;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -67,7 +68,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	}
 	
 	@Test
-	//@Ignore
+	@Ignore
 	public void findAllFilmsRestService() throws Exception {
 		List<Film> filmList = filmRestService.findAllFilms();
 		assertNotNull(filmList);
@@ -75,7 +76,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	}
 	
 	@Test
-	//@Ignore
+	@Ignore
 	public void findTmdbFilmByTitre() throws Exception {
 		final String titre = "camping";
 		Set<Film> filmSet = filmRestService.findTmdbFilmByTitre(titre);
