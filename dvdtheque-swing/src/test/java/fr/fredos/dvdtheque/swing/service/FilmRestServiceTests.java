@@ -1,12 +1,16 @@
 package fr.fredos.dvdtheque.swing.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.core.Is;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -23,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -43,32 +48,9 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	protected IPersonneService personneService;
 	@Autowired
 	protected FilmRestService filmRestService;
-	@Autowired
-	private MockMvc mvc;
-	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
-	
+	private Long tmdbId= new Long(4780);
+	public static final String TITRE_FILM_TMBD_ID_4780 = "OBSESSION";
 	@Test
-	//@Ignore
-	public void findAllFilmsWithControllerDependency() throws Exception {
-		List<Film> allFilms = filmService.findAllFilms();
-		assertNotNull(allFilms);
-		if(CollectionUtils.isNotEmpty(allFilms)) {
-			assertTrue(allFilms.size()>0);
-			Film filmToTest = allFilms.get(0);
-			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_FILMS_URI)
-					.contentType(MediaType.APPLICATION_JSON);
-			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
-			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI)
-					.contentType(MediaType.APPLICATION_JSON))
-					.andExpect(MockMvcResultMatchers.status().isOk())
-					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
-			assertNotNull(resultActions);
-			assertNotNull(filmToTest);
-		}
-	}
-	
-	@Test
-	@Ignore
 	public void findAllFilmsRestService() throws Exception {
 		List<Film> filmList = filmRestService.findAllFilms();
 		assertNotNull(filmList);
@@ -76,11 +58,17 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	}
 	
 	@Test
-	@Ignore
 	public void findTmdbFilmByTitre() throws Exception {
 		final String titre = "camping";
 		Set<Film> filmSet = filmRestService.findTmdbFilmByTitre(titre);
 		assertNotNull(filmSet);
 		assertTrue(CollectionUtils.isNotEmpty(filmSet));
+	}
+	
+	@Test
+	public void testAddTmdbFilm() throws Exception {
+		Film filmSaved = filmRestService.saveTmdbFilm(tmdbId);
+		assertNotNull(filmSaved);
+		assertEquals(StringUtils.upperCase(TITRE_FILM_TMBD_ID_4780),filmSaved.getTitre());
 	}
 }

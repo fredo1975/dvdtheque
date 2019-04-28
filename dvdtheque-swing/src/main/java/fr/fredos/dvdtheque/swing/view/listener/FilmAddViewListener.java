@@ -9,5 +9,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 public interface FilmAddViewListener {
-	public void onSearchButtonClicked(ActionEvent evt) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException;
+	public void onSearchFilmButtonClicked(ActionEvent evt) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException;
+	public void onAddFilmButtonClicked(ActionEvent evt) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException;
 }

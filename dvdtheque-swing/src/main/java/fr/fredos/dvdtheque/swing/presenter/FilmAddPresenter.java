@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import org.apache.commons.logging.Log;
@@ -43,7 +45,12 @@ public class FilmAddPresenter implements FilmAddViewListener{
 	private TmdbFilmTableModel tmdbFilmTableModel;
 	@Autowired
 	private JLabel nbrTmdbFilmsJLabel;
-	
+	@Autowired
+	private JLabel savedTmdbFilmsJLabel;
+	@Autowired
+	private JTable tmdbFilmListJTable;
+	@Autowired
+	private JButton addTmdbFilmButton;
 	@PostConstruct
 	protected void init() {
 		this.filmAddView.addFilmAddViewListener(this);
@@ -55,6 +62,8 @@ public class FilmAddPresenter implements FilmAddViewListener{
     	tmdbFilmTableModel.clearFilmSet();
     	//nbrTmdbFilmsJLabel.setText(null);
     	nbrTmdbFilmsJLabel.setVisible(false);
+    	addTmdbFilmButton.setVisible(false);
+    	savedTmdbFilmsJLabel.setVisible(false);
     	//filmAddView.removeScrollPaneToTmdbFilmListViewPanel();
     	CardLayout cl = (CardLayout)(subPanel.getLayout());
         cl.show(subPanel, FILM_ADD_VIEW_PANEL);
@@ -62,7 +71,7 @@ public class FilmAddPresenter implements FilmAddViewListener{
     }
 
 	@Override
-	public void onSearchButtonClicked(ActionEvent evt) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
+	public void onSearchFilmButtonClicked(ActionEvent evt) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		logger.info("onSearchButtonClicked tmdbSearchTextField="+tmdbSearchTextField.getText());
 		if(StringUtils.isEmpty(tmdbSearchTextField.getText())) {
 			JOptionPane.showMessageDialog(filmAddViewPanel, "il faut entrer un titre de film", "Chercher", JOptionPane.WARNING_MESSAGE);
@@ -73,6 +82,21 @@ public class FilmAddPresenter implements FilmAddViewListener{
 			nbrTmdbFilmsJLabel.setText("Nombre de films : "+String.valueOf(tmdbFilmTableModel.getRowCount()));
 			nbrTmdbFilmsJLabel.setVisible(true);
 			filmAddView.addScrollPaneToTmdbFilmListViewPanel();
+		}
+	}
+	@Override
+	public void onAddFilmButtonClicked(ActionEvent evt)
+			throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
+		logger.info("onAddFilmButtonClicked ");
+		int selectedRow = tmdbFilmListJTable.getSelectedRow();
+		if(selectedRow>=0) {
+			Object selectedO = tmdbFilmListJTable.getValueAt(selectedRow, 0);
+			logger.info("onAddFilmButtonClicked selectedO="+selectedO);
+			TmdbFilmTableModel tmdbFilmTableModel = (TmdbFilmTableModel) tmdbFilmListJTable.getModel();
+			logger.info("onAddFilmButtonClicked selectedFilm="+tmdbFilmTableModel.getFilmAt(selectedRow).toString());
+			Film filmSaved = filmRestService.saveTmdbFilm(tmdbFilmTableModel.getFilmAt(selectedRow).getId());
+			savedTmdbFilmsJLabel.setText(filmSaved.getTitre()+" sauvé");
+			savedTmdbFilmsJLabel.setVisible(true);
 		}
 	}
 }

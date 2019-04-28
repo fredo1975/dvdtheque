@@ -1,11 +1,9 @@
 package fr.fredos.dvdtheque.swing.views;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,7 +37,7 @@ public class FilmListView extends AbstractViewListenerHolder{
 	protected void init() {
 		filmListJTable.setModel(filmTableModel);
 		filmListViewPanel.setLayout(new BoxLayout(filmListViewPanel, BoxLayout.Y_AXIS));
-		filmListViewPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+		//filmListViewPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 		/*
 		try{
 			Double w = new Double(main.getScreenSize().getWidth())/1.2;

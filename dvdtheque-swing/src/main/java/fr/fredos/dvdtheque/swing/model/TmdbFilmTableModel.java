@@ -1,10 +1,11 @@
 package fr.fredos.dvdtheque.swing.model;
 
 import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -16,14 +17,16 @@ import fr.fredos.dvdtheque.dao.model.object.Personne;
 public class TmdbFilmTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	// les colonnes
-	private String[] columnNames = { "Poster", "Titre", "Titre Original", "Réalisateur", "Acteurs", "Année", "" };
+	private String[] columnNames = { "Poster", "Titre", "Titre Original", "Réalisateur", "Acteurs", "Année"};
 	// les donnees
 	private Object[][] data;
 	private Set<Film> filmSet;
+	Map<Integer,Film> filmMap;
 	
 	public void populateFilmSet(final Set<Film> films) throws MalformedURLException {
 		this.filmSet = films;
 		data = new Object[filmSet.size()][getColumnCount()];
+		filmMap = new HashMap<>(filmSet.size());
 		// on parcourt la liste des articles
 		int i = 0;
 		for (Film film : filmSet) {
@@ -34,7 +37,9 @@ public class TmdbFilmTableModel extends AbstractTableModel {
 			data[i][3] = buildPersonneLabel(film.getRealisateurs());
 			data[i][4] = buildPersonneLabel(film.getActeurs());
 			data[i][5] = film.getAnnee();
+			filmMap.put(i, film);
 			i++;
+			
 		}
 	}
 	public void clearFilmSet() {
@@ -74,8 +79,12 @@ public class TmdbFilmTableModel extends AbstractTableModel {
 		return data[row][col];
 	}
 	
+	public Film getFilmAt(int row) {
+		return filmMap.get(row);
+	}
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
 		return columnIndex == 0 ? Icon.class : String.class;
 	}
+	
 }

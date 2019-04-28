@@ -102,11 +102,15 @@ public class SwingConfig {
         return new JLabel();
     }
 	@Bean
+	public JLabel savedTmdbFilmsJLabel() {
+        return new JLabel();
+    }
+	@Bean
 	public JTextField tmdbSearchTextField() {
 		return new JTextField(50);
 	}
 	@Bean
 	protected JButton addTmdbFilmButton() {
-		return new JButton("Ajouter");
+		return new JButton("Ajouter le film sélectionné");
 	}
 }
