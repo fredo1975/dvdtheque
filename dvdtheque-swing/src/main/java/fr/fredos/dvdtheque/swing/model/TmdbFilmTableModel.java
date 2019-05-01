@@ -8,7 +8,7 @@ import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.table.AbstractTableModel;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 
 import fr.dvdtheque.console.image.utils.ImageUtils;
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -20,16 +20,14 @@ public class TmdbFilmTableModel extends AbstractTableModel {
 	private String[] columnNames = { "Poster", "Titre", "Titre Original", "Réalisateur", "Acteurs", "Année"};
 	// les donnees
 	private Object[][] data;
-	private Set<Film> filmSet;
 	Map<Integer,Film> filmMap;
 	
 	public void populateFilmSet(final Set<Film> films) throws MalformedURLException {
-		this.filmSet = films;
-		data = new Object[filmSet.size()][getColumnCount()];
-		filmMap = new HashMap<>(filmSet.size());
+		data = new Object[films.size()][getColumnCount()];
+		filmMap = new HashMap<>(films.size());
 		// on parcourt la liste des articles
 		int i = 0;
-		for (Film film : filmSet) {
+		for (Film film : films) {
 			// Icon ii = new ImageIcon(new URL(film.getPosterPath()));
 			data[i][0] = ImageUtils.getResizedIcon(film);
 			data[i][1] = film.getTitre();
@@ -43,13 +41,13 @@ public class TmdbFilmTableModel extends AbstractTableModel {
 		}
 	}
 	public void clearFilmSet() {
-		if(CollectionUtils.isNotEmpty(this.filmSet)) {
-			this.filmSet.clear();
+		if(MapUtils.isNotEmpty(this.filmMap)) {
+			this.filmMap.clear();
 		}
 		//data = new Object[filmSet.size()][0];
 	}
 	
-	private String buildPersonneLabel(final Set<Personne> personnes) {
+	public String buildPersonneLabel(final Set<Personne> personnes) {
 		StringBuilder sb = new StringBuilder("<html><body>");
 		for(Personne personne : personnes) {
 			sb.append("<p>"+personne.getNom()+"</p>");
@@ -59,8 +57,8 @@ public class TmdbFilmTableModel extends AbstractTableModel {
 	}
 	@Override
 	public int getRowCount() {
-		if(CollectionUtils.isNotEmpty(this.filmSet)) {
-			return filmSet.size();
+		if(MapUtils.isNotEmpty(this.filmMap)) {
+			return filmMap.size();
 		}
 		return 0;
 	}

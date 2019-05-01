@@ -1,7 +1,9 @@
 package fr.fredos.dvdtheque.swing.model;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.table.AbstractTableModel;
@@ -23,15 +25,17 @@ public class FilmTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	// les colonnes
 	private String[] columnNames = { "", "" };
+	
 	// les donnees
 	private Object[][] data;
-	private List<Film> filmList;
+	private Map<Integer,Film> filmMap;
 	@Autowired
 	private FilmRestService filmRestService;
 
 	public void buildFilmList()
 			throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		this.filmList = filmRestService.findAllFilms();
+		List<Film> filmList = filmRestService.findAllFilms();
+		this.filmMap = new HashMap<>(filmList.size());
 		data = new Object[filmList.size()][getColumnCount()];
 		// on parcourt la liste des articles
 		int i = 0;
@@ -39,6 +43,7 @@ public class FilmTableModel extends AbstractTableModel {
 			// Icon ii = new ImageIcon(new URL(film.getPosterPath()));
 			data[i][0] = ImageUtils.getResizedIcon(film);
 			data[i][1] = film.isRipped();
+			this.filmMap.put(new Integer(i), film);
 			i++;
 		}
 	}
@@ -50,14 +55,17 @@ public class FilmTableModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return filmList.size();
+		return filmMap.size();
 	}
 
 	@Override
 	public Object getValueAt(int row, int col) {
 		return data[row][col];
 	}
-
+	
+	public Object getFilmAt(int row) {
+		return this.filmMap.get(row);
+	}
 	public boolean getRipped(int row, int col) {
 		return (boolean) data[row][col];
 	}

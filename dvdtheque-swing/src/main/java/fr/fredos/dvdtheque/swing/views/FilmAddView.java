@@ -46,9 +46,10 @@ public class FilmAddView extends AbstractViewListenerHolder{
 	private JLabel nbrTmdbFilmsJLabel;
 	@Autowired
 	private JLabel savedTmdbFilmsJLabel;
-	JPanel scrollPanePanel;
 	@Autowired
 	private JButton addTmdbFilmButton;
+	JPanel tmdbFilmScrollPanePanel;
+	
 	@PostConstruct
 	protected void init() {
 		filmAddViewPanel.setLayout(new BoxLayout(filmAddViewPanel,BoxLayout.Y_AXIS));
@@ -101,9 +102,6 @@ public class FilmAddView extends AbstractViewListenerHolder{
 		
 		
 		tmdbFilmListJTable.setModel(tmdbFilmTableModel);
-		
-		//filmAddViewPanel.setLayout(new BoxLayout(filmAddViewPanel, BoxLayout.Y_AXIS));
-		//tmdbFilmListJTable.setDefaultRenderer(String.class,new TmdbFilmTabCellRenderer());
 		tmdbFilmListJTable.setRowHeight(IMAGE_HEIGHT_SIZE);
 		tmdbFilmListJTable.setPreferredScrollableViewportSize(new Dimension(1000, 800));
 		//tmdbFilmListJTable.setFillsViewportHeight(true);
@@ -118,11 +116,10 @@ public class FilmAddView extends AbstractViewListenerHolder{
 		scrollPane = new JScrollPane(tmdbFilmListJTable);
 		//scrollPane.setPreferredSize(new Dimension(1200,1000));
 		//scrollPane.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
-		scrollPanePanel = new JPanel(new FlowLayout(1,0,5));
-		scrollPanePanel.add(scrollPane);
+		tmdbFilmScrollPanePanel = new JPanel(new FlowLayout(1,0,5));
+		tmdbFilmScrollPanePanel.add(scrollPane);
 		scrollPane.setAlignmentX( Component.CENTER_ALIGNMENT );
-		scrollPanePanel.setAlignmentX( Component.CENTER_ALIGNMENT );
-		//filmAddViewPanel.add(addPanel2);
+		tmdbFilmScrollPanePanel.setAlignmentX( Component.CENTER_ALIGNMENT );
 		
 		JPanel addButtonPanel = new JPanel(new FlowLayout(1,0,5));
 		//addButtonPanel.setBorder(BorderFactory.createLineBorder(Color.CYAN));
@@ -171,11 +168,11 @@ public class FilmAddView extends AbstractViewListenerHolder{
 		
 	}
 	public void addScrollPaneToTmdbFilmListViewPanel() {
-		filmAddViewPanel.add(scrollPanePanel);
+		filmAddViewPanel.add(tmdbFilmScrollPanePanel);
 		addTmdbFilmButton.setVisible(true);
 	}
 	public void removeScrollPaneToTmdbFilmListViewPanel() {
-		filmAddViewPanel.remove(scrollPanePanel);
+		filmAddViewPanel.remove(tmdbFilmScrollPanePanel);
 		filmAddViewPanel.revalidate();
 	}
 }

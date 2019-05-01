@@ -92,7 +92,7 @@ public class Dvd implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "Dvd [logger=" + logger + ", id=" + id + ", annee=" + annee + ", zone=" + zone + ", edition=" + edition
+		return "Dvd [id=" + id + ", annee=" + annee + ", zone=" + zone + ", edition=" + edition
 				+ ", dateRip=" + dateRip + "]";
 	}
 }
