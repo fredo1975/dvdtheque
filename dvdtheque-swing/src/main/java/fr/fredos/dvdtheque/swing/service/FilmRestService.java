@@ -25,6 +25,8 @@ public class FilmRestService {
 	private static final String GET_ALL_FILMS_URI = "dvdtheque.web.rest.findAllFilms";
 	private static final String GET_TMDB_FILM_URI = "dvdtheque.web.rest.findTmdbFilmByTitre";
 	private static final String ADD_TMDB_FILM_URI = "dvdtheque.web.rest.addTmdbFilm";
+	private static final String CHECK_TMDB_FILM_URI = "dvdtheque.web.rest.checkIfTmdbFilmExists";
+	
 	private final RestTemplate restTemplate;
 	@Autowired
     Environment environment;
@@ -42,7 +44,10 @@ public class FilmRestService {
 		ObjectMapper objectMapper = new ObjectMapper();
 		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(GET_TMDB_FILM_URI)+titre, String.class), new TypeReference<Set<Film>>(){});
 	}
-	
+	public Boolean checkIfTmdbFilmExists(final Long tmdbId) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException{
+		ObjectMapper objectMapper = new ObjectMapper();
+		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(CHECK_TMDB_FILM_URI)+tmdbId, String.class), new TypeReference<Boolean>(){});
+	}
 	public Film saveTmdbFilm(Long id) {
 		HttpEntity<Long> request = new HttpEntity<>(id);
 		ResponseEntity<Film> response = this.restTemplate
