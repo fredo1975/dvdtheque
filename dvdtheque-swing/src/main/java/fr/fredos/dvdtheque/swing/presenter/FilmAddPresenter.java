@@ -23,7 +23,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.swing.model.TmdbFilmTableModel;
 import fr.fredos.dvdtheque.swing.service.FilmRestService;
 import fr.fredos.dvdtheque.swing.view.listener.FilmAddViewListener;
@@ -40,8 +39,6 @@ public class FilmAddPresenter implements FilmAddViewListener{
 	private JPanel filmAddViewPanel;
 	@Autowired
 	private FilmRestService filmRestService;
-	@Autowired
-	private IFilmService filmService;
 	@Autowired
 	JTextField tmdbSearchTextField;
 	@Autowired
@@ -80,7 +77,6 @@ public class FilmAddPresenter implements FilmAddViewListener{
 			JOptionPane.showMessageDialog(filmAddViewPanel, "il faut entrer un titre de film", "Chercher", JOptionPane.WARNING_MESSAGE);
 		}else {
 			Set<Film> films = filmRestService.findTmdbFilmByTitre(tmdbSearchTextField.getText());
-			logger.info("onSearchButtonClicked films="+films.toString());
 			tmdbFilmTableModel.populateFilmSet(films);
 			nbrTmdbFilmsJLabel.setText("Nombre de films : "+String.valueOf(tmdbFilmTableModel.getRowCount()));
 			nbrTmdbFilmsJLabel.setVisible(true);
@@ -90,14 +86,11 @@ public class FilmAddPresenter implements FilmAddViewListener{
 	@Override
 	public void onAddFilmButtonClicked(ActionEvent evt)
 			throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		logger.info("onAddFilmButtonClicked ");
+		//logger.info("onAddFilmButtonClicked ");
 		int selectedRow = tmdbFilmListJTable.getSelectedRow();
 		if(selectedRow>=0) {
-			Object selectedO = tmdbFilmListJTable.getValueAt(selectedRow, 0);
-			logger.info("onAddFilmButtonClicked selectedO="+selectedO);
 			TmdbFilmTableModel tmdbFilmTableModel = (TmdbFilmTableModel) tmdbFilmListJTable.getModel();
-			logger.info("onAddFilmButtonClicked selectedFilm="+tmdbFilmTableModel.getFilmAt(selectedRow).toString());
-			if(this.filmService.checkIfTmdbFilmExists(tmdbFilmTableModel.getFilmAt(selectedRow).getTmdbId())) {
+			if(this.filmRestService.checkIfTmdbFilmExists(tmdbFilmTableModel.getFilmAt(selectedRow).getTmdbId())) {
 				JOptionPane.showMessageDialog(filmAddViewPanel, "Ce film est déjà enregistré", "Chercher", JOptionPane.WARNING_MESSAGE);
 				return;
 			}

@@ -60,4 +60,10 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 		assertNotNull(filmSaved);
 		assertEquals(StringUtils.upperCase(TITRE_FILM_TMBD_ID_4780),filmSaved.getTitre());
 	}
+	
+	@Test
+	public void testCheckIfTmdbFilmExists() throws Exception {
+		Boolean exists = filmRestService.checkIfTmdbFilmExists(tmdbId);
+		assertTrue(exists);
+	}
 }

@@ -100,7 +100,6 @@ public class FilmAddView extends AbstractViewListenerHolder{
 		numberFilmlabelPanel.add(nbrTmdbFilmsJLabel);
 		filmAddViewPanel.add(numberFilmlabelPanel);
 		
-		
 		tmdbFilmListJTable.setModel(tmdbFilmTableModel);
 		tmdbFilmListJTable.setRowHeight(IMAGE_HEIGHT_SIZE);
 		tmdbFilmListJTable.setPreferredScrollableViewportSize(new Dimension(1000, 800));
