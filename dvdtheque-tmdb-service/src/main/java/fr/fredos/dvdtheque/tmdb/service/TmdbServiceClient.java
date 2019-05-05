@@ -54,9 +54,12 @@ public class TmdbServiceClient {
 	 * we're updating all informations with tmdbId in DB for film idFilm
 	 * @param tmdbId
 	 * @param idFilm
-	 * @throws ParseException 
+	 * @throws Exception 
 	 */
-	public Film replaceFilm(final Long tmdbId,final Film film) throws ParseException {
+	public Film replaceFilm(final Long tmdbId,final Film film) throws Exception {
+		if(this.filmService.checkIfTmdbFilmExists(tmdbId)) {
+			throw new Exception("Film with tmbdbId="+tmdbId+" already exists");
+		}
 		Results results = retrieveTmdbSearchResultsById(tmdbId);
 		Film toUpdateFilm = transformTmdbFilmToDvdThequeFilm(film,results, new HashSet<Long>(), true);
 		filmService.updateFilm(toUpdateFilm);

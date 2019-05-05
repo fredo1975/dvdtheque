@@ -152,4 +152,12 @@ public class FilmDaoImpl implements FilmDao {
 		q.setParameter("tmdbIds", tmdbIds);
 		return new HashSet<Long>(q.getResultList());
 	}
+	
+	@Override
+	public Boolean checkIfTmdbFilmExists(Long tmdbId) {
+		StringBuilder sb = new StringBuilder("select count(1) from Film film where film.tmdbId = :tmdbId ");
+		Query q = this.entityManager.createQuery(sb.toString());
+		q.setParameter("tmdbId", tmdbId);
+		return ((Long)q.getSingleResult())==1;
+	}
 }

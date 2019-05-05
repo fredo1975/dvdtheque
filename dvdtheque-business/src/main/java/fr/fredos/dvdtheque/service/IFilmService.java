@@ -10,23 +10,24 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 
 public interface IFilmService {
 	public static final String CACHE_DIST_FILM = "dist-film";
-	public Date clearDate(Date dateToClear);
-	public Film findFilm(Long id);
-	public Film findFilmWithAllObjectGraph(Long id);
-	public List<Film> findAllFilms();
-	public Set<Long> findAllTmdbFilms(Set<Long> tmdbIds);
-	public void updateFilm(Film film);
-	public Long saveNewFilm(Film film);
+	Date clearDate(Date dateToClear);
+	Film findFilm(Long id);
+	Film findFilmWithAllObjectGraph(Long id);
+	List<Film> findAllFilms();
+	Set<Long> findAllTmdbFilms(Set<Long> tmdbIds);
+	void updateFilm(Film film);
+	Long saveNewFilm(Film film);
 	//public List<FilmDto> getAllFilmDtos();
-	public void cleanAllFilms();
-	public Film findFilmByTitre(String titre);
-	public List<Film> getAllRippedFilms();
-	public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto);
-	public void removeFilm(Film film);
-	public Film createOrRetrieveFilm(final String titre,final Integer annee,
+	void cleanAllFilms();
+	Film findFilmByTitre(String titre);
+	List<Film> getAllRippedFilms();
+	List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto);
+	void removeFilm(Film film);
+	Film createOrRetrieveFilm(final String titre,final Integer annee,
 			final String realNom,
 			final String act1Nom,
 			final String act2Nom,
 			final String act3Nom, Date ripDate);
-	public Dvd buildDvd(final Integer annee,final Integer zone,final String edition, Date ripDate);
+	Dvd buildDvd(final Integer annee,final Integer zone,final String edition, Date ripDate);
+	Boolean checkIfTmdbFilmExists(Long tmdbId);
 }

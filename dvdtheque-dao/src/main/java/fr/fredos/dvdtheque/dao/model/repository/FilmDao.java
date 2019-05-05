@@ -8,16 +8,17 @@ import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 
 public interface FilmDao {
-	public Film findFilm(Long id);
-	public Film findFilmByTitre(String titre);
-	public Film findFilmWithAllObjectGraph(Long id);
-	public Long saveNewFilm(Film film);
-	public void updateFilm(Film film);
-	public Long saveDvd(Dvd dvd);
-	public List<Film> findAllFilms();
-	public Set<Long> findAllTmdbFilms(Set<Long> tmdbIds);
-	public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto);
-	public void cleanAllFilms();
-	public List<Film> getAllRippedFilms();
-	public void removeFilm(Film film);
+	Film findFilm(Long id);
+	Film findFilmByTitre(String titre);
+	Film findFilmWithAllObjectGraph(Long id);
+	Long saveNewFilm(Film film);
+	void updateFilm(Film film);
+	Long saveDvd(Dvd dvd);
+	List<Film> findAllFilms();
+	Set<Long> findAllTmdbFilms(Set<Long> tmdbIds);
+	List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto);
+	void cleanAllFilms();
+	List<Film> getAllRippedFilms();
+	void removeFilm(Film film);
+	Boolean checkIfTmdbFilmExists(Long tmdbId);
 }

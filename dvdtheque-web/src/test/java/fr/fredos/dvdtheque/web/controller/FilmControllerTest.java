@@ -62,6 +62,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String SEARCH_ALL_REALISATEUR_URI = "/dvdtheque/realisateurs";
 	private static final String SEARCH_ALL_ACTTEUR_URI = "/dvdtheque/acteurs";
 	private static final String SEARCH_FILM_BY_ID = "/dvdtheque/films/byId/";
+	private static final String SEARCH_FILM_BY_TMDBID = "/dvdtheque/films/byTmdbId/";
 	private static final String SEARCH_TMDB_FILM_BY_TITRE = "/dvdtheque/films/tmdb/byTitre/";
 	private static final String UPDATE_TMDB_FILM_BY_TMDBID = "/dvdtheque/films/tmdb/";
 	private static final String SAVE_FILM_URI = "/dvdtheque/films/save/";
@@ -190,6 +191,18 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(acteur.getNom())));
 			assertNotNull(resultActions);
 		}
+	}
+	@Test
+	@Transactional
+	public void testCheckIfTmdbFilmExists() throws Exception {
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,true);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_FILM_BY_TMDBID+film.getTmdbId())
+				.contentType(MediaType.APPLICATION_JSON);
+		ResultActions resultActions = mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Is.is(Boolean.TRUE)));
+		assertNotNull(resultActions);
+		
 	}
 	@Test
 	@Transactional

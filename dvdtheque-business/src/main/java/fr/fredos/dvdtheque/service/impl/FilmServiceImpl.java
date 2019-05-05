@@ -256,4 +256,9 @@ public class FilmServiceImpl implements IFilmService {
 		film.setId(idFilm);
 		return film;
 	}
+	
+	@Override
+	public Boolean checkIfTmdbFilmExists(Long tmdbId) {
+		return this.filmDao.checkIfTmdbFilmExists(tmdbId);
+	}
 }

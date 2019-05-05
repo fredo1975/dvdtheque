@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.swing.model.TmdbFilmTableModel;
 import fr.fredos.dvdtheque.swing.service.FilmRestService;
 import fr.fredos.dvdtheque.swing.view.listener.FilmAddViewListener;
@@ -39,6 +40,8 @@ public class FilmAddPresenter implements FilmAddViewListener{
 	private JPanel filmAddViewPanel;
 	@Autowired
 	private FilmRestService filmRestService;
+	@Autowired
+	private IFilmService filmService;
 	@Autowired
 	JTextField tmdbSearchTextField;
 	@Autowired
@@ -94,6 +97,10 @@ public class FilmAddPresenter implements FilmAddViewListener{
 			logger.info("onAddFilmButtonClicked selectedO="+selectedO);
 			TmdbFilmTableModel tmdbFilmTableModel = (TmdbFilmTableModel) tmdbFilmListJTable.getModel();
 			logger.info("onAddFilmButtonClicked selectedFilm="+tmdbFilmTableModel.getFilmAt(selectedRow).toString());
+			if(this.filmService.checkIfTmdbFilmExists(tmdbFilmTableModel.getFilmAt(selectedRow).getTmdbId())) {
+				JOptionPane.showMessageDialog(filmAddViewPanel, "Ce film est déjà enregistré", "Chercher", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
 			Film filmSaved = filmRestService.saveTmdbFilm(tmdbFilmTableModel.getFilmAt(selectedRow).getId());
 			savedTmdbFilmsJLabel.setText(filmSaved.getTitre()+" sauvé");
 			savedTmdbFilmsJLabel.setVisible(true);

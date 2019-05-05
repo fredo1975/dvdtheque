@@ -104,12 +104,17 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		logger.info("res = "+res.toString());
     }
 	@Test
-    public void replaceFilmTest() throws ParseException {
+    public void replaceFilmTest() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, null);
 		assertFilmIsNotNull(film,true);
-		film = client.replaceFilm(tmdbId, film);
-		assertFilmIsNotNull(film,true);
-		logger.info("film = "+film.toString());
+		Boolean exists = filmService.checkIfTmdbFilmExists(tmdbId);
+		if(!exists) {
+			film = client.replaceFilm(tmdbId, film);
+			assertFilmIsNotNull(film,true);
+			logger.info("film = "+film.toString()+" replaced");
+		}else {
+			logger.info("film = "+film.toString()+" already existing");
+		}
     }
 	@Test
     public void savetmdbFilmTest() throws ParseException {
