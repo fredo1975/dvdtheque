@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -55,7 +56,7 @@ public class FilmListView extends AbstractViewListenerHolder{
 	protected static final String titreTextField = "Titre";
 	protected static final String titreOTextField = "Titre Original";
 	private String[] filmLabels = { "Titre", "Titre Original","Année de sortie","Zone DVD","Année DVD","Réalisateur","Acteurs","Résumé","TMDB ID","Rippé le","Rippé" };
-
+	protected JComboBox<Integer> filmYearComboBox, filmZoneDvdComboBox, filmYearDvdComboBox,rippedComboBox;
 	@PostConstruct
 	protected void init() {
 		filmListJTable.setModel(filmTableModel);
