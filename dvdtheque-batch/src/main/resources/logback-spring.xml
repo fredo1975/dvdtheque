@@ -3,7 +3,7 @@
 
 <configuration scan="true" scanPeriod="30 seconds">
 
-	<property name="LOGS" value="./logs" />
+	<property name="LOGS" value="logs" />
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
         <resetJUL>true</resetJUL>
     </contextListener>
