@@ -1,1 +1,1 @@
-java -jar dvdtheque-batch.jar --spring.batch.job.names=importFilms --spring.profiles.active=dev
+java -jar dvdtheque-batch.jar --spring.batch.job.names=importFilms --spring.profiles.active=int
