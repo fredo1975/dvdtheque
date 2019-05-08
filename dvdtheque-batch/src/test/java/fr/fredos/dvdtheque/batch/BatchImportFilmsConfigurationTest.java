@@ -66,7 +66,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void launchCleanDBStep() throws Exception {
 		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchStep("cleanDBStep");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
