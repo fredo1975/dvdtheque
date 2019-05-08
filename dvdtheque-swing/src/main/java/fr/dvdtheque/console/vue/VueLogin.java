@@ -104,7 +104,7 @@ public class VueLogin extends BaseVueAppli {
 	public void affiche() {
 		String methodName = "affiche ";
 		logger.info(methodName + "start");
-		jLabel1.setText(getSession().getMessage());
+		//jLabel1.setText(getSession().getMessage());
 		super.affiche();
 		logger.info(methodName + "end");
 	}
@@ -126,7 +126,7 @@ public class VueLogin extends BaseVueAppli {
 		logger.info(methodName + "loginField=" + loginField.getText());
 		logger.info(methodName + "mdpField=" + mdpField.getText());
 		//getSession().initializeUserLoginFields(loginField.getText(), mdpField.getText());
-		getSession().initializeUserLoginFields("fredo", "fredo");
+		//getSession().initializeUserLoginFields("fredo", "fredo");
 		jMenuItemNouveauFilm.setVisible(true);
 		this.executeAction("trylogin");
 	}

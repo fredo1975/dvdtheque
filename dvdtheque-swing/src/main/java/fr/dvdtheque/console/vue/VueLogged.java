@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.dvdtheque.console.factory.ImageFactory;
+import fr.dvdtheque.console.image.utils.ImageFactory;
 
 public class VueLogged extends BaseVueAppli{
 	/**
@@ -70,11 +70,11 @@ public class VueLogged extends BaseVueAppli{
 	public void affiche() {
 		String methodName = "affiche ";
 		logger.info(methodName + "start");
-		if(null != getSession().getUser()){
+		/*if(null != getSession().getUser()){
 			jLabel1.setText("Bienvenue "+getSession().getUser().getFirstName()+" "+getSession().getUser().getLastName()+"\n vous êtes désormais loggé !");
 			jLabel1.setFont(new Font(jLabel1.getFont().getFamily(), Font.BOLD, 15));
 			
-		}
+		}*/
 		super.affiche();
 		logger.info(methodName + "end");
 	}

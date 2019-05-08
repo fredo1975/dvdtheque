@@ -62,6 +62,11 @@ public class FilmController {
 		return filmService.findFilm(id);
 	}
 	@CrossOrigin
+	@GetMapping("/films/byTmdbId/{tmdbid}")
+	Boolean checkIfTmdbFilmExists(@PathVariable Long tmdbid) {
+		return filmService.checkIfTmdbFilmExists(tmdbid);
+	}
+	@CrossOrigin
 	@GetMapping("/realisateurs")
 	List<Personne> findAllRealisateurs() {
 		return personneService.findAllRealisateur();
@@ -78,7 +83,7 @@ public class FilmController {
 	}
 	@CrossOrigin
 	@PutMapping("/films/tmdb/{tmdbId}")
-	ResponseEntity<Film> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws ParseException {
+	ResponseEntity<Film> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws Exception {
 		Film filmOptional = filmService.findFilm(film.getId());
 
 		if(filmOptional==null) {

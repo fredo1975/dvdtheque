@@ -121,7 +121,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = true)
 	public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {
 		List<Film> filmList = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
-		filmList.sort(Comparator.comparing(Film::getPrintRealisateur).thenComparing(Film::getTitre));
+		filmList.sort(Comparator.comparing(Film::getTitre));
 		return filmList;
 	}
 	@Override
@@ -255,5 +255,10 @@ public class FilmServiceImpl implements IFilmService {
 		Long idFilm = saveNewFilm(film);
 		film.setId(idFilm);
 		return film;
+	}
+	
+	@Override
+	public Boolean checkIfTmdbFilmExists(Long tmdbId) {
+		return this.filmDao.checkIfTmdbFilmExists(tmdbId);
 	}
 }

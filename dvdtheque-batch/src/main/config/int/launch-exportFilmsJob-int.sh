@@ -1,0 +1,1 @@
+java -jar dvdtheque-batch.jar --spring.batch.job.names=exportFilms --spring.profiles.active=int

@@ -6,13 +6,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -27,7 +26,6 @@ import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.service.impl.FilmServiceImpl;
 
 @SpringBootTest(classes = { BatchImportFilmsConfiguration.class,
 		RippedFlagTasklet.class,
@@ -68,6 +66,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	}
 	
 	@Test
+	//@Ignore
 	public void launchCleanDBStep() throws Exception {
 		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchStep("cleanDBStep");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());

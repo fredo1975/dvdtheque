@@ -286,4 +286,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Film deletedFilm = filmService.findFilm(film.getId());
 		assertNull(deletedFilm);
 	}
+	
+	@Test
+	public void checkIfTmdbFilmExists() {
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film);
+		Boolean exists = filmService.checkIfTmdbFilmExists(film.getTmdbId());
+		assertTrue(exists);
+	}
 }

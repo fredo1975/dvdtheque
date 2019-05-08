@@ -10,8 +10,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
-import fr.fredos.dvdtheque.swing.Session;
-
 
 public class MaVue extends BaseVueJFrame {
 
@@ -22,15 +20,7 @@ public class MaVue extends BaseVueJFrame {
 	JPanel contentPane;
 	JSpinner jSpinner1 = new JSpinner();
 	JButton jButtonQuitter = new JButton();
-	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
+	
 	// Construire le cadre
 	public MaVue() {
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK);

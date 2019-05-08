@@ -71,7 +71,7 @@ public class VueListeFilm extends JPanel {
 		//jTableFilm.addMouseListener(new TableListe_mouseAdapter(this));
 		jTableFilm.setRowSelectionAllowed(false);
 		jTableFilm.setColumnSelectionAllowed(false);
-		jTableFilm.setModel(new FilmTableModel(getFilmList()));
+		//jTableFilm.setModel(new FilmTableModel(getFilmList()));
 	}
 
 	

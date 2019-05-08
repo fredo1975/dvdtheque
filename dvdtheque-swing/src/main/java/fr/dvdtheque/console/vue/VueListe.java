@@ -51,7 +51,7 @@ public class VueListe extends BaseVueAppli {
 			logger.debug(methodName + "w="+w.intValue()+" h="+h.intValue());
 			jScrollPane1.setPreferredSize(new Dimension(w.intValue()/2,h.intValue()/2));
 		}catch(Exception e){
-			getSession().getErreurs().add(e.getMessage());
+			//getSession().getErreurs().add(e.getMessage());
 			e.printStackTrace();
 		}
 		tablePanel.add(jScrollPane1);
@@ -70,7 +70,7 @@ public class VueListe extends BaseVueAppli {
 	public void affiche() {
 		String methodName = "affiche ";
 		logger.debug(methodName + "start");
-		jTableFilm.setModel(new FilmTableModel(getSession().getFilmList()));
+		//jTableFilm.setModel(new FilmTableModel(getSession().getFilmList()));
 		jTableFilm.getColumnModel().getColumn(jTableFilm.getColumnCount()-1).setCellRenderer(new FilmTabCellRenderer());
 		jTableFilm.getColumnModel().getColumn(jTableFilm.getColumnCount()-1).setMaxWidth(17);
 		super.affiche();
@@ -88,10 +88,10 @@ public class VueListe extends BaseVueAppli {
 			return;
 		}
 		// on note l'identité du film
-		Film film = (Film) (getSession().getFilmList().get(jTableFilm.getSelectedRow()));
-		logger.debug(methodName + "film="+film.toString());
-		getSession().setFilmId(film.getId());
-		getSession().setFilm(film);
+		//Film film = (Film) (getSession().getFilmList().get(jTableFilm.getSelectedRow()));
+		//logger.debug(methodName + "film="+film.toString());
+		//getSession().setFilmId(film.getId());
+		//getSession().setFilm(film);
 		// on fait exécuter l'action
 		super.executeAction("filminfos");
 		logger.debug(methodName + "end");

@@ -56,12 +56,13 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-	private static final String UPDATE_FILM_URI = "/dvdtheque/films/";
+	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
 	private static final String UPDATE_PERSONNE_URI = "/dvdtheque/personnes/byId/";
 	private static final String SEARCH_PERSONNE_URI = "/dvdtheque/films/byPersonne";
 	private static final String SEARCH_ALL_REALISATEUR_URI = "/dvdtheque/realisateurs";
 	private static final String SEARCH_ALL_ACTTEUR_URI = "/dvdtheque/acteurs";
 	private static final String SEARCH_FILM_BY_ID = "/dvdtheque/films/byId/";
+	private static final String SEARCH_FILM_BY_TMDBID = "/dvdtheque/films/byTmdbId/";
 	private static final String SEARCH_TMDB_FILM_BY_TITRE = "/dvdtheque/films/tmdb/byTitre/";
 	private static final String UPDATE_TMDB_FILM_BY_TMDBID = "/dvdtheque/films/tmdb/";
 	private static final String SAVE_FILM_URI = "/dvdtheque/films/save/";
@@ -106,10 +107,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		if(CollectionUtils.isNotEmpty(allFilms)) {
 			assertTrue(allFilms.size()>0);
 			Film filmToTest = allFilms.get(0);
-			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/dvdtheque/films")
+			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_FILMS_URI)
 					.contentType(MediaType.APPLICATION_JSON);
 			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
-			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get("/dvdtheque/films")
+			ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI)
 					.contentType(MediaType.APPLICATION_JSON))
 					.andExpect(MockMvcResultMatchers.status().isOk())
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
@@ -118,7 +119,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		}
 	}
 	@Test
-	public void findAllTmdbFilms() throws Exception {
+	public void findTmdbFilmByTitre() throws Exception {
 		String titre = "Broadway";
 		Film film = new Film();
 		film.setTitre(titre);
@@ -193,6 +194,18 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	@Transactional
+	public void testCheckIfTmdbFilmExists() throws Exception {
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		assertFilmIsNotNull(film,true);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_FILM_BY_TMDBID+film.getTmdbId())
+				.contentType(MediaType.APPLICATION_JSON);
+		ResultActions resultActions = mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Is.is(Boolean.TRUE)));
+		assertNotNull(resultActions);
+		
+	}
+	@Test
+	@Transactional
 	public void testReplaceFilm() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
 		assertFilmIsNotNull(film,true);
@@ -223,7 +236,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-				.put(UPDATE_FILM_URI+film.getId(),filmToUpdate)
+				.put(GET_ALL_FILMS_URI+film.getId(),filmToUpdate)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());

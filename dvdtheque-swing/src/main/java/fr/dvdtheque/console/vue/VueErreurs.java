@@ -51,7 +51,7 @@ public class VueErreurs extends BaseVueAppli {
 		// affichage des erreurs dans le jTextPane
 		pan.removeAll();
 		pan.updateUI();
-		ArrayList<String> erreurs = getSession().getErreurs();
+		ArrayList<String> erreurs = null;
 		String msg = "";
 		for (int i = 0; i < erreurs.size(); i++) {
 			msg += (i + 1) + " - " + erreurs.get(i);

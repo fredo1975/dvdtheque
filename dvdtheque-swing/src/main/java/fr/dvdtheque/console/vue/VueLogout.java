@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.dvdtheque.console.factory.ImageFactory;
+import fr.dvdtheque.console.image.utils.ImageFactory;
 
 public class VueLogout extends BaseVueAppli {
 	/**
@@ -77,7 +77,7 @@ public class VueLogout extends BaseVueAppli {
 	public void affiche() {
 		String methodName = "affiche ";
 		logger.info(methodName + "start");
-		jLabel1.setText(getSession().getMessage());
+		//jLabel1.setText(getSession().getMessage());
 		jMenuItemNouveauFilm.setVisible(false);
 		super.affiche();
 		logger.info(methodName + "end");
