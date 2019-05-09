@@ -80,7 +80,6 @@ public class FilmListView extends AbstractViewListenerHolder {
 		buildNumberFilmlabelPanel();
 		buildFilmListJTable();
 		
-		
 		BufferedImage koPic=null,okPic=null;
 		try {
 			koPic = ImageIO.read(this.getClass().getResource(FilmListView.koPath));
