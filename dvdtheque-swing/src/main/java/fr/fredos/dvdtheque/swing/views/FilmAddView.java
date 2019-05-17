@@ -1,7 +1,6 @@
 package fr.fredos.dvdtheque.swing.views;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -11,7 +10,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -56,7 +54,7 @@ public class FilmAddView extends AbstractViewListenerHolder{
 	@PostConstruct
 	protected void init() {
 		filmAddViewPanel.setLayout(new BoxLayout(filmAddViewPanel,BoxLayout.Y_AXIS));
-		filmAddViewPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
+		//filmAddViewPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
 		
 		buildTextFieldWithButtonPanel();
 		
@@ -73,30 +71,23 @@ public class FilmAddView extends AbstractViewListenerHolder{
 		tmdbFilmListJTable.setModel(tmdbFilmTableModel);
 		tmdbFilmListJTable.setRowHeight(IMAGE_HEIGHT_SIZE);
 		tmdbFilmListJTable.setPreferredScrollableViewportSize(new Dimension(IMAGE_WIDTH_SIZE+800+180+450, IMAGE_HEIGHT_SIZE * 2));
-		//tmdbFilmListJTable.setFillsViewportHeight(true);
+		
 		tmdbFilmListJTable.getColumnModel().getColumn(0).setMaxWidth(IMAGE_WIDTH_SIZE);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-5).setMaxWidth(200);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-4).setMaxWidth(200);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-3).setMaxWidth(200);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-2).setMaxWidth(180);
 		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-1).setMaxWidth(50);
-		/*
-		
-		
-		tmdbFilmListJTable.getColumnModel().getColumn(tmdbFilmListJTable.getColumnCount()-1).setMaxWidth(50);
-		//tmdbFilmListJTable.setFillsViewportHeight(true);*/
 		
 		scrollPane = new JScrollPane(tmdbFilmListJTable);
 		
-		//scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
-		scrollPane.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+		//scrollPane.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
 		tmdbFilmScrollPanePanel = new JPanel(new BorderLayout());
 		tmdbFilmScrollPanePanel.add(tmdbFilmListJTable.getTableHeader(), BorderLayout.PAGE_START);
 		tmdbFilmScrollPanePanel.add(scrollPane, BorderLayout.CENTER);
 		tmdbFilmScrollPanePanel.setMaximumSize(new Dimension(IMAGE_WIDTH_SIZE+600+230, IMAGE_HEIGHT_SIZE * 2));
-		//scrollPane.setAlignmentX( Component.CENTER_ALIGNMENT );
-		//tmdbFilmScrollPanePanel.setAlignmentX( Component.CENTER_ALIGNMENT );
-		tmdbFilmScrollPanePanel.setBorder(BorderFactory.createLineBorder(Color.CYAN));
+		
+		//tmdbFilmScrollPanePanel.setBorder(BorderFactory.createLineBorder(Color.CYAN));
 	}
 	private void buildSavedFilmlabelPanel() {
 		JPanel savedFilmlabelPanel = new JPanel(new FlowLayout(1,0,5));

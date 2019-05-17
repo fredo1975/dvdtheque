@@ -65,12 +65,13 @@ public class FilmListView extends AbstractViewListenerHolder {
 	protected static final String titreOTextField = "Titre Original";
 	private String[] filmLabels = { "Titre", "Titre Original", "Année de sortie", "Zone DVD", "Année DVD",
 			"Réalisateur", "Acteurs", "Résumé", "TMDB ID", "Rippé le", "Rippé" };
-	protected JComboBox<Integer> filmYearComboBox, filmZoneDvdComboBox, filmYearDvdComboBox, rippedComboBox;
+	protected JComboBox<String> filmYearComboBox, filmZoneDvdComboBox, filmYearDvdComboBox;
+	protected JComboBox<ImageIcon> rippedComboBox;
 	protected String[] filmYearStrings, filmZoneDvdStrings;
 	@PostConstruct
 	protected void init() {
 		filmListViewPanel.setLayout(new BoxLayout(filmListViewPanel, BoxLayout.LINE_AXIS));
-		filmListViewPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+		//filmListViewPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 
 		gridbag = new GridBagLayout();
 		c = new GridBagConstraints();
@@ -79,7 +80,10 @@ public class FilmListView extends AbstractViewListenerHolder {
 		buildRightHalf();
 		buildNumberFilmlabelPanel();
 		buildFilmListJTable();
-		
+		buildComboBox();
+	}
+	
+	private void buildComboBox() {
 		BufferedImage koPic=null,okPic=null;
 		try {
 			koPic = ImageIO.read(this.getClass().getResource(FilmListView.koPath));
@@ -89,6 +93,7 @@ public class FilmListView extends AbstractViewListenerHolder {
 		}
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
+		
 		filmYearStrings = new String[cal.get(Calendar.YEAR) - ORIGIN_YEAR + 1];
 		int index = 0;
 		for (int i = cal.get(Calendar.YEAR); i >= ORIGIN_YEAR; i--) {
@@ -99,19 +104,18 @@ public class FilmListView extends AbstractViewListenerHolder {
 		filmZoneDvdStrings[0] = "1";
 		filmZoneDvdStrings[1] = "2";
 		filmZoneDvdStrings[2] = "3";
-		filmYearComboBox = new JComboBox(filmYearStrings);
-		filmYearDvdComboBox = new JComboBox(filmYearStrings);
-		filmZoneDvdComboBox = new JComboBox(filmZoneDvdStrings);
+		filmYearComboBox = new JComboBox<String>(filmYearStrings);
+		filmYearDvdComboBox = new JComboBox<String>(filmYearStrings);
+		filmZoneDvdComboBox = new JComboBox<String>(filmZoneDvdStrings);
 		
-		Object[] items = {new ImageIcon(okPic), new ImageIcon(koPic)};
-		rippedComboBox = new JComboBox(items);
+		ImageIcon[] items = {new ImageIcon(okPic), new ImageIcon(koPic)};
+		rippedComboBox = new JComboBox<ImageIcon>(items);
 	}
-	
 	private void buildLeftHalf() {
 		leftHalf = new JPanel();
 		leftHalf.setLayout(new BoxLayout(leftHalf, BoxLayout.Y_AXIS));
 		leftHalf.setPreferredSize(new Dimension(400, IMAGE_HEIGHT_SIZE * 2));
-		leftHalf.setBorder(BorderFactory.createLineBorder(Color.black));
+		//leftHalf.setBorder(BorderFactory.createLineBorder(Color.black));
 
 	}
 	
@@ -119,12 +123,12 @@ public class FilmListView extends AbstractViewListenerHolder {
 		rightHalf = new JPanel();
 		rightHalf.setPreferredSize(new Dimension(200, 200));
 		rightHalf.setLayout(gridbag);
-		rightHalf.setBorder(BorderFactory.createLineBorder(Color.CYAN));
+		//rightHalf.setBorder(BorderFactory.createLineBorder(Color.CYAN));
 	}
 
 	private void buildNumberFilmlabelPanel() {
 		JPanel numberFilmlabelPanel = new JPanel(new FlowLayout(1, 0, 5));
-		numberFilmlabelPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+		//numberFilmlabelPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 		numberFilmlabelPanel.setMaximumSize(new Dimension(200, 30));
 		numberFilmlabelPanel.add(nbrFilmsJLabel);
 		leftHalf.add(numberFilmlabelPanel);
@@ -143,7 +147,7 @@ public class FilmListView extends AbstractViewListenerHolder {
 		filmListJTable.getSelectionModel().addListSelectionListener(new RowListener());
 		scrollPane = new JScrollPane(filmListJTable);
 		scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
-		scrollPane.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+		//scrollPane.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
 		// scrollPane.setPreferredSize(new Dimension(400,IMAGE_HEIGHT_SIZE*4));
 		filmScrollPanePanel = new JPanel(new FlowLayout(1, 0, 5));
 		filmScrollPanePanel.add(scrollPane);
@@ -164,6 +168,50 @@ public class FilmListView extends AbstractViewListenerHolder {
 				film.getDvd().getAnnee(), film.getRealisateurs(), film.getActeurs(), film.getOverview(),
 				film.getTmdbId(), film.getDvd().getDateRip(), film.isRipped() };
 
+		for (int i = 0; i < this.filmLabels.length; i++) {
+			JLabel titreTextFieldLabel = new JLabel(this.filmLabels[i] + ": ");
+			titreTextFieldLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
+			final JLabel titreTextValueFieldLabel;
+			if (i == 0 || i == 1 || i == 5 || i == 6 || i == 7 || i == 8 || i == 9) {
+				if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4 || i == 7 || i == 8 || i == 10) {
+					if(filmValues[i] != null) {
+						StringBuilder sb = new StringBuilder("<html><body>");
+						sb.append("<p>").append(filmValues[i].toString()).append("</p>");
+						sb.append("</body></html>");
+						titreTextValueFieldLabel = new JLabel(sb.toString());
+					}else {
+						titreTextValueFieldLabel = new JLabel();
+					}
+				}else if(i == 5 || i == 6) {
+					Set<Personne> personnes = (Set<Personne>) filmValues[i];
+					StringBuilder sb = new StringBuilder("<html><body>");
+					for (Personne personne : personnes) {
+						sb.append("<p>").append(personne.getNom()).append("</p>");
+					}
+					sb.append("</body></html>");
+					titreTextValueFieldLabel = new JLabel(sb.toString());
+				}else if(i == 9 && filmValues[i] != null) {
+					DateFormat df = new SimpleDateFormat("dd/M/yyyy");
+					String ripDate = df.format(filmValues[i]);
+					titreTextValueFieldLabel = new JLabel(ripDate);
+				}else {
+					titreTextValueFieldLabel = new JLabel();
+				}
+				titreTextValueFieldLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
+				c.gridwidth = GridBagConstraints.RELATIVE; // next-to-last
+				c.fill = GridBagConstraints.NONE; // reset to default
+				c.weightx = 0.0; // reset to default
+				c.weighty = 0.0;
+				rightHalf.add(titreTextFieldLabel, c);
+
+				c.gridwidth = GridBagConstraints.REMAINDER; // end row
+				c.fill = GridBagConstraints.BOTH;
+				c.weightx = 1.0;
+				rightHalf.add(titreTextValueFieldLabel, c);
+			}
+		}
+		
+		/*
 		for (int i = 0; i < this.filmLabels.length; i++) {
 			JLabel titreTextFieldLabel = new JLabel(this.filmLabels[i] + ": ");
 			titreTextFieldLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
@@ -203,7 +251,8 @@ public class FilmListView extends AbstractViewListenerHolder {
 			c.fill = GridBagConstraints.BOTH;
 			c.weightx = 1.0;
 			rightHalf.add(titreTextValueFieldLabel, c);
-		}
+		}*/
+		
 		filmListViewPanel.revalidate();
 	}
 
