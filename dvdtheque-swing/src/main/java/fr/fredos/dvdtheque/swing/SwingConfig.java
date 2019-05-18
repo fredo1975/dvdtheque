@@ -113,4 +113,9 @@ public class SwingConfig {
 	protected JButton addTmdbFilmButton() {
 		return new JButton("Ajouter le film sélectionné");
 	}
+	
+	@Bean
+	protected JButton updateFilmButton(){
+		return new JButton("Modifier le film sélectionné");
+	}
 }

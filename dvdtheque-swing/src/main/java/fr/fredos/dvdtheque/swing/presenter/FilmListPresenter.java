@@ -1,10 +1,12 @@
 package fr.fredos.dvdtheque.swing.presenter;
 
 import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.commons.logging.Log;
@@ -15,7 +17,9 @@ import org.springframework.web.client.RestClientException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.swing.model.FilmTableModel;
+import fr.fredos.dvdtheque.swing.model.TmdbFilmTableModel;
 import fr.fredos.dvdtheque.swing.view.listener.FilmListViewListener;
 import fr.fredos.dvdtheque.swing.views.FilmListView;
 
@@ -47,4 +51,20 @@ public class FilmListPresenter implements FilmListViewListener {
         cl.show(subPanel, FILM_LIST_VIEW_PANEL);
         subPanel.revalidate();
     }
+	@Override
+	public void onUpdateFilmButtonClicked(ActionEvent evt){
+		logger.info("onUpdateFilmButtonClicked ");
+		/*
+		int selectedRow = tmdbFilmListJTable.getSelectedRow();
+		if(selectedRow>=0) {
+			TmdbFilmTableModel tmdbFilmTableModel = (TmdbFilmTableModel) tmdbFilmListJTable.getModel();
+			if(this.filmRestService.checkIfTmdbFilmExists(tmdbFilmTableModel.getFilmAt(selectedRow).getTmdbId())) {
+				JOptionPane.showMessageDialog(filmAddViewPanel, "Ce film est déjà enregistré", "Chercher", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			Film filmSaved = filmRestService.saveTmdbFilm(tmdbFilmTableModel.getFilmAt(selectedRow).getId());
+			savedTmdbFilmsJLabel.setText(filmSaved.getTitre()+" sauvé");
+			savedTmdbFilmsJLabel.setVisible(true);
+		}*/
+	}
 }
