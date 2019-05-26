@@ -1,7 +1,6 @@
 package fr.fredos.dvdtheque.swing.views;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -21,7 +20,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -69,9 +67,7 @@ public class FilmListView extends AbstractViewListenerHolder {
 	private SpinnerDialog spinnerDialog;
 	@Autowired
 	private Main main;
-	private JPanel filmScrollPanePanel;
-	private JPanel leftHalf;
-	private JPanel rightHalf;
+	private JPanel filmScrollPanePanel,addButtonPanel,leftHalf,rightHalf;
 	GridBagLayout gridbag;
 	GridBagConstraints c;
 	protected static final String titreTextField = "Titre";
@@ -94,44 +90,11 @@ public class FilmListView extends AbstractViewListenerHolder {
 		buildNumberFilmlabelPanel();
 		buildFilmListJTable();
 		buildComboBox();
-	}
-	
-	private void buildComboBox() {
-		BufferedImage koPic=null,okPic=null;
-		try {
-			koPic = ImageIO.read(this.getClass().getResource(FilmListView.koPath));
-			okPic = ImageIO.read(this.getClass().getResource(FilmListView.okPath));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
+		buildAddButtonPanel();
 		
-		filmYearStrings = new String[cal.get(Calendar.YEAR) - ORIGIN_YEAR + 1];
-		int index = 0;
-		for (int i = cal.get(Calendar.YEAR); i >= ORIGIN_YEAR; i--) {
-			filmYearStrings[index++] = String.valueOf(i);
-			// logger.info(methodName + "i="+i);
-		}
-		filmZoneDvdStrings = new String[3];
-		filmZoneDvdStrings[0] = "1";
-		filmZoneDvdStrings[1] = "2";
-		filmZoneDvdStrings[2] = "3";
-		filmYearComboBox = new JComboBox<String>(filmYearStrings);
-		filmYearDvdComboBox = new JComboBox<String>(filmYearStrings);
-		filmZoneDvdComboBox = new JComboBox<String>(filmZoneDvdStrings);
-		filmZoneDvdComboBox.setMaximumSize(new Dimension(20,20));
-		ImageIcon[] items = {new ImageIcon(okPic), new ImageIcon(koPic)};
-		rippedComboBox = new JComboBox<ImageIcon>(items);
 	}
-	private void buildLeftHalf() {
-		leftHalf = new JPanel();
-		leftHalf.setLayout(new BoxLayout(leftHalf, BoxLayout.Y_AXIS));
-		leftHalf.setPreferredSize(new Dimension(400, IMAGE_HEIGHT_SIZE * 2));
-	}
-	private void buildModifyButton() {
-		JPanel addButtonPanel = new JPanel(new FlowLayout(1,0,5));
-		//addButtonPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+	private void buildAddButtonPanel() {
+		this.addButtonPanel = new JPanel(new FlowLayout(1,0,5));
 		updateFilmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -160,11 +123,49 @@ public class FilmListView extends AbstractViewListenerHolder {
     			spinnerDialog.setVisible();
             }
         });
+	}
+	private void buildComboBox() {
+		BufferedImage koPic=null,okPic=null;
+		try {
+			koPic = ImageIO.read(this.getClass().getResource(FilmListView.koPath));
+			okPic = ImageIO.read(this.getClass().getResource(FilmListView.okPath));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		ImageIcon[] items = {new ImageIcon(okPic), new ImageIcon(koPic)};
+		rippedComboBox = new JComboBox<ImageIcon>(items);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		
+		filmYearStrings = new String[cal.get(Calendar.YEAR) - ORIGIN_YEAR + 1];
+		int index = 0;
+		for (int i = cal.get(Calendar.YEAR); i >= ORIGIN_YEAR; i--) {
+			filmYearStrings[index++] = String.valueOf(i);
+			// logger.info(methodName + "i="+i);
+		}
+		filmZoneDvdStrings = new String[3];
+		filmZoneDvdStrings[0] = "1";
+		filmZoneDvdStrings[1] = "2";
+		filmZoneDvdStrings[2] = "3";
+		filmYearComboBox = new JComboBox<String>(filmYearStrings);
+		filmYearDvdComboBox = new JComboBox<String>(filmYearStrings);
+		filmZoneDvdComboBox = new JComboBox<String>(filmZoneDvdStrings);
+		filmZoneDvdComboBox.setMaximumSize(new Dimension(20,20));
+	}
+	private void buildLeftHalf() {
+		leftHalf = new JPanel();
+		leftHalf.setLayout(new BoxLayout(leftHalf, BoxLayout.Y_AXIS));
+		leftHalf.setPreferredSize(new Dimension(400, IMAGE_HEIGHT_SIZE * 2));
+	}
+	private void buildModifyButton() {
+		this.addButtonPanel.removeAll();
+		//addButtonPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
 		updateFilmButton.setVisible(true);
-		addButtonPanel.add(updateFilmButton);
-		addButtonPanel.setMaximumSize(new Dimension(800,30));
-		addButtonPanel.setAlignmentX( Component.CENTER_ALIGNMENT );
-		rightHalf.add(addButtonPanel, c);
+		this.addButtonPanel.add(updateFilmButton);
+		this.addButtonPanel.setMaximumSize(new Dimension(800,30));
+		this.addButtonPanel.setAlignmentX( Component.CENTER_ALIGNMENT );
+		rightHalf.add(this.addButtonPanel, c);
 	}
 	private void buildRightHalf() {
 		rightHalf = new JPanel();

@@ -1,11 +1,13 @@
 package fr.fredos.dvdtheque.swing.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -39,6 +41,9 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	protected FilmRestService filmRestService;
 	private Long tmdbId= new Long(4780);
 	public static final String TITRE_FILM_TMBD_ID_4780 = "OBSESSION";
+	public static final String TITRE_FILM_UPDATED_TMBD_ID_4780 = "OBSESSION UPDATED";
+	
+	
 	@Test
 	public void findAllFilmsRestService() throws Exception {
 		List<Film> filmList = filmRestService.findAllFilms();
@@ -48,8 +53,10 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	
 	@Test
 	public void findTmdbFilmByTitre() throws Exception {
-		final String titre = "camping";
-		Set<Film> filmSet = filmRestService.findTmdbFilmByTitre(titre);
+		Long tmdbId = ThreadLocalRandom.current().nextLong(100, 200);
+		Film filmSaved = filmRestService.saveTmdbFilm(tmdbId);
+		assertNotNull(filmSaved);
+		Set<Film> filmSet = filmRestService.findTmdbFilmByTitre(filmSaved.getTitre());
 		assertNotNull(filmSet);
 		assertTrue(CollectionUtils.isNotEmpty(filmSet));
 	}
@@ -59,10 +66,24 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 		Film filmSaved = filmRestService.saveTmdbFilm(tmdbId);
 		assertNotNull(filmSaved);
 		assertEquals(StringUtils.upperCase(TITRE_FILM_TMBD_ID_4780),filmSaved.getTitre());
+		assertFalse(filmSaved.isRipped());
 	}
-	
+	@Test
+	public void testUpdateFilm() throws Exception {
+		Long tmdbId = ThreadLocalRandom.current().nextLong(200, 500);
+		Film filmSaved = filmRestService.saveTmdbFilm(tmdbId);
+		assertNotNull(filmSaved);
+		//filmSaved.setTitre(TITRE_FILM_UPDATED_TMBD_ID_4780);
+		filmSaved.setRipped(true);
+		Film filmUpdate = filmRestService.updateFilm(filmSaved);
+		assertNotNull(filmUpdate);
+		assertEquals(true,filmUpdate.isRipped());
+	}
 	@Test
 	public void testCheckIfTmdbFilmExists() throws Exception {
+		Long tmdbId = ThreadLocalRandom.current().nextLong(501, 1000);
+		Film filmSaved = filmRestService.saveTmdbFilm(tmdbId);
+		assertNotNull(filmSaved);
 		Boolean exists = filmRestService.checkIfTmdbFilmExists(tmdbId);
 		assertTrue(exists);
 	}

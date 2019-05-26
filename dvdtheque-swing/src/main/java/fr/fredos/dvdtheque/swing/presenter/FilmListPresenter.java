@@ -6,8 +6,8 @@ import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.swing.model.FilmTableModel;
-import fr.fredos.dvdtheque.swing.model.TmdbFilmTableModel;
+import fr.fredos.dvdtheque.swing.service.FilmRestService;
 import fr.fredos.dvdtheque.swing.view.listener.FilmListViewListener;
 import fr.fredos.dvdtheque.swing.views.FilmListView;
 
@@ -37,6 +37,10 @@ public class FilmListPresenter implements FilmListViewListener {
 	private FilmTableModel filmTableModel;
 	@Autowired
 	private JLabel nbrFilmsJLabel;
+	@Autowired
+	private JTable filmListJTable;
+	@Autowired
+	private FilmRestService filmRestService;
 	@PostConstruct
 	protected void init() {
 		this.filmListView.addFilmListViewListener(this);
@@ -53,7 +57,13 @@ public class FilmListPresenter implements FilmListViewListener {
     }
 	@Override
 	public void onUpdateFilmButtonClicked(ActionEvent evt){
-		logger.info("onUpdateFilmButtonClicked ");
+		int selectedRow = filmListJTable.getSelectedRow();
+		logger.info("onUpdateFilmButtonClicked selectedRow="+selectedRow);
+		if(selectedRow>=0) {
+			Film film = (Film) filmTableModel.getFilmAt(selectedRow);
+			logger.info(film.toString());
+			//filmRestService.
+		}
 		/*
 		int selectedRow = tmdbFilmListJTable.getSelectedRow();
 		if(selectedRow>=0) {

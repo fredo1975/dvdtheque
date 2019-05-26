@@ -25,6 +25,7 @@ public class FilmRestService {
 	private static final String GET_ALL_FILMS_URI = "dvdtheque.web.rest.findAllFilms";
 	private static final String GET_TMDB_FILM_URI = "dvdtheque.web.rest.findTmdbFilmByTitre";
 	private static final String ADD_TMDB_FILM_URI = "dvdtheque.web.rest.addTmdbFilm";
+	private static final String UPDATE_FILM_URI = "dvdtheque.web.rest.updateFilm";
 	private static final String CHECK_TMDB_FILM_URI = "dvdtheque.web.rest.checkIfTmdbFilmExists";
 	
 	private final RestTemplate restTemplate;
@@ -52,6 +53,12 @@ public class FilmRestService {
 		HttpEntity<Long> request = new HttpEntity<>(id);
 		ResponseEntity<Film> response = this.restTemplate
 				  .exchange(environment.getRequiredProperty(ADD_TMDB_FILM_URI)+id, HttpMethod.PUT, request, Film.class);
+		return response.getBody();
+	}
+	public Film updateFilm(Film film) {
+		HttpEntity<Film> request = new HttpEntity<>(film);
+		ResponseEntity<Film> response = this.restTemplate
+				  .exchange(environment.getRequiredProperty(UPDATE_FILM_URI)+film.getId(), HttpMethod.PUT, request, Film.class);
 		return response.getBody();
 	}
 }

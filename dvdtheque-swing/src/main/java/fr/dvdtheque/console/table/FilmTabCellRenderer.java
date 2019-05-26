@@ -10,8 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import fr.dvdtheque.console.vue.BaseVueAppli;
 import fr.fredos.dvdtheque.swing.model.FilmTableModel;
+import fr.fredos.dvdtheque.swing.views.FilmListView;
 
 public class FilmTabCellRenderer extends DefaultTableCellRenderer {
 	private static final long serialVersionUID = 1L;
@@ -26,14 +26,14 @@ public class FilmTabCellRenderer extends DefaultTableCellRenderer {
 		FilmTableModel tableModel = (FilmTableModel) table.getModel();
 		if (tableModel.getValueAt(row,col).equals(true)) {
 			try {
-				okkoPic = ImageIO.read(this.getClass().getResource(BaseVueAppli.okPath));
+				okkoPic = ImageIO.read(this.getClass().getResource(FilmListView.okPath));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				okkoPic = ImageIO.read(this.getClass().getResource(BaseVueAppli.koPath));
+				okkoPic = ImageIO.read(this.getClass().getResource(FilmListView.koPath));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
