@@ -16,6 +16,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +47,7 @@ import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 @AutoConfigureMockMvc
 //@TestPropertySource(locations = "classpath:application-integrationtest.properties")
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests{
+	protected Logger logger = LoggerFactory.getLogger(FilmControllerTest.class);
 	@Autowired
 	private MockMvc mvc;
 	@Autowired
@@ -243,6 +246,29 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film filmUpdated = filmService.findFilm(film.getId());
 		assertEquals(StringUtils.upperCase(TITRE_FILM_UPDATED), filmUpdated.getTitre());
 		assertFalse(filmUpdated.isRipped());
+	}
+	@Test
+	@Transactional
+	public void testUpdateWithRestSaveFilm() throws Exception {
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+				.put(SAVE_FILM_URI+tmdbId)
+				.contentType(MediaType.APPLICATION_JSON);
+		String response = mvc.perform(builder).andReturn().getResponse().getContentAsString();
+		logger.debug("response="+response);
+		ObjectMapper mapper = new ObjectMapper();
+		Film filmToUpdate = mapper.readValue(response, Film.class);
+		logger.debug("filmToUpdate="+filmToUpdate);
+		filmToUpdate.setTitre(TITRE_FILM_UPDATED);
+		filmToUpdate.setRipped(true);
+		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
+		builder = MockMvcRequestBuilders
+				.put(GET_ALL_FILMS_URI+filmToUpdate.getId(),filmToUpdate)
+				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
+		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+		Film filmUpdated = filmService.findFilm(filmToUpdate.getId());
+		assertEquals(StringUtils.upperCase(TITRE_FILM_UPDATED), filmUpdated.getTitre());
+		assertTrue(filmUpdated.isRipped());
 	}
 	@Test
 	@Transactional
