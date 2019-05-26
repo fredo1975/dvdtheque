@@ -109,6 +109,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertFilmIsNotNull(film);
 		film = filmService.findFilm(film.getId());
 		assertFilmIsNotNull(film);
+		assertNotNull(film.getDvd());
 	}
 	@Test
 	public void findAllFilms() throws Exception {
