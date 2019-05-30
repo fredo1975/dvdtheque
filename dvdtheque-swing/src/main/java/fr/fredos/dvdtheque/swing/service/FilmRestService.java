@@ -9,6 +9,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -60,10 +61,10 @@ public class FilmRestService {
 				  .exchange(environment.getRequiredProperty(ADD_TMDB_FILM_URI)+id, HttpMethod.PUT, request, Film.class);
 		return response.getBody();
 	}
-	public Film updateFilm(Film film) {
+	public boolean updateFilm(Film film) {
 		HttpEntity<Film> request = new HttpEntity<>(film);
-		ResponseEntity<Film> response = this.restTemplate
-				  .exchange(environment.getRequiredProperty(UPDATE_FILM_URI)+film.getId(), HttpMethod.PUT, request, Film.class);
-		return response.getBody();
+		ResponseEntity<Void> response = this.restTemplate
+				  .exchange(environment.getRequiredProperty(UPDATE_FILM_URI)+film.getId(), HttpMethod.PUT, request, Void.class);
+		return response.getStatusCode().equals(HttpStatus.OK);
 	}
 }
