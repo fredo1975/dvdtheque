@@ -93,7 +93,7 @@ public class FilmController {
 		return ResponseEntity.ok(replacedFilm);
 	}
 	@CrossOrigin
-	@PutMapping("/films/{id}")
+	@PutMapping("/films/update/{id}")
 	ResponseEntity<Object> updateFilm(@RequestBody Film film,@PathVariable Long id) {
 		Film filmOptional = filmService.findFilm(id);
 
@@ -101,7 +101,7 @@ public class FilmController {
 			return ResponseEntity.notFound().build();
 		}
 		filmService.updateFilm(film);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok().build();
 	}
 	
 	@CrossOrigin

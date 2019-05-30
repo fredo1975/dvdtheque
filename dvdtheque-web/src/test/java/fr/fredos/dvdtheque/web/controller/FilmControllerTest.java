@@ -69,6 +69,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String SEARCH_TMDB_FILM_BY_TITRE = "/dvdtheque/films/tmdb/byTitre/";
 	private static final String UPDATE_TMDB_FILM_BY_TMDBID = "/dvdtheque/films/tmdb/";
 	private static final String SAVE_FILM_URI = "/dvdtheque/films/save/";
+	private static final String UPDATE_FILM_URI = "/dvdtheque/films/update/";
 	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque/personnes";
 	private Long tmdbId= new Long(4780);
 	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/xghbwWlA9uW4bjkUCtUDaIeOvQ4.jpg";
@@ -239,7 +240,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-				.put(GET_ALL_FILMS_URI+film.getId(),filmToUpdate)
+				.put(UPDATE_FILM_URI+film.getId(),filmToUpdate)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
@@ -262,7 +263,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		filmToUpdate.setRipped(true);
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		builder = MockMvcRequestBuilders
-				.put(GET_ALL_FILMS_URI+filmToUpdate.getId(),filmToUpdate)
+				.put(UPDATE_FILM_URI+filmToUpdate.getId(),filmToUpdate)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());

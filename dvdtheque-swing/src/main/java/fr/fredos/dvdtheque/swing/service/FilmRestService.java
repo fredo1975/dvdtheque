@@ -23,6 +23,7 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 @Service
 public class FilmRestService {
 	private static final String GET_ALL_FILMS_URI = "dvdtheque.web.rest.findAllFilms";
+	private static final String GET_FILM_BY_ID_URI = "dvdtheque.web.rest.findFilmById";
 	private static final String GET_TMDB_FILM_URI = "dvdtheque.web.rest.findTmdbFilmByTitre";
 	private static final String ADD_TMDB_FILM_URI = "dvdtheque.web.rest.addTmdbFilm";
 	private static final String UPDATE_FILM_URI = "dvdtheque.web.rest.updateFilm";
@@ -44,6 +45,10 @@ public class FilmRestService {
 	public Set<Film> findTmdbFilmByTitre(final String titre) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException{
 		ObjectMapper objectMapper = new ObjectMapper();
 		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(GET_TMDB_FILM_URI)+titre, String.class), new TypeReference<Set<Film>>(){});
+	}
+	public Film findFilmById(final Long id) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException{
+		ObjectMapper objectMapper = new ObjectMapper();
+		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(GET_FILM_BY_ID_URI)+id, String.class), new TypeReference<Film>(){});
 	}
 	public Boolean checkIfTmdbFilmExists(final Long tmdbId) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException{
 		ObjectMapper objectMapper = new ObjectMapper();
