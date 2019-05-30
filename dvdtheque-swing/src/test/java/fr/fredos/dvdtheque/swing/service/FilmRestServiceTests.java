@@ -11,6 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -42,8 +43,12 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	private Long tmdbId= new Long(4780);
 	public static final String TITRE_FILM_TMBD_ID_4780 = "OBSESSION";
 	public static final String TITRE_FILM_UPDATED_TMBD_ID_4780 = "OBSESSION UPDATED";
-	
-	
+	private Film filmSaved;
+	@Before()
+	public void setUp() {
+		Long tmdbId = ThreadLocalRandom.current().nextLong(200, 500);
+		filmSaved = filmRestService.saveTmdbFilm(tmdbId);
+	}
 	@Test
 	public void findAllFilmsRestService() throws Exception {
 		List<Film> filmList = filmRestService.findAllFilms();
@@ -70,14 +75,14 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	}
 	@Test
 	public void testUpdateFilm() throws Exception {
-		Long tmdbId = ThreadLocalRandom.current().nextLong(200, 500);
-		Film filmSaved = filmRestService.saveTmdbFilm(tmdbId);
 		assertNotNull(filmSaved);
 		//filmSaved.setTitre(TITRE_FILM_UPDATED_TMBD_ID_4780);
 		filmSaved.setRipped(true);
-		Film filmUpdate = filmRestService.updateFilm(filmSaved);
-		assertNotNull(filmUpdate);
-		assertEquals(true,filmUpdate.isRipped());
+		boolean updated = filmRestService.updateFilm(filmSaved);
+		assertTrue(updated);
+		Film filmUpdated = filmRestService.findFilmById(filmSaved.getId());
+		assertNotNull(filmUpdated);
+		assertTrue(filmUpdated.isRipped());
 	}
 	@Test
 	public void testCheckIfTmdbFilmExists() throws Exception {
