@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -21,6 +22,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestClientException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
@@ -74,18 +79,18 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 		assertFalse(filmSaved.isRipped());
 	}
 	@Test
-	public void testUpdateFilm() throws Exception {
-		assertNotNull(filmSaved);
+	public void testUpdateFilm() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
+		Film f = filmRestService.findFilmById(980l);
+		assertNotNull(f);
 		//filmSaved.setTitre(TITRE_FILM_UPDATED_TMBD_ID_4780);
-		filmSaved.setRipped(true);
-		boolean updated = filmRestService.updateFilm(filmSaved);
-		assertTrue(updated);
-		Film filmUpdated = filmRestService.findFilmById(filmSaved.getId());
+		f.setRipped(true);
+		filmRestService.updateFilm(f);
+		Film filmUpdated = filmRestService.findFilmById(f.getId());
 		assertNotNull(filmUpdated);
 		assertTrue(filmUpdated.isRipped());
 	}
 	@Test
-	public void testCheckIfTmdbFilmExists() throws Exception {
+	public void testCheckIfTmdbFilmExists() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		Long tmdbId = ThreadLocalRandom.current().nextLong(501, 1000);
 		Film filmSaved = filmRestService.saveTmdbFilm(tmdbId);
 		assertNotNull(filmSaved);

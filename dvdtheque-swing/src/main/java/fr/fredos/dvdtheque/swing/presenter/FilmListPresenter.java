@@ -62,19 +62,7 @@ public class FilmListPresenter implements FilmListViewListener {
 		if(selectedRow>=0) {
 			Film film = (Film) filmTableModel.getFilmAt(selectedRow);
 			logger.info(film.toString());
-			//filmRestService.
+			filmRestService.updateFilm(film);
 		}
-		/*
-		int selectedRow = tmdbFilmListJTable.getSelectedRow();
-		if(selectedRow>=0) {
-			TmdbFilmTableModel tmdbFilmTableModel = (TmdbFilmTableModel) tmdbFilmListJTable.getModel();
-			if(this.filmRestService.checkIfTmdbFilmExists(tmdbFilmTableModel.getFilmAt(selectedRow).getTmdbId())) {
-				JOptionPane.showMessageDialog(filmAddViewPanel, "Ce film est déjà enregistré", "Chercher", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			Film filmSaved = filmRestService.saveTmdbFilm(tmdbFilmTableModel.getFilmAt(selectedRow).getId());
-			savedTmdbFilmsJLabel.setText(filmSaved.getTitre()+" sauvé");
-			savedTmdbFilmsJLabel.setVisible(true);
-		}*/
 	}
 }
