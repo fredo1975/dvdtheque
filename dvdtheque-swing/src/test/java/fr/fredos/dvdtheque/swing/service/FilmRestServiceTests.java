@@ -52,7 +52,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	@Before()
 	public void setUp() {
 		Long tmdbId = ThreadLocalRandom.current().nextLong(200, 500);
-		filmSaved = filmRestService.saveTmdbFilm(tmdbId);
+		this.filmSaved = filmRestService.saveTmdbFilm(tmdbId);
 	}
 	@Test
 	public void findAllFilmsRestService() throws Exception {
