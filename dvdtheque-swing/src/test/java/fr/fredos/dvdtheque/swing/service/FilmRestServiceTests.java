@@ -45,14 +45,16 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	protected IPersonneService personneService;
 	@Autowired
 	protected FilmRestService filmRestService;
-	private Long tmdbId= new Long(4780);
+	private Long TMBD_ID_4780= new Long(4780);
+	private Long tmdbId;
 	public static final String TITRE_FILM_TMBD_ID_4780 = "OBSESSION";
 	public static final String TITRE_FILM_UPDATED_TMBD_ID_4780 = "OBSESSION UPDATED";
 	private Film filmSaved;
 	@Before()
 	public void setUp() {
-		Long tmdbId = ThreadLocalRandom.current().nextLong(200, 500);
-		this.filmSaved = filmRestService.saveTmdbFilm(tmdbId);
+		/*
+		this.tmdbId = ThreadLocalRandom.current().nextLong(200, 500);
+		this.filmSaved = filmRestService.saveTmdbFilm(this.tmdbId);*/
 	}
 	@Test
 	public void findAllFilmsRestService() throws Exception {
@@ -63,9 +65,6 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	
 	@Test
 	public void findTmdbFilmByTitre() throws Exception {
-		Long tmdbId = ThreadLocalRandom.current().nextLong(100, 200);
-		Film filmSaved = filmRestService.saveTmdbFilm(tmdbId);
-		assertNotNull(filmSaved);
 		Set<Film> filmSet = filmRestService.findTmdbFilmByTitre(filmSaved.getTitre());
 		assertNotNull(filmSet);
 		assertTrue(CollectionUtils.isNotEmpty(filmSet));
@@ -73,7 +72,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	
 	@Test
 	public void testAddTmdbFilm() throws Exception {
-		Film filmSaved = filmRestService.saveTmdbFilm(tmdbId);
+		Film filmSaved = filmRestService.saveTmdbFilm(TMBD_ID_4780);
 		assertNotNull(filmSaved);
 		assertEquals(StringUtils.upperCase(TITRE_FILM_TMBD_ID_4780),filmSaved.getTitre());
 		assertFalse(filmSaved.isRipped());
@@ -91,10 +90,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	}
 	@Test
 	public void testCheckIfTmdbFilmExists() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		Long tmdbId = ThreadLocalRandom.current().nextLong(501, 1000);
-		Film filmSaved = filmRestService.saveTmdbFilm(tmdbId);
-		assertNotNull(filmSaved);
-		Boolean exists = filmRestService.checkIfTmdbFilmExists(tmdbId);
+		Boolean exists = filmRestService.checkIfTmdbFilmExists(this.tmdbId);
 		assertTrue(exists);
 	}
 }

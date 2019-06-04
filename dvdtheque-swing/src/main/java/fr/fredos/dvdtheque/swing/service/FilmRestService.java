@@ -8,14 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 @Service
 public class FilmRestService {
+	private static final String DVDTHEQUE_BASE_URI = "dvdtheque.web.rest.base.url";
 	private static final String GET_ALL_FILMS_URI = "dvdtheque.web.rest.findAllFilms";
 	private static final String GET_FILM_BY_ID_URI = "dvdtheque.web.rest.findFilmById";
 	private static final String GET_TMDB_FILM_URI = "dvdtheque.web.rest.findTmdbFilmByTitre";
@@ -40,29 +44,35 @@ public class FilmRestService {
 	
 	public List<Film> findAllFilms() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(GET_ALL_FILMS_URI), String.class), new TypeReference<List<Film>>(){});
+		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(GET_ALL_FILMS_URI), String.class), new TypeReference<List<Film>>(){});
 	}
 	
 	public Set<Film> findTmdbFilmByTitre(final String titre) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException{
 		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(GET_TMDB_FILM_URI)+titre, String.class), new TypeReference<Set<Film>>(){});
+		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(GET_TMDB_FILM_URI)+titre, String.class), new TypeReference<Set<Film>>(){});
 	}
 	public Film findFilmById(final Long id) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException{
 		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(GET_FILM_BY_ID_URI)+id, String.class), new TypeReference<Film>(){});
+		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(GET_FILM_BY_ID_URI)+id, String.class), new TypeReference<Film>(){});
 	}
 	public Boolean checkIfTmdbFilmExists(final Long tmdbId) throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException{
 		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(CHECK_TMDB_FILM_URI)+tmdbId, String.class), new TypeReference<Boolean>(){});
+		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(CHECK_TMDB_FILM_URI)+tmdbId, String.class), new TypeReference<Boolean>(){});
 	}
 	public Film saveTmdbFilm(Long id) {
 		ResponseEntity<Film> response = this.restTemplate
-				  .exchange(environment.getRequiredProperty(ADD_TMDB_FILM_URI)+id, HttpMethod.PUT, new HttpEntity<>(id), Film.class);
+				  .exchange(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(ADD_TMDB_FILM_URI)+id, HttpMethod.PUT, new HttpEntity<>(id), Film.class);
 		return response.getBody();
 	}
-	public boolean updateFilm(Film film) {
-		ResponseEntity<Object> response = this.restTemplate
-				  .exchange(environment.getRequiredProperty(UPDATE_FILM_URI)+film.getId(), HttpMethod.PUT, new HttpEntity<>(film), Object.class);
-		return response.getStatusCode().equals(HttpStatus.OK);
+	public boolean updateFilm(Film film) throws JsonProcessingException {
+		HttpHeaders headers = new HttpHeaders();
+        headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        ObjectMapper objectMapper = new ObjectMapper();
+		String filmJsonString = objectMapper.writeValueAsString(film);
+		
+		ResponseEntity<Void> response = this.restTemplate
+				  .exchange(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(UPDATE_FILM_URI)+film.getId(), HttpMethod.PUT, new HttpEntity<>(film,headers), Void.class);
+		return response.getStatusCode() == HttpStatus.OK;
 	}
 }

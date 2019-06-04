@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestClientException;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.dvdtheque.console.table.FilmTabCellRenderer;
@@ -105,6 +106,9 @@ public class FilmListView extends AbstractViewListenerHolder {
 							try {
 								t.onUpdateFilmButtonClicked(u);
 							} catch (RestClientException | IllegalStateException e) {
+								e.printStackTrace();
+							} catch (JsonProcessingException e) {
+								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						},event);

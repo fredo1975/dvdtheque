@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestClientException;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -56,7 +57,7 @@ public class FilmListPresenter implements FilmListViewListener {
         subPanel.revalidate();
     }
 	@Override
-	public void onUpdateFilmButtonClicked(ActionEvent evt){
+	public void onUpdateFilmButtonClicked(ActionEvent evt) throws JsonProcessingException{
 		int selectedRow = filmListJTable.getSelectedRow();
 		logger.info("onUpdateFilmButtonClicked selectedRow="+selectedRow);
 		if(selectedRow>=0) {
