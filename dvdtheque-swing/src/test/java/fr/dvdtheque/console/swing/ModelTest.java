@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import fr.fredos.dvdtheque.swing.model.FilmTableModel;
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
 		TestConfig.class,
 		fr.fredos.dvdtheque.swing.service.FilmRestService.class})
+@Ignore
 public class ModelTest extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(ModelTest.class);
 	@Autowired
