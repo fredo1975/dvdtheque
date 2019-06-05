@@ -16,7 +16,7 @@ pipeline {
 
         stage ('Build') {
             steps {
-                sh 'mvn spring-boot:run -Dspring-boot.run.profiles=dev' 
+                sh 'mvn clean install' 
             }
             post {
                 success {
