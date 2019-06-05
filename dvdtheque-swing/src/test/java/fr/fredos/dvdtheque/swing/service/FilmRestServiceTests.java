@@ -97,9 +97,9 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Set<Film> filmSet = filmRestService.findTmdbFilmByTitre(this.filmSaved.getTitre());
-		assertEquals(StringUtils.upperCase(filmSet.iterator().next().getTitreO()),this.filmSaved.getTitreO());
-		assertFalse(this.filmSaved.isRipped());
+		Film film = filmRestService.findFilmById(this.filmSaved.getId());
+		assertEquals(StringUtils.upperCase(film.getTitre()),this.filmSaved.getTitre());
+		assertFalse(film.isRipped());
 	}
 	@Test
 	public void testUpdateFilm() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
