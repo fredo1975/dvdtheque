@@ -57,13 +57,15 @@ public class FilmListPresenter implements FilmListViewListener {
         subPanel.revalidate();
     }
 	@Override
-	public void onUpdateFilmButtonClicked(ActionEvent evt) throws JsonProcessingException{
+	public void onUpdateFilmButtonClicked(ActionEvent evt) throws RestClientException, IllegalStateException, IOException{
 		int selectedRow = filmListJTable.getSelectedRow();
 		logger.info("onUpdateFilmButtonClicked selectedRow="+selectedRow);
 		if(selectedRow>=0) {
 			Film film = (Film) filmTableModel.getFilmAt(selectedRow);
 			logger.info(film.toString());
 			filmRestService.updateFilm(film);
+			filmTableModel.buildFilmList();
+			filmTableModel.fireTableDataChanged();
 		}
 	}
 }

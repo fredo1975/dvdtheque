@@ -68,10 +68,7 @@ public class FilmRestService {
 		HttpHeaders headers = new HttpHeaders();
         headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        ObjectMapper objectMapper = new ObjectMapper();
-		String filmJsonString = objectMapper.writeValueAsString(film);
-		
-		ResponseEntity<Void> response = this.restTemplate
+        ResponseEntity<Void> response = this.restTemplate
 				  .exchange(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(UPDATE_FILM_URI)+film.getId(), HttpMethod.PUT, new HttpEntity<>(film,headers), Void.class);
 		return response.getStatusCode() == HttpStatus.OK;
 	}

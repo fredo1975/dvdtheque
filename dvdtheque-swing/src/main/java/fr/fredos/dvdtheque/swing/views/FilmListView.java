@@ -78,6 +78,7 @@ public class FilmListView extends AbstractViewListenerHolder {
 	protected JComboBox<String> filmYearComboBox, filmZoneDvdComboBox, filmYearDvdComboBox;
 	protected JComboBox<ImageIcon> rippedComboBox;
 	protected String[] filmYearStrings, filmZoneDvdStrings;
+	private Film selectedFilm;
 	@PostConstruct
 	protected void init() {
 		filmListViewPanel.setLayout(new BoxLayout(filmListViewPanel, BoxLayout.LINE_AXIS));
@@ -110,6 +111,9 @@ public class FilmListView extends AbstractViewListenerHolder {
 							} catch (JsonProcessingException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
 						},event);
     					return null;
@@ -138,6 +142,16 @@ public class FilmListView extends AbstractViewListenerHolder {
 		}
 		ImageIcon[] items = {new ImageIcon(okPic), new ImageIcon(koPic)};
 		rippedComboBox = new JComboBox<ImageIcon>(items);
+		rippedComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(rippedComboBox.getSelectedIndex()==0) {
+					FilmListView.this.selectedFilm.setRipped(true);
+				}else {
+					FilmListView.this.selectedFilm.setRipped(false);
+				}
+			}
+		});
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		
@@ -153,8 +167,20 @@ public class FilmListView extends AbstractViewListenerHolder {
 		filmZoneDvdStrings[2] = "3";
 		filmYearComboBox = new JComboBox<String>(filmYearStrings);
 		filmYearDvdComboBox = new JComboBox<String>(filmYearStrings);
+		filmYearDvdComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FilmListView.this.selectedFilm.getDvd().setAnnee(Integer.valueOf((String) filmYearDvdComboBox.getSelectedItem()));
+			}
+		});
 		filmZoneDvdComboBox = new JComboBox<String>(filmZoneDvdStrings);
 		filmZoneDvdComboBox.setMaximumSize(new Dimension(20,20));
+		filmZoneDvdComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FilmListView.this.selectedFilm.getDvd().setZone(Integer.valueOf((String) filmZoneDvdComboBox.getSelectedItem()));
+			}
+		});
 	}
 	private void buildLeftHalf() {
 		leftHalf = new JPanel();
@@ -214,6 +240,7 @@ public class FilmListView extends AbstractViewListenerHolder {
 
 	private void populateFilmDetails(Film film) {
 		logger.info("selected film=" + film.toString());
+		this.selectedFilm = film;
 		Object[] filmValues = { film.getTitre(), film.getTitreO(), film.getAnnee(), film.getDvd().getZone(),
 				film.getDvd().getAnnee(), film.getRealisateurs(), film.getActeurs(), film.getOverview(),
 				film.getTmdbId(), film.getDvd().getDateRip(), film.isRipped() };
@@ -221,7 +248,6 @@ public class FilmListView extends AbstractViewListenerHolder {
 		for (int i = 0; i < this.filmLabels.length; i++) {
 			JLabel titreTextFieldLabel = new JLabel(this.filmLabels[i] + ": ");
 			titreTextFieldLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
-			
 			c.gridwidth = GridBagConstraints.RELATIVE; // next-to-last
 			c.fill = GridBagConstraints.NONE; // reset to default
 			c.weightx = 0.0; // reset to default
