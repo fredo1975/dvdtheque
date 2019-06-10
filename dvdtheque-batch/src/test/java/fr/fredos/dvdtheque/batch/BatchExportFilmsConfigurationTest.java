@@ -23,6 +23,7 @@ import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
+@Ignore
 public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	@Autowired
 	public Job exportFilmsJob;
