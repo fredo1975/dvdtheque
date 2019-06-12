@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.Calendar;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -24,7 +23,6 @@ import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
-@Ignore
 public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	@Autowired
 	public Job exportFilmsJob;
