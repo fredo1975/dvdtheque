@@ -24,5 +24,15 @@ pipeline {
                 }
             }
         }
+        stage('Deliver') {
+            steps {
+                sh 'echo \'stoping dvdtheque-dev-rest.service ...\''
+                sh 'sudo systemctl stop dvdtheque-dev-rest.service'
+                sh 'echo \'copying dvdtheque-web-*.jar to  /opt/dvdtheque_rest_service/dev/dvdtheque-web.jar ...\''
+                sh 'sudo cp dvdtheque-web/target/dvdtheque-web-*.jar /opt/dvdtheque_rest_service/dev/dvdtheque-web.jar'
+                sh 'echo \'starting dvdtheque-dev-rest.service ...\''
+                sh 'sudo systemctl start dvdtheque-dev-rest.service'
+            }
+        }
     }
 }
