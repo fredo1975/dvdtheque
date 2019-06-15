@@ -110,6 +110,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(allFilms);
 		if(CollectionUtils.isNotEmpty(allFilms)) {
 			assertTrue(allFilms.size()>0);
+			
 			Film filmToTest = allFilms.get(0);
 			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_FILMS_URI)
 					.contentType(MediaType.APPLICATION_JSON);
@@ -119,7 +120,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 					.andExpect(MockMvcResultMatchers.status().isOk())
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
 			assertNotNull(resultActions);
-			assertFilmIsNotNull(filmToTest,false);
+			assertFilmIsNotNull(filmToTest,true);
 		}
 	}
 	@Test
