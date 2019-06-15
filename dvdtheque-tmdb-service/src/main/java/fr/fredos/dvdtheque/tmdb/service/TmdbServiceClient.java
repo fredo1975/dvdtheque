@@ -69,9 +69,12 @@ public class TmdbServiceClient {
 	 * we're creating a film from a TMDB film
 	 * @param tmdbId
 	 * @return
-	 * @throws ParseException
+	 * @throws Exception 
 	 */
-	public Film saveTmbdFilm(final Long tmdbId) throws ParseException {
+	public Film saveTmbdFilm(final Long tmdbId) throws Exception {
+		if(this.filmService.checkIfTmdbFilmExists(tmdbId)) {
+			throw new Exception("Film with tmbdbId="+tmdbId+" already exists");
+		}
 		Results results = retrieveTmdbSearchResultsById(tmdbId);
 		if(results != null) {
 			Film filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);
@@ -138,7 +141,6 @@ public class TmdbServiceClient {
 		try {
 			Thread.sleep(400);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		/*

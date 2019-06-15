@@ -16,12 +16,22 @@ pipeline {
 
         stage ('Build') {
             steps {
-                sh 'mvn clean install' 
+                sh 'mvn clean install -Djava.io.tmpdir=/var/tmp/exportDir' 
             }
             post {
                 success {
                     junit '*/target/surefire-reports/*.xml'
                 }
+            }
+        }
+        stage('Deliver') {
+            steps {
+                sh 'echo \'stoping dvdtheque-jenkins-rest.service ...\''
+                sh 'sudo systemctl stop dvdtheque-jenkins-rest.service'
+                sh 'echo \'copying dvdtheque-web-*.jar to  /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar ...\''
+                sh 'cp dvdtheque-web/target/dvdtheque-web-*.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar'
+                sh 'echo \'starting dvdtheque-jenkins-rest.service ...\''
+                sh 'sudo systemctl start dvdtheque-jenkins-rest.service'
             }
         }
     }

@@ -93,10 +93,9 @@ public class FilmController {
 		return ResponseEntity.ok(replacedFilm);
 	}
 	@CrossOrigin
-	@PutMapping("/films/{id}")
+	@PutMapping("/films/update/{id}")
 	ResponseEntity<Object> updateFilm(@RequestBody Film film,@PathVariable Long id) {
 		Film filmOptional = filmService.findFilm(id);
-
 		if(filmOptional==null) {
 			return ResponseEntity.notFound().build();
 		}
@@ -106,7 +105,7 @@ public class FilmController {
 	
 	@CrossOrigin
 	@PutMapping("/films/save/{tmdbId}")
-	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId) {
+	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId) throws Exception {
 		Film savedFilm;
 		try {
 			savedFilm = tmdbServiceClient.saveTmbdFilm(tmdbId);

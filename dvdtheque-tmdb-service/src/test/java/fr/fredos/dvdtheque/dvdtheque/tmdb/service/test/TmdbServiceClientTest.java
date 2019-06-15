@@ -117,7 +117,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		}
     }
 	@Test
-    public void savetmdbFilmTest() throws ParseException {
+    public void savetmdbFilmTest() throws Exception {
 		Film film = client.saveTmbdFilm(tmdbId);
 		assertFilmIsNotNull(film,true);
 		logger.info("film = "+film.toString());

@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +72,7 @@ public class FilmServiceImpl implements IFilmService {
 		return filmDao.findFilmWithAllObjectGraph(id);
 	}
 	@Transactional(readOnly = true)
+	@Cacheable(value= CACHE_FILM)
 	public Film findFilm(Long id) {
 		return filmDao.findFilm(id);
 	}
@@ -103,7 +103,7 @@ public class FilmServiceImpl implements IFilmService {
 		return filmDao.saveNewFilm(film);
 	}
 	@Transactional(readOnly = false)
-	@Cacheable(value= "filmCache")
+	@Cacheable(value= CACHE_FILM)
 	public List<Film> findAllFilms() {
 		return filmDao.findAllFilms();
 	}
