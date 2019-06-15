@@ -13,7 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -38,7 +37,6 @@ import fr.fredos.dvdtheque.service.IPersonneService;
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
 		fr.fredos.dvdtheque.swing.service.FilmRestService.class})
 @AutoConfigureMockMvc
-@Ignore
 public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(FilmRestServiceTests.class);
 	@Autowired
@@ -60,26 +58,21 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	private void findTmdbFilmToInsert() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException{
 		boolean found = false;
 		while(!found) {
-			try {
-				Thread.sleep(400);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			this.tmdbId = ThreadLocalRandom.current().nextLong(200, 479);
+			this.tmdbId = ThreadLocalRandom.current().nextLong(200, 1000);
 			if(!filmRestService.checkIfTmdbFilmExists(this.tmdbId)) {
 				found = true;
 			}
 		}
-		this.filmSaved = filmRestService.saveTmdbFilm(this.tmdbId);
+		Film filmSaved = filmRestService.saveTmdbFilm(this.tmdbId);
+		if(filmSaved == null) {
+			findTmdbFilmToInsert();
+		}else {
+			this.filmSaved = filmSaved;
+		}
 	}
 	
 	@Test
 	public void findAllFilmsRestService() throws Exception {
-		try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		List<Film> filmList = filmRestService.findAllFilms();
 		assertNotNull(filmList);
 		assertTrue(CollectionUtils.isNotEmpty(filmList));
@@ -87,11 +80,6 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	
 	@Test
 	public void findTmdbFilmByTitre() throws Exception {
-		try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		Set<Film> filmSet = filmRestService.findTmdbFilmByTitre(this.filmSaved.getTitre());
 		assertNotNull(filmSet);
 		assertTrue(CollectionUtils.isNotEmpty(filmSet));
@@ -99,22 +87,12 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	
 	@Test
 	public void testAddTmdbFilm() throws Exception {
-		try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		Film film = filmRestService.findFilmById(this.filmSaved.getId());
 		assertEquals(StringUtils.upperCase(film.getTitre()),this.filmSaved.getTitre());
 		assertFalse(film.isRipped());
 	}
 	@Test
 	public void testUpdateFilm() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		Film f = filmRestService.findFilmById(this.filmSaved.getId());
 		assertNotNull(f);
 		//filmSaved.setTitre(TITRE_FILM_UPDATED_TMBD_ID_4780);
@@ -126,11 +104,6 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	}
 	@Test
 	public void testCheckIfTmdbFilmExists() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		Boolean exists = filmRestService.checkIfTmdbFilmExists(this.filmSaved.getTmdbId());
 		assertTrue(exists);
 	}
