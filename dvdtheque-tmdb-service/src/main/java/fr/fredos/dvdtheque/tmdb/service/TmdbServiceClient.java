@@ -87,7 +87,7 @@ public class TmdbServiceClient {
 			throw new Exception("Film with tmbdbId="+tmdbId+" already exists");
 		}
 		Results results = retrieveTmdbSearchResultsById(tmdbId);
-		if(results != null && !"34".equals(results.getStatus())) {
+		if(results != null) {
 			Film filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);
 			filmToSave.setId(null);
 			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), null, null, null);
@@ -106,17 +106,13 @@ public class TmdbServiceClient {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	public Results retrieveTmdbSearchResultsById(final Long tmdbId) throws JsonParseException, JsonMappingException, IOException {
+	public Results retrieveTmdbSearchResultsById(final Long tmdbId) {
 		try {
-			ResponseEntity<String> response = restTemplate.getForEntity(environment.getRequiredProperty(TMDB_SEARCH_IMAGES_QUERY)+tmdbId+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&language=fr", String.class);
-			if(HttpStatus.OK.equals(response.getStatusCode())) {
-				ObjectMapper objectMapper = new ObjectMapper();
-				return objectMapper.readValue(response.getBody(),new TypeReference<Results>(){});
-			}
+			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_IMAGES_QUERY)+tmdbId+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&language=fr", Results.class);
 		}catch(org.springframework.web.client.HttpClientErrorException e) {
 			logger.error("film not found");
 		}
-		return new Results("34");
+		return null;
 		
 	}
 	public SearchResults retrieveTmdbSearchResults(final String titre) {

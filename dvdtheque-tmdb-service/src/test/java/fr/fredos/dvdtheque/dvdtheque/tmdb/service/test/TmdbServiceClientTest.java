@@ -2,6 +2,7 @@ package fr.fredos.dvdtheque.dvdtheque.tmdb.service.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -102,15 +103,14 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		logger.info("tmdb id = "+res.getId().toString());
     }
 	@Test
-    public void retrieveTmdbResultsWithResourceNotFoundTest() throws JsonParseException, JsonMappingException, IOException {
+    public void retrieveTmdbResultsWithResourceNotFoundTest() {
 		Long tmdbId = Long.valueOf(413);
 		Results results = client.retrieveTmdbSearchResultsById(tmdbId);
-		assertNotNull(results);
-		assertEquals("34",results.getStatus());
+		assertNull(results);
 		//logger.info("tmdb id = "+res.getId().toString());
     }
 	@Test
-    public void retrieveTmdbResultsByTmdbIdTest() throws JsonParseException, JsonMappingException, IOException {
+    public void retrieveTmdbResultsByTmdbIdTest() {
 		Results res = client.retrieveTmdbSearchResultsById(tmdbId);
 		assertResultsIsNotNull(res);
 		logger.info("res = "+res.toString());
