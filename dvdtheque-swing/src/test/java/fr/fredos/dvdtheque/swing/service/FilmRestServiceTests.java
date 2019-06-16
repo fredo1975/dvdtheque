@@ -58,7 +58,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	private void findTmdbFilmToInsert() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException{
 		boolean found = false;
 		while(!found) {
-			this.tmdbId = ThreadLocalRandom.current().nextLong(200, 1000);
+			this.tmdbId = ThreadLocalRandom.current().nextLong(200, 3000);
 			if(!filmRestService.checkIfTmdbFilmExists(this.tmdbId)) {
 				found = true;
 			}

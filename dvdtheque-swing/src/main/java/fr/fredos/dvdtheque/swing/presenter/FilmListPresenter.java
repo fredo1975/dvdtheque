@@ -46,6 +46,7 @@ public class FilmListPresenter implements FilmListViewListener {
 		this.filmListView.addFilmListViewListener(this);
 		subPanel.add(filmListViewPanel,FILM_LIST_VIEW_PANEL);
 	}
+	@Override
 	public void handleFilmTableList() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
     	logger.info("handleFilmTableList ...");
     	filmTableModel.buildFilmList();
