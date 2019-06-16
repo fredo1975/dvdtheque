@@ -1,6 +1,7 @@
 package fr.dvdtheque.console.image.utils;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -9,8 +10,6 @@ import javax.swing.JPanel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import fr.dvdtheque.console.vue.HeaderPanel;
 
 public class ImageFactory {
 	protected final Log logger = LogFactory.getLog(ImageFactory.class);
@@ -25,6 +24,20 @@ public class ImageFactory {
 	public ImageFactory(JPanel panel) {
 		super();
 		this.panel = panel;
+	}
+	private static class HeaderPanel extends JPanel{
+		private static final long serialVersionUID = 1L;
+		Image header = null;
+		public HeaderPanel(Image header){
+			this.header=header;
+			//setLayout(new FlowLayout(FlowLayout.CENTER));
+			setOpaque( false );
+		}
+		public void paint( Graphics g ){
+	        if ( header != null )
+	            g.drawImage( header, 0, 0,getSize().width, getSize().height, this );
+	        super.paint( g );
+	    }
 	}
 	public JPanel getHeaderPan(){
 		JPanel jPanel = new HeaderPanel(image);
@@ -44,7 +57,6 @@ public class ImageFactory {
 			logger.debug("url.getPath()="+url.getPath());
 			image = panel.getToolkit().getImage(url);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
