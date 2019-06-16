@@ -58,7 +58,7 @@ public class FilmAddPresenter implements FilmAddViewListener{
 	}
 	public void printFilmAddScreen() {
     	logger.info("printFilmAddScreen ...");
-    	tmdbSearchTextField.setText("replicant");
+    	//tmdbSearchTextField.setText("replicant");
     	tmdbFilmTableModel.clearFilmSet();
     	//nbrTmdbFilmsJLabel.setText(null);
     	nbrTmdbFilmsJLabel.setVisible(false);
