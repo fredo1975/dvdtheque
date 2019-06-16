@@ -109,10 +109,8 @@ public class FilmListView extends AbstractViewListenerHolder {
 							} catch (RestClientException | IllegalStateException e) {
 								e.printStackTrace();
 							} catch (JsonProcessingException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						},event);
@@ -124,6 +122,7 @@ public class FilmListView extends AbstractViewListenerHolder {
     				}
 
     				protected void done() {
+    					rebuildRightHalf(FilmListView.this.selectedFilm);
     					spinnerDialog.dispose();
     				}
     			};
@@ -131,6 +130,12 @@ public class FilmListView extends AbstractViewListenerHolder {
     			spinnerDialog.setVisible();
             }
         });
+	}
+	
+	private void rebuildRightHalf(Film f) {
+		rightHalf.removeAll();
+		populateFilmDetails(f);
+		buildModifyButton();
 	}
 	private void buildComboBox() {
 		BufferedImage koPic=null,okPic=null;
@@ -147,8 +152,10 @@ public class FilmListView extends AbstractViewListenerHolder {
 			public void actionPerformed(ActionEvent e) {
 				if(rippedComboBox.getSelectedIndex()==0) {
 					FilmListView.this.selectedFilm.setRipped(true);
+					FilmListView.this.selectedFilm.getDvd().setDateRip(new Date());
 				}else {
 					FilmListView.this.selectedFilm.setRipped(false);
+					FilmListView.this.selectedFilm.getDvd().setDateRip(null);
 				}
 			}
 		});
@@ -274,7 +281,7 @@ public class FilmListView extends AbstractViewListenerHolder {
 					sb.append("</body></html>");
 					titreTextValueFieldLabel = new JLabel(sb.toString());
 				}else if(i == 9 && filmValues[i] != null) {
-					DateFormat df = new SimpleDateFormat("dd/M/yyyy");
+					DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 					String ripDate = df.format(filmValues[i]);
 					titreTextValueFieldLabel = new JLabel(ripDate);
 				}else {
@@ -313,15 +320,20 @@ public class FilmListView extends AbstractViewListenerHolder {
 		filmListViewPanel.revalidate();
 	}
 
+	public Film getSelectedFilm() {
+		return selectedFilm;
+	}
+	public void setSelectedFilm(Film selectedFilm) {
+		this.selectedFilm = selectedFilm;
+	}
+
+
 	private class RowListener implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent event) {
 			if (event.getValueIsAdjusting()) {
 				return;
 			}
-			rightHalf.removeAll();
-			populateFilmDetails(
-					(Film) filmTableModel.getFilmAt(filmListJTable.getSelectionModel().getLeadSelectionIndex()));
-			buildModifyButton();
+			rebuildRightHalf((Film) filmTableModel.getFilmAt(filmListJTable.getSelectionModel().getLeadSelectionIndex()));
 		}
 	}
 }
