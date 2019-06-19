@@ -13,7 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -38,7 +37,6 @@ import fr.fredos.dvdtheque.service.IPersonneService;
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
 		fr.fredos.dvdtheque.swing.service.FilmRestService.class})
 @AutoConfigureMockMvc
-@Ignore
 public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(FilmRestServiceTests.class);
 	@Autowired
