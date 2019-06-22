@@ -1,18 +1,28 @@
 package fr.fredos.dvdtheque.web.controller;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +46,10 @@ public class FilmController {
 	protected IPersonneService personneService;
 	@Autowired
     private TmdbServiceClient tmdbServiceClient;
+	@Autowired
+	private JobLauncher jobLauncher;
+    @Autowired
+    private Job exportFilmsJob;
 	@CrossOrigin
 	@GetMapping("/films/byPersonne")
 	Personne findPersonne(@RequestParam(name="nom",required = false) String nom) {
@@ -131,6 +145,20 @@ public class FilmController {
 		personneService.updatePersonne(personne);
 		logger.info(personne.toString());
 		return ResponseEntity.noContent().build();
+	}
+	@CrossOrigin
+	@PostMapping("/films/export")
+	ResponseEntity<Void> exportFilmList(){
+		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
+    	jobParametersBuilder.addLong("TIMESTAMP",new Date().getTime());
+    	try {
+			jobLauncher.run(exportFilmsJob, jobParametersBuilder.toJobParameters());
+		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
+				| JobParametersInvalidException e) {
+			logger.error(e.getMessage());
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 	/*
 	@CrossOrigin
