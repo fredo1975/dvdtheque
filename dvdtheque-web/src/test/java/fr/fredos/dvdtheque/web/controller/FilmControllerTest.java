@@ -71,7 +71,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String SAVE_FILM_URI = "/dvdtheque/films/save/";
 	private static final String UPDATE_FILM_URI = "/dvdtheque/films/update/";
 	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque/personnes";
-	private static final String EXPORT_FILM_LIST_URI = "/dvdtheque/films/export";
 	private Long tmdbId= new Long(4780);
 	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/xghbwWlA9uW4bjkUCtUDaIeOvQ4.jpg";
 	public static final String TITRE_FILM_TMBD_ID_4780 = "OBSESSION";
@@ -317,13 +316,5 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		Personne personneUpdated = personneService.loadPersonne(personne.getId());
 		assertEquals(StringUtils.upperCase(ACT2_NOM), personneUpdated.getNom());
-	}
-	
-	@Test
-	@Transactional
-	public void testexportFilmList() throws Exception {
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI);
-		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
-		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 	}
 }
