@@ -21,10 +21,9 @@ public class FilmControllerWithJobCallTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmControllerWithJobCallTest.class);
 	@Autowired
 	private MockMvc mvc;
-	
 	private static final String EXPORT_FILM_LIST_URI = "/dvdtheque/films/export";
 	@Test
-	public void testexportFilmList() throws Exception {
+	public void testExportFilmList() throws Exception {
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());

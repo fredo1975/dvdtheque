@@ -84,7 +84,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public static final String ACT3_NOM = "tuotuo tmitmi";
 	public static final String ACT4_NOM = "Graham Collins";
 	public static final int RIP_DATE = -10;
-	private Date createRipDate() {
+	public static Date createRipDate() {
 		Calendar cal = Calendar.getInstance();
 		return DateUtils.addDays(cal.getTime(), RIP_DATE);
 	}
