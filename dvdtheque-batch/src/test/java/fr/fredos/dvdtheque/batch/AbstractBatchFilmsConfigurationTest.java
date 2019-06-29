@@ -12,7 +12,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.service.IFilmService;
 @RunWith(SpringRunner.class)
-//@ActiveProfiles("local")
 public abstract class AbstractBatchFilmsConfigurationTest {
 	@Autowired
 	protected JobLauncher jobLauncher;
