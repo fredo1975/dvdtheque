@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -27,7 +26,6 @@ import fr.fredos.dvdtheque.service.IPersonneService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@EnableBatchProcessing
 public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceTest.class);
 	@Autowired
