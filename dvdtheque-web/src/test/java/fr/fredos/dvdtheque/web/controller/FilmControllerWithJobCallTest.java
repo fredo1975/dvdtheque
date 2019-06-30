@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.web.controller;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@Ignore
 public class FilmControllerWithJobCallTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmControllerWithJobCallTest.class);
 	@Autowired
