@@ -1,18 +1,26 @@
 package fr.fredos.dvdtheque.web.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +31,7 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
+import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 @RestController
@@ -36,6 +45,8 @@ public class FilmController {
 	protected IPersonneService personneService;
 	@Autowired
     private TmdbServiceClient tmdbServiceClient;
+	@Autowired
+    private ExcelFilmHandler excelFilmHandler;
 	/*
 	@Autowired
 	private JobLauncher jobLauncher;
@@ -137,21 +148,42 @@ public class FilmController {
 		logger.info(personne.toString());
 		return ResponseEntity.noContent().build();
 	}
-	/*
+	
 	@CrossOrigin
 	@PostMapping("/films/export")
-	ResponseEntity<Void> exportFilmList(){
-		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
-    	jobParametersBuilder.addLong("TIMESTAMP",new Date().getTime());
-    	try {
-			jobLauncher.run(exportFilmsJob, jobParametersBuilder.toJobParameters());
-		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
-				| JobParametersInvalidException e) {
-			logger.error(e.getMessage());
-			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}*/
+	ResponseEntity<byte[]> exportFilmList(){
+		SXSSFWorkbook workBook = null;
+	    byte[] excelContent = null;
+	    LocalDateTime localDate = LocalDateTime.now();
+	    String fileName = "ListeDVDExport" + "-" + localDate.getSecond() + ".xlsx";
+	    try{
+	    	List<Film> list = filmService.findAllFilms();
+	    	workBook = this.excelFilmHandler.getWorkBook();
+	    	this.excelFilmHandler.createSheet(workBook);
+	    	this.excelFilmHandler.setRow(null);
+	    	for(Film film : list) {
+	    		this.excelFilmHandler.writeBook(film);
+	    	}
+	    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    	workBook.write(baos);
+	    	excelContent = baos.toByteArray();
+	    }catch (Exception ecx) {
+            return new ResponseEntity<byte[]>(null, null, HttpStatus.BAD_REQUEST);
+        }finally {
+            if (null != workBook) {
+                try {
+                	workBook.close();
+                } catch (IOException eio) {
+                    logger.error("Error Occurred while exporting to XLS ", eio);
+                }
+            }
+        }
+    	HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+        headers.setContentLength(excelContent.length);
+        return new ResponseEntity<byte[]>(excelContent, headers, HttpStatus.OK);
+	}
 	/*
 	@CrossOrigin
 	@PostMapping("/films")
