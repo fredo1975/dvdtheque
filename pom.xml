@@ -17,7 +17,7 @@
 	<name>dvdtheque</name>
 	<description>Dvdtheque project and related components</description>
 	<scm>
-		<url>https://github.com/fredo1975</url>
+		<url>https://github.com/fredo1975/dvdtheque</url>
 		<connection>scm:git:https://github.com/fredo1975/dvdtheque.git</connection>
 		<developerConnection>scm:git:https://github.com/fredo1975/dvdtheque.git</developerConnection>
 	</scm>
