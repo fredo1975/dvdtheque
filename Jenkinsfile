@@ -17,7 +17,7 @@ pipeline {
         stage ('Build') {
             steps {
                 sh 'mvn clean install -Djava.io.tmpdir=/var/tmp/exportDir'
-                sh 'mvn release:perform'
+                sh 'mvn release:prepare'
             }
             post {
                 success {
