@@ -16,7 +16,7 @@ pipeline {
 
         stage ('Build') {
             steps {
-                sh 'mvn release:clean release:prepare -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir"'
+                sh 'mvn clean install -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir"'
             }
             post {
                 success {
