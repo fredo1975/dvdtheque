@@ -16,7 +16,7 @@ pipeline {
 
         stage ('Build') {
             steps {
-            	configFileProvider([configFile(fileId: 'MySettings.xml', variable: 'MAVEN_SETTINGS_XML')]) {
+            	configFileProvider([configFile(fileId: 'MySettings', variable: 'MAVEN_SETTINGS_XML')]) {
             		sh 'mvn -e -X -U --batch-mode -s $MAVEN_SETTINGS_XML release:clean build-helper:parse-version versions:set release:prepare -DdevelopmentVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.nextMinorVersion}.0-SNAPSHOT release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" -DrepositoryId=nexus'
             	}
             }
