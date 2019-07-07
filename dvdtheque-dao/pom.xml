@@ -23,9 +23,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>fr.fredos.dvdtheque</groupId>
 			<artifactId>dvdtheque-commons</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
 		</dependency>
 
 		<dependency>

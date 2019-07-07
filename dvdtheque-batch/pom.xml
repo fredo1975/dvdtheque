@@ -13,9 +13,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>fr.fredos.dvdtheque</groupId>
 			<artifactId>dvdtheque-tmdb-service</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

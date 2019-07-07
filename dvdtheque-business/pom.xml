@@ -18,9 +18,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>fr.fredos.dvdtheque</groupId>
 			<artifactId>dvdtheque-dao</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
