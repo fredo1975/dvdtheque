@@ -16,7 +16,7 @@ pipeline {
 
         stage ('Build') {
             steps {
-                sh 'mvn release:clean build-helper:parse-version versions:set release:prepare -DdevelopmentVersion=\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.0-SNAPSHOT release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir"'
+                sh 'mvn release:clean build-helper:parse-version versions:set release:prepare -DdevelopmentVersion='\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.0-SNAPSHOT' release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir"'
             }
             post {
                 success {
