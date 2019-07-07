@@ -15,11 +15,9 @@ pipeline {
         }
 
         stage ('Build') {
-            steps {
-            	configFileProvider([configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-            		sh 'mvn -e -X -U --batch-mode -s $MAVEN_SETTINGS_XML help:effective-settings release:clean build-helper:parse-version versions:set release:prepare -DdevelopmentVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.nextMinorVersion}.0-SNAPSHOT release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" -DrepositoryId=nexus'
-            	}
-            }
+        	withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
+		 		sh 'mvn -e -X -U --batch-mode -s $MAVEN_SETTINGS_XML help:effective-settings release:clean build-helper:parse-version versions:set release:prepare -DdevelopmentVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.nextMinorVersion}.0-SNAPSHOT release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" -DrepositoryId=nexus'
+		    }
             post {
                 success {
                     junit '*/target/surefire-reports/*.xml'
