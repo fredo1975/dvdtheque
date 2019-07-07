@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -26,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 @Service
 public class FilmRestService {
+	protected Logger logger = LoggerFactory.getLogger(FilmRestService.class);
 	private static final String DVDTHEQUE_BASE_URI = "dvdtheque.web.rest.base.url";
 	private static final String GET_ALL_FILMS_URI = "dvdtheque.web.rest.findAllFilms";
 	private static final String GET_FILM_BY_ID_URI = "dvdtheque.web.rest.findFilmById";
@@ -60,9 +63,14 @@ public class FilmRestService {
 		return objectMapper.readValue(this.restTemplate.getForObject(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(CHECK_TMDB_FILM_URI)+tmdbId, String.class), new TypeReference<Boolean>(){});
 	}
 	public Film saveTmdbFilm(Long id) {
-		ResponseEntity<Film> response = this.restTemplate
-				  .exchange(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(ADD_TMDB_FILM_URI)+id, HttpMethod.PUT, new HttpEntity<>(id), Film.class);
-		return response.getBody();
+		try {
+			ResponseEntity<Film> response = this.restTemplate
+					  .exchange(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(ADD_TMDB_FILM_URI)+id, HttpMethod.PUT, new HttpEntity<>(id), Film.class);
+			return response.getBody();
+		}catch(org.springframework.web.client.HttpClientErrorException e) {
+			logger.error("film "+id+" not found");
+		}
+		return null;
 	}
 	public boolean updateFilm(Film film) throws JsonProcessingException {
 		HttpHeaders headers = new HttpHeaders();

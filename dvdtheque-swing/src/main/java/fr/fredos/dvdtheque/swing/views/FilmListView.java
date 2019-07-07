@@ -65,10 +65,12 @@ public class FilmListView extends AbstractViewListenerHolder {
 	@Autowired
 	private JButton updateFilmButton;
 	@Autowired
+	private JButton refreshFilmListButton;
+	@Autowired
 	private SpinnerDialog spinnerDialog;
 	@Autowired
 	private Main main;
-	private JPanel filmScrollPanePanel,addButtonPanel,leftHalf,rightHalf;
+	private JPanel filmScrollPanePanel,updateButtonPanel,leftHalf,rightHalf;
 	GridBagLayout gridbag;
 	GridBagConstraints c;
 	protected static final String titreTextField = "Titre";
@@ -83,20 +85,19 @@ public class FilmListView extends AbstractViewListenerHolder {
 	protected void init() {
 		filmListViewPanel.setLayout(new BoxLayout(filmListViewPanel, BoxLayout.LINE_AXIS));
 		//filmListViewPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
-
 		gridbag = new GridBagLayout();
 		c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHEAST;
 		buildLeftHalf();
 		buildRightHalf();
+		buildRefreshFilmListPanel();
 		buildNumberFilmlabelPanel();
 		buildFilmListJTable();
 		buildComboBox();
-		buildAddButtonPanel();
-		
+		buildUpdateButtonPanel();
 	}
-	private void buildAddButtonPanel() {
-		this.addButtonPanel = new JPanel(new FlowLayout(1,0,5));
+	private void buildUpdateButtonPanel() {
+		this.updateButtonPanel = new JPanel(new FlowLayout(1,0,5));
 		updateFilmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -109,10 +110,8 @@ public class FilmListView extends AbstractViewListenerHolder {
 							} catch (RestClientException | IllegalStateException e) {
 								e.printStackTrace();
 							} catch (JsonProcessingException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						},event);
@@ -124,6 +123,7 @@ public class FilmListView extends AbstractViewListenerHolder {
     				}
 
     				protected void done() {
+    					rebuildRightHalf(FilmListView.this.selectedFilm);
     					spinnerDialog.dispose();
     				}
     			};
@@ -131,6 +131,13 @@ public class FilmListView extends AbstractViewListenerHolder {
     			spinnerDialog.setVisible();
             }
         });
+	}
+	
+	private void rebuildRightHalf(Film f) {
+		
+		rightHalf.repaint();
+		populateFilmDetails(f);
+		buildModifyButton();
 	}
 	private void buildComboBox() {
 		BufferedImage koPic=null,okPic=null;
@@ -147,8 +154,10 @@ public class FilmListView extends AbstractViewListenerHolder {
 			public void actionPerformed(ActionEvent e) {
 				if(rippedComboBox.getSelectedIndex()==0) {
 					FilmListView.this.selectedFilm.setRipped(true);
+					FilmListView.this.selectedFilm.getDvd().setDateRip(new Date());
 				}else {
 					FilmListView.this.selectedFilm.setRipped(false);
+					FilmListView.this.selectedFilm.getDvd().setDateRip(null);
 				}
 			}
 		});
@@ -188,14 +197,14 @@ public class FilmListView extends AbstractViewListenerHolder {
 		leftHalf.setPreferredSize(new Dimension(400, IMAGE_HEIGHT_SIZE * 2));
 	}
 	private void buildModifyButton() {
-		this.addButtonPanel.removeAll();
+		this.updateButtonPanel.removeAll();
 		//addButtonPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		updateFilmButton.setVisible(true);
-		this.addButtonPanel.add(updateFilmButton);
-		this.addButtonPanel.setMaximumSize(new Dimension(800,30));
-		this.addButtonPanel.setAlignmentX( Component.CENTER_ALIGNMENT );
-		rightHalf.add(this.addButtonPanel, c);
+		this.updateButtonPanel.add(updateFilmButton);
+		this.updateButtonPanel.setMaximumSize(new Dimension(800,30));
+		this.updateButtonPanel.setAlignmentX( Component.CENTER_ALIGNMENT );
+		rightHalf.add(this.updateButtonPanel, c);
 	}
 	private void buildRightHalf() {
 		rightHalf = new JPanel();
@@ -210,6 +219,48 @@ public class FilmListView extends AbstractViewListenerHolder {
 		numberFilmlabelPanel.setMaximumSize(new Dimension(200, 30));
 		numberFilmlabelPanel.add(nbrFilmsJLabel);
 		leftHalf.add(numberFilmlabelPanel);
+	}
+	
+	private void buildRefreshFilmListPanel() {
+		JPanel refreshFilmListPanel = new JPanel(new FlowLayout(1, 0, 5));
+		refreshFilmListButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+            	spinnerDialog.setFrame(main);
+    			SwingWorker<?, ?> worker = new SwingWorker<Void, Integer>() {
+    				protected Void doInBackground() throws InterruptedException {
+    					notifyFilmListListeners((t, u) -> {
+							try {
+								t.handleFilmTableList();
+							} catch (RestClientException | IllegalStateException e) {
+								e.printStackTrace();
+							} catch (JsonProcessingException e) {
+								e.printStackTrace();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						},event);
+    					return null;
+    				}
+
+    				protected void process(List<Integer> chunks) {
+    					
+    				}
+
+    				protected void done() {
+    					rightHalf.removeAll();
+    					rightHalf.revalidate();
+    					spinnerDialog.dispose();
+    				}
+    			};
+    			worker.execute();
+    			spinnerDialog.setVisible();
+            }
+        });
+		//numberFilmlabelPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+		refreshFilmListPanel.setMaximumSize(new Dimension(200, 30));
+		refreshFilmListPanel.add(refreshFilmListButton);
+		leftHalf.add(refreshFilmListPanel);
 	}
 	
 	private void buildFilmListJTable() {
@@ -274,7 +325,7 @@ public class FilmListView extends AbstractViewListenerHolder {
 					sb.append("</body></html>");
 					titreTextValueFieldLabel = new JLabel(sb.toString());
 				}else if(i == 9 && filmValues[i] != null) {
-					DateFormat df = new SimpleDateFormat("dd/M/yyyy");
+					DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 					String ripDate = df.format(filmValues[i]);
 					titreTextValueFieldLabel = new JLabel(ripDate);
 				}else {
@@ -313,15 +364,21 @@ public class FilmListView extends AbstractViewListenerHolder {
 		filmListViewPanel.revalidate();
 	}
 
+	public Film getSelectedFilm() {
+		return selectedFilm;
+	}
+	public void setSelectedFilm(Film selectedFilm) {
+		this.selectedFilm = selectedFilm;
+	}
+
+
 	private class RowListener implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent event) {
 			if (event.getValueIsAdjusting()) {
 				return;
 			}
 			rightHalf.removeAll();
-			populateFilmDetails(
-					(Film) filmTableModel.getFilmAt(filmListJTable.getSelectionModel().getLeadSelectionIndex()));
-			buildModifyButton();
+			rebuildRightHalf((Film) filmTableModel.getFilmAt(filmListJTable.getSelectionModel().getLeadSelectionIndex()));
 		}
 	}
 }

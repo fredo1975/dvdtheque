@@ -118,4 +118,9 @@ public class SwingConfig {
 	protected JButton updateFilmButton(){
 		return new JButton("Modifier le film sélectionné");
 	}
+	
+	@Bean
+	protected JButton refreshFilmListButton(){
+		return new JButton("Rafraichir la liste");
+	}
 }

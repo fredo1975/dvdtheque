@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.tmdb.service;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,12 +14,17 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -35,6 +41,7 @@ import fr.fredos.dvdtheque.tmdb.model.SearchResults;
 
 @Service
 public class TmdbServiceClient {
+	protected Logger logger = LoggerFactory.getLogger(TmdbServiceClient.class);
 	@Autowired
     Environment environment;
 	@Autowired
@@ -91,13 +98,18 @@ public class TmdbServiceClient {
 	 * we're retrieving in TMDB the film with id tmdbId
 	 * @param tmdbId
 	 * @return
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
 	 */
 	public Results retrieveTmdbSearchResultsById(final Long tmdbId) {
 		try {
 			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_IMAGES_QUERY)+tmdbId+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&language=fr", Results.class);
-		} catch (RestClientException e) {
-			throw e;
+		}catch(org.springframework.web.client.HttpClientErrorException e) {
+			logger.error("film "+tmdbId+" not found");
 		}
+		return null;
+		
 	}
 	public SearchResults retrieveTmdbSearchResults(final String titre) {
 		try {

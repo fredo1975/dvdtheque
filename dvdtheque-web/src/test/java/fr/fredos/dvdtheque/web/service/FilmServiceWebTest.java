@@ -24,7 +24,9 @@ import fr.fredos.dvdtheque.service.IPersonneService;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class,fr.fredos.dvdtheque.web.controller.WebApplication.class})
+@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
+		fr.fredos.dvdtheque.service.ServiceApplication.class,
+		fr.fredos.dvdtheque.web.controller.WebApplication.class})
 public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContextTests{
 	@Autowired
 	protected IFilmService filmService;

@@ -2,8 +2,10 @@ package fr.fredos.dvdtheque.dvdtheque.tmdb.service.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
@@ -96,6 +101,13 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertResultsIsNotNull(res);
 		
 		logger.info("tmdb id = "+res.getId().toString());
+    }
+	@Test
+    public void retrieveTmdbResultsWithResourceNotFoundTest() {
+		Long tmdbId = Long.valueOf(413);
+		Results results = client.retrieveTmdbSearchResultsById(tmdbId);
+		assertNull(results);
+		//logger.info("tmdb id = "+res.getId().toString());
     }
 	@Test
     public void retrieveTmdbResultsByTmdbIdTest() {

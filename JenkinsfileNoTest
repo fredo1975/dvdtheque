@@ -16,12 +16,7 @@ pipeline {
 
         stage ('Build') {
             steps {
-                sh 'mvn clean install -Djava.io.tmpdir=/var/tmp/exportDir'
-            }
-            post {
-                success {
-                    junit '*/target/surefire-reports/*.xml'
-                }
+                sh 'mvn clean install -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" -Dmaven.test.skip=true'
             }
         }
         stage('Deliver') {
