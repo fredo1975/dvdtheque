@@ -18,7 +18,8 @@ pipeline {
         	withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
 		 		steps {
             		sh "mvn -e -X -U --batch-mode clean"
-		    	}
+            	}
+		    }
             post {
                 success {
                     junit '*/target/surefire-reports/*.xml'
