@@ -18,8 +18,8 @@
 	<description>Dvdtheque project and related components</description>
 	<scm>
 		<url>https://github.com/fredo1975/dvdtheque</url>
-		<connection>scm:git:https://github.com/fredo1975/dvdtheque.git</connection>
-		<developerConnection>scm:git:https://github.com/fredo1975/dvdtheque.git</developerConnection>
+		<connection>scm:git:https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git</connection>
+		<developerConnection>scm:git:https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git</developerConnection>
 	</scm>
 	<modules>
 		<module>dvdtheque-commons</module>
