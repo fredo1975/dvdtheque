@@ -120,7 +120,7 @@
 			<id>bluechipit-3-proxy</id>
 			<name>Propellors Snapshots</name>
 			<url>sftp://propellers.net/maven</url>
-			<layout>legacy</layout>
+			<layout>default</layout>
 		</snapshotRepository>
 	</distributionManagement>
 </project>
