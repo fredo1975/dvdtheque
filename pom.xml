@@ -17,6 +17,8 @@
 	<scm>
 		<url>https://github.com/fredo1975/dvdtheque</url>
 		<connection>scm:git:https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git</connection>
+		<developerConnection>scm:git:https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git</developerConnection>
+		<tag>HEAD</tag>
 	</scm>
 	<modules>
 		<module>dvdtheque-commons</module>
