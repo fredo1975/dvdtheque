@@ -18,8 +18,9 @@ pipeline {
 		 		steps {
 		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
             			sh '''#!/bin/bash -xe
-            			mvn -e -X -U --batch-mode build-helper:parse-version versions:set release:prepare 
-            			-DnewVersion="${parsedVersion.majorVersion}"."${parsedVersion.nextMinorVersion}".0-SNAPSHOT 
+            			mvn -e -X -U --batch-mode build-helper:parse-version versions:set 
+            			-DnewVersion="${parsedVersion.majorVersion}"."${parsedVersion.nextMinorVersion}".0-SNAPSHOT
+            			release:prepare 
             			release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir -Dmaven.javadoc.skip=true'''
 		    		}
 		    	}
