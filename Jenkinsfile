@@ -17,7 +17,7 @@ pipeline {
         stage ('Build') {
 		 		steps {
 		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
-            			sh 'mvn -e -X -U --batch-mode build-helper:parse-version versions:set -DnewVersion =\\\${parsedVersion.majorVersion}.\\\${parsedVersion.nextMinorVersion}.0-SNAPSHOT release:clean release:prepare release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" -DrepositoryId=nexus -Dmaven.javadoc.skip=true'
+            			sh 'mvn -e -X -U --batch-mode release:clean release:prepare release:perform -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.nextMinorVersion}.0-SNAPSHOT -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" -DrepositoryId=nexus -Dmaven.javadoc.skip=true'
 		    		}
 		    	}
             post {
