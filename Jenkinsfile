@@ -17,7 +17,7 @@ pipeline {
         stage ('Build') {
 		 		steps {
 		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
-            			sh 'mvn -e -X -U --batch-mode build-helper:parse-version versions:set \
+            			bash 'mvn -e -X -U --batch-mode build-helper:parse-version versions:set \
             			release:prepare \
             			-Dproject.rel.fr.fredos.dvdtheque.dvdtheque=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.0 \
             			-Dproject.dev.fr.fredos.dvdtheque.dvdtheque=\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.0-SNAPSHOT \
