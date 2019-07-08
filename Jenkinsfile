@@ -20,7 +20,7 @@ pipeline {
             			sh '''#!/bin/bash -xe
             			mvn -e -X -U --batch-mode build-helper:parse-version versions:set release:prepare 
             			-DdevelopmentVersion="${parsedVersion.majorVersion}"."${parsedVersion.nextMinorVersion}".0-SNAPSHOT 
-            			release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir -Dmaven.javadoc.skip=true"'
+            			release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir -Dmaven.javadoc.skip=true'''
 		    		}
 		    	}
             post {
