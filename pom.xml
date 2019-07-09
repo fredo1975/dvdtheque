@@ -99,6 +99,7 @@
 						<versionTagPrefix>version-</versionTagPrefix>
 					</flowInitContext>
 					<allowUntracked>true</allowUntracked>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<noDeploy>true</noDeploy>
 					<squash>true</squash>
 					<scmCommentPrefix>[RELEASE] </scmCommentPrefix>
