@@ -26,7 +26,7 @@ pipeline {
 		 		steps {
 		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
             			sh '''
-            				git checkout -b release-"${NVERSION}"
+            				git checkout -b release-"${NVERSION}" test_jenkins_pipeline
             				mvn clean verify
             				git commit -a -m "Bumped version number to ${NVERSION}"
             				git checkout test_jenkins_pipeline
