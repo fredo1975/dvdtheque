@@ -26,6 +26,7 @@ pipeline {
 		 		steps {
 		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
             			sh '''
+            				git remote set-url origin https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git
             				git branch -D release-"${NVERSION}"
             				git checkout -b release-"${NVERSION}" test_jenkins_pipeline
             				mvn clean verify
@@ -38,7 +39,6 @@ pipeline {
             				mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} versions:commit
             				git add *
             				git commit -a -m "Bumped version number to ${NVERSION}"-SNAPSHOT
-            				git remote set-url origin https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git
             				git push --force origin test_jenkins_pipeline
             				git tag --force -a "${NVERSION}" -m "release-${NVERSION}"
             				git branch -d release-"${NVERSION}"
