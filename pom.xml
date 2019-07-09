@@ -91,7 +91,7 @@
 				<version>1.0-m5.1</version>
 				<configuration>
 					<flowInitContext>
-						<masterBranchName>master</masterBranchName>
+						
 						<developBranchName>test_jenkins_pipeline</developBranchName>
 						<featureBranchPrefix>feature-</featureBranchPrefix>
 						<releaseBranchPrefix>release-</releaseBranchPrefix>
