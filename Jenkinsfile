@@ -34,6 +34,7 @@ pipeline {
             				mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit
             				git push origin test_jenkins_pipeline
             				git tag -a "${NVERSION}"
+            				git branch -d release-"${NVERSION}"
             			'''
 		    		}
 		    	}
