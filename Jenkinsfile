@@ -22,8 +22,9 @@ pipeline {
 		 		steps {
 		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
             			sh '''
-            				mvn -e -X jgitflow:release-start jgitflow:release-finish -Djava.io.tmpdir=/var/tmp/exportDir -Dmaven.javadoc.skip=true
-            				git rebase -i HEAD~4
+            				git checkout -b release-"${VERSION}"
+            				mvn clean verify
+            				
             			'''
 		    		}
 		    	}
@@ -35,4 +36,15 @@ pipeline {
         }
         
     }
+    def getReleaseVersion() {
+	    def pom = readMavenPom file: 'pom.xml'
+	    def gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+	    def versionNumber;
+	    if (gitCommit == null) {
+	        versionNumber = env.BUILD_NUMBER;
+	    } else {
+	        versionNumber = gitCommit.take(8);
+	    }
+	    return pom.version.replace("-SNAPSHOT", ".${versionNumber}")
+	}
 }
