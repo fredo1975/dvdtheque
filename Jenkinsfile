@@ -23,7 +23,6 @@ pipeline {
             			sh '''
             				mvn -e -X --batch-mode release:clean  \
             					release:prepare \
-            					release:update-versions -DdevelopmentVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.nextMinorVersion}.0-SNAPSHOT \
             					release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir -Dmaven.javadoc.skip=true"
             			'''
 		    		}
