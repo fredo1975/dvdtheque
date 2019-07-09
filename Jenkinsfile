@@ -26,6 +26,7 @@ pipeline {
 		 		steps {
 		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
             			sh '''
+            				git branch -d release-"${NVERSION}"
             				git checkout -b release-"${NVERSION}" test_jenkins_pipeline
             				mvn clean verify
             				mvn build-helper:parse-version versions:set -DnewVersion="${NVERSION}" versions:commit
