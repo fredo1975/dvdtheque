@@ -28,7 +28,12 @@ pipeline {
             			sh '''
             				git checkout -b release-"${NVERSION}"
             				mvn clean verify
-            				
+            				git commit -a -m "Bumped version number to ${NVERSION}"
+            				git checkout test_jenkins_pipeline
+            				git merge --no-ff release-"${NVERSION}"-SNAPSHOT
+            				mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit
+            				git push origin test_jenkins_pipeline
+            				git tag -a "${NVERSION}"
             			'''
 		    		}
 		    	}
