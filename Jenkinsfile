@@ -7,6 +7,7 @@ pipeline {
     environment {
     	VERSION = readMavenPom().getVersion()
     	def pom = readMavenPom file: 'pom.xml'
+    	def nversion = pom.version.replace("-SNAPSHOT", ".${currentBuild.number}")
     }
     stages {
         stage ('Initialize') {
@@ -16,6 +17,7 @@ pipeline {
                     echo "M2_HOME = ${M2_HOME}"
                     echo "VERSION = ${VERSION}"
                     echo "pom = ${pom}"
+                    echo "nversion = ${nversion}"
                 '''
             }
         }
