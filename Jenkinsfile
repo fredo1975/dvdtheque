@@ -7,7 +7,7 @@ pipeline {
     environment {
     	VERSION = readMavenPom().getVersion()
     	def pom = readMavenPom file: 'pom.xml'
-    	def nversion = pom.version.replace("-SNAPSHOT", ".${currentBuild.number}")
+    	def NVERSION = pom.version.replace("-SNAPSHOT", "")
     }
     stages {
         stage ('Initialize') {
@@ -17,7 +17,7 @@ pipeline {
                     echo "M2_HOME = ${M2_HOME}"
                     echo "VERSION = ${VERSION}"
                     echo "pom = ${pom}"
-                    echo "nversion = ${nversion}"
+                    echo "NVERSION = ${NVERSION}"
                 '''
             }
         }
@@ -26,7 +26,7 @@ pipeline {
 		 		steps {
 		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
             			sh '''
-            				git checkout -b release-"${VERSION}"
+            				git checkout -b release-"${NVERSION}"
             				mvn clean verify
             				
             			'''
