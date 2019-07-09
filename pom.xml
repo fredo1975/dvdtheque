@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.fredos.dvdtheque</groupId>
@@ -22,14 +24,9 @@
 	</scm>
 	<modules>
 		<module>dvdtheque-commons</module>
-		<!-- 
-		<module>dvdtheque-dao</module>
-		<module>dvdtheque-business</module>
-		<module>dvdtheque-tmdb-service</module>
-		<module>dvdtheque-batch</module>
-		<module>dvdtheque-swing</module>
-		<module>dvdtheque-web</module>
-		 -->
+		<!-- <module>dvdtheque-dao</module> <module>dvdtheque-business</module> 
+			<module>dvdtheque-tmdb-service</module> <module>dvdtheque-batch</module> 
+			<module>dvdtheque-swing</module> <module>dvdtheque-web</module> -->
 	</modules>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -89,6 +86,19 @@
 				<configuration>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>parse-version</id>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<pluginManagement>
