@@ -97,8 +97,8 @@
 						<releaseBranchPrefix>release-</releaseBranchPrefix>
 						<hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
 						<versionTagPrefix>version-</versionTagPrefix>
-						<allowUntracked>true</allowUntracked>
 					</flowInitContext>
+					<allowUntracked>true</allowUntracked>
 					<noDeploy>true</noDeploy>
 					<squash>true</squash>
 					<scmCommentPrefix>[RELEASE] </scmCommentPrefix>
