@@ -36,7 +36,7 @@ pipeline {
         }
         
     }
-    @NonCPS
+    script{
     def getReleaseVersion() {
 	    def pom = readMavenPom file: 'pom.xml'
 	    def gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
@@ -47,5 +47,6 @@ pipeline {
 	        versionNumber = gitCommit.take(8);
 	    }
 	    return pom.version.replace("-SNAPSHOT", ".${versionNumber}")
+	}
 	}
 }
