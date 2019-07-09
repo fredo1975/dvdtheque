@@ -32,7 +32,7 @@ pipeline {
             				mvn clean verify
             				mvn build-helper:parse-version versions:set -DnewVersion="${NVERSION}" versions:commit
             				git push --force origin release-"${NVERSION}"
-            				git checkout -b test_jenkins_pipeline
+            				git checkout test_jenkins_pipeline
             				git merge --no-ff release-"${NVERSION}"
             				mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} versions:commit
             				git push origin test_jenkins_pipeline
