@@ -20,8 +20,7 @@ pipeline {
             			sh '''
             				mvn -e -X --batch-mode release:clean  \
             					release:prepare \
-            					build-helper:parse-version versions:set \
-            					-DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.nextMinorVersion}.0-SNAPSHOT \
+            					release:update-versions -DdevelopmentVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.nextMinorVersion}.0-SNAPSHOT \
             					release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir -Dmaven.javadoc.skip=true"
             			'''
 		    		}
@@ -34,12 +33,7 @@ pipeline {
         }
         stage('Deliver') {
             steps {
-                sh 'echo \'stoping dvdtheque-jenkins-rest.service ...\''
-                sh 'sudo systemctl stop dvdtheque-jenkins-rest.service'
-                sh 'echo \'copying dvdtheque-web-*.jar to  /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar ...\''
-                sh 'cp dvdtheque-web/target/dvdtheque-web-*.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar'
-                sh 'echo \'starting dvdtheque-jenkins-rest.service ...\''
-                sh 'sudo systemctl start dvdtheque-jenkins-rest.service'
+                
             }
         }
     }
