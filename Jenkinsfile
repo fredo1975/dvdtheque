@@ -34,7 +34,7 @@ pipeline {
             				git checkout test_jenkins_pipeline
             				git merge --no-ff release-"${NVERSION}"
             				mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} versions:commit
-            				git remote add origin https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git
+            				
             				git push test_jenkins_pipeline
             				git tag -a "${NVERSION}"
             				git branch -d release-"${NVERSION}"
