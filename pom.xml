@@ -22,12 +22,14 @@
 	</scm>
 	<modules>
 		<module>dvdtheque-commons</module>
+		<!-- 
 		<module>dvdtheque-dao</module>
 		<module>dvdtheque-business</module>
 		<module>dvdtheque-tmdb-service</module>
 		<module>dvdtheque-batch</module>
 		<module>dvdtheque-swing</module>
 		<module>dvdtheque-web</module>
+		 -->
 	</modules>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
