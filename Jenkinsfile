@@ -29,7 +29,7 @@ pipeline {
             				git remote set-url origin https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git
             				mvn build-helper:parse-version
             				git checkout -b release-"${NVERSION}" test_jenkins_pipeline
-            				mvn build-helper:parse-version versions:set -DnewVersion="\\\${parsedVersion.majorVersion}"."\\\${parsedVersion.MinorVersion}".0 versions:commit
+            				mvn build-helper:parse-version versions:set -DnewVersion="\\\${parsedVersion.majorVersion}"."\\\${parsedVersion.minorVersion}".0 versions:commit
             				mvn clean verify
             				git add *
             				git commit -m "replace SNAPSHOT"
