@@ -27,8 +27,8 @@ pipeline {
 		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
             			sh '''
             				git remote set-url origin https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git
-            				mvn build-helper:parse-version
-            				git checkout -b release-${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.0-SNAPSHOT test_jenkins_pipeline
+            				mvn build-helper:parse-version versions:set
+            				git checkout -b release-"\\\${parsedVersion.majorVersion}"."\\\${parsedVersion.minorVersion}".0-SNAPSHOT test_jenkins_pipeline
             				mvn clean verify
             				mvn build-helper:parse-version versions:set -DnewVersion="${NVERSION}" versions:commit
             				git add *
