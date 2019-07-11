@@ -22,7 +22,7 @@ pipeline {
             }
         }
 		stage('Checkout SCM') {
-		    git branch: '$[BRANCH}'
+		    git branch: '${BRANCH}'
 		}
         stage ('Build') {
 		 		steps {
