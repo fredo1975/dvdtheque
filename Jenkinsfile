@@ -34,7 +34,6 @@ pipeline {
             				git commit -m "replace SNAPSHOT"
             				git push --force origin release-"${NVERSION}"
             				git checkout test_jenkins_pipeline
-            				git merge --no-ff release-"${NVERSION}"
             				mvn build-helper:parse-version versions:set -DnewVersion="\\\${parsedVersion.majorVersion}"."\\\${parsedVersion.nextMinorVersion}".0-SNAPSHOT versions:commit -DgenerateBackupPoms=false
             				git add *
             				git commit -m "new dev version"
