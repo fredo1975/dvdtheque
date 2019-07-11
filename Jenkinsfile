@@ -27,7 +27,7 @@ pipeline {
 		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
             			sh '''
             				
-            				mvn build-helper:parse-version versions:set -DnewVersion="\${parsedVersion.majorVersion}".28.0-SNAPSHOT versions:commit -DgenerateBackupPoms=false
+            				mvn build-helper:parse-version versions:set -DnewVersion="\\\${parsedVersion.majorVersion}".28.0-SNAPSHOT versions:commit -DgenerateBackupPoms=false
             				
             			'''
 		    		}
