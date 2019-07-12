@@ -30,7 +30,7 @@ pipeline {
             				mvn build-helper:parse-version
             				git checkout -b release-"${NVERSION}" test_jenkins_pipeline
             				mvn build-helper:parse-version versions:set -DnewVersion="\\\${parsedVersion.majorVersion}"."\\\${parsedVersion.minorVersion}".0 versions:commit
-            				mvn clean verify
+            				mvn clean install
             				git add *
             				git commit -m "replace SNAPSHOT"
             				git push --force origin release-"${NVERSION}"
