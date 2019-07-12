@@ -27,7 +27,7 @@ pipeline {
             			sh '''
             				git remote set-url origin https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git
             				git checkout test_jenkins_pipeline
-            				git merge --no-ff release-"${BRANCH}"
+            				git merge --no-ff origin/release-"${BRANCH}"
             				mvn build-helper:parse-version
             				mvn build-helper:parse-version versions:set -DnewVersion="\\\${parsedVersion.majorVersion}"."\\\${parsedVersion.nextMinorVersion}".0 versions:commit -DgenerateBackupPoms=false
             				git add *
