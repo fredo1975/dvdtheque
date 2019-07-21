@@ -52,6 +52,8 @@ public class Film implements Serializable {
 	private Long tmdbId;
 	@Column(name = "OVERVIEW",length=500)
 	private String overview;
+	@Column(name = "RUNTIME")
+	private Integer runtime;
 	@Transient
 	private boolean alreadyInDvdtheque;
 	public Film() {
@@ -122,7 +124,6 @@ public class Film implements Serializable {
 	public void setRipped(boolean ripped) {
 		this.ripped = ripped;
 	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -164,11 +165,17 @@ public class Film implements Serializable {
 	public void setAlreadyInDvdtheque(boolean alreadyInDvdtheque) {
 		this.alreadyInDvdtheque = alreadyInDvdtheque;
 	}
+	public Integer getRuntime() {
+		return runtime;
+	}
+	public void setRuntime(Integer runtime) {
+		this.runtime = runtime;
+	}
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
-				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped + ", posterPath="
-				+ posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", alreadyInDvdtheque="
-				+ alreadyInDvdtheque + "]";
+		return "Film [logger=" + logger + ", id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
+				+ ", dvd=" + dvd + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped
+				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
+				+ runtime + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
 	}
 }

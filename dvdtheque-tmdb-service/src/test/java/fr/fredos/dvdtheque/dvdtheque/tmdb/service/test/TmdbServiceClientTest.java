@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,9 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
@@ -66,6 +63,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(res.getTitle());
 		assertNotNull(res.getRelease_date());
 		assertNotNull(res.getOverview());
+		assertNotNull(res.getRuntime());
 	}
     private Date createRipDate() {
 		Calendar cal = Calendar.getInstance();
@@ -94,7 +92,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void retrieveTmdbResultsTest() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), null);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
 		assertFilmIsNotNull(film,false);
 		
 		Results res = getResultsByFilmTitre(film);
@@ -117,7 +115,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void replaceFilmTest() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, null, null);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, null, DvdFormat.DVD);
 		assertFilmIsNotNull(film,true);
 		Boolean exists = filmService.checkIfTmdbFilmExists(tmdbId);
 		if(!exists) {
@@ -132,6 +130,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     public void savetmdbFilmTest() throws Exception {
 		Film film = client.saveTmbdFilm(tmdbId);
 		assertFilmIsNotNull(film,true);
+		assertEquals(new Integer(98), film.getRuntime());
 		logger.info("film = "+film.toString());
     }
 	@Test
@@ -162,7 +161,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }*/
 	@Test
     public void retrieveTmdbCreditsTest() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), null);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
 		assertFilmIsNotNull(film,false);
 		
 		assertNotNull(film);
