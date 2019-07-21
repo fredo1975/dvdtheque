@@ -26,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
@@ -86,7 +87,7 @@ public class TmdbServiceClient {
 		if(results != null) {
 			Film filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);
 			filmToSave.setId(null);
-			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), null, null, null);
+			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), null, null, null, DvdFormat.DVD);
 			filmToSave.setDvd(dvd);
 			Long id = filmService.saveNewFilm(filmToSave);
 			filmToSave.setId(id);
