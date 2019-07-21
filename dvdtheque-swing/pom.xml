@@ -20,8 +20,7 @@
 		</dependency>
 		<dependency>
 			<artifactId>dvdtheque-tmdb-service</artifactId>
-			<groupId>${project.groupId}</groupId>
-            <version>${project.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

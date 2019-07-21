@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.IFilmService;
@@ -60,7 +61,7 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findFilmWithAllObjectGraph() throws Exception{
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
 		assertFilmIsNotNull(film);
 		film = filmService.findFilmWithAllObjectGraph(film.getId());
 		assertNotNull(film);
@@ -74,7 +75,7 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 	
 	@Test
 	public void findAllFilms() throws Exception{
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
 		assertFilmIsNotNull(film);
 		List<Film> filmList = filmService.findAllFilms();
 		assertNotNull(filmList);

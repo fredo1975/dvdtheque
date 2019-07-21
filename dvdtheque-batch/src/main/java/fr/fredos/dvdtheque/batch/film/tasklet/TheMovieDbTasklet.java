@@ -30,8 +30,6 @@ public class TheMovieDbTasklet implements Tasklet{
     Environment environment;
 	@Autowired
     private TmdbServiceClient tmdbServiceClient;
-	private static String LISTE_DVD_POSTER_FILE_PATH="dvd.poster.file.path";
-	
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		List<Film> filmList = filmService.findAllFilms();
@@ -62,5 +60,4 @@ public class TheMovieDbTasklet implements Tasklet{
 		});
 		return RepeatStatus.FINISHED;
 	}
-	
 }

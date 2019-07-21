@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
@@ -46,7 +47,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			}
 		}
 		if(filmToSave != null) {
-			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null);
+			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null, DvdFormat.DVD);
 			filmToSave.setDvd(dvd);
 			//filmToSave.setTitreFromExcelFile(StringUtils.upperCase(item.getTitre()));
 			boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));

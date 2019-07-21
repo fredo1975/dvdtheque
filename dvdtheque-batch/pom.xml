@@ -8,12 +8,10 @@
 	</parent>
 	<artifactId>dvdtheque-batch</artifactId>
 	<name>dvdtheque-batch</name>
-
 	<dependencies>
 		<dependency>
 			<artifactId>dvdtheque-tmdb-service</artifactId>
-			<groupId>${project.groupId}</groupId>
-            <version>${project.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -27,7 +25,6 @@
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-file</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-batch</artifactId>
@@ -46,7 +43,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -224,7 +220,6 @@
 		</snapshotRepository>
 	</distributionManagement>
 	 -->
-	 
 	 <build>
         <plugins>
             <plugin>

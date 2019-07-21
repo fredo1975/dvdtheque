@@ -26,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
@@ -51,7 +52,7 @@ public class TmdbServiceClient {
 	private final RestTemplate restTemplate;
 	private static String TMDB_SEARCH_MOVIE_QUERY="themoviedb.search.movie.query";
 	private static String TMDB_API_KEY="themoviedb.api.key";
-	private static String TMDB_SEARCH_IMAGES_QUERY="themoviedb.search.images.query";
+	private static String TMDB_MOVIE_QUERY="themoviedb.movie.query";
 	private static String TMDB_POSTER_PATH_URL = "themoviedb.poster.path.url";
 	private static String NB_ACTEURS="batch.save.nb.acteurs";
 	public TmdbServiceClient(RestTemplateBuilder restTemplateBuilder) {
@@ -86,7 +87,7 @@ public class TmdbServiceClient {
 		if(results != null) {
 			Film filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);
 			filmToSave.setId(null);
-			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), null, null, null);
+			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), null, null, null, DvdFormat.DVD);
 			filmToSave.setDvd(dvd);
 			Long id = filmService.saveNewFilm(filmToSave);
 			filmToSave.setId(id);
@@ -104,7 +105,7 @@ public class TmdbServiceClient {
 	 */
 	public Results retrieveTmdbSearchResultsById(final Long tmdbId) {
 		try {
-			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_IMAGES_QUERY)+tmdbId+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&language=fr", Results.class);
+			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_MOVIE_QUERY)+tmdbId+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&language=fr", Results.class);
 		}catch(org.springframework.web.client.HttpClientErrorException e) {
 			logger.error("film "+tmdbId+" not found");
 		}
@@ -200,6 +201,7 @@ public class TmdbServiceClient {
 				transformedfilm.getRealisateurs().add(realisateur);
 			}
 		}
+		transformedfilm.setRuntime(retrieveTmdbSearchResultsById(results.getId()).getRuntime());
 		return transformedfilm;
 	}
 	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{
@@ -253,7 +255,7 @@ public class TmdbServiceClient {
 	
 	public ImagesResults retrieveTmdbImagesResults(final Long idFilm) {
 		try {
-			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_IMAGES_QUERY)+idFilm+"/images?api_key="+environment.getRequiredProperty(TMDB_API_KEY), ImagesResults.class);
+			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_MOVIE_QUERY)+idFilm+"/images?api_key="+environment.getRequiredProperty(TMDB_API_KEY), ImagesResults.class);
 		} catch (RestClientException e) {
 			throw e;
 		}
@@ -290,7 +292,7 @@ public class TmdbServiceClient {
 	
 	public Credits retrieveTmdbCredits(final Long idFilm) {
 		try {
-			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_IMAGES_QUERY)+idFilm+"/credits?api_key="+environment.getRequiredProperty(TMDB_API_KEY), Credits.class);
+			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_MOVIE_QUERY)+idFilm+"/credits?api_key="+environment.getRequiredProperty(TMDB_API_KEY), Credits.class);
 		} catch (RestClientException e) {
 			throw e;
 		}
