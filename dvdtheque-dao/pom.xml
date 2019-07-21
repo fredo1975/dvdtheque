@@ -20,6 +20,7 @@
 		</dependency>
 		<dependency>
 			<artifactId>dvdtheque-commons</artifactId>
+			<groupId>${project.groupId}</groupId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

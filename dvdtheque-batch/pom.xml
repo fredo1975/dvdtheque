@@ -11,6 +11,7 @@
 	<dependencies>
 		<dependency>
 			<artifactId>dvdtheque-tmdb-service</artifactId>
+			<groupId>${project.groupId}</groupId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
