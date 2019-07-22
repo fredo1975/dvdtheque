@@ -76,6 +76,9 @@ public class FilmDaoImpl implements FilmDao {
 		StringBuilder sb = new StringBuilder("from Film film left join fetch film.acteurs act left join fetch film.realisateurs real ");
 		sb.append("left join fetch film.acteurs act2 ");
 		if(filmFilterCriteriaDto!=null) {
+			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.RIPPED_SINCE)) {
+				sb.append("left join fetch film.dvd dvd ");
+			}
 			sb.append("where 1=1 ");
 			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.TITRE)
 					&& StringUtils.isNotEmpty(filmFilterCriteriaDto.getTitre())) {
@@ -97,6 +100,11 @@ public class FilmDaoImpl implements FilmDao {
 					&& filmFilterCriteriaDto.getSelectedRipped()!=null) {
 				sb.append("and film.ripped=:ripped");
 			}
+		}
+		if(filmFilterCriteriaDto!=null 
+				&& filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.RIPPED_SINCE)
+				&& filmFilterCriteriaDto.getSelectedRippedSince()!=null) {
+			sb.append("order by dvd.dateRip desc");
 		}
 		Query query = this.entityManager.createQuery(sb.toString());
 		if(filmFilterCriteriaDto!=null) {
@@ -121,7 +129,9 @@ public class FilmDaoImpl implements FilmDao {
 				query.setParameter("ripped", filmFilterCriteriaDto.getSelectedRipped());
 			}
 		}
-		return new ArrayList<Film>(new HashSet<Film>(query.getResultList()));
+		List<Film> l = new ArrayList<Film>(new HashSet<Film>(query.getResultList()));
+		Collections.sort(l, (f1,f2)->f2.getDvd().getDateRip().compareTo(f1.getDvd().getDateRip()));
+		return l;
     }
 	public void cleanAllFilms() {
 		/*

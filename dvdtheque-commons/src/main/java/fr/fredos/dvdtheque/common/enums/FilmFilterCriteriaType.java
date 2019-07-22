@@ -1,5 +1,5 @@
 package fr.fredos.dvdtheque.common.enums;
 
 public enum FilmFilterCriteriaType {
-	TITRE,REALISATEUR,ANNEE,ACTEUR,RIPPED
+	TITRE,REALISATEUR,ANNEE,ACTEUR,RIPPED,RIPPED_SINCE
 }

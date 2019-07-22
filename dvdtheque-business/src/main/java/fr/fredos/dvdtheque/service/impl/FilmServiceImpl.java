@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
@@ -163,7 +164,7 @@ public class FilmServiceImpl implements IFilmService {
 	}
 	@Override
 	@Transactional(readOnly = true)
-	public Dvd buildDvd(final Integer annee,final Integer zone,final String edition, Date ripDate) {
+	public Dvd buildDvd(final Integer annee,final Integer zone,final String edition, Date ripDate, DvdFormat dvdFormat) {
 		Dvd dvd = new Dvd();
 		if(annee != null) {
 			dvd.setAnnee(annee);
@@ -181,6 +182,9 @@ public class FilmServiceImpl implements IFilmService {
 		dvd.setZone(1);
 		if(ripDate!=null) {
 			dvd.setDateRip(clearDate(ripDate));
+		}
+		if(dvdFormat!=null) {
+			dvd.setFormat(dvdFormat);
 		}
 		return dvd;
 	}
@@ -209,13 +213,14 @@ public class FilmServiceImpl implements IFilmService {
 			final Personne act1,
 			final Personne act2,
 			final Personne act3,
-			final Date ripDate) {
+			final Date ripDate, 
+			final DvdFormat dvdFormat) {
 		Film film = new Film();
 		film.setAnnee(annee);
 		film.setRipped(true);
 		film.setTitre(titre);
 		film.setTitreO(titre);
-		film.setDvd(buildDvd(annee,null,null, ripDate));
+		film.setDvd(buildDvd(annee,null,null, ripDate, dvdFormat));
 		film.setRealisateurs(buildRealisateurs(realisateur));
 		film.setActeurs(buildActeurs(act1,act2,act3));
 		film.setTmdbId(new Long(100));
@@ -229,10 +234,11 @@ public class FilmServiceImpl implements IFilmService {
 			final String act1Nom,
 			final String act2Nom,
 			final String act3Nom, 
-			final Date ripDate) {
+			final Date ripDate, 
+			final DvdFormat dvdFormat) {
 		Film film = findFilmByTitre(titre);
 		if(film == null) {
-			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom, ripDate);
+			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom, ripDate, dvdFormat);
 		}
 		return film;
 	}
@@ -242,7 +248,8 @@ public class FilmServiceImpl implements IFilmService {
 			final String act1Nom,
 			final String act2Nom,
 			final String act3Nom,
-			final Date ripDate) {
+			final Date ripDate, 
+			final DvdFormat dvdFormat) {
 		Personne realisateur = null;
 		Personne acteur1 = null;
 		Personne acteur2 = null;
@@ -251,7 +258,7 @@ public class FilmServiceImpl implements IFilmService {
 		acteur1 = personneService.createOrRetrievePersonne(act1Nom);
 		acteur2 = personneService.createOrRetrievePersonne(act2Nom);
 		acteur3 = personneService.createOrRetrievePersonne(act3Nom);
-		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3, ripDate);
+		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3, ripDate, dvdFormat);
 		Long idFilm = saveNewFilm(film);
 		film.setId(idFilm);
 		return film;

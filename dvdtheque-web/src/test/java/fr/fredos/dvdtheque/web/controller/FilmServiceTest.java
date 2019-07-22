@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StopWatch;
 
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
@@ -60,7 +61,7 @@ public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 	}
 	@Test
 	public void findAllFilm() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate());
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
 		assertFilmIsNotNull(film);
 		film = filmService.findFilmByTitre(TITRE_FILM);
 		assertNotNull(film);

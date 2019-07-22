@@ -16,6 +16,8 @@ import javax.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
+
 @Entity
 @Table(name = "DVD")
 public class Dvd implements Serializable {
@@ -34,6 +36,8 @@ public class Dvd implements Serializable {
 	@Column(name = "DATE_RIP")
 	@Temporal(TemporalType.DATE)
 	private Date dateRip;
+	@Column(name = "FORMAT")
+	private DvdFormat format;
 	public Long getId() {
 		return id;
 	}
@@ -64,6 +68,12 @@ public class Dvd implements Serializable {
 	public void setDateRip(Date dateRip) {
 		this.dateRip = dateRip;
 	}
+	public DvdFormat getFormat() {
+		return format;
+	}
+	public void setFormat(DvdFormat format) {
+		this.format = format;
+	}
 	public Dvd() {
 		super();
 	}
@@ -92,7 +102,7 @@ public class Dvd implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "Dvd [id=" + id + ", annee=" + annee + ", zone=" + zone + ", edition=" + edition
-				+ ", dateRip=" + dateRip + "]";
+		return "Dvd [logger=" + logger + ", id=" + id + ", annee=" + annee + ", zone=" + zone + ", edition=" + edition
+				+ ", dateRip=" + dateRip + ", format=" + format + "]";
 	}
 }

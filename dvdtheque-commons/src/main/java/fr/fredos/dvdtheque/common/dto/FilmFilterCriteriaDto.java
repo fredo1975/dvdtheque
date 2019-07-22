@@ -17,15 +17,16 @@ public class FilmFilterCriteriaDto {
 	private Long selectedRealisateur;
 	private Long selectedActeur;
 	private Boolean selectedRipped;
-	
+	private Boolean selectedRippedSince;
 	public FilmFilterCriteriaDto(String titre, Integer annee, Long selectedRealisateur, Long selectedActeur,
-			Boolean selectedRipped) {
+			Boolean selectedRipped, Boolean selectedRippedSince) {
 		super();
 		this.titre = titre;
 		this.annee = annee;
 		this.selectedRealisateur = selectedRealisateur;
 		this.selectedActeur = selectedActeur;
 		this.selectedRipped = selectedRipped;
+		this.selectedRippedSince = selectedRippedSince;
 		applyFilmFilterCriteriaType();
 	}
 	private void applyFilmFilterCriteriaType() {
@@ -34,6 +35,7 @@ public class FilmFilterCriteriaDto {
 		Predicate<Boolean> filmFilterCriteriaTypeAnne = p -> annee!=null;
 		Predicate<Boolean> filmFilterCriteriaTypeActeur = p -> selectedActeur!=null;
 		Predicate<Boolean> filmFilterCriteriaTypeRipped = p -> selectedRipped!=null;
+		Predicate<Boolean> filmFilterCriteriaTypeRippedSince = p -> selectedRippedSince!=null;
 		
 		if(filmFilterCriteriaTypeTitre.test(Boolean.TRUE)){
 			addFilmFilterCriteriaType(FilmFilterCriteriaType.TITRE);
@@ -49,6 +51,9 @@ public class FilmFilterCriteriaDto {
 		}
 		if(filmFilterCriteriaTypeRipped.test(Boolean.TRUE)){
 			addFilmFilterCriteriaType(FilmFilterCriteriaType.RIPPED);
+		}
+		if(filmFilterCriteriaTypeRippedSince.test(Boolean.TRUE)){
+			addFilmFilterCriteriaType(FilmFilterCriteriaType.RIPPED_SINCE);
 		}
 	}
 	public String getTitre() {
@@ -91,4 +96,11 @@ public class FilmFilterCriteriaDto {
 	public void setSelectedRipped(Boolean selectedRipped) {
 		this.selectedRipped = selectedRipped;
 	}
+	public Boolean getSelectedRippedSince() {
+		return selectedRippedSince;
+	}
+	public void setSelectedRippedSince(Boolean selectedRippedSince) {
+		this.selectedRippedSince = selectedRippedSince;
+	}
+	
 }

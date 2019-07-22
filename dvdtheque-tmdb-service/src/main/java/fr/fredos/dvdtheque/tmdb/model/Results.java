@@ -8,6 +8,7 @@ public class Results {
 	private String poster_path;
 	private String release_date;
 	private String overview;
+	private int runtime;
 	public Long getId() {
 		return id;
 	}
@@ -44,9 +45,16 @@ public class Results {
 	public void setOverview(String overview) {
 		this.overview = overview;
 	}
+	public int getRuntime() {
+		return runtime;
+	}
+	public void setRuntime(int runtime) {
+		this.runtime = runtime;
+	}
 	@Override
 	public String toString() {
 		return "Results [id=" + id + ", title=" + title + ", original_title=" + original_title + ", poster_path="
-				+ poster_path + ", release_date=" + release_date + ", overview=" + overview + "]";
+				+ poster_path + ", release_date=" + release_date + ", overview=" + overview + ", runtime=" + runtime
+				+ "]";
 	}
 }
