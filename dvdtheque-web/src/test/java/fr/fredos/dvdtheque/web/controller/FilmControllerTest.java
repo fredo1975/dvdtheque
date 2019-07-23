@@ -5,18 +5,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -45,6 +48,7 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
+import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
@@ -61,7 +65,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	protected IPersonneService personneService;
 	@Autowired
 	private TmdbServiceClient client;
-
+	@Autowired
+	ExcelFilmHandler excelFilmHandler;
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
@@ -90,7 +95,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public static final String ACT3_NOM = "tuotuo tmitmi";
 	public static final String ACT4_NOM = "Graham Collins";
 	public static final int RIP_DATE = -10;
-
+	public static final String SHEET_NAME = "Films";
 	public static Date createRipDate() {
 		Calendar cal = Calendar.getInstance();
 		return DateUtils.addDays(cal.getTime(), RIP_DATE);
@@ -354,11 +359,25 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
 		byte[] b = result.getResponse().getContentAsByteArray();
 		assertNotNull(b);
-		File file = new File("E:\\tmp\\test.xlsx");
-		file.createNewFile();
-		OutputStream os = new ByteArrayOutputStream();
-		os.write(b); 
-		logger.info("Successfully byte inserted");
-        os.close();
+		
+		Workbook workbook = excelFilmHandler.createSheetFromByteArray(b);
+        workbook.forEach(sheet -> {
+        	assertEquals(SHEET_NAME, sheet.getSheetName());
+        });
+        Sheet sheet = workbook.getSheetAt(0);
+        assertEquals(SHEET_NAME, sheet.getSheetName());
+        // Create a DataFormatter to format and get each cell's value as String
+        DataFormatter dataFormatter = new DataFormatter();
+        int i=0;
+        sheet.forEach(row -> {
+            row.forEach(cell -> {
+                String cellValue = dataFormatter.formatCellValue(cell);
+                System.out.print(cellValue + "\t");
+            });
+            //System.out.println();
+        });
+
+        // Closing the workbook
+        workbook.close();
 	}
 }

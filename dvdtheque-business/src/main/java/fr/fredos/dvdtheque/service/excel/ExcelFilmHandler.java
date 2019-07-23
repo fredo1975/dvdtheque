@@ -1,8 +1,19 @@
 package fr.fredos.dvdtheque.service.excel;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -33,6 +44,10 @@ public class ExcelFilmHandler {
         this.currentRowNumber = 0;
         this.currentColumnNumber = 0;
         this.createHeaderRow();
+    }
+    public Workbook createSheetFromByteArray(byte[] b) throws EncryptedDocumentException, IOException {
+    	InputStream is = new ByteArrayInputStream(b);
+    	return WorkbookFactory.create(is);
     }
     public SXSSFRow getRow() {
 		return this.row;
