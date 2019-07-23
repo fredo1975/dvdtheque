@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 
@@ -94,6 +95,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()==7);
 				assertTrue(film.isRipped());
+				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
 			if(TITRE_FILM_TAXI_DRIVER.equals(film.getTitre())) {
 				taxiDriverExists = true;
@@ -103,6 +105,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()==7);
 				assertTrue(film.isRipped());
+				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
 			if(TITRE_FILM_ERASERHEAD.equals(film.getTitre())) {
 				eraserHeadExists = true;
@@ -112,6 +115,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()==7);
 				assertFalse(film.isRipped());
+				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
 			assertFilmIsNotNull(film);
 		}
