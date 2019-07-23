@@ -73,5 +73,6 @@ public class ExcelFilmHandler {
         }else {
         	addCell("");
         }
+        addCell(film.getDvd().getFormat().name());
     }
 }
