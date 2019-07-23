@@ -173,7 +173,7 @@ public class Film implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "Film [logger=" + logger + ", id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
+		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
 				+ ", dvd=" + dvd + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped
 				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
 				+ runtime + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
