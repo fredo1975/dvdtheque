@@ -5,6 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,6 +17,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -340,8 +346,19 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	
 	@Test
 	public void testExportFilmList() throws Exception {
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
+				createRipDate(), DvdFormat.DVD);
+		assertFilmIsNotNull(film, false);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI);
-		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
-		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+		MvcResult result = mvc.perform(builder).andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
+		byte[] b = result.getResponse().getContentAsByteArray();
+		assertNotNull(b);
+		File file = new File("E:\\tmp\\test.xlsx");
+		file.createNewFile();
+		OutputStream os = new ByteArrayOutputStream();
+		os.write(b); 
+		logger.info("Successfully byte inserted");
+        os.close();
 	}
 }

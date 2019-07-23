@@ -179,6 +179,7 @@ public class FilmController {
             }
         }
     	HttpHeaders headers = new HttpHeaders();
+    	headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
         headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
         headers.setContentLength(excelContent.length);
