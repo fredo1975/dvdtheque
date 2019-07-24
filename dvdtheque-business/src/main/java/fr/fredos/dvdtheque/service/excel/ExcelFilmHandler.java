@@ -5,13 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Iterator;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.streaming.SXSSFCell;
@@ -21,6 +16,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IPersonneService;
@@ -31,16 +27,17 @@ public class ExcelFilmHandler {
     private Integer currentRowNumber;
     private Integer currentColumnNumber;
     private String[] headerTab = new String[]{"Realisateur", "Titre", "Zonedvd","Annee","Acteurs","Rippé","RIP Date","Dvd Format"};
-    private SXSSFWorkbook workBook;
+    //private SXSSFWorkbook workBook;
     @Autowired
 	protected IPersonneService personneService;
     @Bean
+    @Scope("prototype")
     public SXSSFWorkbook getWorkBook() {
     	return new SXSSFWorkbook(1);
     }
     public void createSheet(SXSSFWorkbook workBook) {
-    	this.workBook = workBook;
-    	this.sheet = this.workBook.createSheet("Films");
+    	//this.workBook = workBook;
+    	this.sheet = workBook.createSheet("Films");
         this.currentRowNumber = 0;
         this.currentColumnNumber = 0;
         this.createHeaderRow();

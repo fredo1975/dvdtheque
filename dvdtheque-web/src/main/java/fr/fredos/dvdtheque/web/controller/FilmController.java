@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -182,6 +183,7 @@ public class FilmController {
     	headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
         headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+        headers.setContentLanguage(Locale.FRANCE);
         headers.setContentLength(excelContent.length);
         return new ResponseEntity<byte[]>(excelContent, headers, HttpStatus.OK);
 	}
