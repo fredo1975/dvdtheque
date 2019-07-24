@@ -7,10 +7,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -88,6 +91,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public static final String TITRE_FILM = "Lorem Ipsum";
 	public static final String TITRE_FILM_UPDATED = "Lorem Ipsum updated";
 	public static final Integer ANNEE = 2015;
+	public static final Integer ANNEE1 = 2017;
 	public static final String REAL_NOM = "toto titi";
 	public static final String REAL_NOM1 = "Dan VanHarp";
 	public static final String ACT1_NOM = "tata tutu";
@@ -95,20 +99,26 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public static final String ACT3_NOM = "tuotuo tmitmi";
 	public static final String ACT4_NOM = "Graham Collins";
 	public static final int RIP_DATE = -10;
+	public static final int RIP_DATE1 = -20;
+	public static final String ZONE_DVD = "1";
 	public static final String SHEET_NAME = "Films";
-	public static Date createRipDate() {
+	public static Date createRipDate(final int ripDate) {
 		Calendar cal = Calendar.getInstance();
-		return DateUtils.addDays(cal.getTime(), RIP_DATE);
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.HOUR, 0);
+		return DateUtils.addDays(cal.getTime(), ripDate);
 	}
 
-	private void assertFilmIsNotNull(Film film, boolean dateRipNull) {
+	private void assertFilmIsNotNull(Film film, boolean dateRipNull, int ripDate) {
 		assertNotNull(film);
 		assertNotNull(film.getId());
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
 		if (!dateRipNull) {
-			assertEquals(filmService.clearDate(createRipDate()), film.getDvd().getDateRip());
+			assertEquals(filmService.clearDate(createRipDate(ripDate)), film.getDvd().getDateRip());
 		}
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
 		assertTrue(film.getActeurs().size() >= 3);
@@ -119,8 +129,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	public void findAllFilms() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film, false);
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		assertFilmIsNotNull(film, false, RIP_DATE);
 		List<Film> allFilms = filmService.findAllFilms();
 		assertNotNull(allFilms);
 		if (CollectionUtils.isNotEmpty(allFilms)) {
@@ -135,7 +145,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 					.andExpect(MockMvcResultMatchers.status().isOk())
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
 			assertNotNull(resultActions);
-			assertFilmIsNotNull(filmToTest, true);
+			assertFilmIsNotNull(filmToTest, true, RIP_DATE);
 		}
 	}
 
@@ -153,8 +163,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	public void findById() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film, false);
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		assertFilmIsNotNull(film, false, RIP_DATE);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_FILM_BY_ID + film.getId())
 				.contentType(MediaType.APPLICATION_JSON);
 		ResultActions resultActions = mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk())
@@ -165,8 +175,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	public void findAllRealisateurs() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film, false);
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		assertFilmIsNotNull(film, false, RIP_DATE);
 		List<Personne> allRealisateur = personneService.findAllRealisateur();
 		assertNotNull(allRealisateur);
 		if (CollectionUtils.isNotEmpty(allRealisateur)) {
@@ -186,8 +196,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	public void findAllPersonne() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film, false);
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		assertFilmIsNotNull(film, false, RIP_DATE);
 		List<Personne> allPersonne = personneService.findAllPersonne();
 		assertNotNull(allPersonne);
 		if (CollectionUtils.isNotEmpty(allPersonne)) {
@@ -207,8 +217,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	public void findAllActeurs() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film, false);
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		assertFilmIsNotNull(film, false, RIP_DATE);
 		List<Personne> allActeur = personneService.findAllActeur();
 		assertNotNull(allActeur);
 		if (CollectionUtils.isNotEmpty(allActeur)) {
@@ -228,8 +238,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Transactional
 	public void testCheckIfTmdbFilmExists() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film, true);
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		assertFilmIsNotNull(film, true, RIP_DATE);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_FILM_BY_TMDBID + film.getTmdbId())
 				.contentType(MediaType.APPLICATION_JSON);
 		ResultActions resultActions = mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk())
@@ -242,8 +252,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Transactional
 	public void testReplaceFilm() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film, true);
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		assertFilmIsNotNull(film, true, RIP_DATE);
 		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(film);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(UPDATE_TMDB_FILM_BY_TMDBID + tmdbId, film)
@@ -252,7 +262,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
 		Film filmUpdated = filmService.findFilm(film.getId());
-		assertFilmIsNotNull(filmUpdated, true);
+		assertFilmIsNotNull(filmUpdated, true, RIP_DATE);
 		Results results = client.retrieveTmdbSearchResultsById(tmdbId);
 		assertEquals(StringUtils.upperCase(results.getTitle()), filmUpdated.getTitre());
 		assertEquals(POSTER_PATH, filmUpdated.getPosterPath());
@@ -262,8 +272,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Transactional
 	public void testUpdateFilm() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film, false);
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		assertFilmIsNotNull(film, false, RIP_DATE);
 		Film filmToUpdate = filmService.findFilm(film.getId());
 		assertNotNull(filmToUpdate);
 		logger.debug("filmToUpdate=" + filmToUpdate.toString());
@@ -311,7 +321,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(TITRE_FILM_TMBD_ID_4780)));
 		Film filmSaved = filmService.findFilmByTitre(TITRE_FILM_TMBD_ID_4780);
-		assertFilmIsNotNull(filmSaved, true);
+		assertFilmIsNotNull(filmSaved, true, RIP_DATE);
 		assertEquals(StringUtils.upperCase(TITRE_FILM_TMBD_ID_4780), filmSaved.getTitre());
 	}
 
@@ -319,8 +329,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Transactional
 	public void testFindPersonne() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film, false);
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		assertFilmIsNotNull(film, false, RIP_DATE);
 		Personne personne = personneService.findPersonneByName(REAL_NOM);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_PERSONNE_URI)
 				.param("nom", personne.getNom()).contentType(MediaType.APPLICATION_JSON);
@@ -333,8 +343,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Transactional
 	public void testUpdatePersonne() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film, false);
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		assertFilmIsNotNull(film, false, RIP_DATE);
 		Personne personne = personneService.findPersonneByName(ACT1_NOM);
 		assertNotNull(personne);
 		personne.setNom(ACT2_NOM);
@@ -352,32 +362,84 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	public void testExportFilmList() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film, false);
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		Film film1 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE1, REAL_NOM1, ACT1_NOM, ACT2_NOM, ACT3_NOM,
+				createRipDate(RIP_DATE1), DvdFormat.BLUERAY);
+		assertFilmIsNotNull(film, false, RIP_DATE);
+		assertFilmIsNotNull(film1, false, RIP_DATE1);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI);
 		MvcResult result = mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
 		byte[] b = result.getResponse().getContentAsByteArray();
 		assertNotNull(b);
-		
 		Workbook workbook = excelFilmHandler.createSheetFromByteArray(b);
         workbook.forEach(sheet -> {
         	assertEquals(SHEET_NAME, sheet.getSheetName());
         });
         Sheet sheet = workbook.getSheetAt(0);
         assertEquals(SHEET_NAME, sheet.getSheetName());
-        // Create a DataFormatter to format and get each cell's value as String
         DataFormatter dataFormatter = new DataFormatter();
-        int i=0;
         sheet.forEach(row -> {
-            row.forEach(cell -> {
-                String cellValue = dataFormatter.formatCellValue(cell);
-                System.out.print(cellValue + "\t");
-            });
-            //System.out.println();
+        	if(row.getRowNum()==1) {
+        		row.forEach(cell -> {
+                    String cellValue = dataFormatter.formatCellValue(cell);
+                    if(cell.getColumnIndex()==0) {
+                    	assertEquals(REAL_NOM, cellValue);
+                    }
+                    if(cell.getColumnIndex()==1) {
+                    	assertEquals(StringUtils.upperCase(TITRE_FILM), StringUtils.upperCase(cellValue));
+                    }
+                    if(cell.getColumnIndex()==2) {
+                    	assertEquals(ZONE_DVD, cellValue);
+                    }
+                    if(cell.getColumnIndex()==3) {
+                    	assertEquals(ANNEE.toString(), cellValue);
+                    }
+                    if(cell.getColumnIndex()==4) {
+                    	assertEquals(ACT1_NOM+","+ACT2_NOM+","+ACT3_NOM, cellValue);
+                    }
+                    if(cell.getColumnIndex()==5) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==6) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	assertEquals(df.print(createRipDate(RIP_DATE),Locale.FRANCE), cellValue);
+                    }
+                    if(cell.getColumnIndex()==7) {
+                    	assertEquals(DvdFormat.DVD.name(), cellValue);
+                    }
+                });
+        	}else if(row.getRowNum()==2){
+        		row.forEach(cell -> {
+                    String cellValue = dataFormatter.formatCellValue(cell);
+                    if(cell.getColumnIndex()==0) {
+                    	assertEquals(REAL_NOM1, cellValue);
+                    }
+                    if(cell.getColumnIndex()==1) {
+                    	assertEquals(StringUtils.upperCase(TITRE_FILM_UPDATED), StringUtils.upperCase(cellValue));
+                    }
+                    if(cell.getColumnIndex()==2) {
+                    	assertEquals(ZONE_DVD, cellValue);
+                    }
+                    if(cell.getColumnIndex()==3) {
+                    	assertEquals(ANNEE1.toString(), cellValue);
+                    }
+                    if(cell.getColumnIndex()==4) {
+                    	assertEquals(ACT1_NOM+","+ACT2_NOM+","+ACT3_NOM, cellValue);
+                    }
+                    if(cell.getColumnIndex()==5) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==6) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	assertEquals(df.print(createRipDate(RIP_DATE1),Locale.FRANCE), cellValue);
+                    }
+                    if(cell.getColumnIndex()==7) {
+                    	assertEquals(DvdFormat.BLUERAY.name(), cellValue);
+                    }
+                });
+        	}
         });
-
-        // Closing the workbook
         workbook.close();
 	}
 }
