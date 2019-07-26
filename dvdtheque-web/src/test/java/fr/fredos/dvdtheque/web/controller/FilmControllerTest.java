@@ -367,7 +367,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				createRipDate(RIP_DATE1), DvdFormat.BLUERAY);
 		assertFilmIsNotNull(film, false, RIP_DATE);
 		assertFilmIsNotNull(film1, false, RIP_DATE1);
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI);
+		//MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(EXPORT_FILM_LIST_URI);
+		
 		MvcResult result = mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
 		byte[] b = result.getResponse().getContentAsByteArray();
