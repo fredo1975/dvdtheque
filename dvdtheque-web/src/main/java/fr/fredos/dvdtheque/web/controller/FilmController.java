@@ -151,7 +151,7 @@ public class FilmController {
 	}
 	
 	@CrossOrigin
-	@GetMapping("/films/export")
+	@PostMapping("/films/export")
 	ResponseEntity<byte[]> exportFilmList(){
 		SXSSFWorkbook workBook = null;
 	    byte[] excelContent = null;
