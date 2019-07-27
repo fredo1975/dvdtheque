@@ -22,8 +22,8 @@ import fr.fredos.dvdtheque.service.dto.PersonneDto;
 public class PersonneServiceImpl implements IPersonneService {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceImpl.class);
 	private static final String CACHE_PERSONNE = "personneCache";
-	private static final String CACHE_REALISATEUR = "realCache";
-	private static final String CACHE_ACTEUR = "actCache";
+	public static final String CACHE_REALISATEUR = "realCache";
+	public static final String CACHE_ACTEUR = "actCache";
 	
 	@Autowired
 	private PersonneDao personneDao;

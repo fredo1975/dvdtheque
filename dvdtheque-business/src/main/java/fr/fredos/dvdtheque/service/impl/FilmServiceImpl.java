@@ -77,7 +77,7 @@ public class FilmServiceImpl implements IFilmService {
 	public Film findFilm(Long id) {
 		return filmDao.findFilm(id);
 	}
-	@CacheEvict(value= CACHE_FILM, allEntries = true)
+	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
 		upperCaseTitre(film);
@@ -96,7 +96,7 @@ public class FilmServiceImpl implements IFilmService {
 		final String titreO = StringUtils.upperCase(film.getTitreO());
 		film.setTitreO(titreO);
 	}
-	@CacheEvict(value= CACHE_FILM, allEntries = true)
+	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
 	@Transactional(readOnly = false)
 	public Long saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
@@ -108,7 +108,7 @@ public class FilmServiceImpl implements IFilmService {
 	public List<Film> findAllFilms() {
 		return filmDao.findAllFilms();
 	}
-	@CacheEvict(value= CACHE_FILM, allEntries = true)
+	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
 		filmDao.cleanAllFilms();
@@ -126,7 +126,7 @@ public class FilmServiceImpl implements IFilmService {
 		return filmList;
 	}
 	@Override
-	@CacheEvict(value= CACHE_FILM, allEntries = true)
+	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
 	@Transactional(readOnly = false)
 	public void removeFilm(Film film) {
 		film = filmDao.findFilm(film.getId());
