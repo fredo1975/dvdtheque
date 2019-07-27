@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.IFilmService;
@@ -152,7 +153,10 @@ public class FilmController {
 	
 	@CrossOrigin
 	@PostMapping("/films/export")
-	ResponseEntity<byte[]> exportFilmList(){
+	ResponseEntity<byte[]> exportFilmList() throws DvdthequeServerRestException, IOException{
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentLanguage(Locale.FRANCE);
+    	headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 		SXSSFWorkbook workBook = null;
 	    byte[] excelContent = null;
 	    LocalDateTime localDate = LocalDateTime.now();
@@ -168,9 +172,10 @@ public class FilmController {
 	    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    	workBook.write(baos);
 	    	excelContent = baos.toByteArray();
-	    }catch (Exception ecx) {
-            return new ResponseEntity<byte[]>(null, null, HttpStatus.BAD_REQUEST);
-        }finally {
+	    /*}catch (Exception ex) {
+	    	ApiError error = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR,ex.getMessage(),ex);
+            return new ResponseEntity<byte[]>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+        */}finally {
             if (null != workBook) {
                 try {
                 	workBook.close();
@@ -179,21 +184,9 @@ public class FilmController {
                 }
             }
         }
-    	HttpHeaders headers = new HttpHeaders();
-    	headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
         headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
-        headers.setContentLanguage(Locale.FRANCE);
         headers.setContentLength(excelContent.length);
         return new ResponseEntity<byte[]>(excelContent, headers, HttpStatus.OK);
 	}
-	/*
-	@CrossOrigin
-	@PostMapping("/films")
-	ResponseEntity<Object> saveFilm(@RequestBody Film film) {
-		Long id = filmService.saveNewFilm(film);
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(id).toUri();
-		return ResponseEntity.created(location).build();
-	}*/
 }
