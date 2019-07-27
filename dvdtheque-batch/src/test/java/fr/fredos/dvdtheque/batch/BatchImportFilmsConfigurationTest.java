@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -56,7 +55,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		assertNotNull(film.getDvd());
 		assertNotNull(film.getOverview());
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
-		assertTrue(film.getActeurs().size()==7);
+		assertTrue(film.getActeurs().size()>7);
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue(film.getRealisateurs().size()==1);
 	}
@@ -93,7 +92,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(REAL_NOM.equals(real.getNom()));
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
-				assertTrue(acteurs.size()==7);
+				assertTrue(acteurs.size()>7);
 				assertTrue(film.isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
@@ -103,7 +102,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(REAL_NOM2.equals(real.getNom()));
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
-				assertTrue(acteurs.size()==7);
+				assertTrue(acteurs.size()>7);
 				assertTrue(film.isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
@@ -113,7 +112,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(REAL_NOM.equals(real.getNom()));
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
-				assertTrue(acteurs.size()==7);
+				assertTrue(acteurs.size()>7);
 				assertFalse(film.isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
