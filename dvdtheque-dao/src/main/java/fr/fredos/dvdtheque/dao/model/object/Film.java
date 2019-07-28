@@ -50,7 +50,7 @@ public class Film implements Serializable {
 	private String posterPath;
 	@Column(name = "TMDB_ID")
 	private Long tmdbId;
-	@Column(name = "OVERVIEW",length=500)
+	@Column(name = "OVERVIEW",length=65535)
 	private String overview;
 	@Column(name = "RUNTIME")
 	private Integer runtime;
