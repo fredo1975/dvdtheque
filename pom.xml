@@ -96,8 +96,8 @@
 					<squash>false</squash>
 					<scmCommentPrefix>[RELEASE] </scmCommentPrefix>
 					<flowInitContext>
-						<masterBranchName>master_tmp</masterBranchName>
-						<developBranchName>develop_tmp</developBranchName>
+						<masterBranchName>master</masterBranchName>
+						<developBranchName>develop</developBranchName>
 						<featureBranchPrefix>feature-</featureBranchPrefix>
 						<releaseBranchPrefix>release-</releaseBranchPrefix>
 						<hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
