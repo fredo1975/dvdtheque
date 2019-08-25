@@ -8,7 +8,7 @@ pipeline {
     	VERSION = readMavenPom().getVersion()
     	def pom = readMavenPom file: 'pom.xml'
     	def NVERSION = pom.version.replace("-SNAPSHOT", "")
-    	def SERVER_IP = 192.168.1.100
+    	def SERVER_IP = '192.168.1.100'
     	ACTION_TYPE = "${env.ACTION_TYPE}"
     }
     stages {
