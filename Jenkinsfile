@@ -45,8 +45,8 @@ pipeline {
             steps {
                 sh 'echo \'stoping dvdtheque-jenkins-rest.service ...\''
                 sh 'sudo systemctl stop dvdtheque-jenkins-rest.service'
-                sh 'echo \'copying dvdtheque-web-*.jar to  /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar ...\''
-                sh 'cp dvdtheque-web/target/dvdtheque-web-*.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar'
+                sh 'echo \'copying dvdtheque-web-${NVERSION}.jar to  /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar ...\''
+                sh 'mv dvdtheque-web/target/dvdtheque-web-$NVERSION.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar'
                 sh 'echo \'starting dvdtheque-jenkins-rest.service ...\''
                 sh 'sudo systemctl start dvdtheque-jenkins-rest.service'
             }
