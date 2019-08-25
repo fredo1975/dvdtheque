@@ -26,7 +26,7 @@ pipeline {
 
         stage ('Build') {
 		 		steps {
-		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
+		 			withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		 				script {
 			 				if("${ACTION_TYPE}" == "release"){
 			 					sh ''' mvn -X -U jgitflow:release-start -DdevelopmentVersion=${DEV_VERSION} jgitflow:release-finish -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" '''
