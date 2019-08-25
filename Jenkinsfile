@@ -1,8 +1,14 @@
 pipeline {
     agent any
     tools {
-        maven 'Maven 3.3.9'
+        maven 'Maven 3.6.0'
         jdk 'jdk8'
+    }
+    environment {
+    	VERSION = readMavenPom().getVersion()
+    	def pom = readMavenPom file: 'pom.xml'
+    	def NVERSION = pom.version.replace("-SNAPSHOT", "")
+    	ACTION_TYPE = "${env.ACTION_TYPE}"
     }
     stages {
         stage ('Initialize') {
@@ -10,16 +16,23 @@ pipeline {
                 sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
+                    echo "VERSION = ${VERSION}"
+                    echo "pom = ${pom}"
+                    echo "NVERSION = ${NVERSION}"
+                    echo "DEV_VERSION = ${DEV_VERSION}"
                 '''
             }
         }
-
         stage ('Build') {
 		 		steps {
-		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
-            			sh '''
-            			mvn -e -X -U --batch-mode release:clean release:prepare release:perform -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir -Dmaven.javadoc.skip=true"
-            			'''
+		 			withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		 				script {
+			 				if("${ACTION_TYPE}" == "release"){
+			 					sh ''' mvn -X -U jgitflow:release-start -DdevelopmentVersion=${DEV_VERSION} jgitflow:release-finish -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" '''
+			 				}else if ("${ACTION_TYPE}" == "release-noTest") {
+			 					sh '''mvn clean install -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" -Dmaven.test.skip=true'''
+			 				}
+			 			}
 		    		}
 		    	}
             post {
