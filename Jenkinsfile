@@ -8,6 +8,7 @@ pipeline {
     	VERSION = readMavenPom().getVersion()
     	def pom = readMavenPom file: 'pom.xml'
     	def NVERSION = pom.version.replace("-SNAPSHOT", "")
+    	def SERVER_IP = '192.168.1.100'
     	ACTION_TYPE = "${env.ACTION_TYPE}"
     }
     stages {
@@ -20,6 +21,7 @@ pipeline {
                     echo "pom = ${pom}"
                     echo "NVERSION = ${NVERSION}"
                     echo "DEV_VERSION = ${DEV_VERSION}"
+                    echo "SERVER_IP = ${SERVER_IP}"
                 '''
             }
         }
@@ -60,6 +62,16 @@ pipeline {
 			 	}
                 sh 'echo \'starting dvdtheque-jenkins-rest.service ...\''
                 sh 'sudo systemctl start dvdtheque-jenkins-rest.service'
+                script {
+			 		if("${ACTION_TYPE}" == "release"){
+			 			sh 'echo \'stoping dvdtheque-rest.service on remote prod server 192.168.1.100 ...\''
+                		sh 'ssh fredo@192.168.1.100 sudo systemctl stop dvdtheque-rest.service'
+			 			sh 'echo \'copying dvdtheque-web-${NVERSION}.jar to remote 192.168.1.100 server to /opt/dvdtheque_rest_service/prod/dvdtheque-web.jar ...\''
+                		sh 'scp -r dvdtheque-web/target/dvdtheque-web-$NVERSION.jar fredo@192.168.1.100:/opt/dvdtheque_rest_service/prod/dvdtheque-web.jar'
+                		sh 'echo \'starting dvdtheque-rest.service on remote prod server 192.168.1.100 ...\''
+                		sh 'ssh fredo@192.168.1.100 sudo systemctl start dvdtheque-rest.service'
+			 		}
+			 	}
             }
         }
     }
