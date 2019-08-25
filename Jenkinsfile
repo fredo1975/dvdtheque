@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        maven 'Maven 3.3.9'
+        maven 'Maven 3.6.0'
         jdk 'jdk8'
     }
     environment {
@@ -25,10 +25,10 @@ pipeline {
         }
         stage ('Build') {
 		 		steps {
-		 			withMaven(mavenSettingsConfig: '64b2f66f-fa43-4c22-86bc-47645fa2ff4e') {
+		 			withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		 				script {
 			 				if("${ACTION_TYPE}" == "release"){
-			 					sh ''' mvn -X jgitflow:release-start -DdevelopmentVersion=${DEV_VERSION} jgitflow:release-finish -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" -Dmaven.test.skip=true'''
+			 					sh ''' mvn -X -U jgitflow:release-start -DdevelopmentVersion=${DEV_VERSION} jgitflow:release-finish -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" '''
 			 				}else if ("${ACTION_TYPE}" == "release-noTest") {
 			 					sh '''mvn clean install -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" -Dmaven.test.skip=true'''
 			 				}
