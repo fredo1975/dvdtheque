@@ -37,7 +37,11 @@ pipeline {
 		    	}
             post {
                 success {
-                    junit '*/target/surefire-reports/*.xml'
+                	script {
+			 			if("${ACTION_TYPE}" == "release"){
+                    		junit '*/target/surefire-reports/*.xml'
+                    	}
+                    }
                 }
             }
         }
