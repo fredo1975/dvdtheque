@@ -54,7 +54,7 @@ pipeline {
                 script {
 			 		if("${ACTION_TYPE}" == "release"){
 			 			sh 'echo \'copying dvdtheque-web-${NVERSION}.jar to  /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar ...\''
-                		sh 'mv dvdtheque-web/target/dvdtheque-web-$NVERSION.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar'
+                		sh 'cp dvdtheque-web/target/dvdtheque-web-$NVERSION.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar'
 			 		}else if ("${ACTION_TYPE}" == "release-noTest") {
 			 			sh 'echo \'copying dvdtheque-web-${VERSION}.jar to  /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar ...\''
                 		sh 'mv dvdtheque-web/target/dvdtheque-web-$VERSION.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar'
