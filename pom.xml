@@ -88,12 +88,12 @@
 					<password>github1975</password>
 					<pushReleases>true</pushReleases>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<noTag>true</noTag>
+					<noTag>false</noTag>
 					<allowUntracked>true</allowUntracked>
 					<pullDevelop>true</pullDevelop>
 					<pullMaster>true</pullMaster>
 					<allowSnapshots>true</allowSnapshots>
-					<noDeploy>true</noDeploy>
+					<noDeploy>false</noDeploy>
 					<squash>false</squash>
 					<scmCommentPrefix>[RELEASE] </scmCommentPrefix>
 					<flowInitContext>
