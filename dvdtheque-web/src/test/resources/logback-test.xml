@@ -2,21 +2,6 @@
 <!DOCTYPE xml>
 
 <configuration scan="true" scanPeriod="30 seconds">
-
-    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-        <resetJUL>true</resetJUL>
-    </contextListener>
-    
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d %5p %40.40c:%4L - %m%n</pattern>
-        </encoder>
-    </appender>
-
-    <logger name="org.hibernate" level="info"/>
-    <logger name="fr.fredos.dvdtheque" level="info"/>
-
-    <root level="info">
-        <appender-ref ref="console"/>
-    </root>
+	<include
+		resource="org/springframework/boot/logging/logback/base.xml" />
 </configuration>
