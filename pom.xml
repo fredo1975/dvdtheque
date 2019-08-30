@@ -27,7 +27,6 @@
 		<module>dvdtheque-swing</module>
 		<module>dvdtheque-web</module>
 		<module>dvdtheque-config-server</module>
-		<module>dvdtheque-config-client</module>
 	</modules>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
