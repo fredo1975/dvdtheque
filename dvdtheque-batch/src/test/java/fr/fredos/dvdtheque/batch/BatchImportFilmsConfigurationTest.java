@@ -80,7 +80,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchJob(jobParameters);
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 		List<Film> films = filmService.findAllFilms();
-		assertTrue(films.size()==9);
+		assertTrue(films.size()==11);
 		boolean blueVelvetExists = false;
 		boolean taxiDriverExists = false;
 		boolean eraserHeadExists = false;
