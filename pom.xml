@@ -23,7 +23,7 @@
 	<modules>
 		<module>dvdtheque-commons</module>
 		<module>dvdtheque-dao</module>
-		<module>dvdtheque-business</module>
+		<module>dvdtheque-services</module>
 		<module>dvdtheque-tmdb-service</module>
 		<module>dvdtheque-batch</module>
 		<module>dvdtheque-swing</module>

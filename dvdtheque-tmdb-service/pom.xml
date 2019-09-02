@@ -15,7 +15,7 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<artifactId>dvdtheque-business</artifactId>
+			<artifactId>dvdtheque-services</artifactId>
 			<groupId>${project.groupId}</groupId>
 			<version>${project.version}</version>
 		</dependency>
