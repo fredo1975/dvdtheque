@@ -53,11 +53,11 @@ pipeline {
                 sh 'sudo systemctl stop dvdtheque-jenkins-rest.service'
                 script {
 			 		if("${ACTION_TYPE}" == "release"){
-			 			sh 'echo \'copying dvdtheque-web-${NVERSION}.jar to  /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar ...\''
-                		sh 'cp dvdtheque-web/target/dvdtheque-web-$NVERSION.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar'
+			 			sh 'echo \'copying dvdtheque-rest-services-${NVERSION}.jar to  /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar ...\''
+                		sh 'cp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar'
 			 		}else if ("${ACTION_TYPE}" == "release-noTest") {
-			 			sh 'echo \'copying dvdtheque-web-${VERSION}.jar to  /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar ...\''
-                		sh 'mv dvdtheque-web/target/dvdtheque-web-$VERSION.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-web.jar'
+			 			sh 'echo \'copying dvdtheque-rest-services-${VERSION}.jar to  /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar ...\''
+                		sh 'mv dvdtheque-web/target/dvdtheque-web-$VERSION.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar'
 			 		}
 			 	}
                 sh 'echo \'starting dvdtheque-jenkins-rest.service ...\''
@@ -66,8 +66,8 @@ pipeline {
 			 		if("${ACTION_TYPE}" == "release"){
 			 			sh 'echo \'stoping dvdtheque-prod-rest.service on remote prod server 192.168.1.100 ...\''
                 		sh 'ssh jenkins@$SERVER_IP sudo systemctl stop dvdtheque-prod-rest.service'
-			 			sh 'echo \'copying dvdtheque-web-${NVERSION}.jar to remote 192.168.1.100 server to /opt/dvdtheque_rest_service/prod/dvdtheque-web.jar ...\''
-                		sh 'scp dvdtheque-web/target/dvdtheque-web-$NVERSION.jar jenkins@$SERVER_IP:/opt/dvdtheque_rest_service/prod/dvdtheque-web.jar'
+			 			sh 'echo \'copying dvdtheque-rest-services-${NVERSION}.jar to remote 192.168.1.100 server to /opt/dvdtheque_rest_service/prod/dvdtheque-rest-services.jar ...\''
+                		sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$SERVER_IP:/opt/dvdtheque_rest_service/prod/dvdtheque-rest-services.jar'
                 		sh 'echo \'starting dvdtheque-prod-rest.service on remote prod server 192.168.1.100 ...\''
                 		sh 'ssh jenkins@$SERVER_IP sudo systemctl start dvdtheque-prod-rest.service'
 			 		}
