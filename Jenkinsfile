@@ -57,7 +57,7 @@ pipeline {
                 		sh 'cp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar'
 			 		}else if ("${ACTION_TYPE}" == "release-noTest") {
 			 			sh 'echo \'copying dvdtheque-rest-services-${VERSION}.jar to  /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar ...\''
-                		sh 'mv dvdtheque-web/target/dvdtheque-web-$VERSION.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar'
+                		sh 'mv dvdtheque-rest-services/target/dvdtheque-rest-services-$VERSION.jar /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar'
 			 		}
 			 	}
                 sh 'echo \'starting dvdtheque-jenkins-rest.service ...\''
