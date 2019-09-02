@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.web.error;
+package fr.fredos.dvdtheque.rest.error;
 
 public class ApiValidationError extends ApiSubError {
 	private String object;

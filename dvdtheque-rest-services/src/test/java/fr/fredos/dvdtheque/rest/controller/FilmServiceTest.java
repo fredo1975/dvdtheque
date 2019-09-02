@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.web.service;
+package fr.fredos.dvdtheque.rest.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -12,23 +12,23 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.StopWatch;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 
-
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
-		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.web.controller.WebApplication.class})
-public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContextTests{
+@SpringBootTest
+public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTests{
+	protected Logger logger = LoggerFactory.getLogger(FilmServiceTest.class);
 	@Autowired
 	protected IFilmService filmService;
 	@Autowired
@@ -60,25 +60,17 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 		assertTrue(film.getRealisateurs().size()==1);
 	}
 	@Test
-	public void findFilmWithAllObjectGraph() throws Exception{
+	public void findAllFilm() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
 		assertFilmIsNotNull(film);
-		film = filmService.findFilmWithAllObjectGraph(film.getId());
+		film = filmService.findFilmByTitre(TITRE_FILM);
 		assertNotNull(film);
-		assertNotNull(film.getTitre());
-		
-		assertNotNull(film.getActeurs());
-		for(Personne acteur : film.getActeurs()){
-			logger.info(" acteur="+acteur.toString());
-		}
-	}
-	
-	@Test
-	public void findAllFilms() throws Exception{
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
-		assertFilmIsNotNull(film);
-		List<Film> filmList = filmService.findAllFilms();
-		assertNotNull(filmList);
-		logger.debug("filmList ="+filmList.toString());
+		StopWatch watch = new StopWatch();
+		logger.debug(watch.prettyPrint());
+		watch.start();
+		List<Film> films = filmService.findAllFilms();
+		assertNotNull(films);
+		watch.stop();
+		logger.debug(watch.prettyPrint());
 	}
 }

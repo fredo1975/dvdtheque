@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.web.error;
+package fr.fredos.dvdtheque.rest.error;
 
 import java.time.LocalDateTime;
 import java.util.List;

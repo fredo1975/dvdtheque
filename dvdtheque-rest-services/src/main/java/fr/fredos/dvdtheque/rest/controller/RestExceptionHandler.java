@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.web.controller;
+package fr.fredos.dvdtheque.rest.controller;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import fr.fredos.dvdtheque.web.error.ApiError;
+import fr.fredos.dvdtheque.rest.error.ApiError;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
