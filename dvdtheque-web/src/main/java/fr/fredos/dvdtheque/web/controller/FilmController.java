@@ -13,7 +13,6 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,7 +37,6 @@ import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 @RestController
-@EnableDiscoveryClient
 @ComponentScan({"fr.fredos.dvdtheque.service,fr.fredos.dvdtheque.dao.model.repository,fr.fredos.dvdtheque.batch"})
 @RequestMapping("/dvdtheque")
 public class FilmController {
