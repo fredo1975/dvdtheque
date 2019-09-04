@@ -53,8 +53,8 @@ pipeline {
             steps {
                 sh 'echo stoping dvdtheque-jenkins-rest.service on remote dev server "${DEV_SERVER_IP}" ...'
                 sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl stop dvdtheque-jenkins-rest.service'
-                sh 'echo copying dvdtheque-rest-services-"${NVERSION}".jar to remote dev server "${DEV_SERVER_IP}" in /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar ...'
-               	sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$DEV_SERVER_IP:/opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar'
+                sh 'echo copying dvdtheque-rest-services-"${VERSION}".jar to remote dev server "${DEV_SERVER_IP}" in /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar ...'
+               	sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$VERSION.jar jenkins@$DEV_SERVER_IP:/opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar'
                 sh 'echo starting dvdtheque-jenkins-rest.service on remote dev server "${DEV_SERVER_IP}" ...'
                 sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl start dvdtheque-jenkins-rest.service'
                 script {
