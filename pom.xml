@@ -28,6 +28,7 @@
 		<module>dvdtheque-rest-services</module>
 		<module>dvdtheque-config-server</module>
 		<module>dvdtheque-discovery-server</module>
+		<module>dvdtheque-hystrix-dashboard</module>
 	</modules>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
