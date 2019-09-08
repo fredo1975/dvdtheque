@@ -26,7 +26,7 @@ public class ExcelFilmHandler {
 	private SXSSFSheet sheet;
     private Integer currentRowNumber;
     private Integer currentColumnNumber;
-    private String[] headerTab = new String[]{"Realisateur", "Titre", "Zonedvd","Annee","Acteurs","Rippé","RIP Date","Dvd Format"};
+    private String[] headerTab = new String[]{"Realisateur", "Titre", "Zonedvd","Annee","Acteurs","Rippé","RIP Date","Dvd Format", "TMDB ID"};
     //private SXSSFWorkbook workBook;
     @Autowired
 	protected IPersonneService personneService;
@@ -86,5 +86,6 @@ public class ExcelFilmHandler {
         	addCell("");
         }
         addCell(film.getDvd().getFormat().name());
+        addCell(film.getTmdbId().toString());
     }
 }

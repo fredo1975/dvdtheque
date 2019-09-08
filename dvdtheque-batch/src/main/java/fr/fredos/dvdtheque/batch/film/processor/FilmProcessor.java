@@ -4,7 +4,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,6 @@ import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.tmdb.model.Results;
-import fr.fredos.dvdtheque.tmdb.model.SearchResults;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
@@ -39,12 +37,9 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			e1.printStackTrace();
 		}
 		Film filmToSave = null;
-		SearchResults searchResults = tmdbServiceClient.retrieveTmdbSearchResults(item.getTitre());
-		if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
-			Results res = tmdbServiceClient.filterSearchResultsByDateRelease(item.getAnnee(), searchResults.getResults());
-			if(res != null) {
-				filmToSave = tmdbServiceClient.transformTmdbFilmToDvdThequeFilm(null, res, new HashSet<>(), true);
-			}
+		Results results = tmdbServiceClient.retrieveTmdbSearchResultsById(item.getTmdbId());
+		if(results != null) {
+			filmToSave = tmdbServiceClient.transformTmdbFilmToDvdThequeFilm(null, results, new HashSet<>(), true);
 		}
 		if(filmToSave != null) {
 			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null, DvdFormat.DVD);
