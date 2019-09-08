@@ -36,16 +36,16 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	
 	@Autowired
 	public Job importFilmsJob;
-	public static final String TITRE_FILM_BLUE_VELVET = "BLUE VELVET";
-	public static final String TITRE_FILM_TAXI_DRIVER = "TAXI DRIVER";
-	public static final String TITRE_FILM_ERASERHEAD = "ERASERHEAD";
-	public static final Integer ANNEE_BLUE_VELVET = 1986;
-	public static final String REAL_NOM = "DAVID LYNCH";
-	public static final String REAL_NOM2 = "MARTIN SCORSESE";
-	public static final String ACT1_NOM = "Kyle MacLachlan";
-	public static final String ACT2_NOM = "Laura Dern";
-	public static final String ACT3_NOM = "Dennis Hopper";
-	public static final String ACT4_NOM = "Isabella Rossellini";
+	public static final String TITRE_FILM_2001 = "2001 : L'ODYSSÉE DE L'ESPACE";
+	public static final String TITRE_FILM_2046 = "2046";
+	public static final String TITRE_FILM_40_ans = "40 ANS : MODE D'EMPLOI";
+	public static final String REAL_NOM = "STANLEY KUBRICK";
+	public static final String REAL_NOM2 = "WONG KAR-WAI";
+	public static final String REAL_NOM3 = "JUDD APATOW";
+	public static final String ACT1_NOM = "WILLIAM SYLVESTER";
+	public static final String ACT2_NOM = "LEONARD ROSSITER";
+	public static final String ACT3_NOM = "ROBERT BEATTY";
+	public static final String ACT4_NOM = "FRANK MILLER";
 	
 	private void assertFilmIsNotNull(Film film) {
 		assertNotNull(film);
@@ -80,14 +80,14 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchJob(jobParameters);
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 		List<Film> films = filmService.findAllFilms();
-		assertTrue(films.size()==11);
-		boolean blueVelvetExists = false;
+		assertTrue(films.size()==7);
+		boolean odysseyExists = false;
 		boolean taxiDriverExists = false;
 		boolean eraserHeadExists = false;
 		
 		for(Film film : films) {
-			if(TITRE_FILM_BLUE_VELVET.equals(film.getTitre())) {
-				blueVelvetExists = true;
+			if(TITRE_FILM_2001.equals(film.getTitre())) {
+				odysseyExists = true;
 				Personne real = film.getRealisateurs().iterator().next();
 				assertTrue(REAL_NOM.equals(real.getNom()));
 				Set<Personne> acteurs = film.getActeurs();
@@ -96,7 +96,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(film.isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
-			if(TITRE_FILM_TAXI_DRIVER.equals(film.getTitre())) {
+			if(TITRE_FILM_2046.equals(film.getTitre())) {
 				taxiDriverExists = true;
 				Personne real = film.getRealisateurs().iterator().next();
 				assertTrue(REAL_NOM2.equals(real.getNom()));
@@ -106,10 +106,10 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(film.isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
-			if(TITRE_FILM_ERASERHEAD.equals(film.getTitre())) {
+			if(TITRE_FILM_40_ans.equals(film.getTitre())) {
 				eraserHeadExists = true;
 				Personne real = film.getRealisateurs().iterator().next();
-				assertTrue(REAL_NOM.equals(real.getNom()));
+				assertTrue(REAL_NOM3.equals(real.getNom()));
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
@@ -118,7 +118,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 			}
 			assertFilmIsNotNull(film);
 		}
-		assertTrue(blueVelvetExists);
+		assertTrue(odysseyExists);
 		assertTrue(taxiDriverExists);
 		assertTrue(eraserHeadExists);
 	}
