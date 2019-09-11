@@ -5,22 +5,30 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -32,6 +40,7 @@ import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
+import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
@@ -49,6 +58,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public static final String ACT2_NOM = "toitoi tuitui";
 	public static final String ACT3_NOM = "tuotuo tmitmi";
 	public static final String ACT4_NOM = "Graham Collins";
+	public static final String SHEET_NAME = "Films";
+	public static final String ZONE_DVD = "1";
 	public static final int RIP_DATE_OFFSET = -10;
 	public static final int RIP_DATE_OFFSET2 = -1;
 	@Autowired
@@ -57,7 +68,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	protected IFilmService filmService;
 	@Autowired
 	protected IPersonneService personneService;
-	
+	@Autowired
+	protected ExcelFilmHandler excelFilmHandler;
 	private void assertFilmIsNotNull(Film film, int ripDateOffset) {
 		assertNotNull(film);
 		assertNotNull(film.getId());
@@ -328,5 +340,142 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
 		Boolean exists = filmService.checkIfTmdbFilmExists(film.getTmdbId());
 		assertTrue(exists);
+	}
+	
+	@Test
+	public void testExcelToCsv() throws IOException {
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD);
+		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD);
+		assertFilmIsNotNull(film2, RIP_DATE_OFFSET);
+		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD);
+		assertFilmIsNotNull(film3, RIP_DATE_OFFSET);
+		
+		List<Film> list = filmService.findAllFilms();
+		assertNotNull(list);
+	    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
+	    assertNotNull(excelContent);
+	    Workbook workBook = this.excelFilmHandler.createSheetFromByteArray(excelContent);
+	    assertNotNull(workBook);
+		workBook.forEach(sheet -> {
+        	assertEquals(SHEET_NAME, sheet.getSheetName());
+        });
+		Sheet sheet = workBook.getSheetAt(0);
+        assertEquals(SHEET_NAME, sheet.getSheetName());
+        String csv = this.excelFilmHandler.createCsvFromExcel(workBook);
+        assertNotNull(csv);
+	}
+	@Test
+	public void testCreateSXSSFWorkbookFromFilmList() throws IOException {
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD);
+		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD);
+		assertFilmIsNotNull(film2, RIP_DATE_OFFSET);
+		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD);
+		assertFilmIsNotNull(film3, RIP_DATE_OFFSET);
+		
+		List<Film> list = filmService.findAllFilms();
+		assertNotNull(list);
+		
+		byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
+		assertNotNull(excelContent);
+		Workbook workBook = excelFilmHandler.createSheetFromByteArray(excelContent);
+		assertNotNull(workBook);
+		workBook.forEach(sheet -> {
+        	assertEquals(SHEET_NAME, sheet.getSheetName());
+        });
+		Sheet sheet = workBook.getSheetAt(0);
+        assertEquals(SHEET_NAME, sheet.getSheetName());
+        DataFormatter dataFormatter = new DataFormatter();
+        sheet.forEach(row -> {
+        	if(row.getRowNum()==1) {
+        		row.forEach(cell -> {
+                    String cellValue = dataFormatter.formatCellValue(cell);
+                    if(cell.getColumnIndex()==0) {
+                    	assertEquals(REAL_NOM, cellValue);
+                    }
+                    if(cell.getColumnIndex()==1) {
+                    	assertEquals(StringUtils.upperCase(TITRE_FILM), StringUtils.upperCase(cellValue));
+                    }
+                    if(cell.getColumnIndex()==2) {
+                    	assertEquals(ZONE_DVD, cellValue);
+                    }
+                    if(cell.getColumnIndex()==3) {
+                    	assertEquals(ANNEE, new Integer(cellValue));
+                    }
+                    if(cell.getColumnIndex()==4) {
+                    	assertEquals(ACT1_NOM+","+ACT2_NOM+","+ACT3_NOM, cellValue);
+                    }
+                    if(cell.getColumnIndex()==5) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==6) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	assertEquals(df.print(createRipDate(RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
+                    }
+                    if(cell.getColumnIndex()==7) {
+                    	assertEquals(DvdFormat.DVD.name(), cellValue);
+                    }
+                });
+        	}else if(row.getRowNum()==2) {
+        		row.forEach(cell -> {
+                    String cellValue = dataFormatter.formatCellValue(cell);
+                    if(cell.getColumnIndex()==0) {
+                    	assertEquals(REAL_NOM, cellValue);
+                    }
+                    if(cell.getColumnIndex()==1) {
+                    	assertEquals(StringUtils.upperCase(TITRE_FILM_REUPDATED), StringUtils.upperCase(cellValue));
+                    }
+                    if(cell.getColumnIndex()==2) {
+                    	assertEquals(ZONE_DVD, cellValue);
+                    }
+                    if(cell.getColumnIndex()==3) {
+                    	assertEquals(ANNEE, new Integer(cellValue));
+                    }
+                    if(cell.getColumnIndex()==4) {
+                    	assertEquals(ACT1_NOM+","+ACT2_NOM+","+ACT3_NOM, cellValue);
+                    }
+                    if(cell.getColumnIndex()==5) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==6) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	assertEquals(df.print(createRipDate(RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
+                    }
+                    if(cell.getColumnIndex()==7) {
+                    	assertEquals(DvdFormat.DVD.name(), cellValue);
+                    }
+                });
+        	}else if(row.getRowNum()==3) {
+        		row.forEach(cell -> {
+                    String cellValue = dataFormatter.formatCellValue(cell);
+                    if(cell.getColumnIndex()==0) {
+                    	assertEquals(REAL_NOM, cellValue);
+                    }
+                    if(cell.getColumnIndex()==1) {
+                    	assertEquals(StringUtils.upperCase(TITRE_FILM_UPDATED), StringUtils.upperCase(cellValue));
+                    }
+                    if(cell.getColumnIndex()==2) {
+                    	assertEquals(ZONE_DVD, cellValue);
+                    }
+                    if(cell.getColumnIndex()==3) {
+                    	assertEquals(ANNEE, new Integer(cellValue));
+                    }
+                    if(cell.getColumnIndex()==4) {
+                    	assertEquals(ACT1_NOM+","+ACT2_NOM+","+ACT3_NOM, cellValue);
+                    }
+                    if(cell.getColumnIndex()==5) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==6) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	assertEquals(df.print(createRipDate(RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
+                    }
+                    if(cell.getColumnIndex()==7) {
+                    	assertEquals(DvdFormat.DVD.name(), cellValue);
+                    }
+                });
+        	}
+        });
 	}
 }

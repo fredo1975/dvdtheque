@@ -40,7 +40,7 @@ public class ExcelStreamFilmWriter implements ItemStreamWriter<Film> {
 		String fileName = environment.getRequiredProperty(EXCEL_DVD_FILE_PATH_EXPORT)+environment.getRequiredProperty(EXCEL_DVD_FILE_NAME_EXPORT);
     	this.resource = new FileSystemResource(fileName);
     	this.workBook = this.excelFilmHandler.getWorkBook();
-		this.excelFilmHandler.createSheet(this.workBook);
+		this.excelFilmHandler.initSheet(this.workBook);
 	}
 
 	@Override

@@ -152,38 +152,21 @@ public class FilmController {
 	}
 	
 	@CrossOrigin
+	@PostMapping("/films/import")
+	ResponseEntity<Object> importFilmList(@RequestBody byte[] bytesContent) {
+		logger.info("importFilmList");
+		return ResponseEntity.noContent().build();
+	}
+	@CrossOrigin
 	@PostMapping("/films/export")
 	ResponseEntity<byte[]> exportFilmList() throws DvdthequeServerRestException, IOException{
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentLanguage(Locale.FRANCE);
     	headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-		SXSSFWorkbook workBook = null;
-	    byte[] excelContent = null;
 	    LocalDateTime localDate = LocalDateTime.now();
 	    String fileName = "ListeDVDExport" + "-" + localDate.getSecond() + ".xlsx";
-	    try{
-	    	List<Film> list = filmService.findAllFilms();
-	    	workBook = this.excelFilmHandler.getWorkBook();
-	    	this.excelFilmHandler.createSheet(workBook);
-	    	this.excelFilmHandler.setRow(null);
-	    	for(Film film : list) {
-	    		this.excelFilmHandler.writeBook(film);
-	    	}
-	    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    	workBook.write(baos);
-	    	excelContent = baos.toByteArray();
-	    /*}catch (Exception ex) {
-	    	ApiError error = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR,ex.getMessage(),ex);
-            return new ResponseEntity<byte[]>(null, headers, HttpStatus.INTERNAL_SERVER_ERROR);
-        */}finally {
-            if (null != workBook) {
-                try {
-                	workBook.close();
-                } catch (IOException eio) {
-                    logger.error("Error Occurred while exporting to XLS ", eio);
-                }
-            }
-        }
+	    List<Film> list = filmService.findAllFilms();
+	    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
         headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
         headers.setContentLength(excelContent.length);
