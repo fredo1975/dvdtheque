@@ -1,6 +1,5 @@
 package fr.fredos.dvdtheque.rest.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
@@ -9,7 +8,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -154,7 +155,8 @@ public class FilmController {
 	@CrossOrigin
 	@PostMapping("/films/import")
 	ResponseEntity<Object> importFilmList(@RequestBody byte[] bytesContent) {
-		logger.info("importFilmList");
+		String csv = new String(bytesContent);
+		logger.info("importFilmList csv="+csv);
 		return ResponseEntity.noContent().build();
 	}
 	@CrossOrigin

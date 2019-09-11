@@ -68,18 +68,18 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
 	private static final String UPDATE_PERSONNE_URI = "/dvdtheque/personnes/byId/";
-	private static final String SEARCH_PERSONNE_URI = "/dvdtheque/films/byPersonne";
+	private static final String SEARCH_PERSONNE_URI = GET_ALL_FILMS_URI+"byPersonne";
 	private static final String SEARCH_ALL_REALISATEUR_URI = "/dvdtheque/realisateurs";
 	private static final String SEARCH_ALL_ACTTEUR_URI = "/dvdtheque/acteurs";
-	private static final String SEARCH_FILM_BY_ID = "/dvdtheque/films/byId/";
-	private static final String SEARCH_FILM_BY_TMDBID = "/dvdtheque/films/byTmdbId/";
-	private static final String SEARCH_TMDB_FILM_BY_TITRE = "/dvdtheque/films/tmdb/byTitre/";
-	private static final String UPDATE_TMDB_FILM_BY_TMDBID = "/dvdtheque/films/tmdb/";
-	private static final String SAVE_FILM_URI = "/dvdtheque/films/save/";
-	private static final String UPDATE_FILM_URI = "/dvdtheque/films/update/";
+	private static final String SEARCH_FILM_BY_ID = GET_ALL_FILMS_URI+"byId/";
+	private static final String SEARCH_FILM_BY_TMDBID = GET_ALL_FILMS_URI+"byTmdbId/";
+	private static final String SEARCH_TMDB_FILM_BY_TITRE = GET_ALL_FILMS_URI+"tmdb/byTitre/";
+	private static final String UPDATE_TMDB_FILM_BY_TMDBID = GET_ALL_FILMS_URI+"tmdb/";
+	private static final String SAVE_FILM_URI = GET_ALL_FILMS_URI+"save/";
+	private static final String UPDATE_FILM_URI = GET_ALL_FILMS_URI+"update/";
 	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque/personnes";
-	private static final String EXPORT_FILM_LIST_URI = "/dvdtheque/films/export";
-	private static final String IMPORT_FILM_LIST_URI = "/dvdtheque/films/import";
+	private static final String EXPORT_FILM_LIST_URI = GET_ALL_FILMS_URI+"export";
+	private static final String IMPORT_FILM_LIST_URI = GET_ALL_FILMS_URI+"import";
 	private Long tmdbId = new Long(4780);
 	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/xghbwWlA9uW4bjkUCtUDaIeOvQ4.jpg";
 	public static final String TITRE_FILM_TMBD_ID_4780 = "OBSESSION";
@@ -355,7 +355,23 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void testImportFilmList() throws Exception {
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(IMPORT_FILM_LIST_URI);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
+				createRipDate(RIP_DATE), DvdFormat.DVD);
+		Film film1 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE1, REAL_NOM1, ACT1_NOM, ACT2_NOM, ACT3_NOM,
+				createRipDate(RIP_DATE1), DvdFormat.BLUERAY);
+		assertFilmIsNotNull(film, false, RIP_DATE);
+		assertFilmIsNotNull(film1, false, RIP_DATE1);
+		List<Film> list = filmService.findAllFilms();
+		assertNotNull(list);
+	    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
+	    assertNotNull(excelContent);
+	    Workbook workBook = this.excelFilmHandler.createSheetFromByteArray(excelContent);
+        String csv = this.excelFilmHandler.createCsvFromExcel(workBook);
+        assertNotNull(csv);
+        byte[] b = csv.getBytes();
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(IMPORT_FILM_LIST_URI).content(b);
+		MvcResult result = mvc.perform(builder).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
 		
 	}
 	@Test
@@ -441,6 +457,5 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
                 });
         	}
         });
-        workbook.close();
 	}
 }

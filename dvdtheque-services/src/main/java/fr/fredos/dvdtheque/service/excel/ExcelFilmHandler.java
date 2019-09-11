@@ -166,7 +166,6 @@ public class ExcelFilmHandler {
                 }else {
                 	sb.append(";");
                 }
-                
                 switch (cell.getCellType()) {
                 case STRING:
                     sb.append(cell.getStringCellValue());
@@ -182,7 +181,6 @@ public class ExcelFilmHandler {
             }
             sb.append(NEW_LINE_CHARACTER);
         }
-        logger.info("sb="+sb.toString());
         return sb.toString();
     }
 }
