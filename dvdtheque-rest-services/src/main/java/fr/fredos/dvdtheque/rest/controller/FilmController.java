@@ -25,9 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.multipart.MultipartFile;
 
 import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -154,9 +152,9 @@ public class FilmController {
 	
 	@CrossOrigin
 	@PostMapping("/films/import")
-	ResponseEntity<Object> importFilmList(@RequestBody byte[] bytesContent) {
-		String csv = new String(bytesContent);
-		logger.info("importFilmList csv="+csv);
+	ResponseEntity<Void> importFilmList(@RequestParam("file") MultipartFile file) {
+		//String csv = new String(bytesContent);
+		logger.info("importFilmList file="+file);
 		return ResponseEntity.noContent().build();
 	}
 	@CrossOrigin

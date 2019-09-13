@@ -45,7 +45,7 @@ public class ExcelFilmHandler {
     public SXSSFWorkbook getWorkBook() {
     	return new SXSSFWorkbook(1);
     }
-    private void initSheet(SXSSFWorkbook workBook) {
+    public void initSheet(SXSSFWorkbook workBook) {
     	//this.workBook = workBook;
     	this.sheet = workBook.createSheet("Films");
         this.currentRowNumber = 0;
@@ -60,7 +60,7 @@ public class ExcelFilmHandler {
 		return this.row;
 	}
 
-    private void setRow(SXSSFRow row) {
+    public void setRow(SXSSFRow row) {
 		this.row = row;
 	}
 
@@ -81,7 +81,7 @@ public class ExcelFilmHandler {
         cell.setCellValue(value);
         this.currentColumnNumber++;
     }
-    private void writeBook(Film film) {
+    public void writeBook(Film film) {
         addRow();
         addCell(personneService.printPersonnes(film.getRealisateurs(),","));
         addCell(film.getTitre());
