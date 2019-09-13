@@ -27,6 +27,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,6 +38,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -368,8 +370,11 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	    Workbook workBook = this.excelFilmHandler.createSheetFromByteArray(excelContent);
         String csv = this.excelFilmHandler.createCsvFromExcel(workBook);
         assertNotNull(csv);
-        byte[] b = csv.getBytes();
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(IMPORT_FILM_LIST_URI).content(b);
+        byte[] content = csv.getBytes();
+        String contentType = "text/plain";
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
+        		"ListDvd.csv", contentType, content);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(IMPORT_FILM_LIST_URI).file(mockMultipartFile);
 		MvcResult result = mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
 		
