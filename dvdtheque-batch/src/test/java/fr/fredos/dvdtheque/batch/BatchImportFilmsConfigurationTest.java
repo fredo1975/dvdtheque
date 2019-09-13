@@ -20,6 +20,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 
 import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
@@ -36,6 +37,9 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	
 	@Autowired
 	public Job importFilmsJob;
+	@Autowired
+    protected Environment environment;
+	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
 	public static final String TITRE_FILM_2001 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_FILM_2046 = "2046";
 	public static final String TITRE_FILM_40_ans = "40 ANS : MODE D'EMPLOI";
@@ -74,10 +78,10 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	@Test
 	public void launchImportFilmsJob() throws Exception {
 		Calendar c = Calendar.getInstance();
-		JobParametersBuilder builder = new JobParametersBuilder();
-		builder.addDate("TIMESTAMP", c.getTime());
-		JobParameters jobParameters = builder.toJobParameters();
-		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchJob(jobParameters);
+		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
+		jobParametersBuilder.addDate("TIMESTAMP", c.getTime());
+		jobParametersBuilder.addString("INPUT_FILE_PATH", environment.getRequiredProperty(LISTE_DVD_FILE_NAME));
+		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchJob(jobParametersBuilder.toJobParameters());
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 		List<Film> films = filmService.findAllFilms();
 		assertTrue(films.size()==7);
