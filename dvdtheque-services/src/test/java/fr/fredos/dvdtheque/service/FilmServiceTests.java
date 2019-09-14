@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,7 +20,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -143,7 +141,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertTrue(CollectionUtils.isNotEmpty(films));
 		assertTrue(films.size()==3);
 		for(Film f : films) {
-			logger.info(film.toString());
+			logger.info(f.toString());
 		}
 		watch.stop();
 		logger.info(watch.prettyPrint());

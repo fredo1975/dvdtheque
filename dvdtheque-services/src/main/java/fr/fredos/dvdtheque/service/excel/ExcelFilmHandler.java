@@ -2,6 +2,7 @@ package fr.fredos.dvdtheque.service.excel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -31,7 +32,6 @@ import fr.fredos.dvdtheque.service.IPersonneService;
 @Configuration
 public class ExcelFilmHandler {
 	protected Logger logger = LoggerFactory.getLogger(ExcelFilmHandler.class);
-	private static final String CVS_SEPERATOR_CHAR=";";
     private static final String NEW_LINE_CHARACTER="\r\n";
 	private SXSSFRow row;
 	private SXSSFSheet sheet;
@@ -55,6 +55,9 @@ public class ExcelFilmHandler {
     public Workbook createSheetFromByteArray(byte[] b) throws EncryptedDocumentException, IOException {
     	InputStream is = new ByteArrayInputStream(b);
     	return WorkbookFactory.create(is);
+    }
+    public Workbook createSheetFromFile(File f) throws EncryptedDocumentException, IOException {
+    	return WorkbookFactory.create(f);
     }
     public SXSSFRow getRow() {
 		return this.row;
