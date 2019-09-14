@@ -27,7 +27,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -38,7 +37,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -108,7 +106,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		return DateUtils.addDays(cal.getTime(), ripDate);
 	}
 
-	private void assertFilmIsNotNull(Film film, boolean dateRipNull, int ripDate) {
+	public void assertFilmIsNotNull(Film film, boolean dateRipNull, int ripDate) {
 		assertNotNull(film);
 		assertNotNull(film.getId());
 		assertNotNull(film.getTitre());
@@ -355,32 +353,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Personne personneUpdated = personneService.loadPersonne(personne.getId());
 		assertEquals(StringUtils.upperCase(ACT2_NOM), personneUpdated.getNom());
 	}
-	@Test
-	public void testImportFilmList() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
-		Film film1 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE1, REAL_NOM1, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE1), DvdFormat.BLUERAY);
-		assertFilmIsNotNull(film, false, RIP_DATE);
-		assertFilmIsNotNull(film1, false, RIP_DATE1);
-		List<Film> list = filmService.findAllFilms();
-		assertNotNull(list);
-	    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
-	    assertNotNull(excelContent);
-	    Workbook workBook = this.excelFilmHandler.createSheetFromByteArray(excelContent);
-        String csv = this.excelFilmHandler.createCsvFromExcel(workBook);
-        assertNotNull(csv);
-        byte[] content = csv.getBytes();
-        String contentType = "text/plain";
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
-        		"ListDvd.csv", contentType, content);
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(IMPORT_FILM_LIST_URI).file(mockMultipartFile);
-		MvcResult result = mvc.perform(builder).andDo(MockMvcResultHandlers.print())
-				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
-		
-	}
+	
 	@Test
 	public void testExportFilmList() throws Exception {
+		filmService.cleanAllFilms();
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
 				createRipDate(RIP_DATE), DvdFormat.DVD);
 		Film film1 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE1, REAL_NOM1, ACT1_NOM, ACT2_NOM, ACT3_NOM,
