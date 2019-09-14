@@ -103,7 +103,7 @@ public class FilmServiceImpl implements IFilmService {
 		upperCaseTitre(film);
 		return filmDao.saveNewFilm(film);
 	}
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = true)
 	@Cacheable(value= CACHE_FILM)
 	public List<Film> findAllFilms() {
 		return filmDao.findAllFilms();

@@ -5,28 +5,30 @@
 		<artifactId>dvdtheque</artifactId>
 		<version>2.43.0</version>
 	</parent>
-	<artifactId>dvdtheque-tmdb-service</artifactId>
+	<artifactId>dvdtheque-batch-app</artifactId>
 	<packaging>jar</packaging>
-	<name>dvdtheque-tmdb-service</name>
+
+	<name>dvdtheque-batch-app</name>
 	<url>http://maven.apache.org</url>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
-			<artifactId>dvdtheque-services</artifactId>
+			<artifactId>dvdtheque-batch</artifactId>
 			<groupId>${project.groupId}</groupId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>
