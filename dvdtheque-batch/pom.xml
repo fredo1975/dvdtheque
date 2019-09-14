@@ -8,6 +8,7 @@
 	</parent>
 	<artifactId>dvdtheque-batch</artifactId>
 	<name>dvdtheque-batch</name>
+	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
 			<artifactId>dvdtheque-tmdb-service</artifactId>
@@ -58,12 +59,5 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+	
 </project>
