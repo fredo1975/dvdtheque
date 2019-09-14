@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
@@ -38,7 +37,6 @@ import fr.fredos.dvdtheque.service.IFilmService;
 @EnableBatchProcessing
 public class BatchImportFilmsConfiguration{
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
-	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
 	@Autowired
 	protected JobBuilderFactory jobBuilderFactory;
     @Autowired
@@ -46,8 +44,6 @@ public class BatchImportFilmsConfiguration{
     @Autowired
     @Qualifier("rippedFlagTasklet")
     protected Tasklet rippedFlagTasklet;
-    @Autowired
-    protected Environment environment;
     String[] headerTab = new String[]{"realisateur", "titre", "zonedvd","annee","acteurs","ripped","ripdate","dvdformat","tmdbId"};
     
     @Bean

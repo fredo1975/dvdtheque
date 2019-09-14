@@ -1,8 +1,8 @@
 package fr.fredos.dvdtheque.rest.controller;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,19 +39,26 @@ public class FilmControllerForImportFilmListTest {
 	private static final String IMPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "import";
 
 	@Test
-	public void testImportFilmList() throws Exception {
+	public void testImportFilmListFromCsv() throws Exception {
 		Resource resource = new ClassPathResource("ListeDVD.csv");
 		File file = resource.getFile();
-		StringBuilder sb = new StringBuilder();
-		try (FileReader reader = new FileReader(file); BufferedReader br = new BufferedReader(reader)) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				sb.append(line+"\n");
-			}
-		}
-		byte[] content = sb.toString().getBytes();
+		byte[] content = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
 		String contentType = "text/plain";
 		MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "ListDvd.csv", contentType, content);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(IMPORT_FILM_LIST_URI)
+				.file(mockMultipartFile);
+		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
+
+	}
+	
+	@Test
+	public void testImportFilmListFromExcel() throws Exception {
+		Resource resource = new ClassPathResource("ListeDVD.xlsx");
+		File file = resource.getFile();
+		byte[] bFile = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
+		String contentType = "text/plain";
+		MockMultipartFile mockMultipartFile = new MockMultipartFile("file", file.getName(), contentType, bFile);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(IMPORT_FILM_LIST_URI)
 				.file(mockMultipartFile);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
