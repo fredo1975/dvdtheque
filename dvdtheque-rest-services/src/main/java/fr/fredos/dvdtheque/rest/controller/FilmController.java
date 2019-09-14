@@ -165,7 +165,6 @@ public class FilmController {
 	private File createFileToImport(MultipartFile file) throws Exception {
 		File resFile = null;
 		File tempFile = new File(System.getProperty("java.io.tmpdir")+"/"+"tmp_"+file.getOriginalFilename());
-		logger.info("createFileToImport file="+file);
 		File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+file.getOriginalFilename());
 		try {
 			file.transferTo(convFile);
