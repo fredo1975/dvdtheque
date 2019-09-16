@@ -26,10 +26,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.messaging.support.MessageBuilder;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
 import fr.fredos.dvdtheque.batch.film.writer.DbFilmWriter;
+import fr.fredos.dvdtheque.batch.jms.model.JmsStatusMessage;
+import fr.fredos.dvdtheque.batch.jms.publisher.MessagePublisher;
+import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 
@@ -37,6 +41,7 @@ import fr.fredos.dvdtheque.service.IFilmService;
 @EnableBatchProcessing
 public class BatchImportFilmsConfiguration{
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
+	String[] headerTab = new String[]{"realisateur", "titre", "zonedvd","annee","acteurs","ripped","ripdate","dvdformat","tmdbId"};
 	@Autowired
 	protected JobBuilderFactory jobBuilderFactory;
     @Autowired
@@ -44,16 +49,54 @@ public class BatchImportFilmsConfiguration{
     @Autowired
     @Qualifier("rippedFlagTasklet")
     protected Tasklet rippedFlagTasklet;
-    String[] headerTab = new String[]{"realisateur", "titre", "zonedvd","annee","acteurs","ripped","ripdate","dvdformat","tmdbId"};
+    
+	    /*
+    @Output(Source.OUTPUT)
+	@Autowired
+	private MessageChannel messageChannel;
+    
+    
+    @EnableBinding(Sink.class)
+	static class TestSink {
+    	protected Logger logger = LoggerFactory.getLogger(TestSink.class);
+
+		@StreamListener(Sink.INPUT1)
+		public void receive(String data) {
+			logger.info("Data received from customer-1..." + data);
+		}
+
+		@StreamListener(Sink.INPUT2)
+		public void receiveX(String data) {
+			logger.info("Data received from customer-2..." + data);
+		}
+	}
+    interface Sink {
+
+		String INPUT1 = "input1";
+		String INPUT2 = "input2";
+
+
+		@Input(INPUT1)
+		SubscribableChannel input1();
+
+
+		@Input(INPUT2)
+		SubscribableChannel input2();
+
+	}*/
     
     @Bean
 	protected Tasklet cleanDBTasklet() {
-		return new Tasklet() {
+    	return new Tasklet() {
 			@Autowired
 			protected IFilmService filmService;
+			@Autowired
+		    private MessagePublisher messagePublisher;
 			@Override
 			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+				this.messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_INIT, null));
 				filmService.cleanAllFilms();
+				this.messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_COMPLETED, null));
 				return RepeatStatus.FINISHED;
 			}
 		};

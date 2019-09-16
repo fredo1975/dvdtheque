@@ -20,20 +20,22 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
-
+import org.springframework.test.annotation.DirtiesContext;
 import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
+import fr.fredos.dvdtheque.batch.jms.publisher.MessagePublisher;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 
 @SpringBootTest(classes = { BatchImportFilmsConfiguration.class,
+		MessagePublisher.class,
 		RippedFlagTasklet.class,
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
+@DirtiesContext
 public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
-	
 	@Autowired
 	public Job importFilmsJob;
 	@Autowired
@@ -62,12 +64,15 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue(film.getRealisateurs().size()==1);
 	}
+	
 	@Before
 	public void init() {
 		jobLauncherTestUtils = new JobLauncherTestUtils();
 		jobLauncherTestUtils.setJob(importFilmsJob);
 	}
-	
+	@Test
+	public void contextLoads() {
+	}
 	@Test
 	//@Ignore
 	public void launchCleanDBStep() throws Exception {
