@@ -34,7 +34,6 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="org.hibernate" level="info"/>
     <logger name="fr.fredos.dvdtheque" level="info"/>
 
     <root level="info">

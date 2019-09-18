@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.batch.app;
+package fr.fredos.dvdtheque.jms.publisher;
 
 /**
  * Hello world!
