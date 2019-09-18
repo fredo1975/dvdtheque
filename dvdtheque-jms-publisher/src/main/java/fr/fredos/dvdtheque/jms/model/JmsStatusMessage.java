@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.batch.jms.model;
+package fr.fredos.dvdtheque.jms.model;
 
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.dao.model.object.Film;

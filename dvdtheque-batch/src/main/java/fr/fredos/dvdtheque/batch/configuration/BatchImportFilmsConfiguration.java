@@ -26,15 +26,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.messaging.support.MessageBuilder;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
 import fr.fredos.dvdtheque.batch.film.writer.DbFilmWriter;
-import fr.fredos.dvdtheque.batch.jms.model.JmsStatusMessage;
-import fr.fredos.dvdtheque.batch.jms.publisher.MessagePublisher;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.jms.model.JmsStatusMessage;
+import fr.fredos.dvdtheque.jms.publisher.MessagePublisher;
 import fr.fredos.dvdtheque.service.IFilmService;
 
 @Configuration

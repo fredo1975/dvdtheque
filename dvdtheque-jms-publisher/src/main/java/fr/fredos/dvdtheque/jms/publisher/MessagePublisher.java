@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.batch.jms.publisher;
+package fr.fredos.dvdtheque.jms.publisher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +8,7 @@ import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
-import fr.fredos.dvdtheque.batch.jms.model.JmsStatusMessage;
+import fr.fredos.dvdtheque.jms.model.JmsStatusMessage;
 
 @EnableBinding(Source.class)
 @Component
