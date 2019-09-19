@@ -10,7 +10,7 @@
 	<artifactId>dvdtheque-jms-publisher</artifactId>
 	<packaging>jar</packaging>
 
-	<name>dvdtheque-batch-app</name>
+	<name>dvdtheque-jms-publisher</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -57,6 +57,23 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<!--to be imported on other projects -->
+							<classifier>app-to-import</classifier>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

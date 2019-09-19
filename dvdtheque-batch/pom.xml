@@ -17,12 +17,14 @@
 			<groupId>${project.groupId}</groupId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- 
 		<dependency>
 			<artifactId>dvdtheque-jms-publisher</artifactId>
 			<groupId>${project.groupId}</groupId>
 			<version>${project.version}</version>
+			<classifier>app-to-import</classifier>
 		</dependency>
-
+ -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-integration</artifactId>
@@ -64,12 +66,4 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 </project>

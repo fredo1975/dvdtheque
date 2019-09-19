@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.batch;
+package fr.fredos.dvdtheque.dvdtheque.batch.app;
 
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.SpringApplication;
@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		"fr.fredos.dvdtheque.service",
 		"fr.fredos.dvdtheque.dao",
 		"fr.fredos.dvdtheque.tmdb.service"})
-public class BatchApplication {
+public class BatchApplicationApp {
 	public static void main(String[] args) throws Exception {
-		SpringApplication.run(BatchApplication.class, args);
+		SpringApplication.run(BatchApplicationApp.class, args);
     }
 }

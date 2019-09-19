@@ -25,8 +25,9 @@
 		<module>dvdtheque-dao</module>
 		<module>dvdtheque-services</module>
 		<module>dvdtheque-tmdb-service</module>
-		<module>dvdtheque-jms-publisher</module>
+		<!--  module>dvdtheque-jms-publisher</module-->
 		<module>dvdtheque-batch</module>
+		<module>dvdtheque-batch-app</module>
 		<module>dvdtheque-swing</module>
 		<module>dvdtheque-rest-services</module>
 		<module>dvdtheque-config-server</module>

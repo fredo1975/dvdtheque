@@ -30,10 +30,7 @@ import org.springframework.core.io.FileSystemResource;
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
 import fr.fredos.dvdtheque.batch.film.writer.DbFilmWriter;
-import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.jms.model.JmsStatusMessage;
-import fr.fredos.dvdtheque.jms.publisher.MessagePublisher;
 import fr.fredos.dvdtheque.service.IFilmService;
 
 @Configuration
@@ -89,13 +86,13 @@ public class BatchImportFilmsConfiguration{
     	return new Tasklet() {
 			@Autowired
 			protected IFilmService filmService;
-			@Autowired
-		    private MessagePublisher messagePublisher;
+			/*@Autowired
+		    private MessagePublisher messagePublisher;*/
 			@Override
 			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-				this.messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_INIT, null));
+				//this.messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_INIT, null));
 				filmService.cleanAllFilms();
-				this.messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_COMPLETED, null));
+				//this.messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_COMPLETED, null));
 				return RepeatStatus.FINISHED;
 			}
 		};

@@ -27,10 +27,9 @@ import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.jms.publisher.DvdthequeJmsPublisher;
 
 @SpringBootTest(classes = { BatchImportFilmsConfiguration.class,
-		DvdthequeJmsPublisher.class,
+		//DvdthequeJmsPublisher.class,
 		RippedFlagTasklet.class,
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
