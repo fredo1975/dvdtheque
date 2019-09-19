@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(scanBasePackages = {"fr.fredos.dvdtheque.batch",
 		"fr.fredos.dvdtheque.service",
 		"fr.fredos.dvdtheque.dao",
-		"fr.fredos.dvdtheque.tmdb.service"})
+		"fr.fredos.dvdtheque.tmdb.service",
+		"fr.fredos.dvdtheque.jms.publisher"})
 public class BatchApplication {
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(BatchApplication.class, args);

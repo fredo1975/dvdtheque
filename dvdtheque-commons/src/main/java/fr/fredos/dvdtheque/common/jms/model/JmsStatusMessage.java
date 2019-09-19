@@ -1,14 +1,13 @@
-package fr.fredos.dvdtheque.jms.model;
+package fr.fredos.dvdtheque.common.jms.model;
 
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
-import fr.fredos.dvdtheque.dao.model.object.Film;
 
-public class JmsStatusMessage {
+public class JmsStatusMessage<T> {
 
 	private JmsStatus status;
-	private Film film;
+	private T film;
 	
-	public JmsStatusMessage(JmsStatus status, Film film) {
+	public JmsStatusMessage(JmsStatus status, T film) {
 		super();
 		this.status = status;
 		this.film = film;
@@ -19,10 +18,10 @@ public class JmsStatusMessage {
 	public void setStatus(JmsStatus status) {
 		this.status = status;
 	}
-	public Film getFilm() {
+	public T getFilm() {
 		return film;
 	}
-	public void setFilm(Film film) {
+	public void setFilm(T film) {
 		this.film = film;
 	}
 	

@@ -13,18 +13,30 @@
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
+			<artifactId>dvdtheque-commons</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<artifactId>dvdtheque-tmdb-service</artifactId>
 			<groupId>${project.groupId}</groupId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- 
+		<!-- <dependency> <artifactId>dvdtheque-jms-publisher</artifactId> <groupId>${project.groupId}</groupId> 
+			<version>${project.version}</version> <classifier>app-to-import</classifier> 
+			</dependency> -->
 		<dependency>
-			<artifactId>dvdtheque-jms-publisher</artifactId>
-			<groupId>${project.groupId}</groupId>
-			<version>${project.version}</version>
-			<classifier>app-to-import</classifier>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-activemq</artifactId>
 		</dependency>
- -->
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-broker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-integration</artifactId>

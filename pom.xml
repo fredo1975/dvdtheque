@@ -25,7 +25,7 @@
 		<module>dvdtheque-dao</module>
 		<module>dvdtheque-services</module>
 		<module>dvdtheque-tmdb-service</module>
-		<!--  module>dvdtheque-jms-publisher</module-->
+		<module>dvdtheque-jms-publisher</module>
 		<module>dvdtheque-batch</module>
 		<module>dvdtheque-batch-app</module>
 		<module>dvdtheque-swing</module>
@@ -64,22 +64,29 @@
 		</dependency>
 
 		<!-- RabbitMQ Starter Dependency (Not required if you're using the simple 
-			in-memory broker for STOMP) -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-amqp</artifactId>
-		</dependency>
+			in-memory broker for STOMP) <dependency> <groupId>org.springframework.boot</groupId> 
+			<artifactId>spring-boot-starter-amqp</artifactId> </dependency> -->
 
-		<!-- Following dependency is required for Full Featured STOMP Broker Relay -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-reactor-netty</artifactId>
-		</dependency>
+		<!-- Following dependency is required for Full Featured STOMP Broker Relay 
+			<dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-reactor-netty</artifactId> 
+			</dependency> -->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-activemq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-broker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -178,6 +185,7 @@
 				<artifactId>activemq-web</artifactId> <version>${activemq.version}</version> 
 				</dependency> <dependency> <groupId>org.apache.activemq</groupId> <artifactId>artemis-amqp-protocol</artifactId> 
 				<version>2.6.4</version> </dependency> activemq -->
+
 
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>

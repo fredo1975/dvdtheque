@@ -1,5 +1,9 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
+import javax.jms.ConnectionFactory;
+import javax.jms.Topic;
+
+import org.apache.activemq.command.ActiveMQTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -23,13 +27,22 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.config.JmsListenerContainerFactory;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
+import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.jms.support.converter.MessageType;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
 import fr.fredos.dvdtheque.batch.film.writer.DbFilmWriter;
+import fr.fredos.dvdtheque.common.enums.JmsStatus;
+import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 
@@ -45,54 +58,46 @@ public class BatchImportFilmsConfiguration{
     @Autowired
     @Qualifier("rippedFlagTasklet")
     protected Tasklet rippedFlagTasklet;
-    
-	    /*
-    @Output(Source.OUTPUT)
-	@Autowired
-	private MessageChannel messageChannel;
-    
-    
-    @EnableBinding(Sink.class)
-	static class TestSink {
-    	protected Logger logger = LoggerFactory.getLogger(TestSink.class);
+    /*
+    @Bean
+    public JmsListenerContainerFactory<?> myFactory(ConnectionFactory connectionFactory,
+                                                    DefaultJmsListenerContainerFactoryConfigurer configurer) {
+        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        // This provides all boot's default to this factory, including the message converter
+        configurer.configure(factory, connectionFactory);
+        // You could still override some of Boot's default if necessary.
+        return factory;
+    }*/
 
-		@StreamListener(Sink.INPUT1)
-		public void receive(String data) {
-			logger.info("Data received from customer-1..." + data);
-		}
-
-		@StreamListener(Sink.INPUT2)
-		public void receiveX(String data) {
-			logger.info("Data received from customer-2..." + data);
-		}
-	}
-    interface Sink {
-
-		String INPUT1 = "input1";
-		String INPUT2 = "input2";
-
-
-		@Input(INPUT1)
-		SubscribableChannel input1();
-
-
-		@Input(INPUT2)
-		SubscribableChannel input2();
-
-	}*/
-    
+    @Bean // Serialize message content to json using TextMessage
+    public MessageConverter jacksonJmsMessageConverter() {
+        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+        converter.setTargetType(MessageType.TEXT);
+        converter.setTypeIdPropertyName("_type");
+        return converter;
+    }
+    @Bean
+    public Topic topic(){
+        return new ActiveMQTopic("dvdtheque-topic");
+    }
     @Bean
 	protected Tasklet cleanDBTasklet() {
     	return new Tasklet() {
 			@Autowired
 			protected IFilmService filmService;
 			/*@Autowired
-		    private MessagePublisher messagePublisher;*/
+			protected MessagePublisher messagePublisher;*/
+			@Autowired
+		    private JmsTemplate jmsTemplate;
+			@Autowired
+		    private Topic topic;
 			@Override
 			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-				//this.messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_INIT, null));
+				//messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_INIT, null));
+				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT, null));
 				filmService.cleanAllFilms();
-				//this.messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_COMPLETED, null));
+				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_COMPLETED, null));
+				//messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_COMPLETED, null));
 				return RepeatStatus.FINISHED;
 			}
 		};
