@@ -50,7 +50,7 @@ import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 @RestController
-@ComponentScan({"fr.fredos.dvdtheque"})
+@ComponentScan({"fr.fredos.dvdtheque.rest"})
 @RequestMapping("/dvdtheque")
 public class FilmController {
 	protected Logger logger = LoggerFactory.getLogger(FilmController.class);

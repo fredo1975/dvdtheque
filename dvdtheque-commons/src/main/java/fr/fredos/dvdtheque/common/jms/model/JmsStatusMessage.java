@@ -24,6 +24,10 @@ public class JmsStatusMessage<T> {
 	public void setFilm(T film) {
 		this.film = film;
 	}
+	@Override
+	public String toString() {
+		return "JmsStatusMessage [status=" + status + ", film=" + film + "]";
+	}
 	
 	
 }
