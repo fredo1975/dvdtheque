@@ -67,7 +67,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     private void findTmdbFilmToInsert() throws Exception{
 		boolean found = false;
 		while(!found) {
-			this.tmdbId = ThreadLocalRandom.current().nextLong(200, 3000);
+			this.tmdbId = ThreadLocalRandom.current().nextLong(200, 40000);
 			if(!filmService.checkIfTmdbFilmExists(this.tmdbId)) {
 				found = true;
 			}
@@ -81,8 +81,12 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		boolean found = false;
 		while(!found) {
 			this.tmdbIdToSave = ThreadLocalRandom.current().nextLong(200, 3000);
-			if(client.retrieveTmdbSearchResultsById(this.tmdbIdToSave)!=null) {
+			Results res = client.retrieveTmdbSearchResultsById(this.tmdbIdToSave);
+			try {
+				assertResultsIsNotNull(res);
 				found = true;
+			}catch(AssertionError err) {
+				logger.info("findTmdbFilmToTestSave retrying another tmdbIdToSave for tmdbIdToSave="+tmdbIdToSave);
 			}
 		}
 	}
