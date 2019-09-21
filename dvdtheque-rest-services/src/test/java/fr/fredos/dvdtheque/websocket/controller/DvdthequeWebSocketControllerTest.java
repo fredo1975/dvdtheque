@@ -36,8 +36,8 @@ import fr.fredos.dvdtheque.websocket.conf.DvdthequeWebSocketConfiguration;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { DvdthequeWebSocketConfiguration.class},
 webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class DvdthequeWebSocketConfigurationTest {
-	protected Logger logger = LoggerFactory.getLogger(DvdthequeWebSocketConfigurationTest.class);
+public class DvdthequeWebSocketControllerTest {
+	protected Logger logger = LoggerFactory.getLogger(DvdthequeWebSocketControllerTest.class);
 	static final String WEBSOCKET_TOPIC = "/topic";
     @Value("${local.server.port}")
     private int port;
