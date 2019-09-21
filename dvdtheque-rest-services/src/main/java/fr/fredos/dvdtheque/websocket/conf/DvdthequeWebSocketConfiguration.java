@@ -9,7 +9,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-@ComponentScan({"fr.fredos.dvdtheque.websocket"})
+@ComponentScan({"fr.fredos.dvdtheque"})
 public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {

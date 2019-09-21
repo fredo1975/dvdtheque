@@ -1,12 +1,15 @@
 package fr.fredos.dvdtheque.websocket.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
+import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -24,7 +28,6 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
-
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -39,43 +42,71 @@ public class DvdthequeWebSocketConfigurationTest {
     @Value("${local.server.port}")
     private int port;
     private String WEBSOCKET_URI;
-    private CompletableFuture<String> completableFuture;
     WebSocketStompClient stompClient;
-    private static final String SEND_CREATE_JMS_STATUS_ENDPOINT = "/app/send/";
+    private static final String SEND_CREATE_JMS_STATUS_ENDPOINT = "/app/websocket";
+    private static final String SUBSCRIBE_TOPIC_ENDPOINT = "/topic";
+    private StompSession stompSession;
     @Before
-    public void setup() {
-    	completableFuture = new CompletableFuture<>();
-        
+    public void setup() throws InterruptedException, ExecutionException, TimeoutException {
+    	stompClient = new WebSocketStompClient(new SockJsClient(Arrays.asList(new WebSocketTransport(new StandardWebSocketClient()))));
+    	stompClient.setMessageConverter(new MappingJackson2MessageConverter());
         WEBSOCKET_URI = "ws://localhost:" + port + "/websocket";
+        stompSession = stompClient.connect(WEBSOCKET_URI, new MyStompSessionHandlerAdapter() {}).get(1, TimeUnit.SECONDS);
     }
-
+    @After
+    public void tearDown() throws Exception {
+        stompSession.disconnect();
+        stompClient.stop();
+    }
+    @Test
+    public void connectsToSocket() throws Exception {
+        assertThat(stompSession.isConnected()).isTrue();
+    }
 	@Test
     public void shouldReceiveAMessageFromTheServer() throws Exception {
-		stompClient = new WebSocketStompClient(new SockJsClient(Arrays.asList(new WebSocketTransport(new StandardWebSocketClient()))));
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-        StompSession session = stompClient
-                .connect(WEBSOCKET_URI, new StompSessionHandlerAdapter() {})
-                .get(1, TimeUnit.SECONDS);
-        Thread.currentThread().sleep(1000);
-        //session.subscribe(WEBSOCKET_TOPIC, new DefaultStompFrameHandler());
-        session.subscribe(SEND_CREATE_JMS_STATUS_ENDPOINT, new MyStompFrameHandler());
-        Thread.currentThread().sleep(1000);
+		CompletableFuture<JmsStatusMessage<Film>> resultKeeper = new CompletableFuture<>();
+        stompSession.subscribe(SUBSCRIBE_TOPIC_ENDPOINT, new MyStompFrameHandler((payload) -> resultKeeper.complete(payload)));
         JmsStatusMessage<Film> jms = new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT,null);
-        session.send(WEBSOCKET_TOPIC, jms);
-        Thread.currentThread().sleep(1000);
-        assertEquals(jms, completableFuture.get(10, TimeUnit.SECONDS));
+        stompSession.send(SEND_CREATE_JMS_STATUS_ENDPOINT, jms);
+        assertEquals(jms, resultKeeper.get(2, TimeUnit.SECONDS));
     }
 
-    class MyStompFrameHandler implements StompFrameHandler {
+	public static class MyStompFrameHandler implements StompFrameHandler {
+    	private final Consumer<JmsStatusMessage<Film>> frameHandler;
         @Override
         public Type getPayloadType(StompHeaders stompHeaders) {
-            return byte[].class;
+            return JmsStatusMessage.class;
         }
-        
+        public MyStompFrameHandler(Consumer<JmsStatusMessage<Film>> frameHandler) {
+            this.frameHandler = frameHandler;
+        }
         @Override
         public void handleFrame(StompHeaders stompHeaders, Object payload) {
-        	logger.info("received message: {} with headers: {}", payload, stompHeaders);
-        	completableFuture.complete(payload.toString());
+        	frameHandler.accept((JmsStatusMessage<Film>) payload);
         }
+    }
+    
+    class MyStompSessionHandlerAdapter extends StompSessionHandlerAdapter{
+		@Override
+		public Type getPayloadType(StompHeaders headers) {
+			return super.getPayloadType(headers);
+		}
+		@Override
+		public void handleFrame(StompHeaders headers, Object payload) {
+			super.handleFrame(headers, payload);
+		}
+		@Override
+		public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+			super.afterConnected(session, connectedHeaders);
+		}
+		@Override
+		public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
+				Throwable exception) {
+			super.handleException(session, command, headers, payload, exception);
+		}
+		@Override
+		public void handleTransportError(StompSession session, Throwable exception) {
+			super.handleTransportError(session, exception);
+		}
     }
 }
