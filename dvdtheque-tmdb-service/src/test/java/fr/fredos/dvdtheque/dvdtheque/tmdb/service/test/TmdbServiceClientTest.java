@@ -142,7 +142,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void retrieveTmdbResultsByTmdbIdTest() {
-		Results res = client.retrieveTmdbSearchResultsById(tmdbId);
+		Results res = client.retrieveTmdbSearchResultsById(Long.valueOf(55));
 		assertResultsIsNotNull(res);
 		logger.info("res = "+res.toString());
     }
