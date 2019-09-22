@@ -13,7 +13,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		config.enableSimpleBroker("/topic");
+		config.enableSimpleBroker("/dvdtheque-topic");
 		config.setApplicationDestinationPrefixes("/app");
 	}
 

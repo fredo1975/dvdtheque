@@ -21,7 +21,7 @@ public class DvdthequeWebSocketController {
 
 	@MessageMapping("/websocket")
 	public void onReceiveMessage(JmsStatusMessage<Film> jmsStatusMessage) {
-		this.simpMessagingTemplate.convertAndSend("/topic", jmsStatusMessage);
+		this.simpMessagingTemplate.convertAndSend("/dvdtheque-topic", jmsStatusMessage);
 	}
 
 	@MessageExceptionHandler
