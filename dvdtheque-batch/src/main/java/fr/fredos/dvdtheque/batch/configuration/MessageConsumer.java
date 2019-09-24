@@ -6,12 +6,12 @@ import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
-@Component
-@EnableJms
+/*@Component
+@EnableJms*/
 public class MessageConsumer {
 	protected Logger logger = LoggerFactory.getLogger(MessageConsumer.class);
-	@JmsListener(destination = "dvdtheque-topic")
+	/*@JmsListener(destination = "topic")
     public void listener(String message){
         logger.info("Message received {} ", message);
-    }
+    }*/
 }

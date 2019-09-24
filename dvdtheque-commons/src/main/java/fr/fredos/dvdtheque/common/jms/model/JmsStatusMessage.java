@@ -5,7 +5,6 @@ import java.io.Serializable;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 
 public class JmsStatusMessage<T> implements Serializable{
-
 	private static final long serialVersionUID = 1L;
 	private JmsStatus status;
 	private T film;

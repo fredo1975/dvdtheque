@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
@@ -19,11 +20,15 @@ public class DvdthequeWebSocketController {
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
 
-	@MessageMapping("/websocket")
+	@MessageMapping("/dvdtheque")
 	public void onReceiveMessage(JmsStatusMessage<Film> jmsStatusMessage) {
-		this.simpMessagingTemplate.convertAndSend("/dvdtheque-topic", jmsStatusMessage);
+		logger.info("onReceiveMessage jmsStatusMessage="+jmsStatusMessage.toString()); 
+		this.simpMessagingTemplate.convertAndSend("/topic", jmsStatusMessage);
 	}
-
+	@SubscribeMapping("/topic")
+	public void onSendMessage(){
+		logger.info("onSendMessage"); 
+	}
 	@MessageExceptionHandler
 	public String handleException(Throwable exception) {
 		simpMessagingTemplate.convertAndSend("/errors", exception.getMessage());

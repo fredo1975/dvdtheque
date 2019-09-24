@@ -39,8 +39,9 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public Job importFilmsJob;
 	@Autowired
     protected Environment environment;
+	/*
 	@Autowired
-	protected MessageConsumer messageConsumer;
+	protected MessageConsumer messageConsumer;*/
 	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
 	public static final String TITRE_FILM_2001 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_FILM_2046 = "2046";

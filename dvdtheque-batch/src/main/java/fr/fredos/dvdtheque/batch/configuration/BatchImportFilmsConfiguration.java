@@ -1,6 +1,5 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
-import javax.jms.ConnectionFactory;
 import javax.jms.Topic;
 
 import org.apache.activemq.command.ActiveMQTopic;
@@ -27,12 +26,9 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
-import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
@@ -78,7 +74,7 @@ public class BatchImportFilmsConfiguration{
     }
     @Bean
     public Topic topic(){
-        return new ActiveMQTopic("dvdtheque-topic");
+        return new ActiveMQTopic("topic");
     }
     @Bean
 	protected Tasklet cleanDBTasklet() {

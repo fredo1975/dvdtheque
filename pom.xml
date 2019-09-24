@@ -26,6 +26,7 @@
 		<module>dvdtheque-services</module>
 		<module>dvdtheque-tmdb-service</module>
 		<module>dvdtheque-jms-publisher</module>
+		<module>dvdtheque-jms-receiver-test</module>
 		<module>dvdtheque-batch</module>
 		<module>dvdtheque-batch-app</module>
 		<module>dvdtheque-swing</module>
