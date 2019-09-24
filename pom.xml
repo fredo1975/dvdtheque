@@ -138,7 +138,11 @@
 				<artifactId>commons-collections</artifactId>
 				<version>3.2.1</version>
 			</dependency>
-
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.7</version>
+			</dependency>
 			<!-- activemq <dependency> <groupId>org.apache.activemq</groupId> <artifactId>activemq-amqp</artifactId> 
 				<version>${activemq.version}</version> </dependency> <dependency> <groupId>org.apache.activemq</groupId> 
 				<artifactId>activemq-blueprint</artifactId> <version>${activemq.version}</version> 

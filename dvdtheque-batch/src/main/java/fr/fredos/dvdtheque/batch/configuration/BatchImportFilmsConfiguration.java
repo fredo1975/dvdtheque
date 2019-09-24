@@ -3,6 +3,7 @@ package fr.fredos.dvdtheque.batch.configuration;
 import javax.jms.Topic;
 
 import org.apache.activemq.command.ActiveMQTopic;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -54,17 +55,10 @@ public class BatchImportFilmsConfiguration{
     @Autowired
     @Qualifier("rippedFlagTasklet")
     protected Tasklet rippedFlagTasklet;
-    /*
-    @Bean
-    public JmsListenerContainerFactory<?> myFactory(ConnectionFactory connectionFactory,
-                                                    DefaultJmsListenerContainerFactoryConfigurer configurer) {
-        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-        // This provides all boot's default to this factory, including the message converter
-        configurer.configure(factory, connectionFactory);
-        // You could still override some of Boot's default if necessary.
-        return factory;
-    }*/
-
+    @Autowired
+    private JmsTemplate jmsTemplate;
+	@Autowired
+    private Topic topic;
     @Bean // Serialize message content to json using TextMessage
     public MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
@@ -81,19 +75,19 @@ public class BatchImportFilmsConfiguration{
     	return new Tasklet() {
 			@Autowired
 			protected IFilmService filmService;
-			/*@Autowired
-			protected MessagePublisher messagePublisher;*/
 			@Autowired
 		    private JmsTemplate jmsTemplate;
 			@Autowired
 		    private Topic topic;
 			@Override
 			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-				//messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_INIT, null));
+				StopWatch watch = new StopWatch();
+				watch.start();
 				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT, null));
 				filmService.cleanAllFilms();
 				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_COMPLETED, null));
-				//messagePublisher.sendMessage(new JmsStatusMessage(JmsStatus.CLEAN_DB_COMPLETED, null));
+				watch.stop();
+				logger.debug("database cleaning Time Elapsed: " + watch.getTime());
 				return RepeatStatus.FINISHED;
 			}
 		};
@@ -122,27 +116,45 @@ public class BatchImportFilmsConfiguration{
     @Bean
     @StepScope
     public FlatFileItemReader<FilmCsvImportFormat> reader(@Value("#{jobParameters[INPUT_FILE_PATH]}") String inputFilePath) {
+    	StopWatch watch = new StopWatch();
+		watch.start();
+    	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILE_ITEM_READER_INIT, null));
     	FlatFileItemReader<FilmCsvImportFormat> csvFileReader = new FlatFileItemReader<>();
     	csvFileReader.setResource(new FileSystemResource(inputFilePath));
         csvFileReader.setLinesToSkip(1);
         LineMapper<FilmCsvImportFormat> filmCsvImportFormatLineMapper = createFilmCsvImportFormatLineMapper();
         csvFileReader.setLineMapper(filmCsvImportFormatLineMapper);
+        jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILE_ITEM_READER_COMPLETED, null));
+        watch.stop();
+		logger.debug("reader Time Elapsed: " + watch.getTime());
         return csvFileReader;
     }
     
     private LineMapper<FilmCsvImportFormat> createFilmCsvImportFormatLineMapper() {
+    	StopWatch watch = new StopWatch();
+		watch.start();
+    	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_MAPPER_INIT, null));
         DefaultLineMapper<FilmCsvImportFormat> filmLineMapper = new DefaultLineMapper<>();
         LineTokenizer filmCsvImportFormatLineTokenizer = createFilmCsvImportFormatLineTokenizer();
         filmLineMapper.setLineTokenizer(filmCsvImportFormatLineTokenizer);
         FieldSetMapper<FilmCsvImportFormat> filmCsvImportFormatInformationMapper = createFilmCsvImportFormatInformationMapper();
         filmLineMapper.setFieldSetMapper(filmCsvImportFormatInformationMapper);
+        jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_MAPPER_COMPLETED, null));
+        watch.stop();
+		logger.debug("createFilmCsvImportFormatLineMapper Time Elapsed: " + watch.getTime());
         return filmLineMapper;
     }
 
     private LineTokenizer createFilmCsvImportFormatLineTokenizer() {
+    	StopWatch watch = new StopWatch();
+		watch.start();
+    	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_INIT, null));
         DelimitedLineTokenizer filmCsvImportFormatLineTokenizer = new DelimitedLineTokenizer();
         filmCsvImportFormatLineTokenizer.setDelimiter(";");
         filmCsvImportFormatLineTokenizer.setNames(headerTab);
+        jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_COMPLETED, null));
+        watch.stop();
+		logger.debug("createFilmCsvImportFormatLineTokenizer Time Elapsed: " + watch.getTime());
         return filmCsvImportFormatLineTokenizer;
     }
 

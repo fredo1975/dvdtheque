@@ -7,6 +7,7 @@ import java.util.HashSet;
 import javax.jms.Topic;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
@@ -39,9 +40,11 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 	private static String RIPPEDFLAGTASKLET_FROM_FILE="rippedFlagTasklet.from.file";
 	@Override
 	public Film process(FilmCsvImportFormat item) throws Exception {
+		StopWatch watch = new StopWatch();
+		watch.start();
 		Film filmTemp = new Film ();
 		filmTemp.setTmdbId(item.getTmdbId());
-		jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.BEGIN_FILM_PROCESSOR, filmTemp));
+		jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_INIT, filmTemp));
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e1) {
@@ -73,7 +76,9 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			}
 			filmToSave.setId(null);
 			logger.debug(filmToSave.toString());
-			jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.END_FILM_PROCESSOR, filmToSave));
+			jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_COMPLETED, filmToSave));
+			watch.stop();
+			logger.debug("Film "+filmToSave.getTitre()+" processing Time Elapsed: " + watch.getTime());
 			return filmToSave;
 		}
 		return null;
