@@ -1,7 +1,6 @@
 package fr.fredos.dvdtheque.rest.controller;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
@@ -10,10 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -40,10 +36,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import fr.fredos.dvdtheque.common.exceptions.DvdthequeCommonsException;
 import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
+import fr.fredos.dvdtheque.rest.file.util.MultipartFileUtil;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
@@ -66,6 +62,8 @@ public class FilmController {
 	private JobLauncher jobLauncher;
     @Autowired
     private Job importFilmsJob;
+    @Autowired
+    private MultipartFileUtil multipartFileUtil;
 	@CrossOrigin
 	@GetMapping("/films/byPersonne")
 	Personne findPersonne(@RequestParam(name="nom",required = false) String nom) {
@@ -162,46 +160,13 @@ public class FilmController {
 		logger.info(personne.toString());
 		return ResponseEntity.noContent().build();
 	}
-	private File createFileToImport(MultipartFile file) throws Exception {
-		File resFile = null;
-		File tempFile = new File(System.getProperty("java.io.tmpdir")+"/"+"tmp_"+file.getOriginalFilename());
-		File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+file.getOriginalFilename());
-		try {
-			file.transferTo(convFile);
-		} catch (IllegalStateException | IOException e) {
-			logger.error(e.getMessage());
-			throw e;
-		}
-		if(StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(file.getOriginalFilename()),"csv")) {
-			resFile = convFile;
-		} else if(StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(file.getOriginalFilename()),"xls") 
-				|| StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(file.getOriginalFilename()),"xlsx")) {
-			Workbook workBook;
-			try {
-				workBook = this.excelFilmHandler.createSheetFromFile(convFile);
-				String csv = this.excelFilmHandler.createCsvFromExcel(workBook);
-				FileOutputStream outputStream = new FileOutputStream(tempFile);
-			    byte[] strToBytes = csv.getBytes();
-			    outputStream.write(strToBytes);
-			    outputStream.close();
-			    resFile = tempFile;
-			} catch (EncryptedDocumentException | IOException e) {
-				logger.error(e.getMessage());
-				throw e;
-			}
-		}else {
-			String msg = "File not recognized";
-			logger.error(msg);
-			throw new DvdthequeCommonsException(msg);
-		}
-		return resFile;
-	}
+	
 	@CrossOrigin
 	@PostMapping("/films/import")
 	ResponseEntity<Void> importFilmList(@RequestParam("file") MultipartFile file) {
 		File resFile = null;
 		try {
-			resFile = createFileToImport(file);
+			resFile = this.multipartFileUtil.createFileToImport(file);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
