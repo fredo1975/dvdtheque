@@ -94,7 +94,7 @@ public class DvdthequeWebSocketControllerTest {
     public void shouldReceiveAMessageFromTheServer() throws Exception {
 		CompletableFuture<JmsStatusMessage<Film>> resultKeeper = new CompletableFuture<>();
         stompSession.subscribe(SUBSCRIBE_TOPIC_ENDPOINT, new MyStompFrameHandler((payload) -> resultKeeper.complete(payload)));
-        JmsStatusMessage<Film> jms = new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT,null);
+        JmsStatusMessage<Film> jms = new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT,null,0l);
         stompSession.send(SEND_CREATE_JMS_STATUS_ENDPOINT, jms);
         assertEquals(jms, resultKeeper.get(5, TimeUnit.SECONDS));
     }

@@ -83,10 +83,10 @@ public class BatchImportFilmsConfiguration{
 			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 				StopWatch watch = new StopWatch();
 				watch.start();
-				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT, null));
+				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT, null,0l));
 				filmService.cleanAllFilms();
-				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_COMPLETED, null));
 				watch.stop();
+				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_COMPLETED, null,watch.getTime()));
 				logger.debug("database cleaning Time Elapsed: " + watch.getTime());
 				return RepeatStatus.FINISHED;
 			}
@@ -118,14 +118,14 @@ public class BatchImportFilmsConfiguration{
     public FlatFileItemReader<FilmCsvImportFormat> reader(@Value("#{jobParameters[INPUT_FILE_PATH]}") String inputFilePath) {
     	StopWatch watch = new StopWatch();
 		watch.start();
-    	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILE_ITEM_READER_INIT, null));
+    	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILE_ITEM_READER_INIT, null,0l));
     	FlatFileItemReader<FilmCsvImportFormat> csvFileReader = new FlatFileItemReader<>();
     	csvFileReader.setResource(new FileSystemResource(inputFilePath));
         csvFileReader.setLinesToSkip(1);
         LineMapper<FilmCsvImportFormat> filmCsvImportFormatLineMapper = createFilmCsvImportFormatLineMapper();
         csvFileReader.setLineMapper(filmCsvImportFormatLineMapper);
-        jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILE_ITEM_READER_COMPLETED, null));
         watch.stop();
+        jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILE_ITEM_READER_COMPLETED, null,watch.getTime()));
 		logger.debug("reader Time Elapsed: " + watch.getTime());
         return csvFileReader;
     }
@@ -133,14 +133,14 @@ public class BatchImportFilmsConfiguration{
     private LineMapper<FilmCsvImportFormat> createFilmCsvImportFormatLineMapper() {
     	StopWatch watch = new StopWatch();
 		watch.start();
-    	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_MAPPER_INIT, null));
+    	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_MAPPER_INIT, null,0l));
         DefaultLineMapper<FilmCsvImportFormat> filmLineMapper = new DefaultLineMapper<>();
         LineTokenizer filmCsvImportFormatLineTokenizer = createFilmCsvImportFormatLineTokenizer();
         filmLineMapper.setLineTokenizer(filmCsvImportFormatLineTokenizer);
         FieldSetMapper<FilmCsvImportFormat> filmCsvImportFormatInformationMapper = createFilmCsvImportFormatInformationMapper();
         filmLineMapper.setFieldSetMapper(filmCsvImportFormatInformationMapper);
-        jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_MAPPER_COMPLETED, null));
         watch.stop();
+        jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_MAPPER_COMPLETED, null,watch.getTime()));
 		logger.debug("createFilmCsvImportFormatLineMapper Time Elapsed: " + watch.getTime());
         return filmLineMapper;
     }
@@ -148,12 +148,12 @@ public class BatchImportFilmsConfiguration{
     private LineTokenizer createFilmCsvImportFormatLineTokenizer() {
     	StopWatch watch = new StopWatch();
 		watch.start();
-    	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_INIT, null));
+    	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_INIT, null,0l));
         DelimitedLineTokenizer filmCsvImportFormatLineTokenizer = new DelimitedLineTokenizer();
         filmCsvImportFormatLineTokenizer.setDelimiter(";");
         filmCsvImportFormatLineTokenizer.setNames(headerTab);
-        jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_COMPLETED, null));
         watch.stop();
+        jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_COMPLETED, null,watch.getTime()));
 		logger.debug("createFilmCsvImportFormatLineTokenizer Time Elapsed: " + watch.getTime());
         return filmCsvImportFormatLineTokenizer;
     }

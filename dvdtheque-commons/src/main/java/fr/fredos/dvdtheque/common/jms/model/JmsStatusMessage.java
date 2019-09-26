@@ -8,14 +8,15 @@ public class JmsStatusMessage<T> implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private JmsStatus status;
 	private T film;
-	
+	private long timing;
 	public JmsStatusMessage() {
 		super();
 	}
-	public JmsStatusMessage(JmsStatus status, T film) {
+	public JmsStatusMessage(JmsStatus status, T film, long timing) {
 		super();
 		this.status = status;
 		this.film = film;
+		this.timing = timing;
 	}
 	public JmsStatus getStatus() {
 		return status;
@@ -29,9 +30,15 @@ public class JmsStatusMessage<T> implements Serializable{
 	public void setFilm(T film) {
 		this.film = film;
 	}
+	public long getTiming() {
+		return timing;
+	}
+	public void setTiming(long timing) {
+		this.timing = timing;
+	}
 	@Override
 	public String toString() {
-		return "JmsStatusMessage [status=" + status + ", film=" + film + "]";
+		return "JmsStatusMessage [status=" + status + ", film=" + film + ", timing=" + timing + "]";
 	}
 	@Override
 	public int hashCode() {
@@ -49,7 +56,7 @@ public class JmsStatusMessage<T> implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		JmsStatusMessage other = (JmsStatusMessage) obj;
+		JmsStatusMessage<T> other = (JmsStatusMessage<T>) obj;
 		if (film == null) {
 			if (other.film != null)
 				return false;
@@ -59,6 +66,4 @@ public class JmsStatusMessage<T> implements Serializable{
 			return false;
 		return true;
 	}
-	
-	
 }
