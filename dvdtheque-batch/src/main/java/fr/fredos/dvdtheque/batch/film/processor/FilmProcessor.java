@@ -44,7 +44,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 		watch.start();
 		Film filmTemp = new Film ();
 		filmTemp.setTmdbId(item.getTmdbId());
-		jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_INIT, filmTemp,0l));
+		jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_INIT, filmTemp,0l,JmsStatus.FILM_PROCESSOR_INIT.statusValue()));
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e1) {
@@ -77,7 +77,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			filmToSave.setId(null);
 			logger.debug(filmToSave.toString());
 			watch.stop();
-			jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_COMPLETED, filmToSave,watch.getTime()));
+			jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_COMPLETED, filmToSave,watch.getTime(),JmsStatus.FILM_PROCESSOR_COMPLETED.statusValue()));
 			logger.debug("Film "+filmToSave.getTitre()+" processing Time Elapsed: " + watch.getTime());
 			return filmToSave;
 		}

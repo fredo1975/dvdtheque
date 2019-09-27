@@ -9,14 +9,16 @@ public class JmsStatusMessage<T> implements Serializable{
 	private JmsStatus status;
 	private T film;
 	private long timing;
+	private int statusValue;
 	public JmsStatusMessage() {
 		super();
 	}
-	public JmsStatusMessage(JmsStatus status, T film, long timing) {
+	public JmsStatusMessage(JmsStatus status, T film, long timing,int statusValue) {
 		super();
 		this.status = status;
 		this.film = film;
 		this.timing = timing;
+		this.statusValue = statusValue;
 	}
 	public JmsStatus getStatus() {
 		return status;
@@ -36,9 +38,11 @@ public class JmsStatusMessage<T> implements Serializable{
 	public void setTiming(long timing) {
 		this.timing = timing;
 	}
-	@Override
-	public String toString() {
-		return "JmsStatusMessage [status=" + status + ", film=" + film + ", timing=" + timing + "]";
+	public int getStatusValue() {
+		return statusValue;
+	}
+	public void setStatusValue(int statusValue) {
+		this.statusValue = statusValue;
 	}
 	@Override
 	public int hashCode() {
@@ -66,4 +70,10 @@ public class JmsStatusMessage<T> implements Serializable{
 			return false;
 		return true;
 	}
+	@Override
+	public String toString() {
+		return "JmsStatusMessage [status=" + status + ", film=" + film + ", timing=" + timing + ", statusValue="
+				+ statusValue + "]";
+	}
+	
 }

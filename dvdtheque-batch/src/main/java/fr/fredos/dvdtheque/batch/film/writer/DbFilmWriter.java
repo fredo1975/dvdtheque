@@ -29,10 +29,10 @@ public class DbFilmWriter implements ItemWriter<Film> {
 			if(film != null) {
 				StopWatch watch = new StopWatch();
 				watch.start();
-				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.DB_FILM_WRITER_INIT, film,0l));
+				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.DB_FILM_WRITER_INIT, film,0l,JmsStatus.DB_FILM_WRITER_INIT.statusValue()));
 				filmService.saveNewFilm(film);
 				watch.stop();
-				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.DB_FILM_WRITER_COMPLETED, film,watch.getTime()));
+				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.DB_FILM_WRITER_COMPLETED, film,watch.getTime(),JmsStatus.DB_FILM_WRITER_COMPLETED.statusValue()));
 				logger.debug("Film "+film.getTitre()+" insertion Time Elapsed: " + watch.getTime());
 			}
 		}
