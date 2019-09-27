@@ -61,8 +61,9 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     
     @Before()
 	public void setUp() throws Exception {
-		findTmdbFilmToInsert();
-		findTmdbFilmToTestSave();
+    	filmService.cleanAllFilms();
+		/*findTmdbFilmToInsert();
+		findTmdbFilmToTestSave();*/
 	}
     private void findTmdbFilmToInsert() throws Exception{
 		boolean found = false;
@@ -150,9 +151,9 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     public void replaceFilmTest() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, null, DvdFormat.DVD);
 		assertFilmIsNotNull(film,true);
-		Boolean exists = filmService.checkIfTmdbFilmExists(tmdbId);
+		Boolean exists = filmService.checkIfTmdbFilmExists(612152l);
 		if(!exists) {
-			film = client.replaceFilm(tmdbId, film);
+			film = client.replaceFilm(612152l, film);
 			assertFilmIsNotNull(film,true);
 			logger.info("film = "+film.toString()+" replaced");
 		}else {
@@ -161,7 +162,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void savetmdbFilmTest() throws Exception {
-		Film film = client.saveTmbdFilm(tmdbIdToSave);
+		Film film = client.saveTmbdFilm(13457l);
 		assertFilmIsNotNull(film,true);
 		//assertEquals(new Integer(98), film.getRuntime());
 		logger.info("film = "+film.toString());
@@ -195,7 +196,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }*/
 	@Test
     public void retrieveTmdbCreditsTest() {
-		Results res = client.retrieveTmdbSearchResultsById(this.tmdbId);
+		Results res = client.retrieveTmdbSearchResultsById(335070l);
 		assertResultsIsNotNull(res);
 		
 		Credits credits = client.retrieveTmdbCredits(res.getId());
