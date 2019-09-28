@@ -66,7 +66,6 @@ public class PersonneDaoImpl implements PersonneDao{
 		Query q = this.em.createQuery("from Personne personne order by personne.nom ASC");
 		return q.getResultList();
     }
-	
 	public List<Personne> findAllPersonneByType(Integer typeId) {
 		StringBuilder sb = new StringBuilder("select distinct personneType.personne ");
 		if(typeId==2){
@@ -78,7 +77,6 @@ public class PersonneDaoImpl implements PersonneDao{
         Query query = this.em.createQuery(sb.toString());
         return query.getResultList();
     }
-	
 	public Personne findPersonneByName(String nom) {
 		StringBuilder sb = new StringBuilder("from Personne personne where personne.nom=:nom ");
         Query query = this.em.createQuery(sb.toString());
@@ -91,8 +89,6 @@ public class PersonneDaoImpl implements PersonneDao{
         }
         return p;
     }
-	
-	
     public List<Personne> findAllPersonneByFilm(Film film) {
 		List<Personne> persList = new ArrayList<Personne>();
 		StringBuilder sbRealisateur = new StringBuilder("from Film film join fetch film.realisateurs real join fetch film.acteurs act ");
@@ -109,7 +105,6 @@ public class PersonneDaoImpl implements PersonneDao{
 		this.em.flush();
 		return p.getId();
 	}
-	
 	public void updatePersonne(Personne p){
 		this.em.merge(p);
 	}

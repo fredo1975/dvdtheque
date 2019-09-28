@@ -26,6 +26,9 @@ public class Personne implements Serializable {
 	private String prenom;
 	@Column(name = "DATE_N")
 	private Date dateN;
+	@Column(name = "PROFILE_PATH")
+	@Size(min = 1, max = 255)
+	private String profilePath;
 	//@JoinColumn(name = "ID_PAYS")
 	//@ManyToOne
 	@Transient
@@ -63,7 +66,12 @@ public class Personne implements Serializable {
 	public void setPays(Pays pays) {
 		this.pays = pays;
 	}
-	
+	public String getProfilePath() {
+		return profilePath;
+	}
+	public void setProfilePath(String profilePath) {
+		this.profilePath = profilePath;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -89,6 +97,7 @@ public class Personne implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "id="+id+" nom="+nom;
+		return "Personne [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", dateN=" + dateN + ", profilePath="
+				+ profilePath + ", pays=" + pays + "]";
 	}
 }

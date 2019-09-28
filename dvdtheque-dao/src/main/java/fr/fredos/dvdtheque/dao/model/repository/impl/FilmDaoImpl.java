@@ -145,12 +145,12 @@ public class FilmDaoImpl implements FilmDao {
 		for(Film film : findAllFilms()) {
 			removeFilm(film);
 		}
+		this.entityManager.flush();
 	}
 	public List<Film> getAllRippedFilms(){
 		Query query = this.entityManager.createQuery("from Film film where film.ripped=1");
         return query.getResultList();
 	}
-	
 	public void removeFilm(Film film) {
 		this.entityManager.remove(film);
 		//this.entityManager.flush();
@@ -162,7 +162,6 @@ public class FilmDaoImpl implements FilmDao {
 		q.setParameter("tmdbIds", tmdbIds);
 		return new HashSet<Long>(q.getResultList());
 	}
-	
 	@Override
 	public Boolean checkIfTmdbFilmExists(Long tmdbId) {
 		StringBuilder sb = new StringBuilder("select count(1) from Film film where film.tmdbId = :tmdbId ");

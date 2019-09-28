@@ -174,7 +174,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
 		
 		film.setTitre(TITRE_FILM_UPDATED);
-		Personne real = personneService.buildPersonne(REAL_NOM1);
+		Personne real = personneService.buildPersonne(REAL_NOM1, null);
 		assertNotNull(real);
 		Long idreal = personneService.savePersonne(real);
 		assertNotNull(idreal);
@@ -182,7 +182,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		film.getRealisateurs().clear();
 		film.getRealisateurs().add(real);
 		
-		Personne act = personneService.buildPersonne(ACT4_NOM);
+		Personne act = personneService.buildPersonne(ACT4_NOM, null);
 		assertNotNull(act);
 		Long idAct = personneService.savePersonne(act);
 		assertNotNull(idAct);

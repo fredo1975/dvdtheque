@@ -177,10 +177,10 @@ public class TmdbServiceClient {
 			for(Cast cast : credits.getCast()) {
 				Personne personne = null;
 				if(!persistPersonne) {
-					personne = personneService.buildPersonne(StringUtils.upperCase(cast.getName()));
+					personne = personneService.buildPersonne(StringUtils.upperCase(cast.getName()), environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+cast.getProfile_path());
 					personne.setId(Long.valueOf(cast.getCast_id()));
 				}else {
-					personne = personneService.createOrRetrievePersonne(StringUtils.upperCase(cast.getName()));
+					personne = personneService.createOrRetrievePersonne(StringUtils.upperCase(cast.getName()), environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+cast.getProfile_path());
 				}
 				transformedfilm.getActeurs().add(personne);
 				if(i++==Integer.parseInt(environment.getRequiredProperty(NB_ACTEURS))) {
@@ -193,10 +193,10 @@ public class TmdbServiceClient {
 			for(Crew c : crew) {
 				Personne realisateur = null;
 				if(!persistPersonne) {
-					realisateur = personneService.buildPersonne(StringUtils.upperCase(c.getName()));
+					realisateur = personneService.buildPersonne(StringUtils.upperCase(c.getName()), null);
 					realisateur.setId(RandomUtils.nextLong());
 				}else {
-					realisateur = personneService.createOrRetrievePersonne(StringUtils.upperCase(c.getName()));
+					realisateur = personneService.createOrRetrievePersonne(StringUtils.upperCase(c.getName()), null);
 				}
 				transformedfilm.getRealisateurs().add(realisateur);
 			}

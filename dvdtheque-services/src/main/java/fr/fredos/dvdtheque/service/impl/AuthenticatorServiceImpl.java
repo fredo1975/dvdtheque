@@ -20,7 +20,6 @@ public class AuthenticatorServiceImpl implements IAuthenticatorService {
 	protected Logger logger = LoggerFactory.getLogger(AuthenticatorServiceImpl.class);
 	@Autowired
     private AuthenticatorDao authenticatorDao;
-	
 	@Transactional(readOnly = true)
 	public User authenticate(String userName, String password){
 		User user = authenticatorDao.authenticate(userName, password);
