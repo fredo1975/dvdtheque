@@ -112,7 +112,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
 		filmDao.cleanAllFilms();
-		//personneService.cleanAllPersonnes();
+		personneService.cleanAllPersonnes();
 	}
 	@Transactional(readOnly = true)
 	public List<Film> getAllRippedFilms(){
@@ -136,14 +136,11 @@ public class FilmServiceImpl implements IFilmService {
 	    URL url = new URL(imageUrl);
 	    InputStream is = url.openStream();
 	    OutputStream os = new FileOutputStream(destinationFile);
-
 	    byte[] b = new byte[2048];
 	    int length;
-
 	    while ((length = is.read(b)) != -1) {
 	        os.write(b, 0, length);
 	    }
-
 	    is.close();
 	    os.close();
 	}
@@ -254,10 +251,10 @@ public class FilmServiceImpl implements IFilmService {
 		Personne acteur1 = null;
 		Personne acteur2 = null;
 		Personne acteur3 = null;
-		realisateur = personneService.createOrRetrievePersonne(realNom);
-		acteur1 = personneService.createOrRetrievePersonne(act1Nom);
-		acteur2 = personneService.createOrRetrievePersonne(act2Nom);
-		acteur3 = personneService.createOrRetrievePersonne(act3Nom);
+		realisateur = personneService.createOrRetrievePersonne(realNom, null);
+		acteur1 = personneService.createOrRetrievePersonne(act1Nom, null);
+		acteur2 = personneService.createOrRetrievePersonne(act2Nom, null);
+		acteur3 = personneService.createOrRetrievePersonne(act3Nom, null);
 		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3, ripDate, dvdFormat);
 		Long idFilm = saveNewFilm(film);
 		film.setId(idFilm);

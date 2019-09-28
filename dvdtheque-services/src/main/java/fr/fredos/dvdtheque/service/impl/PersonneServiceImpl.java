@@ -24,7 +24,6 @@ public class PersonneServiceImpl implements IPersonneService {
 	private static final String CACHE_PERSONNE = "personneCache";
 	public static final String CACHE_REALISATEUR = "realCache";
 	public static final String CACHE_ACTEUR = "actCache";
-	
 	@Autowired
 	private PersonneDao personneDao;
 	@Transactional(readOnly = true)
@@ -52,13 +51,11 @@ public class PersonneServiceImpl implements IPersonneService {
 	public List<Personne> findAllPersonne(){
 		return personneDao.findAllPersonne();
 	}
-	
 	@CacheEvict(value= CACHE_PERSONNE, allEntries = true)
 	@Transactional(readOnly = false)
 	public Long savePersonne(Personne personne) {
 		return personneDao.savePersonne(personne);
 	}
-	
 	@CacheEvict(value= CACHE_PERSONNE, allEntries = true)
 	@Transactional(readOnly = false)
 	public void updatePersonne(Personne personne){
@@ -100,32 +97,31 @@ public class PersonneServiceImpl implements IPersonneService {
 	public void deletePersonne(Personne p) {
 		// TODO Auto-generated method stub
 	}
-	
 	@Override
-	public Personne buildPersonne(String nom) {
+	public Personne buildPersonne(String nom, String profilePath) {
 		Personne personne = new Personne();
 		personne.setNom(nom);
+		if(StringUtils.isNotEmpty(profilePath)) {
+			personne.setProfilePath(profilePath);
+		}
 		return personne;
 	}
-	
 	@Override
 	@Transactional(readOnly = false)
 	//@Cacheable(value= CACHE_PERSONNE)
-	public Personne createOrRetrievePersonne(String nom) {
+	public Personne createOrRetrievePersonne(String nom, String profilePath) {
 		Personne p = findPersonneByName(nom);
 		if(p == null) {
-			p = buildPersonne(nom);
+			p = buildPersonne(nom, profilePath);
 			Long id = savePersonne(p);
 			p.setId(id);
 		}
 		return p;
 	}
-	
 	@Override
 	public Long createPersonne(final String nom) {
-		return savePersonne(buildPersonne(nom));
+		return savePersonne(buildPersonne(nom, null));
 	}
-	
 	@Override
 	public String printPersonnes(final Set<Personne> personnes, final String separator) {
     	if(CollectionUtils.isNotEmpty(personnes)) {
