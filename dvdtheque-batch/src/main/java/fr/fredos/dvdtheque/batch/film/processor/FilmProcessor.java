@@ -4,15 +4,21 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 
+import javax.jms.Topic;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.jms.core.JmsTemplate;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.JmsStatus;
+import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
@@ -27,9 +33,18 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 	protected IFilmService filmService;
 	@Autowired
     Environment environment;
+	@Autowired
+    private JmsTemplate jmsTemplate;
+	@Autowired
+    private Topic topic;
 	private static String RIPPEDFLAGTASKLET_FROM_FILE="rippedFlagTasklet.from.file";
 	@Override
 	public Film process(FilmCsvImportFormat item) throws Exception {
+		StopWatch watch = new StopWatch();
+		watch.start();
+		Film filmTemp = new Film ();
+		filmTemp.setTmdbId(item.getTmdbId());
+		jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_INIT, filmTemp,0l,JmsStatus.FILM_PROCESSOR_INIT.statusValue()));
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e1) {
@@ -61,6 +76,9 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			}
 			filmToSave.setId(null);
 			logger.debug(filmToSave.toString());
+			watch.stop();
+			jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_COMPLETED, filmToSave,watch.getTime(),JmsStatus.FILM_PROCESSOR_COMPLETED.statusValue()));
+			logger.debug("Film "+filmToSave.getTitre()+" processing Time Elapsed: " + watch.getTime());
 			return filmToSave;
 		}
 		return null;

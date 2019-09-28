@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -22,22 +23,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 
 import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
+import fr.fredos.dvdtheque.batch.configuration.MessageConsumer;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 
-@SpringBootTest(classes = { BatchImportFilmsConfiguration.class,
+@SpringBootTest(classes = { BatchImportFilmsConfiguration.class,MessageConsumer.class,
 		RippedFlagTasklet.class,
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
 public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
-	
 	@Autowired
 	public Job importFilmsJob;
 	@Autowired
     protected Environment environment;
+	/*
+	@Autowired
+	protected MessageConsumer messageConsumer;*/
 	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
 	public static final String TITRE_FILM_2001 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_FILM_2046 = "2046";
@@ -62,12 +66,19 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue(film.getRealisateurs().size()==1);
 	}
+	
 	@Before
 	public void init() {
 		jobLauncherTestUtils = new JobLauncherTestUtils();
 		jobLauncherTestUtils.setJob(importFilmsJob);
 	}
-	
+	@After 
+	public void consumeMessages() {
+		
+	}
+	@Test
+	public void contextLoads() {
+	}
 	@Test
 	//@Ignore
 	public void launchCleanDBStep() throws Exception {
