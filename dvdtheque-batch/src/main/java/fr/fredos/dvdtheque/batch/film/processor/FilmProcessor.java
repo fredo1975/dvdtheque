@@ -57,7 +57,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			filmToSave = tmdbServiceClient.transformTmdbFilmToDvdThequeFilm(null, results, new HashSet<>(), true);
 		}
 		if(filmToSave != null) {
-			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null, DvdFormat.DVD);
+			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null, DvdFormat.valueOf(item.getDvdFormat()));
 			filmToSave.setDvd(dvd);
 			//filmToSave.setTitreFromExcelFile(StringUtils.upperCase(item.getTitre()));
 			boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
