@@ -79,7 +79,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String UPDATE_FILM_URI = GET_ALL_FILMS_URI+"update/";
 	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque/personnes";
 	private static final String EXPORT_FILM_LIST_URI = GET_ALL_FILMS_URI+"export";
-	private static final String IMPORT_FILM_LIST_URI = GET_ALL_FILMS_URI+"import";
 	private Long tmdbId = new Long(4780);
 	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/xghbwWlA9uW4bjkUCtUDaIeOvQ4.jpg";
 	public static final String TITRE_FILM_TMBD_ID_4780 = "OBSESSION";
@@ -123,15 +122,15 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 
 	@Test
 	public void findAllFilms() throws Exception {
+		filmService.cleanAllFilms();
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
 				createRipDate(RIP_DATE), DvdFormat.DVD);
 		assertFilmIsNotNull(film, false, RIP_DATE);
 		List<Film> allFilms = filmService.findAllFilms();
 		assertNotNull(allFilms);
 		if (CollectionUtils.isNotEmpty(allFilms)) {
-			assertTrue(allFilms.size() > 0);
-
-			Film filmToTest = allFilms.get(0);
+			assertTrue(allFilms.size()==1);
+			Film filmToTest = filmService.findFilmByTitre(TITRE_FILM);
 			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_FILMS_URI)
 					.contentType(MediaType.APPLICATION_JSON);
 			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
@@ -169,6 +168,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 
 	@Test
 	public void findAllRealisateurs() throws Exception {
+		filmService.cleanAllFilms();
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
 				createRipDate(RIP_DATE), DvdFormat.DVD);
 		assertFilmIsNotNull(film, false, RIP_DATE);
@@ -190,6 +190,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 
 	@Test
 	public void findAllPersonne() throws Exception {
+		filmService.cleanAllFilms();
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
 				createRipDate(RIP_DATE), DvdFormat.DVD);
 		assertFilmIsNotNull(film, false, RIP_DATE);
