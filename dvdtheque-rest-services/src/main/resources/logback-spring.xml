@@ -39,7 +39,7 @@
     </root>
  
     <!-- LOG "fr.fredos.dvdtheque.web.controller*" at TRACE level -->
-    <logger name="fr.fredos.dvdtheque" level="trace" additivity="false">
+    <logger name="fr.fredos.dvdtheque" level="info" additivity="false">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </logger>

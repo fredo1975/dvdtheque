@@ -151,24 +151,26 @@ public class TmdbServiceClient {
 		if(StringUtils.isNotEmpty(results.getRelease_date())) {
 			transformedfilm.setAnnee(retrieveYearFromReleaseDate(results.getRelease_date()));
 		}
+		/*
 		try {
 			Thread.sleep(400);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		/*
+		
 		ImagesResults imagesResults = retrieveTmdbImagesResults(results.getId());
 		if(CollectionUtils.isNotEmpty(imagesResults.getPosters())) {
 			String imageUrl = retrieveTmdbFrPosterPathUrl(imagesResults);
 			transformedfilm.setPosterPath(imageUrl);
 		}*/
 		transformedfilm.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
+		/*
 		try {
 			Thread.sleep(400);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		transformedfilm.setTmdbId(results.getId());
 		transformedfilm.setOverview(results.getOverview());
 		Credits credits = retrieveTmdbCredits(results.getId());
@@ -201,7 +203,7 @@ public class TmdbServiceClient {
 				transformedfilm.getRealisateurs().add(realisateur);
 			}
 		}
-		transformedfilm.setRuntime(retrieveTmdbSearchResultsById(results.getId()).getRuntime());
+		transformedfilm.setRuntime(results.getRuntime());
 		return transformedfilm;
 	}
 	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{
