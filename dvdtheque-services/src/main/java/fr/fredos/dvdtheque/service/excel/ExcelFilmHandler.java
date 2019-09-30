@@ -132,10 +132,8 @@ public class ExcelFilmHandler {
 	    	}
 	    	for(Iterator<Row> rowIt = sheet.iterator();rowIt.hasNext();) {
 	        	Row row = rowIt.next();
-	        	logger.info("row="+row.toString());
 	        	for(Iterator<Cell> cellIt = row.iterator();cellIt.hasNext();) {
 	        		Cell cell = cellIt.next();
-	        		logger.info("cell="+cell.toString());
 	        	}
 	        }
 	    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
