@@ -1,7 +1,6 @@
 package fr.fredos.dvdtheque.tmdb.model;
 
 public class BackDrops {
-
 	private String file_path;
 	private String iso_639_1;
 	public String getFile_path() {
