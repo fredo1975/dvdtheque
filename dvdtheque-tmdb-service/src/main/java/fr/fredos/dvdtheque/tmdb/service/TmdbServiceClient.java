@@ -7,8 +7,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
@@ -62,9 +65,9 @@ public class TmdbServiceClient {
 	private static String TMDB_MOVIE_QUERY="themoviedb.movie.query";
 	private static String TMDB_POSTER_PATH_URL = "themoviedb.poster.path.url";
 	private static String NB_ACTEURS="batch.save.nb.acteurs";
-	private List<Genres> genresList;
-	public List<Genres> getGenresList() {
-		return genresList;
+	private Map<Integer,Genres> genresById;
+	public Map<Integer,Genres> getGenresById() {
+		return genresById;
 	}
 	public TmdbServiceClient(RestTemplateBuilder restTemplateBuilder) {
         restTemplate = restTemplateBuilder.build();
@@ -74,7 +77,11 @@ public class TmdbServiceClient {
 		ObjectMapper objectMapper = new ObjectMapper();
 		ClassPathResource classPathResource = new ClassPathResource("fr/fredos/dvdtheque/tmdb/model/genres.json");
 		File file = classPathResource.getFile();
-		this.genresList = objectMapper.readValue(file, new TypeReference<List<Genres>>(){});
+		List<Genres> l = objectMapper.readValue(file, new TypeReference<List<Genres>>(){});
+		genresById = new HashMap<Integer, Genres>(l.size());
+		for(Genres genres : l) {
+			genresById.put(genres.getId(), genres);
+		}
 	}
 	/**
 	 * we're updating all informations with tmdbId in DB for film idFilm
@@ -169,26 +176,7 @@ public class TmdbServiceClient {
 		if(StringUtils.isNotEmpty(results.getRelease_date())) {
 			transformedfilm.setAnnee(retrieveYearFromReleaseDate(results.getRelease_date()));
 		}
-		/*
-		try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		ImagesResults imagesResults = retrieveTmdbImagesResults(results.getId());
-		if(CollectionUtils.isNotEmpty(imagesResults.getPosters())) {
-			String imageUrl = retrieveTmdbFrPosterPathUrl(imagesResults);
-			transformedfilm.setPosterPath(imageUrl);
-		}*/
 		transformedfilm.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
-		/*
-		try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		transformedfilm.setTmdbId(results.getId());
 		transformedfilm.setOverview(results.getOverview());
 		Credits credits = retrieveTmdbCredits(results.getId());
@@ -222,6 +210,17 @@ public class TmdbServiceClient {
 			}
 		}
 		transformedfilm.setRuntime(results.getRuntime());
+		List<Genres> genres = results.getGenre_ids();
+		if(CollectionUtils.isNotEmpty(genres)){
+			Set<Genre> filmGenres = new HashSet<>(genres.size());
+			for (Genres g : genres) {
+				Genres _g = this.genresById.get(g.getId());
+				if(_g != null) {
+					filmGenres.add(new Genre(_g.getId(), _g.getName()));
+				}
+			}
+			transformedfilm.setGenres(filmGenres);
+		}
 		return transformedfilm;
 	}
 	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{

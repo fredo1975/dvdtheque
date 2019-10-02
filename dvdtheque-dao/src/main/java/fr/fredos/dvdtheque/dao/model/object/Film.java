@@ -54,8 +54,9 @@ public class Film implements Serializable {
 	private String overview;
 	@Column(name = "RUNTIME")
 	private Integer runtime;
-	@Column(name = "GENRE_ID")
-	private Genre genre;
+	//@Column(name = "GENRE_ID")
+	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
+	private Set<Genre> genres;
 	@Transient
 	private boolean alreadyInDvdtheque;
 	public Film() {
@@ -173,18 +174,17 @@ public class Film implements Serializable {
 	public void setRuntime(Integer runtime) {
 		this.runtime = runtime;
 	}
-	public Genre getGenre() {
-		return genre;
+	public Set<Genre> getGenres() {
+		return genres;
 	}
-	public void setGenre(Genre genre) {
-		this.genre = genre;
+	public void setGenres(Set<Genre> genres) {
+		this.genres = genres;
 	}
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
-				+ ", dvd=" + dvd + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped
-				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
-				+ runtime + ", genre=" + genre + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
+		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
+				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped + ", posterPath="
+				+ posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime=" + runtime + ", genres="
+				+ genres + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
 	}
-	
 }

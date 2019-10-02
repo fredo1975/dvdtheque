@@ -178,6 +178,12 @@ CREATE TABLE IF NOT EXISTS `DVD` (
 
 -- --------------------------------------------------------
 
+CREATE TABLE IF NOT EXISTS `GENRE` (
+  `ID` bigint(20) NOT NULL,
+  `NAME` varchar(2500) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=22456 ;
+
 --
 -- Structure de la table `FILM`
 --
@@ -224,6 +230,12 @@ CREATE TABLE IF NOT EXISTS `FILM_realisateurs` (
 
 -- --------------------------------------------------------
 
+CREATE TABLE IF NOT EXISTS `FILM_genres` (
+  `FILM_ID` bigint(20) NOT NULL,
+  `GENRE_ID` bigint(20) NOT NULL,
+  PRIMARY KEY (`FILM_ID`,`GENRE_ID`),
+  KEY `FK_GENRE_ID` (`GENRE_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 --
 -- Structure de la table `PERSONNE`
 --
