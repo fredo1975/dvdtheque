@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.tmdb.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -19,12 +22,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
@@ -35,6 +41,7 @@ import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.tmdb.model.Cast;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
 import fr.fredos.dvdtheque.tmdb.model.Crew;
+import fr.fredos.dvdtheque.tmdb.model.Genres;
 import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
 import fr.fredos.dvdtheque.tmdb.model.Posters;
 import fr.fredos.dvdtheque.tmdb.model.Results;
@@ -55,9 +62,20 @@ public class TmdbServiceClient {
 	private static String TMDB_MOVIE_QUERY="themoviedb.movie.query";
 	private static String TMDB_POSTER_PATH_URL = "themoviedb.poster.path.url";
 	private static String NB_ACTEURS="batch.save.nb.acteurs";
+	private List<Genres> genresList;
+	public List<Genres> getGenresList() {
+		return genresList;
+	}
 	public TmdbServiceClient(RestTemplateBuilder restTemplateBuilder) {
         restTemplate = restTemplateBuilder.build();
     }
+	@PostConstruct
+	public void loadGenres() throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		ClassPathResource classPathResource = new ClassPathResource("fr/fredos/dvdtheque/tmdb/model/genres.json");
+		File file = classPathResource.getFile();
+		this.genresList = objectMapper.readValue(file, new TypeReference<List<Genres>>(){});
+	}
 	/**
 	 * we're updating all informations with tmdbId in DB for film idFilm
 	 * @param tmdbId

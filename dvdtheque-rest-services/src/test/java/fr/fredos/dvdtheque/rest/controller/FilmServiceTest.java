@@ -61,7 +61,7 @@ public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 	}
 	@Test
 	public void findAllFilm() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film);
 		film = filmService.findFilmByTitre(TITRE_FILM);
 		assertNotNull(film);

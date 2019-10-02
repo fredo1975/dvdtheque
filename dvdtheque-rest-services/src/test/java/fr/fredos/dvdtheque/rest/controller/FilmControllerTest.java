@@ -124,7 +124,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public void findAllFilms() throws Exception {
 		filmService.cleanAllFilms();
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
+				createRipDate(RIP_DATE), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film, false, RIP_DATE);
 		List<Film> allFilms = filmService.findAllFilms();
 		assertNotNull(allFilms);
@@ -157,7 +157,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	public void findById() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
+				createRipDate(RIP_DATE), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film, false, RIP_DATE);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_FILM_BY_ID + film.getId())
 				.contentType(MediaType.APPLICATION_JSON);
@@ -170,7 +170,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public void findAllRealisateurs() throws Exception {
 		filmService.cleanAllFilms();
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
+				createRipDate(RIP_DATE), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film, false, RIP_DATE);
 		List<Personne> allRealisateur = personneService.findAllRealisateur();
 		assertNotNull(allRealisateur);
@@ -192,7 +192,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public void findAllPersonne() throws Exception {
 		filmService.cleanAllFilms();
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
+				createRipDate(RIP_DATE), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film, false, RIP_DATE);
 		List<Personne> allPersonne = personneService.findAllPersonne();
 		assertNotNull(allPersonne);
@@ -213,7 +213,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	public void findAllActeurs() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
+				createRipDate(RIP_DATE), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film, false, RIP_DATE);
 		List<Personne> allActeur = personneService.findAllActeur();
 		assertNotNull(allActeur);
@@ -234,7 +234,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Transactional
 	public void testCheckIfTmdbFilmExists() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
+				createRipDate(RIP_DATE), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film, true, RIP_DATE);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_FILM_BY_TMDBID + film.getTmdbId())
 				.contentType(MediaType.APPLICATION_JSON);
@@ -248,7 +248,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Transactional
 	public void testReplaceFilm() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
+				createRipDate(RIP_DATE), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film, true, RIP_DATE);
 		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(film);
@@ -268,7 +268,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Transactional
 	public void testUpdateFilm() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
+				createRipDate(RIP_DATE), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film, false, RIP_DATE);
 		Film filmToUpdate = filmService.findFilm(film.getId());
 		assertNotNull(filmToUpdate);
@@ -325,7 +325,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Transactional
 	public void testFindPersonne() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
+				createRipDate(RIP_DATE), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film, false, RIP_DATE);
 		Personne personne = personneService.findPersonneByName(REAL_NOM);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_PERSONNE_URI)
@@ -339,7 +339,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Transactional
 	public void testUpdatePersonne() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
+				createRipDate(RIP_DATE), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film, false, RIP_DATE);
 		Personne personne = personneService.findPersonneByName(ACT1_NOM);
 		assertNotNull(personne);
@@ -359,9 +359,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public void testExportFilmList() throws Exception {
 		filmService.cleanAllFilms();
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE), DvdFormat.DVD);
+				createRipDate(RIP_DATE), DvdFormat.DVD, null);
 		Film film1 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE1, REAL_NOM1, ACT1_NOM, ACT2_NOM, ACT3_NOM,
-				createRipDate(RIP_DATE1), DvdFormat.BLUERAY);
+				createRipDate(RIP_DATE1), DvdFormat.BLUERAY, null);
 		assertFilmIsNotNull(film, false, RIP_DATE);
 		assertFilmIsNotNull(film1, false, RIP_DATE1);
 		//MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI);

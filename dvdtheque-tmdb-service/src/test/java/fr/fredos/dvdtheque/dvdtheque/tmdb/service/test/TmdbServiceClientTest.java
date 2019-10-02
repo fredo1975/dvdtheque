@@ -26,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
@@ -62,35 +63,8 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     @Before()
 	public void setUp() throws Exception {
     	filmService.cleanAllFilms();
-		/*findTmdbFilmToInsert();
-		findTmdbFilmToTestSave();*/
 	}
-    private void findTmdbFilmToInsert() throws Exception{
-		boolean found = false;
-		while(!found) {
-			this.tmdbId = ThreadLocalRandom.current().nextLong(200, 40000);
-			if(!filmService.checkIfTmdbFilmExists(this.tmdbId)) {
-				found = true;
-			}
-		}
-		Film filmSaved = client.saveTmbdFilm(tmdbId);
-		if(filmSaved == null) {
-			findTmdbFilmToInsert();
-		}
-	}
-    private void findTmdbFilmToTestSave() {
-		boolean found = false;
-		while(!found) {
-			this.tmdbIdToSave = ThreadLocalRandom.current().nextLong(200, 3000);
-			Results res = client.retrieveTmdbSearchResultsById(this.tmdbIdToSave);
-			try {
-				assertResultsIsNotNull(res);
-				found = true;
-			}catch(AssertionError err) {
-				logger.info("findTmdbFilmToTestSave retrying another tmdbIdToSave for tmdbIdToSave="+tmdbIdToSave);
-			}
-		}
-	}
+    
     private void assertResultsIsNotNull(Results res) {
 		assertNotNull(res);
 		assertNotNull(res.getId());
@@ -111,6 +85,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
+		assertNotNull(film.getGenre());
 		if(!dateRipNull) {
 			assertEquals(filmService.clearDate(createRipDate()),film.getDvd().getDateRip());
 		}
@@ -119,6 +94,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertTrue(film.getActeurs().size()>=3);
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue(film.getRealisateurs().size()==1);
+		assertTrue(film.getGenre().getId() == 28);
 	}
     private Results getResultsByFilmTitre(Film film) {
     	SearchResults searchResults = client.retrieveTmdbSearchResults(film.getTitre());
@@ -149,7 +125,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void replaceFilmTest() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, null, DvdFormat.DVD);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, null, DvdFormat.DVD, new Genre(28,"Action"));
 		assertFilmIsNotNull(film,true);
 		Boolean exists = filmService.checkIfTmdbFilmExists(612152l);
 		if(!exists) {

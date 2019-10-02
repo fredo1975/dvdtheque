@@ -61,7 +61,7 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findFilmWithAllObjectGraph() throws Exception{
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film);
 		film = filmService.findFilmWithAllObjectGraph(film.getId());
 		assertNotNull(film);
@@ -75,7 +75,7 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 	
 	@Test
 	public void findAllFilms() throws Exception{
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD, null);
 		assertFilmIsNotNull(film);
 		List<Film> filmList = filmService.findAllFilms();
 		assertNotNull(filmList);

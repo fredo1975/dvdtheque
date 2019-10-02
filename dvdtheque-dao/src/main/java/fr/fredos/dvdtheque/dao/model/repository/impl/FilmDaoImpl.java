@@ -21,6 +21,7 @@ import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.FilmFilterCriteriaType;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
 @Repository("filmDao")
 public class FilmDaoImpl implements FilmDao {
@@ -29,6 +30,15 @@ public class FilmDaoImpl implements FilmDao {
     private EntityManager entityManager;
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
+	}
+	public Genre findGenre(int id){
+		Query q = this.entityManager.createQuery("from Genre g where g.id = :id");
+		q.setParameter("id", id);
+		return (Genre)q.getSingleResult();
+	}
+	public int saveGenre(Genre genre){
+		this.entityManager.persist(genre);
+		return genre.getId();
 	}
 	public Film findFilm(Long id){
 		Query q = this.entityManager.createQuery("from Film film join fetch film.realisateurs real where film.id = :id");

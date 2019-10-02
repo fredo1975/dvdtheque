@@ -8,6 +8,7 @@ import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 
 public interface IFilmService {
 	public static final String CACHE_DIST_FILM = "dist-film";
@@ -31,7 +32,7 @@ public interface IFilmService {
 			final String act2Nom,
 			final String act3Nom,
 			final Date ripDate,
-			final DvdFormat dvdFormat);
+			final DvdFormat dvdFormat, Genre genre);
 	Dvd buildDvd(final Integer annee,final Integer zone,final String edition,final Date ripDate,final DvdFormat dvdFormat);
 	Boolean checkIfTmdbFilmExists(final Long tmdbId);
 }

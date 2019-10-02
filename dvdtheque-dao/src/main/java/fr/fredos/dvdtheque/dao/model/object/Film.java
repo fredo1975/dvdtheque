@@ -54,6 +54,8 @@ public class Film implements Serializable {
 	private String overview;
 	@Column(name = "RUNTIME")
 	private Integer runtime;
+	@Column(name = "GENRE_ID")
+	private Genre genre;
 	@Transient
 	private boolean alreadyInDvdtheque;
 	public Film() {
@@ -171,11 +173,18 @@ public class Film implements Serializable {
 	public void setRuntime(Integer runtime) {
 		this.runtime = runtime;
 	}
+	public Genre getGenre() {
+		return genre;
+	}
+	public void setGenre(Genre genre) {
+		this.genre = genre;
+	}
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
 				+ ", dvd=" + dvd + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped
 				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
-				+ runtime + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
+				+ runtime + ", genre=" + genre + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
 	}
+	
 }

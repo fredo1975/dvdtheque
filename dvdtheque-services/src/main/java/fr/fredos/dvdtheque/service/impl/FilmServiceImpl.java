@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -28,6 +29,7 @@ import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
 import fr.fredos.dvdtheque.service.IFilmService;
@@ -39,6 +41,7 @@ public class FilmServiceImpl implements IFilmService {
 	private static final String REALISATEUR_MESSAGE_WARNING = "Film should contains one producer";
 	private static final String ACTEURS_MESSAGE_WARNING = "Film should contains actors";
 	public static final String CACHE_FILM = "filmCache";
+	public static final String CACHE_GENRE = "genreCache";
 	
 	@Autowired
 	private FilmDao filmDao;
@@ -100,8 +103,24 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = false)
 	public Long saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
+		if(film.getGenre() != null) {
+			Genre genre = null;
+			try {
+				genre = filmDao.findGenre(film.getGenre().getId());
+			}catch(EmptyResultDataAccessException e) {
+				logger.debug("genre id="+ film.getGenre().getId()+" doesn't exists");
+			}
+			if(genre == null) {
+				int id = saveGenre(film.getGenre());
+			}
+		}
 		upperCaseTitre(film);
 		return filmDao.saveNewFilm(film);
+	}
+	@CacheEvict(value= {CACHE_GENRE}, allEntries = true)
+	@Transactional(readOnly = false)
+	public int saveGenre(Genre genre) {
+		return filmDao.saveGenre(genre);
 	}
 	@Transactional(readOnly = true)
 	@Cacheable(value= CACHE_FILM)
@@ -211,7 +230,8 @@ public class FilmServiceImpl implements IFilmService {
 			final Personne act2,
 			final Personne act3,
 			final Date ripDate, 
-			final DvdFormat dvdFormat) {
+			final DvdFormat dvdFormat, 
+			final Genre genre) {
 		Film film = new Film();
 		film.setAnnee(annee);
 		film.setRipped(true);
@@ -222,6 +242,7 @@ public class FilmServiceImpl implements IFilmService {
 		film.setActeurs(buildActeurs(act1,act2,act3));
 		film.setTmdbId(new Long(100));
 		film.setOverview("Overview");
+		film.setGenre(genre);
 		return film;
 	}
 	//@Cacheable(value= "filmCache")
@@ -232,10 +253,11 @@ public class FilmServiceImpl implements IFilmService {
 			final String act2Nom,
 			final String act3Nom, 
 			final Date ripDate, 
-			final DvdFormat dvdFormat) {
+			final DvdFormat dvdFormat, 
+			final Genre genre) {
 		Film film = findFilmByTitre(titre);
 		if(film == null) {
-			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom, ripDate, dvdFormat);
+			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom, ripDate, dvdFormat, genre);
 		}
 		return film;
 	}
@@ -246,7 +268,8 @@ public class FilmServiceImpl implements IFilmService {
 			final String act2Nom,
 			final String act3Nom,
 			final Date ripDate, 
-			final DvdFormat dvdFormat) {
+			final DvdFormat dvdFormat, 
+			final Genre genre) {
 		Personne realisateur = null;
 		Personne acteur1 = null;
 		Personne acteur2 = null;
@@ -255,7 +278,7 @@ public class FilmServiceImpl implements IFilmService {
 		acteur1 = personneService.createOrRetrievePersonne(act1Nom, null);
 		acteur2 = personneService.createOrRetrievePersonne(act2Nom, null);
 		acteur3 = personneService.createOrRetrievePersonne(act3Nom, null);
-		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3, ripDate, dvdFormat);
+		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3, ripDate, dvdFormat, genre);
 		Long idFilm = saveNewFilm(film);
 		film.setId(idFilm);
 		return film;

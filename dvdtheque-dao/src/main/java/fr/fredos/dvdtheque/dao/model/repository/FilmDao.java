@@ -6,9 +6,12 @@ import java.util.Set;
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 
 public interface FilmDao {
 	Film findFilm(Long id);
+	Genre findGenre(int id);
+	int saveGenre(Genre genre);
 	Film findFilmByTitre(String titre);
 	Film findFilmWithAllObjectGraph(Long id);
 	Long saveNewFilm(Film film);

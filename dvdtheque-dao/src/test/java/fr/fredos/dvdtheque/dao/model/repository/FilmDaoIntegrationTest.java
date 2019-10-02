@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.dao.model.repository;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -10,10 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.dao.Application;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -28,4 +31,10 @@ public class FilmDaoIntegrationTest {
 		assertNotNull(films);
 		logger.info("films.size()="+films.size());
 	}
+	@Test(expected=EmptyResultDataAccessException.class)
+	public void findGenre() {
+		Genre genre = filmDao.findGenre(28);
+		assertNull(genre);
+	}
+	
 }
