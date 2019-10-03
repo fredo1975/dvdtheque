@@ -36,12 +36,11 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
-		assertNotNull(film.getGenre());
+		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
 		assertTrue(film.getActeurs().size()==3);
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue(film.getRealisateurs().size()==1);
-		assertTrue(film.getGenre().getId() == 28);
 	}
 	@Test
 	public void getPersonneVersusLoadPersonne() throws Exception {
@@ -50,7 +49,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 				FilmServiceTests.REAL_NOM,
 				FilmServiceTests.ACT1_NOM,
 				FilmServiceTests.ACT2_NOM,
-				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"));
+				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film);
 		Personne personneByLoad = personneService.loadPersonne(film.getRealisateurs().iterator().next().getId());
 		assertNotNull(personneByLoad);
@@ -63,7 +62,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 				FilmServiceTests.REAL_NOM,
 				FilmServiceTests.ACT1_NOM,
 				FilmServiceTests.ACT2_NOM,
-				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"));
+				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film);
 		Personne personne = personneService.findByPersonneId(film.getRealisateurs().iterator().next().getId());
 		assertNotNull(personne);
@@ -75,7 +74,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 				FilmServiceTests.REAL_NOM,
 				FilmServiceTests.ACT1_NOM,
 				FilmServiceTests.ACT2_NOM,
-				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"));
+				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film);
 		List<Personne> realList = personneService.findAllRealisateur();
 		assertNotNull(realList);
@@ -89,7 +88,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 				FilmServiceTests.REAL_NOM,
 				FilmServiceTests.ACT1_NOM,
 				FilmServiceTests.ACT2_NOM,
-				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"));
+				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film);
 		List<Personne> actList = personneService.findAllActeur();
 		assertNotNull(actList);
@@ -103,7 +102,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 				FilmServiceTests.REAL_NOM,
 				FilmServiceTests.ACT1_NOM,
 				FilmServiceTests.ACT2_NOM,
-				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"));
+				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film);
 		film = filmService.findFilm(film.getId());
 		assertNotNull(film);
@@ -118,7 +117,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 				FilmServiceTests.REAL_NOM,
 				FilmServiceTests.ACT1_NOM,
 				FilmServiceTests.ACT2_NOM,
-				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"));
+				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film);
 		List<Personne> personneList = personneService.findAllPersonne();
 		assertNotNull(personneList);
@@ -133,7 +132,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 				FilmServiceTests.REAL_NOM,
 				FilmServiceTests.ACT1_NOM,
 				FilmServiceTests.ACT2_NOM,
-				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"));
+				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film2);
 		List<Personne> personne2List = personneService.findAllPersonne();
 		assertNotNull(personne2List);
@@ -151,7 +150,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 				FilmServiceTests.REAL_NOM,
 				FilmServiceTests.ACT1_NOM,
 				FilmServiceTests.ACT2_NOM,
-				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"));
+				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film);
 		Personne personne = personneService.findPersonneByName(FilmServiceTests.ACT1_NOM);
 		assertNotNull(personne);
@@ -163,7 +162,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 				FilmServiceTests.REAL_NOM,
 				FilmServiceTests.ACT1_NOM,
 				FilmServiceTests.ACT2_NOM,
-				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"));
+				FilmServiceTests.ACT3_NOM, null, null, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film);
 		film = filmService.findFilm(film.getId());
 		assertFilmIsNotNull(film);

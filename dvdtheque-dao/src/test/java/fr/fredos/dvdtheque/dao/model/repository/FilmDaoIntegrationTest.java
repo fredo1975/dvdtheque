@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.dao.Application;
@@ -31,7 +30,7 @@ public class FilmDaoIntegrationTest {
 		assertNotNull(films);
 		logger.info("films.size()="+films.size());
 	}
-	@Test(expected=EmptyResultDataAccessException.class)
+	@Test
 	public void findGenre() {
 		Genre genre = filmDao.findGenre(28);
 		assertNull(genre);

@@ -31,14 +31,24 @@ public class FilmDaoImpl implements FilmDao {
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}
-	public Genre findGenre(int id){
-		Query q = this.entityManager.createQuery("from Genre g where g.id = :id");
-		q.setParameter("id", id);
-		return (Genre)q.getSingleResult();
+	public Genre findGenre(int tmdbId){
+		Query q = this.entityManager.createQuery("from Genre g where g.tmdbId = :tmdbId");
+		q.setParameter("tmdbId", tmdbId);
+		Genre g = null;
+		try {
+        	g = (Genre)q.getSingleResult();
+        }catch(NoResultException nre) {
+        	logger.debug("genre tmdbId="+tmdbId+" not found");
+        }
+		return g;
 	}
-	public int saveGenre(Genre genre){
+	public Genre saveGenre(Genre genre){
 		this.entityManager.persist(genre);
-		return genre.getId();
+		this.entityManager.flush();
+		return genre;
+	}
+	public void removeGenres() {
+		
 	}
 	public Film findFilm(Long id){
 		Query q = this.entityManager.createQuery("from Film film join fetch film.realisateurs real where film.id = :id");
@@ -87,7 +97,7 @@ public class FilmDaoImpl implements FilmDao {
 		sb.append("left join fetch film.acteurs act2 ");
 		if(filmFilterCriteriaDto!=null) {
 			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.RIPPED_SINCE)) {
-				sb.append("left join fetch film.dvd dvd ");
+				sb.append("left join fetch film.dvd dvd left join fetch film.genres g ");
 			}
 			sb.append("where 1=1 ");
 			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.TITRE)
@@ -144,18 +154,17 @@ public class FilmDaoImpl implements FilmDao {
 		return l;
     }
 	public void cleanAllFilms() {
-		/*
-		Query query = this.entityManager.createQuery("delete from Film");
-		int nb = query.executeUpdate();
-		logger.info(nb+" films deleted");
-		Query queryDvd = this.entityManager.createQuery("delete from Dvd");
-		int nbDvd = queryDvd.executeUpdate();
-		logger.info(nbDvd+" dvd deleted");*/
-		
 		for(Film film : findAllFilms()) {
 			removeFilm(film);
 		}
 		this.entityManager.flush();
+		
+	}
+	public void cleanAllGenres() {
+		Query query = this.entityManager.createQuery("delete from Genre");
+		int nbGenres = query.executeUpdate();
+		logger.debug(nbGenres+" genres deleted");
+		
 	}
 	public List<Film> getAllRippedFilms(){
 		Query query = this.entityManager.createQuery("from Film film where film.ripped=1");

@@ -54,9 +54,8 @@ public class Film implements Serializable {
 	private String overview;
 	@Column(name = "RUNTIME")
 	private Integer runtime;
-	//@Column(name = "GENRE_ID")
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
-	private Set<Genre> genres;
+	private Set<Genre> genres = new HashSet<>();
 	@Transient
 	private boolean alreadyInDvdtheque;
 	public Film() {

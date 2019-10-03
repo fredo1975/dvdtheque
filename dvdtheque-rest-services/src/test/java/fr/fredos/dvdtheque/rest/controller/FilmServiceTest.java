@@ -22,6 +22,7 @@ import org.springframework.util.StopWatch;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 
@@ -53,6 +54,8 @@ public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
+		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
+		assertTrue(film.getGenres().size() == 2);
 		assertEquals(filmService.clearDate(createRipDate()),film.getDvd().getDateRip());
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
 		assertTrue(film.getActeurs().size()==3);
@@ -61,7 +64,7 @@ public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 	}
 	@Test
 	public void findAllFilm() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD, null);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film);
 		film = filmService.findFilmByTitre(TITRE_FILM);
 		assertNotNull(film);

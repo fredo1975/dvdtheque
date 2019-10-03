@@ -32,7 +32,10 @@ public interface IFilmService {
 			final String act2Nom,
 			final String act3Nom,
 			final Date ripDate,
-			final DvdFormat dvdFormat, Genre genre);
+			final DvdFormat dvdFormat, 
+			final Genre genre1, Genre genre2);
 	Dvd buildDvd(final Integer annee,final Integer zone,final String edition,final Date ripDate,final DvdFormat dvdFormat);
 	Boolean checkIfTmdbFilmExists(final Long tmdbId);
+	Genre findGenre(int id);
+	Genre saveGenre(Genre genre);
 }

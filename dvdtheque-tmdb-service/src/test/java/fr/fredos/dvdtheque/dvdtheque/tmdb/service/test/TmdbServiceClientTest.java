@@ -9,7 +9,6 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -85,7 +84,8 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
-		assertNotNull(film.getGenre());
+		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
+		assertTrue(film.getGenres().size() == 2);
 		if(!dateRipNull) {
 			assertEquals(filmService.clearDate(createRipDate()),film.getDvd().getDateRip());
 		}
@@ -94,7 +94,6 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertTrue(film.getActeurs().size()>=3);
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue(film.getRealisateurs().size()==1);
-		assertTrue(film.getGenre().getId() == 28);
 	}
     private Results getResultsByFilmTitre(Film film) {
     	SearchResults searchResults = client.retrieveTmdbSearchResults(film.getTitre());
@@ -125,7 +124,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void replaceFilmTest() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, null, DvdFormat.DVD, new Genre(28,"Action"));
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, null, DvdFormat.DVD, new Genre(28,"Action"), new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film,true);
 		Boolean exists = filmService.checkIfTmdbFilmExists(612152l);
 		if(!exists) {

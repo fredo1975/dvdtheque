@@ -80,6 +80,11 @@ public class FilmServiceImpl implements IFilmService {
 	public Film findFilm(Long id) {
 		return filmDao.findFilm(id);
 	}
+	@Transactional(readOnly = true)
+	@Cacheable(value= CACHE_GENRE)
+	public Genre findGenre(int tmdbId) {
+		return filmDao.findGenre(tmdbId);
+	}
 	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
@@ -103,23 +108,12 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = false)
 	public Long saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
-		if(film.getGenre() != null) {
-			Genre genre = null;
-			try {
-				genre = filmDao.findGenre(film.getGenre().getId());
-			}catch(EmptyResultDataAccessException e) {
-				logger.debug("genre id="+ film.getGenre().getId()+" doesn't exists");
-			}
-			if(genre == null) {
-				int id = saveGenre(film.getGenre());
-			}
-		}
 		upperCaseTitre(film);
 		return filmDao.saveNewFilm(film);
 	}
 	@CacheEvict(value= {CACHE_GENRE}, allEntries = true)
 	@Transactional(readOnly = false)
-	public int saveGenre(Genre genre) {
+	public Genre saveGenre(Genre genre) {
 		return filmDao.saveGenre(genre);
 	}
 	@Transactional(readOnly = true)
@@ -127,10 +121,11 @@ public class FilmServiceImpl implements IFilmService {
 	public List<Film> findAllFilms() {
 		return filmDao.findAllFilms();
 	}
-	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
+	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR, CACHE_GENRE}, allEntries = true)
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
 		filmDao.cleanAllFilms();
+		filmDao.cleanAllGenres();
 		personneService.cleanAllPersonnes();
 	}
 	@Transactional(readOnly = true)
@@ -223,6 +218,7 @@ public class FilmServiceImpl implements IFilmService {
 		realisateurs.add(realisateur);
 		return realisateurs;
 	}
+	
 	private Film buildFilm(final String titre,
 			final Integer annee,
 			final Personne realisateur,
@@ -231,7 +227,7 @@ public class FilmServiceImpl implements IFilmService {
 			final Personne act3,
 			final Date ripDate, 
 			final DvdFormat dvdFormat, 
-			final Genre genre) {
+			final Set<Genre> genres) {
 		Film film = new Film();
 		film.setAnnee(annee);
 		film.setRipped(true);
@@ -242,7 +238,7 @@ public class FilmServiceImpl implements IFilmService {
 		film.setActeurs(buildActeurs(act1,act2,act3));
 		film.setTmdbId(new Long(100));
 		film.setOverview("Overview");
-		film.setGenre(genre);
+		film.setGenres(genres);
 		return film;
 	}
 	//@Cacheable(value= "filmCache")
@@ -254,12 +250,20 @@ public class FilmServiceImpl implements IFilmService {
 			final String act3Nom, 
 			final Date ripDate, 
 			final DvdFormat dvdFormat, 
-			final Genre genre) {
+			final Genre genre1, 
+			final Genre genre2) {
 		Film film = findFilmByTitre(titre);
 		if(film == null) {
-			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom, ripDate, dvdFormat, genre);
+			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom, ripDate, dvdFormat, genre1, genre2);
 		}
 		return film;
+	}
+	private Genre createOrRetrieveGenre(Genre g) {
+		Genre genre = filmDao.findGenre(g.getTmdbId());
+		if(genre == null) {
+			genre = filmDao.saveGenre(g);
+		}
+		return genre;
 	}
 	private Film createFilm(final String titre,
 			final Integer annee,
@@ -269,7 +273,8 @@ public class FilmServiceImpl implements IFilmService {
 			final String act3Nom,
 			final Date ripDate, 
 			final DvdFormat dvdFormat, 
-			final Genre genre) {
+			final Genre genre1, 
+			final Genre genre2) {
 		Personne realisateur = null;
 		Personne acteur1 = null;
 		Personne acteur2 = null;
@@ -278,7 +283,10 @@ public class FilmServiceImpl implements IFilmService {
 		acteur1 = personneService.createOrRetrievePersonne(act1Nom, null);
 		acteur2 = personneService.createOrRetrievePersonne(act2Nom, null);
 		acteur3 = personneService.createOrRetrievePersonne(act3Nom, null);
-		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3, ripDate, dvdFormat, genre);
+		Set<Genre> newGenres = new HashSet<Genre>(2);
+		newGenres.add(createOrRetrieveGenre(genre1));
+		newGenres.add(createOrRetrieveGenre(genre2));
+		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3, ripDate, dvdFormat, newGenres);
 		Long idFilm = saveNewFilm(film);
 		film.setId(idFilm);
 		return film;
