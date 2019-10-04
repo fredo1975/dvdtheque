@@ -61,13 +61,9 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
 		assertNotNull(film.getDvd());
-		assertNotNull(film.getDvd().getDateRip());
 		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
-		assertTrue(film.getGenres().size() == 2);
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
-		assertTrue(film.getActeurs().size()==3||film.getActeurs().size()==2);
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
-		assertTrue(film.getRealisateurs().size()==1);
 		assertTrue(DvdFormat.DVD.equals(film.getDvd().getFormat()));
 	}
 	@Test
@@ -80,7 +76,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	}
 	
 	@Test
-	public void findTmdbFilmByTitre() throws Exception {
+	public void findTmdbFilmByTitre() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		Film film = filmRestService.saveTmdbFilm(tmdbId2);
 		assertFilmIsNotNull(film);
 		Set<Film> filmSet = filmRestService.findTmdbFilmByTitre(film.getTitre());
@@ -89,10 +85,10 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	}
 	
 	@Test
-	public void testAddTmdbFilm() throws Exception {
+	public void testAddTmdbFilm() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException{
 		Film film = filmRestService.saveTmdbFilm(tmdbId3);
 		assertFilmIsNotNull(film);
-		Film savedFilm = filmRestService.findFilmById(tmdbId3);
+		Film savedFilm = filmRestService.findFilmById(film.getId());
 		assertEquals(StringUtils.upperCase(film.getTitre()),savedFilm.getTitre());
 		assertFalse(film.isRipped());
 	}
@@ -100,7 +96,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	public void testUpdateFilm() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		Film film = filmRestService.saveTmdbFilm(tmdbId4);
 		assertFilmIsNotNull(film);
-		Film f = filmRestService.findFilmById(tmdbId4);
+		Film f = filmRestService.findFilmById(film.getId());
 		assertNotNull(f);
 		//filmSaved.setTitre(TITRE_FILM_UPDATED_TMBD_ID_4780);
 		f.setRipped(true);
