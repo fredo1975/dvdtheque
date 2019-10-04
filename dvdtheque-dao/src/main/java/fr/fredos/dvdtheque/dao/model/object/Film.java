@@ -58,6 +58,8 @@ public class Film implements Serializable {
 	private Integer runtime;
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	private Set<Genre> genres = new HashSet<>();
+	@Column(name = "HOMEPAGE")
+	private String homepage;
 	@Transient
 	private boolean alreadyInDvdtheque;
 	public Film() {
@@ -134,6 +136,12 @@ public class Film implements Serializable {
 	public void setVu(boolean vu) {
 		this.vu = vu;
 	}
+	public String getHomepage() {
+		return homepage;
+	}
+	public void setHomepage(String homepage) {
+		this.homepage = homepage;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -192,6 +200,7 @@ public class Film implements Serializable {
 		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
 				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped + ", vu=" + vu
 				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
-				+ runtime + ", genres=" + genres + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
+				+ runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
+				+ alreadyInDvdtheque + "]";
 	}
 }
