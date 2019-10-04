@@ -225,6 +225,7 @@ public class TmdbServiceClient {
 				}
 			}
 			transformedfilm.setGenres(filmGenres);
+			transformedfilm.setVu(false);
 		}
 		return transformedfilm;
 	}

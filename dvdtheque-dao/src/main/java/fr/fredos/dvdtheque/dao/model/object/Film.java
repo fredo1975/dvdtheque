@@ -46,6 +46,8 @@ public class Film implements Serializable {
 	private Set<Personne> acteurs = new HashSet<>();
 	@Column(name = "RIPPED")
 	private boolean ripped;
+	@Column(name = "VU")
+	private boolean vu;
 	@Column(name = "POSTER_PATH")
 	private String posterPath;
 	@Column(name = "TMDB_ID")
@@ -126,6 +128,12 @@ public class Film implements Serializable {
 	public void setRipped(boolean ripped) {
 		this.ripped = ripped;
 	}
+	public boolean isVu() {
+		return vu;
+	}
+	public void setVu(boolean vu) {
+		this.vu = vu;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -182,8 +190,8 @@ public class Film implements Serializable {
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
-				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped + ", posterPath="
-				+ posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime=" + runtime + ", genres="
-				+ genres + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
+				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped + ", vu=" + vu
+				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
+				+ runtime + ", genres=" + genres + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
 	}
 }
