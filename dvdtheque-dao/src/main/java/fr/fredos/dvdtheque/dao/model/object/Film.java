@@ -54,6 +54,8 @@ public class Film implements Serializable {
 	private String overview;
 	@Column(name = "RUNTIME")
 	private Integer runtime;
+	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
+	private Set<Genre> genres = new HashSet<>();
 	@Transient
 	private boolean alreadyInDvdtheque;
 	public Film() {
@@ -171,11 +173,17 @@ public class Film implements Serializable {
 	public void setRuntime(Integer runtime) {
 		this.runtime = runtime;
 	}
+	public Set<Genre> getGenres() {
+		return genres;
+	}
+	public void setGenres(Set<Genre> genres) {
+		this.genres = genres;
+	}
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO
-				+ ", dvd=" + dvd + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped
-				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
-				+ runtime + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
+		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
+				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped + ", posterPath="
+				+ posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime=" + runtime + ", genres="
+				+ genres + ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
 	}
 }

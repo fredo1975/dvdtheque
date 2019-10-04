@@ -3,7 +3,6 @@ package fr.fredos.dvdtheque.tmdb.model;
 import java.util.List;
 
 public class ImagesResults {
-
 	private List<BackDrops> backdrops;
 	private List<Posters> posters;
 	public List<BackDrops> getBackdrops() {

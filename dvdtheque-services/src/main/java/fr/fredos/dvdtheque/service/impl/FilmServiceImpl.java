@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -28,6 +29,7 @@ import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
 import fr.fredos.dvdtheque.service.IFilmService;
@@ -39,6 +41,7 @@ public class FilmServiceImpl implements IFilmService {
 	private static final String REALISATEUR_MESSAGE_WARNING = "Film should contains one producer";
 	private static final String ACTEURS_MESSAGE_WARNING = "Film should contains actors";
 	public static final String CACHE_FILM = "filmCache";
+	public static final String CACHE_GENRE = "genreCache";
 	
 	@Autowired
 	private FilmDao filmDao;
@@ -77,6 +80,11 @@ public class FilmServiceImpl implements IFilmService {
 	public Film findFilm(Long id) {
 		return filmDao.findFilm(id);
 	}
+	@Transactional(readOnly = true)
+	@Cacheable(value= CACHE_GENRE)
+	public Genre findGenre(int tmdbId) {
+		return filmDao.findGenre(tmdbId);
+	}
 	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
@@ -103,15 +111,21 @@ public class FilmServiceImpl implements IFilmService {
 		upperCaseTitre(film);
 		return filmDao.saveNewFilm(film);
 	}
+	@CacheEvict(value= {CACHE_GENRE}, allEntries = true)
+	@Transactional(readOnly = false)
+	public Genre saveGenre(Genre genre) {
+		return filmDao.saveGenre(genre);
+	}
 	@Transactional(readOnly = true)
 	@Cacheable(value= CACHE_FILM)
 	public List<Film> findAllFilms() {
 		return filmDao.findAllFilms();
 	}
-	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
+	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR, CACHE_GENRE}, allEntries = true)
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
 		filmDao.cleanAllFilms();
+		filmDao.cleanAllGenres();
 		personneService.cleanAllPersonnes();
 	}
 	@Transactional(readOnly = true)
@@ -204,6 +218,7 @@ public class FilmServiceImpl implements IFilmService {
 		realisateurs.add(realisateur);
 		return realisateurs;
 	}
+	
 	private Film buildFilm(final String titre,
 			final Integer annee,
 			final Personne realisateur,
@@ -211,7 +226,8 @@ public class FilmServiceImpl implements IFilmService {
 			final Personne act2,
 			final Personne act3,
 			final Date ripDate, 
-			final DvdFormat dvdFormat) {
+			final DvdFormat dvdFormat, 
+			final Set<Genre> genres) {
 		Film film = new Film();
 		film.setAnnee(annee);
 		film.setRipped(true);
@@ -222,6 +238,7 @@ public class FilmServiceImpl implements IFilmService {
 		film.setActeurs(buildActeurs(act1,act2,act3));
 		film.setTmdbId(new Long(100));
 		film.setOverview("Overview");
+		film.setGenres(genres);
 		return film;
 	}
 	//@Cacheable(value= "filmCache")
@@ -232,12 +249,21 @@ public class FilmServiceImpl implements IFilmService {
 			final String act2Nom,
 			final String act3Nom, 
 			final Date ripDate, 
-			final DvdFormat dvdFormat) {
+			final DvdFormat dvdFormat, 
+			final Genre genre1, 
+			final Genre genre2) {
 		Film film = findFilmByTitre(titre);
 		if(film == null) {
-			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom, ripDate, dvdFormat);
+			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom, ripDate, dvdFormat, genre1, genre2);
 		}
 		return film;
+	}
+	private Genre createOrRetrieveGenre(Genre g) {
+		Genre genre = filmDao.findGenre(g.getTmdbId());
+		if(genre == null) {
+			genre = filmDao.saveGenre(g);
+		}
+		return genre;
 	}
 	private Film createFilm(final String titre,
 			final Integer annee,
@@ -246,7 +272,9 @@ public class FilmServiceImpl implements IFilmService {
 			final String act2Nom,
 			final String act3Nom,
 			final Date ripDate, 
-			final DvdFormat dvdFormat) {
+			final DvdFormat dvdFormat, 
+			final Genre genre1, 
+			final Genre genre2) {
 		Personne realisateur = null;
 		Personne acteur1 = null;
 		Personne acteur2 = null;
@@ -255,7 +283,10 @@ public class FilmServiceImpl implements IFilmService {
 		acteur1 = personneService.createOrRetrievePersonne(act1Nom, null);
 		acteur2 = personneService.createOrRetrievePersonne(act2Nom, null);
 		acteur3 = personneService.createOrRetrievePersonne(act3Nom, null);
-		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3, ripDate, dvdFormat);
+		Set<Genre> newGenres = new HashSet<Genre>(2);
+		newGenres.add(createOrRetrieveGenre(genre1));
+		newGenres.add(createOrRetrieveGenre(genre2));
+		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3, ripDate, dvdFormat, newGenres);
 		Long idFilm = saveNewFilm(film);
 		film.setId(idFilm);
 		return film;

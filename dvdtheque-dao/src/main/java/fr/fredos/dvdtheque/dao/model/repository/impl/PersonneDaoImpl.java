@@ -114,6 +114,6 @@ public class PersonneDaoImpl implements PersonneDao{
 	public void cleanAllPersons() {
 		Query queryPersonne = this.em.createQuery("delete from Personne");
 		int nbPersonne = queryPersonne.executeUpdate();
-		logger.info(nbPersonne+" personne deleted");
+		logger.debug(nbPersonne+" personne deleted");
 	}
 }

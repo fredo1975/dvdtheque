@@ -1,15 +1,21 @@
 package fr.fredos.dvdtheque.tmdb.service;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,22 +25,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.tmdb.model.Cast;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
 import fr.fredos.dvdtheque.tmdb.model.Crew;
+import fr.fredos.dvdtheque.tmdb.model.Genres;
 import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
 import fr.fredos.dvdtheque.tmdb.model.Posters;
 import fr.fredos.dvdtheque.tmdb.model.Results;
@@ -55,9 +67,23 @@ public class TmdbServiceClient {
 	private static String TMDB_MOVIE_QUERY="themoviedb.movie.query";
 	private static String TMDB_POSTER_PATH_URL = "themoviedb.poster.path.url";
 	private static String NB_ACTEURS="batch.save.nb.acteurs";
+	private Map<Integer,Genres> genresById;
+	public Map<Integer,Genres> getGenresById() {
+		return genresById;
+	}
 	public TmdbServiceClient(RestTemplateBuilder restTemplateBuilder) {
         restTemplate = restTemplateBuilder.build();
     }
+	@PostConstruct
+	public void loadGenres() throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		InputStream in = this.getClass().getClassLoader().getResourceAsStream("genres.json");
+		List<Genres> l = objectMapper.readValue(in, new TypeReference<List<Genres>>(){});
+		genresById = new HashMap<Integer, Genres>(l.size());
+		for(Genres genres : l) {
+			genresById.put(genres.getId(), genres);
+		}
+	}
 	/**
 	 * we're updating all informations with tmdbId in DB for film idFilm
 	 * @param tmdbId
@@ -151,26 +177,7 @@ public class TmdbServiceClient {
 		if(StringUtils.isNotEmpty(results.getRelease_date())) {
 			transformedfilm.setAnnee(retrieveYearFromReleaseDate(results.getRelease_date()));
 		}
-		/*
-		try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		ImagesResults imagesResults = retrieveTmdbImagesResults(results.getId());
-		if(CollectionUtils.isNotEmpty(imagesResults.getPosters())) {
-			String imageUrl = retrieveTmdbFrPosterPathUrl(imagesResults);
-			transformedfilm.setPosterPath(imageUrl);
-		}*/
 		transformedfilm.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
-		/*
-		try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		transformedfilm.setTmdbId(results.getId());
 		transformedfilm.setOverview(results.getOverview());
 		Credits credits = retrieveTmdbCredits(results.getId());
@@ -204,6 +211,21 @@ public class TmdbServiceClient {
 			}
 		}
 		transformedfilm.setRuntime(results.getRuntime());
+		List<Genres> genres = results.getGenres();
+		if(CollectionUtils.isNotEmpty(genres)){
+			Set<Genre> filmGenres = new HashSet<>(genres.size());
+			for (Genres g : genres) {
+				Genres _g = this.genresById.get(g.getId());
+				if(_g != null) {
+					Genre genre = filmService.findGenre(_g.getId());
+					if(genre == null) {
+						genre = filmService.saveGenre(new Genre(_g.getId(),_g.getName()));
+					}
+					filmGenres.add(genre);
+				}
+			}
+			transformedfilm.setGenres(filmGenres);
+		}
 		return transformedfilm;
 	}
 	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{

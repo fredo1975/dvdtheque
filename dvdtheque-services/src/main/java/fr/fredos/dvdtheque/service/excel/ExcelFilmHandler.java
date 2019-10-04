@@ -24,12 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IPersonneService;
-@Configuration
+@Component
 public class ExcelFilmHandler {
 	protected Logger logger = LoggerFactory.getLogger(ExcelFilmHandler.class);
     private static final String NEW_LINE_CHARACTER="\r\n";
@@ -62,11 +62,9 @@ public class ExcelFilmHandler {
     public SXSSFRow getRow() {
 		return this.row;
 	}
-
     public void setRow(SXSSFRow row) {
 		this.row = row;
 	}
-
 	public void createHeaderRow() {
     	addRow();
     	for(int i=0;i<headerTab.length;i++) {
@@ -78,7 +76,6 @@ public class ExcelFilmHandler {
 		this.currentRowNumber++;
 		this.currentColumnNumber = 0;
     }
-
     private void addCell(String value) {
         SXSSFCell cell = this.row.createCell(currentColumnNumber);
         cell.setCellValue(value);
@@ -130,14 +127,6 @@ public class ExcelFilmHandler {
 	    	for(Film film : list) {
 	    		writeBook(film);
 	    	}
-	    	for(Iterator<Row> rowIt = sheet.iterator();rowIt.hasNext();) {
-	        	Row row = rowIt.next();
-	        	logger.info("row="+row.toString());
-	        	for(Iterator<Cell> cellIt = row.iterator();cellIt.hasNext();) {
-	        		Cell cell = cellIt.next();
-	        		logger.info("cell="+cell.toString());
-	        	}
-	        }
 	    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    	workBook.write(baos);
 	    	excelContent = baos.toByteArray();

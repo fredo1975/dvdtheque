@@ -1,7 +1,8 @@
 package fr.fredos.dvdtheque.tmdb.model;
 
-public class Results {
+import java.util.List;
 
+public class Results {
 	private Long id;
 	private String title;
 	private String original_title;
@@ -9,6 +10,7 @@ public class Results {
 	private String release_date;
 	private String overview;
 	private int runtime;
+	private List<Genres> genres;
 	public Long getId() {
 		return id;
 	}
@@ -51,10 +53,16 @@ public class Results {
 	public void setRuntime(int runtime) {
 		this.runtime = runtime;
 	}
+	public List<Genres> getGenres() {
+		return genres;
+	}
+	public void setGenres(List<Genres> genres) {
+		this.genres = genres;
+	}
 	@Override
 	public String toString() {
 		return "Results [id=" + id + ", title=" + title + ", original_title=" + original_title + ", poster_path="
 				+ poster_path + ", release_date=" + release_date + ", overview=" + overview + ", runtime=" + runtime
-				+ "]";
+				+ ", genres=" + genres + "]";
 	}
 }

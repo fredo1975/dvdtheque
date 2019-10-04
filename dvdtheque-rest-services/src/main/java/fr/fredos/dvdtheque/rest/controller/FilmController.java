@@ -75,6 +75,11 @@ public class FilmController {
 		return filmService.findAllFilms();
 	}
 	@CrossOrigin
+	@PutMapping("/films/cleanAllfilms")
+	void cleanAllFilms() {
+		filmService.cleanAllFilms();
+	}
+	@CrossOrigin
 	@GetMapping("/films/byTitre/{titre}")
 	Film findFilmByTitre(@PathVariable String titre) {
 		return filmService.findFilmByTitre(titre);

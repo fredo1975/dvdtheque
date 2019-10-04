@@ -3,7 +3,6 @@ package fr.fredos.dvdtheque.tmdb.model;
 import java.util.List;
 
 public class Credits {
-
 	private Long id;
 	private List<Crew> crew;
 	private List<Cast> cast;

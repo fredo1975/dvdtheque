@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
@@ -61,7 +62,7 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findFilmWithAllObjectGraph() throws Exception{
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film);
 		film = filmService.findFilmWithAllObjectGraph(film.getId());
 		assertNotNull(film);
@@ -75,7 +76,7 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 	
 	@Test
 	public void findAllFilms() throws Exception{
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD);
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film);
 		List<Film> filmList = filmService.findAllFilms();
 		assertNotNull(filmList);
