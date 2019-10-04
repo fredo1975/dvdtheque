@@ -27,8 +27,8 @@
 		<module>dvdtheque-jms-receiver-test</module>
 		<module>dvdtheque-batch</module>
 		<module>dvdtheque-batch-app</module>
-		<module>dvdtheque-swing</module>
 		<module>dvdtheque-rest-services</module>
+		<module>dvdtheque-swing</module>
 		<module>dvdtheque-config-server</module>
 		<module>dvdtheque-discovery-server</module>
 		<!-- module>dvdtheque-hystrix-dashboard</module -->

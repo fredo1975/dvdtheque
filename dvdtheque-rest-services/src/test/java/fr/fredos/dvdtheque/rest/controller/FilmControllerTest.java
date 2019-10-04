@@ -70,6 +70,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
+	private static final String GET_CLEAN_ALL_FILMS_URI = "/dvdtheque/films/cleanAllfilms/";
 	private static final String UPDATE_PERSONNE_URI = "/dvdtheque/personnes/byId/";
 	private static final String SEARCH_PERSONNE_URI = GET_ALL_FILMS_URI+"byPersonne";
 	private static final String SEARCH_ALL_REALISATEUR_URI = "/dvdtheque/realisateurs";
@@ -130,6 +131,12 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Before()
 	public void setUp() throws Exception {
     	filmService.cleanAllFilms();
+	}
+	@Test
+	public void cleanAllFilms() throws Exception {
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(GET_CLEAN_ALL_FILMS_URI)
+				.contentType(MediaType.APPLICATION_JSON);
+		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 	@Test
 	public void findAllFilms() throws Exception {
