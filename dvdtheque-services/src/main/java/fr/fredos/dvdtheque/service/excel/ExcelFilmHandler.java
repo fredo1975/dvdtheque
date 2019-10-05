@@ -37,7 +37,7 @@ public class ExcelFilmHandler {
 	private SXSSFSheet sheet;
     private Integer currentRowNumber;
     private Integer currentColumnNumber;
-    private String[] headerTab = new String[]{"Realisateur", "Titre", "Zonedvd","Annee","Acteurs","Rippé","RIP Date","Dvd Format", "TMDB ID"};
+    private String[] headerTab = new String[]{"Realisateur", "Titre", "Zonedvd","Annee","Acteurs","Rippé","RIP Date","Dvd Format", "TMDB ID", "Vu"};
     @Autowired
 	protected IPersonneService personneService;
     @Bean
@@ -97,6 +97,7 @@ public class ExcelFilmHandler {
         }
         addCell(film.getDvd().getFormat().name());
         addCell(film.getTmdbId().toString());
+        addCell(film.isVu()?"oui":"non");
     }
     public SXSSFWorkbook createSXSSFWorkbookFromFilmList(List<Film> list) throws IOException {
     	SXSSFWorkbook workBook = new SXSSFWorkbook(1);

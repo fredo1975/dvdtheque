@@ -13,6 +13,7 @@ public class FilmCsvImportFormat {
 	private String ripDate;
 	private String dvdFormat;
 	private Long tmdbId;
+	private String vu;
 	public String getRealisateur() {
 		return realisateur;
 	}
@@ -66,6 +67,12 @@ public class FilmCsvImportFormat {
 	}
 	public void setTmdbId(Long tmdbId) {
 		this.tmdbId = tmdbId;
+	}
+	public String getVu() {
+		return vu;
+	}
+	public void setVu(String vu) {
+		this.vu = vu;
 	}
 	@Override
 	public String toString() {
