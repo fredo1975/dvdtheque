@@ -131,7 +131,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public void findAllGenres() throws Exception {
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
-		Set<Genre> genres = filmService.findAllGenres();
+		List<Genre> genres = filmService.findAllGenres();
 		assertTrue(CollectionUtils.isNotEmpty(genres));
 	}
 	@Test

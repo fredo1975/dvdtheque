@@ -166,7 +166,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
 				createRipDate(RIP_DATE), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film, false, RIP_DATE);
-		Set<Genre> allGenres = filmService.findAllGenres();
+		List<Genre> allGenres = filmService.findAllGenres();
 		assertNotNull(allGenres);
 		assertTrue(CollectionUtils.isNotEmpty(allGenres));
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_GENRES_URI)

@@ -79,7 +79,7 @@ public class FilmController {
 	@CrossOrigin
 	@GetMapping("/films/genres")
 	List<Genre> findAllGenres() {
-		return new ArrayList<>(filmService.findAllGenres());
+		return filmService.findAllGenres();
 	}
 	@CrossOrigin
 	@PutMapping("/films/cleanAllfilms")
