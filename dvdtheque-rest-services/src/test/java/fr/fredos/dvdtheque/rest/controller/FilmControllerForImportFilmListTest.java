@@ -54,7 +54,7 @@ public class FilmControllerForImportFilmListTest {
 	
 	@Test
 	public void testImportFilmListFromExcel() throws Exception {
-		Resource resource = new ClassPathResource("ListeDVD.xls");
+		Resource resource = new ClassPathResource("ListeDVD.xlsx");
 		File file = resource.getFile();
 		byte[] bFile = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
 		String contentType = "text/plain";
