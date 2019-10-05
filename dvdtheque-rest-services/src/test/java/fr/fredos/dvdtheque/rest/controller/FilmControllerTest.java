@@ -171,7 +171,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertTrue(CollectionUtils.isNotEmpty(allGenres));
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_GENRES_URI)
 				.contentType(MediaType.APPLICATION_JSON);
-		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+		mvc.perform(builder).andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Is.is("Action")));
 	}
 	@Test
 	public void findTmdbFilmByTitre() throws Exception {
@@ -180,7 +181,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		film.setTitre(titre);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_TMDB_FILM_BY_TITRE + titre)
 				.contentType(MediaType.APPLICATION_JSON);
-		ResultActions resultActions = mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+		ResultActions resultActions = mvc.perform(builder).andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is("BROADWAY QUI DANSE")));
 		assertNotNull(resultActions);
 	}
 

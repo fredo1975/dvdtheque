@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -77,8 +78,8 @@ public class FilmController {
 	}
 	@CrossOrigin
 	@GetMapping("/films/genres")
-	Set<Genre> findAllGenres() {
-		return filmService.findAllGenres();
+	List<Genre> findAllGenres() {
+		return new ArrayList<>(filmService.findAllGenres());
 	}
 	@CrossOrigin
 	@PutMapping("/films/cleanAllfilms")
