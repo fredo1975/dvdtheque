@@ -25,4 +25,5 @@ public interface FilmDao {
 	void removeFilm(Film film);
 	Boolean checkIfTmdbFilmExists(Long tmdbId);
 	void cleanAllGenres();
+	public List<Genre> findAllGenres();
 }

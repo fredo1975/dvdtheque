@@ -74,6 +74,11 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 					}
 				}
 			}
+			if(StringUtils.isEmpty(item.getVu())) {
+				filmToSave.setVu(false);
+			}else {
+				filmToSave.setVu(item.getVu().equalsIgnoreCase("oui")?true:false);
+			}
 			filmToSave.setId(null);
 			logger.debug(filmToSave.toString());
 			watch.stop();

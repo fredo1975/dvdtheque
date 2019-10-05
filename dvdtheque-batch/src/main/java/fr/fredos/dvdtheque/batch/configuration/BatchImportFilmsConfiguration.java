@@ -47,7 +47,7 @@ import fr.fredos.dvdtheque.service.IFilmService;
 @EnableBatchProcessing
 public class BatchImportFilmsConfiguration{
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
-	String[] headerTab = new String[]{"realisateur", "titre", "zonedvd","annee","acteurs","ripped","ripdate","dvdformat","tmdbId"};
+	String[] headerTab = new String[]{"realisateur", "titre", "zonedvd","annee","acteurs","ripped","ripdate","dvdformat","tmdbId","vu"};
 	@Autowired
 	protected JobBuilderFactory jobBuilderFactory;
     @Autowired

@@ -46,9 +46,9 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	@Autowired
 	protected FilmRestService filmRestService;
 	private Long tmdbId1 = new Long(612152);
-	private Long tmdbId2 = new Long(20);
+	private Long tmdbId2 = new Long(22);
 	private Long tmdbId3 = new Long(21);
-	private Long tmdbId4 = new Long(22);
+	private Long tmdbId4 = new Long(20);
 	private Long tmdbId5 = new Long(24);
 	public static final String TITRE_FILM_TMBD_ID3 = "The Endless Summer";
 	@Before()

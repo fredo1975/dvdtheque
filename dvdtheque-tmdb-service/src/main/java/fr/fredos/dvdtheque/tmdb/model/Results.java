@@ -11,6 +11,7 @@ public class Results {
 	private String overview;
 	private int runtime;
 	private List<Genres> genres;
+	private String homepage;
 	public Long getId() {
 		return id;
 	}
@@ -59,10 +60,17 @@ public class Results {
 	public void setGenres(List<Genres> genres) {
 		this.genres = genres;
 	}
+	public String getHomepage() {
+		return homepage;
+	}
+	public void setHomepage(String homepage) {
+		this.homepage = homepage;
+	}
 	@Override
 	public String toString() {
 		return "Results [id=" + id + ", title=" + title + ", original_title=" + original_title + ", poster_path="
 				+ poster_path + ", release_date=" + release_date + ", overview=" + overview + ", runtime=" + runtime
-				+ ", genres=" + genres + "]";
+				+ ", genres=" + genres + ", homepage=" + homepage + "]";
 	}
+	
 }

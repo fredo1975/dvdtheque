@@ -38,4 +38,5 @@ public interface IFilmService {
 	Boolean checkIfTmdbFilmExists(final Long tmdbId);
 	Genre findGenre(int id);
 	Genre saveGenre(Genre genre);
+	List<Genre> findAllGenres();
 }

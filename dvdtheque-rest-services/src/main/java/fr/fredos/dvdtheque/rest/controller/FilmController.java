@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.rest.file.util.MultipartFileUtil;
 import fr.fredos.dvdtheque.service.IFilmService;
@@ -73,6 +75,11 @@ public class FilmController {
 	@GetMapping("/films")
 	List<Film> findAllFilms() {
 		return filmService.findAllFilms();
+	}
+	@CrossOrigin
+	@GetMapping("/films/genres")
+	List<Genre> findAllGenres() {
+		return filmService.findAllGenres();
 	}
 	@CrossOrigin
 	@PutMapping("/films/cleanAllfilms")

@@ -226,6 +226,10 @@ public class TmdbServiceClient {
 			}
 			transformedfilm.setGenres(filmGenres);
 		}
+		transformedfilm.setVu(false);
+		if(StringUtils.isNotEmpty(results.getHomepage())) {
+			transformedfilm.setHomepage(results.getHomepage());
+		}
 		return transformedfilm;
 	}
 	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{

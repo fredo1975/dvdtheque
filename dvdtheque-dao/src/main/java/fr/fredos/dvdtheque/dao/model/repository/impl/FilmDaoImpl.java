@@ -42,6 +42,10 @@ public class FilmDaoImpl implements FilmDao {
         }
 		return g;
 	}
+	public List<Genre> findAllGenres() {
+		Query query = this.entityManager.createQuery("from Genre order by name asc");
+        return (List<Genre>)query.getResultList();
+	}
 	public Genre saveGenre(Genre genre){
 		this.entityManager.persist(genre);
 		this.entityManager.flush();
