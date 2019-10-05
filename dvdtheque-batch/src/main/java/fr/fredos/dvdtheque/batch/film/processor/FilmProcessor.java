@@ -73,11 +73,11 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 						filmToSave.getDvd().setDateRip(sdf.parse(item.getRipDate()));
 					}
 				}
-				if(StringUtils.isEmpty(item.getVu())) {
-					filmToSave.setVu(false);
-				}else {
-					filmToSave.setRipped(item.getVu().equalsIgnoreCase("oui")?true:false);
-				}
+			}
+			if(StringUtils.isEmpty(item.getVu())) {
+				filmToSave.setVu(false);
+			}else {
+				filmToSave.setRipped(item.getVu().equalsIgnoreCase("oui")?true:false);
 			}
 			filmToSave.setId(null);
 			logger.debug(filmToSave.toString());
