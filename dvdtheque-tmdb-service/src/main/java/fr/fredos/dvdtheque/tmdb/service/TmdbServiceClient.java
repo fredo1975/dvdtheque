@@ -225,10 +225,10 @@ public class TmdbServiceClient {
 				}
 			}
 			transformedfilm.setGenres(filmGenres);
-			transformedfilm.setVu(false);
-			if(StringUtils.isNotEmpty(results.getHomepage())) {
-				transformedfilm.setHomepage(results.getHomepage());
-			}
+		}
+		transformedfilm.setVu(false);
+		if(StringUtils.isNotEmpty(results.getHomepage())) {
+			transformedfilm.setHomepage(results.getHomepage());
 		}
 		return transformedfilm;
 	}
