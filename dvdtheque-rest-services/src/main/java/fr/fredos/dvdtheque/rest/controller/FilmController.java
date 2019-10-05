@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
 import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.rest.file.util.MultipartFileUtil;
 import fr.fredos.dvdtheque.service.IFilmService;
@@ -73,6 +74,11 @@ public class FilmController {
 	@GetMapping("/films")
 	List<Film> findAllFilms() {
 		return filmService.findAllFilms();
+	}
+	@CrossOrigin
+	@GetMapping("/films/genres")
+	Set<Genre> findAllGenres() {
+		return filmService.findAllGenres();
 	}
 	@CrossOrigin
 	@PutMapping("/films/cleanAllfilms")

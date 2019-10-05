@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -71,6 +72,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
 	private static final String GET_CLEAN_ALL_FILMS_URI = "/dvdtheque/films/cleanAllfilms/";
+	private static final String GET_ALL_GENRES_URI = "/dvdtheque/films/genres/";
 	private static final String UPDATE_PERSONNE_URI = "/dvdtheque/personnes/byId/";
 	private static final String SEARCH_PERSONNE_URI = GET_ALL_FILMS_URI+"byPersonne";
 	private static final String SEARCH_ALL_REALISATEUR_URI = "/dvdtheque/realisateurs";
@@ -159,7 +161,18 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			assertFilmIsNotNull(filmToTest, true, RIP_DATE);
 		}
 	}
-
+	@Test
+	public void findAllGenres() throws Exception {
+		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE, REAL_NOM, ACT1_NOM, ACT2_NOM, ACT3_NOM,
+				createRipDate(RIP_DATE), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
+		assertFilmIsNotNull(film, false, RIP_DATE);
+		Set<Genre> allGenres = filmService.findAllGenres();
+		assertNotNull(allGenres);
+		assertTrue(CollectionUtils.isNotEmpty(allGenres));
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_GENRES_URI)
+				.contentType(MediaType.APPLICATION_JSON);
+		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+	}
 	@Test
 	public void findTmdbFilmByTitre() throws Exception {
 		String titre = "Broadway";
