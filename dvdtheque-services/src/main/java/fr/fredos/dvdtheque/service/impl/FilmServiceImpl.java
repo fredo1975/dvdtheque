@@ -195,7 +195,6 @@ public class FilmServiceImpl implements IFilmService {
 		}else {
 			dvd.setEdition(edition);
 		}
-		dvd.setZone(1);
 		if(ripDate!=null) {
 			dvd.setDateRip(clearDate(ripDate));
 		}
