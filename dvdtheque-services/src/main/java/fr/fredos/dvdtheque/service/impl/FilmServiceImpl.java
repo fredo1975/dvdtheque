@@ -122,7 +122,7 @@ public class FilmServiceImpl implements IFilmService {
 	public List<Genre> findAllGenres() {
 		return filmDao.findAllGenres();
 	}
-	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR, CACHE_GENRE}, allEntries = true)
+	@CacheEvict(value= {CACHE_FILM, CACHE_GENRE, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR, CACHE_GENRE}, allEntries = true)
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
 		filmDao.cleanAllFilms();
