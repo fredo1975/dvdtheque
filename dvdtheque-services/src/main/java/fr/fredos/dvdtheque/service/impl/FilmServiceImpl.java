@@ -89,11 +89,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
 		upperCaseTitre(film);
-		if(film.isRipped()) {
-			if(film.getDvd().getDateRip() == null) {
-				film.getDvd().setDateRip(new Date());
-			}
-		}else {
+		if(!film.isRipped()) {
 			film.getDvd().setDateRip(null);
 		}
 		filmDao.updateFilm(film);
