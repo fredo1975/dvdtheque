@@ -100,7 +100,7 @@ public class FilmServiceImpl implements IFilmService {
 		final String titreO = StringUtils.upperCase(film.getTitreO());
 		film.setTitreO(titreO);
 	}
-	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
+	@CacheEvict(value= {CACHE_FILM, CACHE_GENRE, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
 	@Transactional(readOnly = false)
 	public Long saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
