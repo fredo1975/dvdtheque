@@ -215,7 +215,6 @@ public class TmdbServiceClient {
 		transformedfilm.setRuntime(results.getRuntime());
 		List<Genres> genres = results.getGenres();
 		if(CollectionUtils.isNotEmpty(genres)){
-			Set<Genre> filmGenres = new HashSet<>(genres.size());
 			for (Genres g : genres) {
 				Genres _g = this.genresById.get(g.getId());
 				if(_g != null) {
@@ -223,10 +222,11 @@ public class TmdbServiceClient {
 					if(genre == null) {
 						genre = filmService.saveGenre(new Genre(_g.getId(),_g.getName()));
 					}
-					filmGenres.add(genre);
+					transformedfilm.getGenres().add(genre);
+				}else {
+					logger.error("genre "+g.getName()+" not found in loaded genres");
 				}
 			}
-			transformedfilm.setGenres(filmGenres);
 		}
 		transformedfilm.setVu(false);
 		if(StringUtils.isNotEmpty(results.getHomepage())) {
