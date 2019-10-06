@@ -1,7 +1,10 @@
 package fr.fredos.dvdtheque.tmdb.service;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -25,9 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -78,7 +79,8 @@ public class TmdbServiceClient {
 	public void loadGenres() throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream("genres.json");
-		List<Genres> l = objectMapper.readValue(in, new TypeReference<List<Genres>>(){});
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.ISO_8859_1));
+		List<Genres> l = objectMapper.readValue(bufferedReader, new TypeReference<List<Genres>>(){});
 		genresById = new HashMap<Integer, Genres>(l.size());
 		for(Genres genres : l) {
 			genresById.put(genres.getId(), genres);
@@ -213,7 +215,6 @@ public class TmdbServiceClient {
 		transformedfilm.setRuntime(results.getRuntime());
 		List<Genres> genres = results.getGenres();
 		if(CollectionUtils.isNotEmpty(genres)){
-			Set<Genre> filmGenres = new HashSet<>(genres.size());
 			for (Genres g : genres) {
 				Genres _g = this.genresById.get(g.getId());
 				if(_g != null) {
@@ -221,10 +222,11 @@ public class TmdbServiceClient {
 					if(genre == null) {
 						genre = filmService.saveGenre(new Genre(_g.getId(),_g.getName()));
 					}
-					filmGenres.add(genre);
+					transformedfilm.getGenres().add(genre);
+				}else {
+					logger.error("genre "+g.getName()+" not found in loaded genres");
 				}
 			}
-			transformedfilm.setGenres(filmGenres);
 		}
 		transformedfilm.setVu(false);
 		if(StringUtils.isNotEmpty(results.getHomepage())) {

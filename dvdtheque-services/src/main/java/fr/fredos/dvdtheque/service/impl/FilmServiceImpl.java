@@ -89,11 +89,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
 		upperCaseTitre(film);
-		if(film.isRipped()) {
-			if(film.getDvd().getDateRip() == null) {
-				film.getDvd().setDateRip(new Date());
-			}
-		}else {
+		if(!film.isRipped()) {
 			film.getDvd().setDateRip(null);
 		}
 		filmDao.updateFilm(film);
@@ -104,7 +100,7 @@ public class FilmServiceImpl implements IFilmService {
 		final String titreO = StringUtils.upperCase(film.getTitreO());
 		film.setTitreO(titreO);
 	}
-	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
+	@CacheEvict(value= {CACHE_FILM, CACHE_GENRE, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
 	@Transactional(readOnly = false)
 	public Long saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
@@ -126,7 +122,7 @@ public class FilmServiceImpl implements IFilmService {
 	public List<Genre> findAllGenres() {
 		return filmDao.findAllGenres();
 	}
-	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR, CACHE_GENRE}, allEntries = true)
+	@CacheEvict(value= {CACHE_FILM, CACHE_GENRE, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR, CACHE_GENRE}, allEntries = true)
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
 		filmDao.cleanAllFilms();
