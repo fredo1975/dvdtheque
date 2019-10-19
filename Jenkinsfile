@@ -60,7 +60,7 @@ pipeline {
 			    	if("${ACTION_TYPE}" == "release"){
 			    		sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-rest.service'
 			    	}else if ("${ACTION_TYPE}" == "release-noTest") {
-			    		sh 'nothing to do'
+			    		sh 'echo nothing to do'
 			    	}
 		    	}
 	    	}
@@ -88,7 +88,7 @@ pipeline {
 		   			if("${ACTION_TYPE}" == "release"){
 		   				sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-rest.service'
 		   			}else if ("${ACTION_TYPE}" == "release-noTest") {
-		   				sh 'nothing to do'
+		   				sh 'echo nothing to do'
 		   			}
 	   			}
 	   		}
@@ -104,7 +104,7 @@ pipeline {
 				    if("${ACTION_TYPE}" == "release"){
 				         sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-server-config.service"
 				    }else if ("${ACTION_TYPE}" == "release-noTest") {
-				         sh 'nothing to do'
+				         sh 'echo nothing to do'
 				    }
 			    }
 			}
