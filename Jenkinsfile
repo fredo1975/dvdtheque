@@ -32,7 +32,7 @@ pipeline {
 		 			withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		 				script {
 			 				if("${ACTION_TYPE}" == "release"){
-			 					sh ''' mvn -X -U jgitflow:release-start -DdevelopmentVersion=${DEV_VERSION} jgitflow:release-finish -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" '''
+			 					sh ''' mvn -U jgitflow:release-start -DdevelopmentVersion=${DEV_VERSION} jgitflow:release-finish -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" '''
 			 				}else if ("${ACTION_TYPE}" == "release-noTest") {
 			 					sh '''mvn clean install -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" -Dmaven.test.skip=true'''
 			 				}
