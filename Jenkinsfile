@@ -49,32 +49,47 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') {
+        stage('Stopping Dev Rest service') {
+	       sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl stop dvdtheque-rest.service'
+	    }
+	    stage('Stopping Prod Rest service') {
+	    	if("${ACTION_TYPE}" == "release"){
+	    		sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-rest.service'
+	    	}else if ("${ACTION_TYPE}" == "release-noTest") {
+	    		sh 'nothing to do'
+	    	}
+	    }
+        stage('Copying dvdtheque-rest-services') {
             steps {
-                sh 'echo stoping dvdtheque-jenkins-rest.service on remote dev server "${DEV_SERVER_IP}" ...'
-                sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl stop dvdtheque-jenkins-rest.service'
                 script {
 			 		if("${ACTION_TYPE}" == "release"){
-			 			sh 'echo copying dvdtheque-rest-services-"${NVERSION}".jar to remote dev server "${DEV_SERVER_IP}" in /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar ...'
-                		sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$DEV_SERVER_IP:/opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar'
+			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$DEV_SERVER_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
+			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$PROD_SERVER_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
 			 		}else if ("${ACTION_TYPE}" == "release-noTest") {
-			 			sh 'echo copying dvdtheque-rest-services-"${VERSION}".jar to remote dev server "${DEV_SERVER_IP}" in /opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar ...'
-                		sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$VERSION.jar jenkins@$DEV_SERVER_IP:/opt/dvdtheque_rest_jenkins_service/dvdtheque-rest-services.jar'
-			 		}
-			 	}
-                sh 'echo starting dvdtheque-jenkins-rest.service on remote dev server "${DEV_SERVER_IP}" ...'
-                sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl start dvdtheque-jenkins-rest.service'
-                script {
-			 		if("${ACTION_TYPE}" == "release"){
-			 			sh 'echo stoping dvdtheque-prod-rest.service on remote prod server 192.168.1.100 ...'
-                		sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-prod-rest.service'
-			 			sh 'echo copying dvdtheque-rest-services-${NVERSION}.jar to remote 192.168.1.100 server to /opt/dvdtheque_rest_service/prod/dvdtheque-rest-services.jar ...'
-                		sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$PROD_SERVER_IP:/opt/dvdtheque_rest_service/prod/dvdtheque-rest-services.jar'
-                		sh 'echo starting dvdtheque-prod-rest.service on remote prod server 192.168.1.100 ...'
-                		sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-prod-rest.service'
+			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$VERSION.jar jenkins@$DEV_SERVER_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
 			 		}
 			 	}
             }
         }
+        stage('Sarting Dev Rest service') {
+	        sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl start dvdtheque-rest.service'
+   		}
+   		stage('Sarting Prod Rest service') {
+   			if("${ACTION_TYPE}" == "release"){
+   				sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-rest.service'
+   			}else if ("${ACTION_TYPE}" == "release-noTest") {
+   				sh 'nothing to do'
+   			}
+   		}
+   		stage('Check status Dev Rest service') {
+	        sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl status dvdtheque-rest.service"
+	   	}
+		stage('Check status Prod Rest service') {
+		    if("${ACTION_TYPE}" == "release"){
+		         sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-server-config.service"
+		    }else if ("${ACTION_TYPE}" == "release-noTest") {
+		         sh 'nothing to do'
+		    }
+		}
     }
 }
