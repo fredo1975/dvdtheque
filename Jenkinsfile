@@ -56,10 +56,12 @@ pipeline {
 	    }
 	    stage('Stopping Prod Rest service') {
 	    	steps {
-		    	if("${ACTION_TYPE}" == "release"){
-		    		sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-rest.service'
-		    	}else if ("${ACTION_TYPE}" == "release-noTest") {
-		    		sh 'nothing to do'
+	    		script {
+			    	if("${ACTION_TYPE}" == "release"){
+			    		sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-rest.service'
+			    	}else if ("${ACTION_TYPE}" == "release-noTest") {
+			    		sh 'nothing to do'
+			    	}
 		    	}
 	    	}
 	    }
@@ -82,12 +84,14 @@ pipeline {
    		}
    		stage('Sarting Prod Rest service') {
    			steps {
-	   			if("${ACTION_TYPE}" == "release"){
-	   				sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-rest.service'
-	   			}else if ("${ACTION_TYPE}" == "release-noTest") {
-	   				sh 'nothing to do'
+	   			script {
+		   			if("${ACTION_TYPE}" == "release"){
+		   				sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-rest.service'
+		   			}else if ("${ACTION_TYPE}" == "release-noTest") {
+		   				sh 'nothing to do'
+		   			}
 	   			}
-   			}
+	   		}
    		}
    		stage('Check status Dev Rest service') {
    			steps {
@@ -96,12 +100,14 @@ pipeline {
 	   	}
 		stage('Check status Prod Rest service') {
 			steps {
-			    if("${ACTION_TYPE}" == "release"){
-			         sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-server-config.service"
-			    }else if ("${ACTION_TYPE}" == "release-noTest") {
-			         sh 'nothing to do'
+				script {
+				    if("${ACTION_TYPE}" == "release"){
+				         sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-server-config.service"
+				    }else if ("${ACTION_TYPE}" == "release-noTest") {
+				         sh 'nothing to do'
+				    }
 			    }
-		    }
+			}
 		}
     }
 }
