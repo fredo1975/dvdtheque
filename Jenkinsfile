@@ -50,7 +50,9 @@ pipeline {
             }
         }
         stage('Stopping Dev Rest service') {
-	       sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl stop dvdtheque-rest.service'
+        	steps {
+	       		sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl stop dvdtheque-rest.service'
+	       	}
 	    }
 	    stage('Stopping Prod Rest service') {
 	    	if("${ACTION_TYPE}" == "release"){
