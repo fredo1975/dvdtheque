@@ -55,10 +55,12 @@ pipeline {
 	       	}
 	    }
 	    stage('Stopping Prod Rest service') {
-	    	if("${ACTION_TYPE}" == "release"){
-	    		sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-rest.service'
-	    	}else if ("${ACTION_TYPE}" == "release-noTest") {
-	    		sh 'nothing to do'
+	    	steps {
+		    	if("${ACTION_TYPE}" == "release"){
+		    		sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-rest.service'
+		    	}else if ("${ACTION_TYPE}" == "release-noTest") {
+		    		sh 'nothing to do'
+		    	}
 	    	}
 	    }
         stage('Copying dvdtheque-rest-services') {
@@ -74,23 +76,31 @@ pipeline {
             }
         }
         stage('Sarting Dev Rest service') {
-	        sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl start dvdtheque-rest.service'
+        	steps {
+	        	sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl start dvdtheque-rest.service'
+	        }
    		}
    		stage('Sarting Prod Rest service') {
-   			if("${ACTION_TYPE}" == "release"){
-   				sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-rest.service'
-   			}else if ("${ACTION_TYPE}" == "release-noTest") {
-   				sh 'nothing to do'
+   			steps {
+	   			if("${ACTION_TYPE}" == "release"){
+	   				sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-rest.service'
+	   			}else if ("${ACTION_TYPE}" == "release-noTest") {
+	   				sh 'nothing to do'
+	   			}
    			}
    		}
    		stage('Check status Dev Rest service') {
-	        sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl status dvdtheque-rest.service"
+   			steps {
+	        	sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl status dvdtheque-rest.service"
+	        }
 	   	}
 		stage('Check status Prod Rest service') {
-		    if("${ACTION_TYPE}" == "release"){
-		         sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-server-config.service"
-		    }else if ("${ACTION_TYPE}" == "release-noTest") {
-		         sh 'nothing to do'
+			steps {
+			    if("${ACTION_TYPE}" == "release"){
+			         sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-server-config.service"
+			    }else if ("${ACTION_TYPE}" == "release-noTest") {
+			         sh 'nothing to do'
+			    }
 		    }
 		}
     }
