@@ -1,0 +1,56 @@
+node {
+   def mvnHome
+   def DEV_SERVER_IP = "192.168.1.103"
+   def PROD_SERVER_IP = "192.168.1.100"
+   stage('Preparation') { // for display purposes
+      // Get some code from a GitHub repository
+      if("${ENV}" == "dev"){
+            git branch: 'develop', url: 'https://github.com/fredo1975/dvdtheque.git'
+       }else if ("${ENV}" == "prod") {
+            git branch: 'master', url: 'https://github.com/fredo1975/dvdtheque.git'
+       }
+      // Get the Maven tool.
+      // ** NOTE: This 'M3' Maven tool must be configured
+      // **       in the global configuration.           
+      mvnHome = tool 'Maven 3.6.0'
+	  VERSION = readMavenPom().getVersion()
+	  pom = readMavenPom file: 'pom.xml'
+      NVERSION = pom.version.replace("-SNAPSHOT", "")
+   }
+   stage('Build') {
+      // Run the maven build
+      withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+         sh 'mvn -U clean install -pl dvdtheque-discovery-server -am'
+      }
+   }
+   stage('Stopping config server') {
+       if("${ENV}" == "dev"){
+            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
+       }else if ("${ENV}" == "prod") {
+            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
+       }
+   }
+   stage('Copying config server jar') {
+        if("${ENV}" == "dev"){
+			def ARTIFACT = "dvdtheque-discovery-server-${VERSION}.jar"
+            sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
+        }else if ("${ENV}" == "prod") {
+            def ARTIFACT = "dvdtheque-discovery-server-${NVERSION}.jar"
+            sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$PROD_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
+        }
+   }
+   stage('Sarting config server') {
+        if("${ENV}" == "dev"){
+            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
+       }else if ("${ENV}" == "prod") {
+            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
+       }
+   }
+   stage('Check status config server') {
+        if("${ENV}" == "dev"){
+            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
+       }else if ("${ENV}" == "prod") {
+            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
+       }
+   }
+}
