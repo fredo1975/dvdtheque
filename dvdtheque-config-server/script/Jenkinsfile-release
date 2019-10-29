@@ -1,7 +1,7 @@
 node {
    def mvnHome
    def DEV_SERVER_IP = "192.168.1.103"
-   def PROD_SERVER_IP = "192.168.1.100"
+   def PROD_SERVER_IP = "192.168.1.105"
    stage('Preparation') { // for display purposes
       // Get some code from a GitHub repository
       if("${ENV}" == "dev"){
