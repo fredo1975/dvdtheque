@@ -76,16 +76,19 @@ public class FilmServiceImpl implements IFilmService {
 	public Film findFilmWithAllObjectGraph(Long id)  {
 		return filmDao.findFilmWithAllObjectGraph(id);
 	}
+	@Override
 	@Transactional(readOnly = true)
 	@Cacheable(value= CACHE_FILM)
 	public Film findFilm(Long id) {
 		return filmDao.findFilm(id);
 	}
+	@Override
 	@Transactional(readOnly = true)
 	@Cacheable(value= CACHE_GENRE)
 	public Genre findGenre(int tmdbId) {
 		return filmDao.findGenre(tmdbId);
 	}
+	@Override
 	@CacheEvict(value= {CACHE_FILM, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
@@ -101,6 +104,7 @@ public class FilmServiceImpl implements IFilmService {
 		final String titreO = StringUtils.upperCase(film.getTitreO());
 		film.setTitreO(titreO);
 	}
+	@Override
 	@CacheEvict(value= {CACHE_FILM, CACHE_GENRE, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR}, allEntries = true)
 	@Transactional(readOnly = false)
 	public Long saveNewFilm(Film film) {
@@ -108,21 +112,25 @@ public class FilmServiceImpl implements IFilmService {
 		upperCaseTitre(film);
 		return filmDao.saveNewFilm(film);
 	}
+	@Override
 	@CacheEvict(value= {CACHE_GENRE}, allEntries = true)
 	@Transactional(readOnly = false)
 	public Genre saveGenre(Genre genre) {
 		return filmDao.saveGenre(genre);
 	}
+	@Override
 	@Transactional(readOnly = true)
 	@Cacheable(value= CACHE_FILM)
 	public List<Film> findAllFilms() {
 		return filmDao.findAllFilms();
 	}
+	@Override
 	@Transactional(readOnly = true)
 	@Cacheable(value= CACHE_GENRE)
 	public List<Genre> findAllGenres() {
 		return filmDao.findAllGenres();
 	}
+	@Override
 	@CacheEvict(value= {CACHE_FILM, CACHE_GENRE, PersonneServiceImpl.CACHE_ACTEUR,PersonneServiceImpl.CACHE_REALISATEUR, CACHE_GENRE}, allEntries = true)
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
@@ -130,6 +138,7 @@ public class FilmServiceImpl implements IFilmService {
 		filmDao.cleanAllGenres();
 		personneService.cleanAllPersonnes();
 	}
+	@Override
 	@Transactional(readOnly = true)
 	public List<Film> getAllRippedFilms(){
 		return filmDao.getAllRippedFilms();
@@ -296,5 +305,11 @@ public class FilmServiceImpl implements IFilmService {
 	@Override
 	public Boolean checkIfTmdbFilmExists(Long tmdbId) {
 		return this.filmDao.checkIfTmdbFilmExists(tmdbId);
+	}
+	@Override
+	@Transactional(readOnly = true)
+	//@Cacheable(value= CACHE_GENRE)
+	public Genre attachToSession(Genre genre) {
+		return this.filmDao.attachToSession(genre);
 	}
 }
