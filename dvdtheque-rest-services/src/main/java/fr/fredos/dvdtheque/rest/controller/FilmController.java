@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -20,7 +21,6 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -66,8 +66,6 @@ public class FilmController {
     private Job importFilmsJob;
     @Autowired
     private MultipartFileUtil multipartFileUtil;
-    @Value("${eureka.instance.instance-id}")
-    private String instanceId;
 	@CrossOrigin
 	@GetMapping("/films/byPersonne")
 	Personne findPersonne(@RequestParam(name="nom",required = false) String nom) {
@@ -153,7 +151,6 @@ public class FilmController {
 	@PutMapping("/films/save/{tmdbId}")
 	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId) throws Exception {
 		Film savedFilm;
-		logger.info("saveFilm - instanceId="+instanceId);
 		try {
 			savedFilm = tmdbServiceClient.saveTmbdFilm(tmdbId);
 			if(savedFilm==null) {
