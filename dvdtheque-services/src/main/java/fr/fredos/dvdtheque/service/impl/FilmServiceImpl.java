@@ -18,9 +18,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -36,11 +36,10 @@ import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.service.dto.FilmDto;
 @Service("filmService")
-@CacheConfig(cacheNames = "films")
 public class FilmServiceImpl implements IFilmService {
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceImpl.class);
 	private static final String REALISATEUR_MESSAGE_WARNING = "Film should contains one producer";
-	//private static final String ACTEURS_MESSAGE_WARNING = "Film should contains actors";
+	private static final String ACTEURS_MESSAGE_WARNING = "Film should contains actors";
 	public static final String CACHE_FILM = "filmCache";
 	public static final String CACHE_GENRE = "genreCache";
 	
