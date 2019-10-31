@@ -11,7 +11,6 @@ import fr.fredos.dvdtheque.dao.model.object.Genre;
 public interface FilmDao {
 	Film findFilm(Long id);
 	Genre findGenre(int id);
-	Genre attachToSession(Genre genre);
 	Genre saveGenre(Genre genre);
 	Film findFilmByTitre(String titre);
 	Film findFilmWithAllObjectGraph(Long id);

@@ -37,7 +37,6 @@ public interface IFilmService {
 	Dvd buildDvd(final Integer annee,final Integer zone,final String edition,final Date ripDate,final DvdFormat dvdFormat);
 	Boolean checkIfTmdbFilmExists(final Long tmdbId);
 	Genre findGenre(int id);
-	Genre attachToSession(Genre genre);
 	Genre saveGenre(Genre genre);
 	List<Genre> findAllGenres();
 }
