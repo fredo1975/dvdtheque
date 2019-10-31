@@ -1,0 +1,1349 @@
+2019-11-01 00:25:44,153 DEBUG org.springframework.boot.context.logging.ClasspathLoggingApplicationListener [restartedMain] Application started with classpath: [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:25:44,291 DEBUG org.springframework.boot.SpringApplication [restartedMain] Loading source class org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration
+2019-11-01 00:25:44,319 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Activated activeProfiles dev
+2019-11-01 00:25:44,319 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Loaded config file 'file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/bootstrap.properties' (classpath:/bootstrap.properties)
+2019-11-01 00:25:44,320 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Matching URLs for reloading : [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:25:44,321 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Included patterns for restart : []
+2019-11-01 00:25:44,321 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Excluded patterns for restart : [/spring-boot-actuator/target/classes/, /spring-boot-devtools/target/classes/, /spring-boot/target/classes/, /spring-boot-starter-[\w-]+/, /spring-boot-autoconfigure/target/classes/, /spring-boot-starter/target/classes/]
+2019-11-01 00:25:44,321 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2019-11-01 00:25:44,604 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$e4f9f24b] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:25:44,697 DEBUG org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener [restartedMain] 
+
+
+============================
+CONDITIONS EVALUATION REPORT
+============================
+
+
+Positive matches:
+-----------------
+
+   ConfigServiceBootstrapConfiguration#configServicePropertySource matched:
+      - @ConditionalOnProperty (spring.cloud.config.enabled) matched (OnPropertyCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.config.client.ConfigServicePropertySourceLocator; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor; SearchStrategy: all) found bean 'org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor' (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration#configurationPropertiesBeans matched:
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.context.properties.ConfigurationPropertiesBeans; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration#configurationPropertiesRebinder matched:
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.context.properties.ConfigurationPropertiesRebinder; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   EncryptionBootstrapConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.crypto.encrypt.TextEncryptor' (OnClassCondition)
+
+   PropertyPlaceholderAutoConfiguration#propertySourcesPlaceholderConfigurer matched:
+      - @ConditionalOnMissingBean (types: org.springframework.context.support.PropertySourcesPlaceholderConfigurer; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+   ConfigServiceBootstrapConfiguration.RetryConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.fail-fast) did not find property 'spring.cloud.config.fail-fast' (OnPropertyCondition)
+      Matched:
+         - @ConditionalOnClass found required classes 'org.springframework.retry.annotation.Retryable', 'org.aspectj.lang.annotation.Aspect', 'org.springframework.boot.autoconfigure.aop.AopAutoConfiguration' (OnClassCondition)
+
+   DiscoveryClientConfigServiceBootstrapConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.discovery.enabled) did not find property 'spring.cloud.config.discovery.enabled' (OnPropertyCondition)
+
+   EncryptionBootstrapConfiguration.RsaEncryptionConfiguration:
+      Did not match:
+         - Keystore nor key found in Environment (EncryptionBootstrapConfiguration.KeyCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.rsa.crypto.RsaSecretEncryptor' (OnClassCondition)
+
+   EncryptionBootstrapConfiguration.VanillaEncryptionConfiguration:
+      Did not match:
+         - @ConditionalOnMissingClass found unwanted class 'org.springframework.security.rsa.crypto.RsaSecretEncryptor' (OnClassCondition)
+
+   EurekaDiscoveryClientConfigServiceBootstrapConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.discovery.enabled) did not find property 'spring.cloud.config.discovery.enabled' (OnPropertyCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.cloud.config.client.ConfigServicePropertySourceLocator' (OnClassCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2019-11-01 00:25:44,702 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Creating new Restarter for thread Thread[main,5,main]
+2019-11-01 00:25:44,703 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Immediately restarting application
+2019-11-01 00:25:44,703 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Created RestartClassLoader org.springframework.boot.devtools.restart.classloader.RestartClassLoader@23a92bb1
+2019-11-01 00:25:44,703 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Starting application fr.fredos.dvdtheque.rest.controller.WebApplication with URLs [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:25:44,816 DEBUG org.springframework.boot.context.logging.ClasspathLoggingApplicationListener [restartedMain] Application started with classpath: [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:25:44,844 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [restartedMain] Fetching config from server at : http://localhost:8888
+2019-11-01 00:25:44,872 DEBUG org.springframework.core.log.CompositeLog [restartedMain] HTTP GET http://localhost:8888/dvdtheque-rest-services/dev
+2019-11-01 00:25:44,964 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Accept=[application/json, application/*+json]
+2019-11-01 00:25:47,401 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Response 200 OK
+2019-11-01 00:25:47,404 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Reading to [org.springframework.cloud.config.environment.Environment]
+2019-11-01 00:25:47,424 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [restartedMain] Located environment: name=dvdtheque-rest-services, profiles=[dev], label=null, version=13688a30ff4d56f7d4e8f336d87a26f62dd62ee3, state=null
+2019-11-01 00:25:47,424 INFO org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration [restartedMain] Located property source: CompositePropertySource {name='configService', propertySources=[MapPropertySource {name='configClient'}, MapPropertySource {name='https://github.com/fredo1975/spring-cloud-server-config.git/dvdtheque-rest-services-dev.properties'}]}
+2019-11-01 00:25:47,500 INFO org.springframework.boot.SpringApplication [restartedMain] The following profiles are active: dev
+2019-11-01 00:25:49,319 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-11-01 00:25:49,340 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 14ms. Found 0 repository interfaces.
+2019-11-01 00:25:49,478 WARN org.springframework.boot.actuate.endpoint.EndpointId [restartedMain] Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2019-11-01 00:25:49,780 INFO org.springframework.cloud.context.scope.GenericScope [restartedMain] BeanFactory id=f4dad867-45bb-3f3a-97ac-b87988667fe3
+2019-11-01 00:25:49,800 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2019-11-01 00:25:49,808 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'taskScheduler' has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.
+2019-11-01 00:25:49,814 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2019-11-01 00:25:49,951 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$c8dfef4e] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:25:50,001 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.integration.config.IntegrationManagementConfiguration' of type [org.springframework.integration.config.IntegrationManagementConfiguration$$EnhancerBySpringCGLIB$$33d1aa7d] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:25:50,011 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationJmxConfiguration' of type [org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationJmxConfiguration$$EnhancerBySpringCGLIB$$f63b59d] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:25:50,023 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration' of type [org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration$$EnhancerBySpringCGLIB$$484b5e6a] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:25:50,029 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'mbeanServer' of type [com.sun.jmx.mbeanserver.JmxMBeanServer] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:25:50,050 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'integrationDisposableAutoCreatedBeans' of type [org.springframework.integration.config.annotation.Disposables] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:25:50,095 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.hateoas.config.HateoasConfiguration' of type [org.springframework.hateoas.config.HateoasConfiguration$$EnhancerBySpringCGLIB$$48603c80] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:25:50,102 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$e4f9f24b] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:25:50,728 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8083 (http)
+2019-11-01 00:25:50,747 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8083"]
+2019-11-01 00:25:50,757 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2019-11-01 00:25:50,757 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.26]
+2019-11-01 00:25:50,905 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2019-11-01 00:25:50,906 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 3393 ms
+2019-11-01 00:25:51,041 WARN com.netflix.config.sources.URLConfigurationSource [restartedMain] No URLs will be polled as dynamic configuration sources.
+2019-11-01 00:25:51,041 INFO com.netflix.config.sources.URLConfigurationSource [restartedMain] To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2019-11-01 00:25:51,061 INFO com.netflix.config.DynamicPropertyFactory [restartedMain] DynamicPropertyFactory is initialized with configuration sources: com.netflix.config.ConcurrentCompositeConfiguration@324f4196
+2019-11-01 00:25:51,921 INFO org.springframework.boot.actuate.endpoint.web.ServletEndpointRegistrar [restartedMain] Registered '/actuator/jolokia' to jolokia-actuator-endpoint
+2019-11-01 00:25:52,037 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2019-11-01 00:25:52,195 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2019-11-01 00:25:52,255 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-11-01 00:25:52,324 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.3.12.Final}
+2019-11-01 00:25:52,326 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2019-11-01 00:25:52,510 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-11-01 00:25:52,659 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2019-11-01 00:25:53,708 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-11-01 00:25:54,294 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'clientInboundChannelExecutor'
+2019-11-01 00:25:54,300 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'clientOutboundChannelExecutor'
+2019-11-01 00:25:54,329 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'messageBrokerTaskScheduler'
+2019-11-01 00:25:54,389 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'brokerChannelExecutor'
+2019-11-01 00:25:54,658 WARN org.springframework.boot.autoconfigure.batch.JpaBatchConfigurer [restartedMain] JPA does not support custom isolation levels, so locks may not be taken when launching Jobs
+2019-11-01 00:25:54,662 INFO org.springframework.batch.core.repository.support.JobRepositoryFactoryBean [restartedMain] No database type set, using meta data indicating: MYSQL
+2019-11-01 00:25:54,684 INFO org.springframework.batch.core.launch.support.SimpleJobLauncher [restartedMain] No TaskExecutor has been set, defaulting to synchronous executor.
+2019-11-01 00:25:54,790 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [restartedMain] HHH000397: Using ASTQueryTranslatorFactory
+2019-11-01 00:25:55,141 WARN com.netflix.config.sources.URLConfigurationSource [restartedMain] No URLs will be polled as dynamic configuration sources.
+2019-11-01 00:25:55,141 INFO com.netflix.config.sources.URLConfigurationSource [restartedMain] To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2019-11-01 00:25:55,318 WARN org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration$JpaWebMvcConfiguration [restartedMain] spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-11-01 00:25:55,431 WARN org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration [restartedMain] Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2019-11-01 00:25:56,300 WARN org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] Unable to start LiveReload server
+2019-11-01 00:25:56,428 INFO org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver [restartedMain] Exposing 21 endpoint(s) beneath base path '/actuator'
+2019-11-01 00:25:56,516 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'taskScheduler'
+2019-11-01 00:25:56,681 INFO org.springframework.integration.monitor.IntegrationMBeanExporter [restartedMain] Registering MessageChannel nullChannel
+2019-11-01 00:25:56,697 INFO org.springframework.integration.monitor.IntegrationMBeanExporter [restartedMain] Registering MessageChannel errorChannel
+2019-11-01 00:25:56,779 INFO org.springframework.integration.monitor.IntegrationMBeanExporter [restartedMain] Registering MessageHandler errorLogger
+2019-11-01 00:25:56,813 INFO org.springframework.integration.endpoint.EventDrivenConsumer [restartedMain] Adding {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
+2019-11-01 00:25:56,814 INFO org.springframework.integration.channel.AbstractSubscribableChannel [restartedMain] Channel 'dvdtheque-rest-services-1.errorChannel' has 1 subscriber(s).
+2019-11-01 00:25:56,814 INFO org.springframework.integration.endpoint.AbstractEndpoint [restartedMain] started _org.springframework.integration.errorLogger
+2019-11-01 00:25:56,830 INFO org.springframework.cloud.netflix.eureka.InstanceInfoFactory [restartedMain] Setting initial instance status as: STARTING
+2019-11-01 00:25:56,896 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Initializing Eureka in region us-east-1
+2019-11-01 00:25:56,950 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [restartedMain] Using JSON encoding codec LegacyJacksonJson
+2019-11-01 00:25:56,950 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [restartedMain] Using JSON decoding codec LegacyJacksonJson
+2019-11-01 00:25:57,130 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [restartedMain] Using XML encoding codec XStreamXml
+2019-11-01 00:25:57,131 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [restartedMain] Using XML decoding codec XStreamXml
+2019-11-01 00:25:57,299 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [restartedMain] Resolving eureka endpoints via configuration
+2019-11-01 00:25:57,384 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Disable delta property : false
+2019-11-01 00:25:57,385 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Single vip registry refresh property : null
+2019-11-01 00:25:57,385 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Force full registry fetch : false
+2019-11-01 00:25:57,385 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Application is null : false
+2019-11-01 00:25:57,385 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Registered Applications size is zero : true
+2019-11-01 00:25:57,385 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Application version is -1: true
+2019-11-01 00:25:57,385 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Getting all instance registry info from the eureka server
+2019-11-01 00:25:59,467 ERROR com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient [restartedMain] Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/}
+com.sun.jersey.api.client.ClientHandlerException: java.net.ConnectException: Connection refused: connect
+	at com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(ApacheHttpClient4Handler.java:187)
+	at com.sun.jersey.api.client.filter.GZIPContentEncodingFilter.handle(GZIPContentEncodingFilter.java:123)
+	at com.netflix.discovery.EurekaIdentityHeaderFilter.handle(EurekaIdentityHeaderFilter.java:27)
+	at com.sun.jersey.api.client.Client.handle(Client.java:652)
+	at com.sun.jersey.api.client.WebResource.handle(WebResource.java:682)
+	at com.sun.jersey.api.client.WebResource.access$200(WebResource.java:74)
+	at com.sun.jersey.api.client.WebResource$Builder.get(WebResource.java:509)
+	at com.netflix.discovery.shared.transport.jersey.AbstractJerseyEurekaHttpClient.getApplicationsInternal(AbstractJerseyEurekaHttpClient.java:194)
+	at com.netflix.discovery.shared.transport.jersey.AbstractJerseyEurekaHttpClient.getApplications(AbstractJerseyEurekaHttpClient.java:165)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$6.execute(EurekaHttpClientDecorator.java:137)
+	at com.netflix.discovery.shared.transport.decorator.MetricsCollectingEurekaHttpClient.execute(MetricsCollectingEurekaHttpClient.java:73)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getApplications(EurekaHttpClientDecorator.java:134)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$6.execute(EurekaHttpClientDecorator.java:137)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.executeOnNewServer(RedirectingEurekaHttpClient.java:118)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:79)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getApplications(EurekaHttpClientDecorator.java:134)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$6.execute(EurekaHttpClientDecorator.java:137)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getApplications(EurekaHttpClientDecorator.java:134)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$6.execute(EurekaHttpClientDecorator.java:137)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getApplications(EurekaHttpClientDecorator.java:134)
+	at com.netflix.discovery.DiscoveryClient.getAndStoreFullRegistry(DiscoveryClient.java:1069)
+	at com.netflix.discovery.DiscoveryClient.fetchRegistry(DiscoveryClient.java:983)
+	at com.netflix.discovery.DiscoveryClient.<init>(DiscoveryClient.java:430)
+	at com.netflix.discovery.DiscoveryClient.<init>(DiscoveryClient.java:276)
+	at com.netflix.discovery.DiscoveryClient.<init>(DiscoveryClient.java:272)
+	at org.springframework.cloud.netflix.eureka.CloudEurekaClient.<init>(CloudEurekaClient.java:67)
+	at org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration$RefreshableEurekaClientConfiguration.eurekaClient(EurekaClientAutoConfiguration.java:330)
+	at org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration$RefreshableEurekaClientConfiguration$$EnhancerBySpringCGLIB$$ec62eb6a.CGLIB$eurekaClient$2(<generated>)
+	at org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration$RefreshableEurekaClientConfiguration$$EnhancerBySpringCGLIB$$ec62eb6a$$FastClassBySpringCGLIB$$5a92a164.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invokeSuper(MethodProxy.java:244)
+	at org.springframework.context.annotation.ConfigurationClassEnhancer$BeanMethodInterceptor.intercept(ConfigurationClassEnhancer.java:363)
+	at org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration$RefreshableEurekaClientConfiguration$$EnhancerBySpringCGLIB$$ec62eb6a.eurekaClient(<generated>)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:622)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:607)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1321)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1160)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:555)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:515)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$1(AbstractBeanFactory.java:356)
+	at org.springframework.cloud.context.scope.GenericScope$BeanLifecycleWrapper.getBean(GenericScope.java:389)
+	at org.springframework.cloud.context.scope.GenericScope.get(GenericScope.java:186)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:353)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.aop.target.SimpleBeanTargetSource.getTarget(SimpleBeanTargetSource.java:35)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration.getTargetObject(EurekaRegistration.java:129)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration.getEurekaClient(EurekaRegistration.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:282)
+	at org.springframework.cloud.context.scope.GenericScope$LockedScopedProxyFactoryBean.invoke(GenericScope.java:499)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:689)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration$$EnhancerBySpringCGLIB$$b5bd5c47.getEurekaClient(<generated>)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry.maybeInitializeClient(EurekaServiceRegistry.java:57)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry.register(EurekaServiceRegistry.java:38)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaAutoServiceRegistration.start(EurekaAutoServiceRegistration.java:83)
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:182)
+	at org.springframework.context.support.DefaultLifecycleProcessor.access$200(DefaultLifecycleProcessor.java:53)
+	at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.start(DefaultLifecycleProcessor.java:360)
+	at org.springframework.context.support.DefaultLifecycleProcessor.startBeans(DefaultLifecycleProcessor.java:158)
+	at org.springframework.context.support.DefaultLifecycleProcessor.onRefresh(DefaultLifecycleProcessor.java:122)
+	at org.springframework.context.support.AbstractApplicationContext.finishRefresh(AbstractApplicationContext.java:893)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.finishRefresh(ServletWebServerApplicationContext.java:162)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:552)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:141)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:744)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:391)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:312)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1215)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1204)
+	at fr.fredos.dvdtheque.rest.controller.WebApplication.main(WebApplication.java:12)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:49)
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:606)
+	at org.apache.http.conn.scheme.PlainSocketFactory.connectSocket(PlainSocketFactory.java:121)
+	at org.apache.http.impl.conn.DefaultClientConnectionOperator.openConnection(DefaultClientConnectionOperator.java:180)
+	at org.apache.http.impl.conn.AbstractPoolEntry.open(AbstractPoolEntry.java:144)
+	at org.apache.http.impl.conn.AbstractPooledConnAdapter.open(AbstractPooledConnAdapter.java:134)
+	at org.apache.http.impl.client.DefaultRequestDirector.tryConnect(DefaultRequestDirector.java:605)
+	at org.apache.http.impl.client.DefaultRequestDirector.execute(DefaultRequestDirector.java:440)
+	at org.apache.http.impl.client.AbstractHttpClient.doExecute(AbstractHttpClient.java:835)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:118)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(ApacheHttpClient4Handler.java:173)
+	... 84 common frames omitted
+2019-11-01 00:25:59,470 WARN com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient [restartedMain] Request execution failed with message: java.net.ConnectException: Connection refused: connect
+2019-11-01 00:25:59,471 ERROR com.netflix.discovery.DiscoveryClient [restartedMain] DiscoveryClient_DVDTHEQUE-REST-SERVICES/BLUECHIPIT-1:dvdtheque-rest-services:8083 - was unable to refresh its cache! status = Cannot execute request on any known server
+com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getApplications(EurekaHttpClientDecorator.java:134)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$6.execute(EurekaHttpClientDecorator.java:137)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getApplications(EurekaHttpClientDecorator.java:134)
+	at com.netflix.discovery.DiscoveryClient.getAndStoreFullRegistry(DiscoveryClient.java:1069)
+	at com.netflix.discovery.DiscoveryClient.fetchRegistry(DiscoveryClient.java:983)
+	at com.netflix.discovery.DiscoveryClient.<init>(DiscoveryClient.java:430)
+	at com.netflix.discovery.DiscoveryClient.<init>(DiscoveryClient.java:276)
+	at com.netflix.discovery.DiscoveryClient.<init>(DiscoveryClient.java:272)
+	at org.springframework.cloud.netflix.eureka.CloudEurekaClient.<init>(CloudEurekaClient.java:67)
+	at org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration$RefreshableEurekaClientConfiguration.eurekaClient(EurekaClientAutoConfiguration.java:330)
+	at org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration$RefreshableEurekaClientConfiguration$$EnhancerBySpringCGLIB$$ec62eb6a.CGLIB$eurekaClient$2(<generated>)
+	at org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration$RefreshableEurekaClientConfiguration$$EnhancerBySpringCGLIB$$ec62eb6a$$FastClassBySpringCGLIB$$5a92a164.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invokeSuper(MethodProxy.java:244)
+	at org.springframework.context.annotation.ConfigurationClassEnhancer$BeanMethodInterceptor.intercept(ConfigurationClassEnhancer.java:363)
+	at org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration$RefreshableEurekaClientConfiguration$$EnhancerBySpringCGLIB$$ec62eb6a.eurekaClient(<generated>)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:622)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:607)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1321)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1160)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:555)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:515)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$1(AbstractBeanFactory.java:356)
+	at org.springframework.cloud.context.scope.GenericScope$BeanLifecycleWrapper.getBean(GenericScope.java:389)
+	at org.springframework.cloud.context.scope.GenericScope.get(GenericScope.java:186)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:353)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.aop.target.SimpleBeanTargetSource.getTarget(SimpleBeanTargetSource.java:35)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration.getTargetObject(EurekaRegistration.java:129)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration.getEurekaClient(EurekaRegistration.java:117)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:282)
+	at org.springframework.cloud.context.scope.GenericScope$LockedScopedProxyFactoryBean.invoke(GenericScope.java:499)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:689)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration$$EnhancerBySpringCGLIB$$b5bd5c47.getEurekaClient(<generated>)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry.maybeInitializeClient(EurekaServiceRegistry.java:57)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry.register(EurekaServiceRegistry.java:38)
+	at org.springframework.cloud.netflix.eureka.serviceregistry.EurekaAutoServiceRegistration.start(EurekaAutoServiceRegistration.java:83)
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:182)
+	at org.springframework.context.support.DefaultLifecycleProcessor.access$200(DefaultLifecycleProcessor.java:53)
+	at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.start(DefaultLifecycleProcessor.java:360)
+	at org.springframework.context.support.DefaultLifecycleProcessor.startBeans(DefaultLifecycleProcessor.java:158)
+	at org.springframework.context.support.DefaultLifecycleProcessor.onRefresh(DefaultLifecycleProcessor.java:122)
+	at org.springframework.context.support.AbstractApplicationContext.finishRefresh(AbstractApplicationContext.java:893)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.finishRefresh(ServletWebServerApplicationContext.java:162)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:552)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:141)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:744)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:391)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:312)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1215)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1204)
+	at fr.fredos.dvdtheque.rest.controller.WebApplication.main(WebApplication.java:12)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:49)
+2019-11-01 00:25:59,473 WARN com.netflix.discovery.DiscoveryClient$1 [restartedMain] Using default backup registry implementation which does not do anything.
+2019-11-01 00:25:59,478 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Starting heartbeat executor: renew interval is: 5
+2019-11-01 00:25:59,484 INFO com.netflix.discovery.InstanceInfoReplicator [restartedMain] InstanceInfoReplicator onDemand update allowed rate per min is 4
+2019-11-01 00:25:59,488 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Discovery Client initialized at timestamp 1572564359486 with initial instances count: 0
+2019-11-01 00:25:59,493 INFO org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry [restartedMain] Registering application DVDTHEQUE-REST-SERVICES with eureka with status UP
+2019-11-01 00:25:59,494 INFO com.netflix.discovery.DiscoveryClient$3 [restartedMain] Saw local status change event StatusChangeEvent [timestamp=1572564359494, current=UP, previous=STARTING]
+2019-11-01 00:25:59,497 WARN com.netflix.discovery.InstanceInfoReplicator [restartedMain] Ignoring onDemand update due to rate limiter
+2019-11-01 00:25:59,500 INFO org.springframework.core.log.CompositeLog [restartedMain] Starting...
+2019-11-01 00:25:59,534 INFO org.springframework.core.log.CompositeLog [restartedMain] Starting "system" session, StompBrokerRelay[ReactorNettyTcpClient[reactor.netty.tcp.TcpClientDoOn@404e3486]]
+2019-11-01 00:25:59,714 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [DiscoveryClient-InstanceInfoReplicator-0] Fetching config from server at : http://localhost:8888
+2019-11-01 00:25:59,784 INFO org.springframework.core.log.CompositeLog [restartedMain] Started.
+2019-11-01 00:25:59,824 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8083"]
+2019-11-01 00:25:59,843 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8083 (http) with context path ''
+2019-11-01 00:25:59,843 INFO org.springframework.cloud.netflix.eureka.serviceregistry.EurekaAutoServiceRegistration [restartedMain] Updating port to 8083
+2019-11-01 00:25:59,861 INFO org.springframework.core.log.CompositeLog [tcp-client-scheduler-4] "System" session connected.
+2019-11-01 00:25:59,865 INFO org.springframework.core.log.CompositeLog [tcp-client-scheduler-4] BrokerAvailabilityEvent[available=true, StompBrokerRelay[ReactorNettyTcpClient[reactor.netty.tcp.TcpClientDoOn@404e3486]]]
+2019-11-01 00:25:59,928 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started WebApplication in 16.327 seconds (JVM running for 16.878)
+2019-11-01 00:26:00,225 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [DiscoveryClient-InstanceInfoReplicator-0] Located environment: name=dvdtheque-rest-services, profiles=[dev], label=null, version=13688a30ff4d56f7d4e8f336d87a26f62dd62ee3, state=null
+2019-11-01 00:26:00,230 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-InstanceInfoReplicator-0] DiscoveryClient_DVDTHEQUE-REST-SERVICES/BLUECHIPIT-1:dvdtheque-rest-services:8083: registering service...
+2019-11-01 00:26:02,263 ERROR com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient [DiscoveryClient-InstanceInfoReplicator-0] Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/}
+com.sun.jersey.api.client.ClientHandlerException: java.net.ConnectException: Connection refused: connect
+	at com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(ApacheHttpClient4Handler.java:187)
+	at com.sun.jersey.api.client.filter.GZIPContentEncodingFilter.handle(GZIPContentEncodingFilter.java:123)
+	at com.netflix.discovery.EurekaIdentityHeaderFilter.handle(EurekaIdentityHeaderFilter.java:27)
+	at com.sun.jersey.api.client.Client.handle(Client.java:652)
+	at com.sun.jersey.api.client.WebResource.handle(WebResource.java:682)
+	at com.sun.jersey.api.client.WebResource.access$200(WebResource.java:74)
+	at com.sun.jersey.api.client.WebResource$Builder.post(WebResource.java:570)
+	at com.netflix.discovery.shared.transport.jersey.AbstractJerseyEurekaHttpClient.register(AbstractJerseyEurekaHttpClient.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.MetricsCollectingEurekaHttpClient.execute(MetricsCollectingEurekaHttpClient.java:73)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.executeOnNewServer(RedirectingEurekaHttpClient.java:118)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:79)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.DiscoveryClient.register(DiscoveryClient.java:847)
+	at com.netflix.discovery.InstanceInfoReplicator.run(InstanceInfoReplicator.java:121)
+	at com.netflix.discovery.InstanceInfoReplicator$1.run(InstanceInfoReplicator.java:101)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:606)
+	at org.apache.http.conn.scheme.PlainSocketFactory.connectSocket(PlainSocketFactory.java:121)
+	at org.apache.http.impl.conn.DefaultClientConnectionOperator.openConnection(DefaultClientConnectionOperator.java:180)
+	at org.apache.http.impl.conn.AbstractPoolEntry.open(AbstractPoolEntry.java:144)
+	at org.apache.http.impl.conn.AbstractPooledConnAdapter.open(AbstractPooledConnAdapter.java:134)
+	at org.apache.http.impl.client.DefaultRequestDirector.tryConnect(DefaultRequestDirector.java:605)
+	at org.apache.http.impl.client.DefaultRequestDirector.execute(DefaultRequestDirector.java:440)
+	at org.apache.http.impl.client.AbstractHttpClient.doExecute(AbstractHttpClient.java:835)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:118)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(ApacheHttpClient4Handler.java:173)
+	... 30 common frames omitted
+2019-11-01 00:26:02,263 WARN com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient [DiscoveryClient-InstanceInfoReplicator-0] Request execution failed with message: java.net.ConnectException: Connection refused: connect
+2019-11-01 00:26:02,264 WARN com.netflix.discovery.DiscoveryClient [DiscoveryClient-InstanceInfoReplicator-0] DiscoveryClient_DVDTHEQUE-REST-SERVICES/BLUECHIPIT-1:dvdtheque-rest-services:8083 - registration failed Cannot execute request on any known server
+com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.DiscoveryClient.register(DiscoveryClient.java:847)
+	at com.netflix.discovery.InstanceInfoReplicator.run(InstanceInfoReplicator.java:121)
+	at com.netflix.discovery.InstanceInfoReplicator$1.run(InstanceInfoReplicator.java:101)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+2019-11-01 00:26:02,264 WARN com.netflix.discovery.InstanceInfoReplicator [DiscoveryClient-InstanceInfoReplicator-0] There was a problem with the instance info replicator
+com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.DiscoveryClient.register(DiscoveryClient.java:847)
+	at com.netflix.discovery.InstanceInfoReplicator.run(InstanceInfoReplicator.java:121)
+	at com.netflix.discovery.InstanceInfoReplicator$1.run(InstanceInfoReplicator.java:101)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+2019-11-01 00:26:02,267 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-InstanceInfoReplicator-0] DiscoveryClient_DVDTHEQUE-REST-SERVICES/BLUECHIPIT-1:dvdtheque-rest-services:8083: registering service...
+2019-11-01 00:26:04,279 ERROR com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient [DiscoveryClient-InstanceInfoReplicator-0] Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/}
+com.sun.jersey.api.client.ClientHandlerException: java.net.ConnectException: Connection refused: connect
+	at com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(ApacheHttpClient4Handler.java:187)
+	at com.sun.jersey.api.client.filter.GZIPContentEncodingFilter.handle(GZIPContentEncodingFilter.java:123)
+	at com.netflix.discovery.EurekaIdentityHeaderFilter.handle(EurekaIdentityHeaderFilter.java:27)
+	at com.sun.jersey.api.client.Client.handle(Client.java:652)
+	at com.sun.jersey.api.client.WebResource.handle(WebResource.java:682)
+	at com.sun.jersey.api.client.WebResource.access$200(WebResource.java:74)
+	at com.sun.jersey.api.client.WebResource$Builder.post(WebResource.java:570)
+	at com.netflix.discovery.shared.transport.jersey.AbstractJerseyEurekaHttpClient.register(AbstractJerseyEurekaHttpClient.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.MetricsCollectingEurekaHttpClient.execute(MetricsCollectingEurekaHttpClient.java:73)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.executeOnNewServer(RedirectingEurekaHttpClient.java:118)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:79)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.DiscoveryClient.register(DiscoveryClient.java:847)
+	at com.netflix.discovery.InstanceInfoReplicator.run(InstanceInfoReplicator.java:121)
+	at com.netflix.discovery.InstanceInfoReplicator$1.run(InstanceInfoReplicator.java:101)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:606)
+	at org.apache.http.conn.scheme.PlainSocketFactory.connectSocket(PlainSocketFactory.java:121)
+	at org.apache.http.impl.conn.DefaultClientConnectionOperator.openConnection(DefaultClientConnectionOperator.java:180)
+	at org.apache.http.impl.conn.AbstractPoolEntry.open(AbstractPoolEntry.java:144)
+	at org.apache.http.impl.conn.AbstractPooledConnAdapter.open(AbstractPooledConnAdapter.java:134)
+	at org.apache.http.impl.client.DefaultRequestDirector.tryConnect(DefaultRequestDirector.java:605)
+	at org.apache.http.impl.client.DefaultRequestDirector.execute(DefaultRequestDirector.java:440)
+	at org.apache.http.impl.client.AbstractHttpClient.doExecute(AbstractHttpClient.java:835)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:118)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(ApacheHttpClient4Handler.java:173)
+	... 30 common frames omitted
+2019-11-01 00:26:04,279 WARN com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient [DiscoveryClient-InstanceInfoReplicator-0] Request execution failed with message: java.net.ConnectException: Connection refused: connect
+2019-11-01 00:26:04,280 WARN com.netflix.discovery.DiscoveryClient [DiscoveryClient-InstanceInfoReplicator-0] DiscoveryClient_DVDTHEQUE-REST-SERVICES/BLUECHIPIT-1:dvdtheque-rest-services:8083 - registration failed Cannot execute request on any known server
+com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.DiscoveryClient.register(DiscoveryClient.java:847)
+	at com.netflix.discovery.InstanceInfoReplicator.run(InstanceInfoReplicator.java:121)
+	at com.netflix.discovery.InstanceInfoReplicator$1.run(InstanceInfoReplicator.java:101)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+2019-11-01 00:26:04,280 WARN com.netflix.discovery.InstanceInfoReplicator [DiscoveryClient-InstanceInfoReplicator-0] There was a problem with the instance info replicator
+com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56)
+	at com.netflix.discovery.DiscoveryClient.register(DiscoveryClient.java:847)
+	at com.netflix.discovery.InstanceInfoReplicator.run(InstanceInfoReplicator.java:121)
+	at com.netflix.discovery.InstanceInfoReplicator$1.run(InstanceInfoReplicator.java:101)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+2019-11-01 00:26:06,507 ERROR com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient [DiscoveryClient-HeartbeatExecutor-0] Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/}
+com.sun.jersey.api.client.ClientHandlerException: java.net.ConnectException: Connection refused: connect
+	at com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(ApacheHttpClient4Handler.java:187)
+	at com.sun.jersey.api.client.filter.GZIPContentEncodingFilter.handle(GZIPContentEncodingFilter.java:123)
+	at com.netflix.discovery.EurekaIdentityHeaderFilter.handle(EurekaIdentityHeaderFilter.java:27)
+	at com.sun.jersey.api.client.Client.handle(Client.java:652)
+	at com.sun.jersey.api.client.WebResource.handle(WebResource.java:682)
+	at com.sun.jersey.api.client.WebResource.access$200(WebResource.java:74)
+	at com.sun.jersey.api.client.WebResource$Builder.put(WebResource.java:529)
+	at com.netflix.discovery.shared.transport.jersey.AbstractJerseyEurekaHttpClient.sendHeartBeat(AbstractJerseyEurekaHttpClient.java:102)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.MetricsCollectingEurekaHttpClient.execute(MetricsCollectingEurekaHttpClient.java:73)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.executeOnNewServer(RedirectingEurekaHttpClient.java:118)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:79)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.DiscoveryClient.renew(DiscoveryClient.java:864)
+	at com.netflix.discovery.DiscoveryClient$HeartbeatThread.run(DiscoveryClient.java:1423)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:606)
+	at org.apache.http.conn.scheme.PlainSocketFactory.connectSocket(PlainSocketFactory.java:121)
+	at org.apache.http.impl.conn.DefaultClientConnectionOperator.openConnection(DefaultClientConnectionOperator.java:180)
+	at org.apache.http.impl.conn.AbstractPoolEntry.open(AbstractPoolEntry.java:144)
+	at org.apache.http.impl.conn.AbstractPooledConnAdapter.open(AbstractPooledConnAdapter.java:134)
+	at org.apache.http.impl.client.DefaultRequestDirector.tryConnect(DefaultRequestDirector.java:605)
+	at org.apache.http.impl.client.DefaultRequestDirector.execute(DefaultRequestDirector.java:440)
+	at org.apache.http.impl.client.AbstractHttpClient.doExecute(AbstractHttpClient.java:835)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:118)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(ApacheHttpClient4Handler.java:173)
+	... 27 common frames omitted
+2019-11-01 00:26:06,509 WARN com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient [DiscoveryClient-HeartbeatExecutor-0] Request execution failed with message: java.net.ConnectException: Connection refused: connect
+2019-11-01 00:26:06,509 ERROR com.netflix.discovery.DiscoveryClient [DiscoveryClient-HeartbeatExecutor-0] DiscoveryClient_DVDTHEQUE-REST-SERVICES/BLUECHIPIT-1:dvdtheque-rest-services:8083 - was unable to send heartbeat!
+com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.DiscoveryClient.renew(DiscoveryClient.java:864)
+	at com.netflix.discovery.DiscoveryClient$HeartbeatThread.run(DiscoveryClient.java:1423)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+2019-11-01 00:26:13,520 ERROR com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient [DiscoveryClient-HeartbeatExecutor-0] Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/}
+com.sun.jersey.api.client.ClientHandlerException: java.net.ConnectException: Connection refused: connect
+	at com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(ApacheHttpClient4Handler.java:187)
+	at com.sun.jersey.api.client.filter.GZIPContentEncodingFilter.handle(GZIPContentEncodingFilter.java:123)
+	at com.netflix.discovery.EurekaIdentityHeaderFilter.handle(EurekaIdentityHeaderFilter.java:27)
+	at com.sun.jersey.api.client.Client.handle(Client.java:652)
+	at com.sun.jersey.api.client.WebResource.handle(WebResource.java:682)
+	at com.sun.jersey.api.client.WebResource.access$200(WebResource.java:74)
+	at com.sun.jersey.api.client.WebResource$Builder.put(WebResource.java:529)
+	at com.netflix.discovery.shared.transport.jersey.AbstractJerseyEurekaHttpClient.sendHeartBeat(AbstractJerseyEurekaHttpClient.java:102)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.MetricsCollectingEurekaHttpClient.execute(MetricsCollectingEurekaHttpClient.java:73)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.executeOnNewServer(RedirectingEurekaHttpClient.java:118)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:79)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.DiscoveryClient.renew(DiscoveryClient.java:864)
+	at com.netflix.discovery.DiscoveryClient$HeartbeatThread.run(DiscoveryClient.java:1423)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:606)
+	at org.apache.http.conn.scheme.PlainSocketFactory.connectSocket(PlainSocketFactory.java:121)
+	at org.apache.http.impl.conn.DefaultClientConnectionOperator.openConnection(DefaultClientConnectionOperator.java:180)
+	at org.apache.http.impl.conn.AbstractPoolEntry.open(AbstractPoolEntry.java:144)
+	at org.apache.http.impl.conn.AbstractPooledConnAdapter.open(AbstractPooledConnAdapter.java:134)
+	at org.apache.http.impl.client.DefaultRequestDirector.tryConnect(DefaultRequestDirector.java:605)
+	at org.apache.http.impl.client.DefaultRequestDirector.execute(DefaultRequestDirector.java:440)
+	at org.apache.http.impl.client.AbstractHttpClient.doExecute(AbstractHttpClient.java:835)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:118)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:56)
+	at com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(ApacheHttpClient4Handler.java:173)
+	... 27 common frames omitted
+2019-11-01 00:26:13,521 WARN com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient [DiscoveryClient-HeartbeatExecutor-0] Request execution failed with message: java.net.ConnectException: Connection refused: connect
+2019-11-01 00:26:13,521 ERROR com.netflix.discovery.DiscoveryClient [DiscoveryClient-HeartbeatExecutor-0] DiscoveryClient_DVDTHEQUE-REST-SERVICES/BLUECHIPIT-1:dvdtheque-rest-services:8083 - was unable to send heartbeat!
+com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.DiscoveryClient.renew(DiscoveryClient.java:864)
+	at com.netflix.discovery.DiscoveryClient$HeartbeatThread.run(DiscoveryClient.java:1423)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+2019-11-01 00:27:38,467 DEBUG org.springframework.boot.context.logging.ClasspathLoggingApplicationListener [restartedMain] Application started with classpath: [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:27:38,657 DEBUG org.springframework.boot.SpringApplication [restartedMain] Loading source class org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration
+2019-11-01 00:27:38,689 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Activated activeProfiles dev
+2019-11-01 00:27:38,689 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Loaded config file 'file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/bootstrap.properties' (classpath:/bootstrap.properties)
+2019-11-01 00:27:38,690 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Matching URLs for reloading : [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:27:38,690 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Included patterns for restart : []
+2019-11-01 00:27:38,691 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Excluded patterns for restart : [/spring-boot-actuator/target/classes/, /spring-boot-devtools/target/classes/, /spring-boot/target/classes/, /spring-boot-starter-[\w-]+/, /spring-boot-autoconfigure/target/classes/, /spring-boot-starter/target/classes/]
+2019-11-01 00:27:38,691 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2019-11-01 00:27:39,013 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$52fe7d89] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:27:39,116 DEBUG org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener [restartedMain] 
+
+
+============================
+CONDITIONS EVALUATION REPORT
+============================
+
+
+Positive matches:
+-----------------
+
+   ConfigServiceBootstrapConfiguration#configServicePropertySource matched:
+      - @ConditionalOnProperty (spring.cloud.config.enabled) matched (OnPropertyCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.config.client.ConfigServicePropertySourceLocator; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor; SearchStrategy: all) found bean 'org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor' (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration#configurationPropertiesBeans matched:
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.context.properties.ConfigurationPropertiesBeans; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration#configurationPropertiesRebinder matched:
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.context.properties.ConfigurationPropertiesRebinder; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   EncryptionBootstrapConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.crypto.encrypt.TextEncryptor' (OnClassCondition)
+
+   PropertyPlaceholderAutoConfiguration#propertySourcesPlaceholderConfigurer matched:
+      - @ConditionalOnMissingBean (types: org.springframework.context.support.PropertySourcesPlaceholderConfigurer; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+   ConfigServiceBootstrapConfiguration.RetryConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.fail-fast) did not find property 'spring.cloud.config.fail-fast' (OnPropertyCondition)
+      Matched:
+         - @ConditionalOnClass found required classes 'org.springframework.retry.annotation.Retryable', 'org.aspectj.lang.annotation.Aspect', 'org.springframework.boot.autoconfigure.aop.AopAutoConfiguration' (OnClassCondition)
+
+   DiscoveryClientConfigServiceBootstrapConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.discovery.enabled) did not find property 'spring.cloud.config.discovery.enabled' (OnPropertyCondition)
+
+   EncryptionBootstrapConfiguration.RsaEncryptionConfiguration:
+      Did not match:
+         - Keystore nor key found in Environment (EncryptionBootstrapConfiguration.KeyCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.rsa.crypto.RsaSecretEncryptor' (OnClassCondition)
+
+   EncryptionBootstrapConfiguration.VanillaEncryptionConfiguration:
+      Did not match:
+         - @ConditionalOnMissingClass found unwanted class 'org.springframework.security.rsa.crypto.RsaSecretEncryptor' (OnClassCondition)
+
+   EurekaDiscoveryClientConfigServiceBootstrapConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.discovery.enabled) did not find property 'spring.cloud.config.discovery.enabled' (OnPropertyCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.cloud.config.client.ConfigServicePropertySourceLocator' (OnClassCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2019-11-01 00:27:39,122 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Creating new Restarter for thread Thread[main,5,main]
+2019-11-01 00:27:39,122 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Immediately restarting application
+2019-11-01 00:27:39,122 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Created RestartClassLoader org.springframework.boot.devtools.restart.classloader.RestartClassLoader@1f74101
+2019-11-01 00:27:39,123 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Starting application fr.fredos.dvdtheque.rest.controller.WebApplication with URLs [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:27:39,285 DEBUG org.springframework.boot.context.logging.ClasspathLoggingApplicationListener [restartedMain] Application started with classpath: [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:27:39,325 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [restartedMain] Fetching config from server at : http://localhost:8888
+2019-11-01 00:27:39,365 DEBUG org.springframework.core.log.CompositeLog [restartedMain] HTTP GET http://localhost:8888/dvdtheque-rest-services/dev
+2019-11-01 00:27:39,449 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Accept=[application/json, application/*+json]
+2019-11-01 00:27:39,978 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Response 200 OK
+2019-11-01 00:27:39,980 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Reading to [org.springframework.cloud.config.environment.Environment]
+2019-11-01 00:27:40,001 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [restartedMain] Located environment: name=dvdtheque-rest-services, profiles=[dev], label=null, version=13688a30ff4d56f7d4e8f336d87a26f62dd62ee3, state=null
+2019-11-01 00:27:40,002 INFO org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration [restartedMain] Located property source: CompositePropertySource {name='configService', propertySources=[MapPropertySource {name='configClient'}, MapPropertySource {name='https://github.com/fredo1975/spring-cloud-server-config.git/dvdtheque-rest-services-dev.properties'}]}
+2019-11-01 00:27:40,059 INFO org.springframework.boot.SpringApplication [restartedMain] The following profiles are active: dev
+2019-11-01 00:27:41,807 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-11-01 00:27:41,829 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 15ms. Found 0 repository interfaces.
+2019-11-01 00:27:41,961 WARN org.springframework.boot.actuate.endpoint.EndpointId [restartedMain] Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2019-11-01 00:27:42,362 INFO org.springframework.cloud.context.scope.GenericScope [restartedMain] BeanFactory id=f4dad867-45bb-3f3a-97ac-b87988667fe3
+2019-11-01 00:27:42,384 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2019-11-01 00:27:42,391 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'taskScheduler' has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.
+2019-11-01 00:27:42,399 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2019-11-01 00:27:42,532 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$36e47a8c] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:27:42,578 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.integration.config.IntegrationManagementConfiguration' of type [org.springframework.integration.config.IntegrationManagementConfiguration$$EnhancerBySpringCGLIB$$a1d635bb] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:27:42,587 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationJmxConfiguration' of type [org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationJmxConfiguration$$EnhancerBySpringCGLIB$$7d6840db] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:27:42,598 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration' of type [org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration$$EnhancerBySpringCGLIB$$b64fe9a8] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:27:42,611 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'mbeanServer' of type [com.sun.jmx.mbeanserver.JmxMBeanServer] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:27:42,637 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'integrationDisposableAutoCreatedBeans' of type [org.springframework.integration.config.annotation.Disposables] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:27:42,681 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.hateoas.config.HateoasConfiguration' of type [org.springframework.hateoas.config.HateoasConfiguration$$EnhancerBySpringCGLIB$$b664c7be] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:27:42,686 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$52fe7d89] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:27:43,289 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8083 (http)
+2019-11-01 00:27:43,307 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8083"]
+2019-11-01 00:27:43,317 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2019-11-01 00:27:43,317 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.26]
+2019-11-01 00:27:43,477 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2019-11-01 00:27:43,477 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 3404 ms
+2019-11-01 00:27:43,608 WARN com.netflix.config.sources.URLConfigurationSource [restartedMain] No URLs will be polled as dynamic configuration sources.
+2019-11-01 00:27:43,608 INFO com.netflix.config.sources.URLConfigurationSource [restartedMain] To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2019-11-01 00:27:43,625 INFO com.netflix.config.DynamicPropertyFactory [restartedMain] DynamicPropertyFactory is initialized with configuration sources: com.netflix.config.ConcurrentCompositeConfiguration@1928e627
+2019-11-01 00:27:44,459 INFO org.springframework.boot.actuate.endpoint.web.ServletEndpointRegistrar [restartedMain] Registered '/actuator/jolokia' to jolokia-actuator-endpoint
+2019-11-01 00:27:44,578 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2019-11-01 00:27:44,731 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2019-11-01 00:27:44,791 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-11-01 00:27:44,859 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.3.12.Final}
+2019-11-01 00:27:44,862 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2019-11-01 00:27:45,041 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-11-01 00:27:45,189 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2019-11-01 00:27:46,152 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-11-01 00:27:46,771 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'clientInboundChannelExecutor'
+2019-11-01 00:27:46,776 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'clientOutboundChannelExecutor'
+2019-11-01 00:27:46,805 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'messageBrokerTaskScheduler'
+2019-11-01 00:27:46,864 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'brokerChannelExecutor'
+2019-11-01 00:27:47,133 WARN org.springframework.boot.autoconfigure.batch.JpaBatchConfigurer [restartedMain] JPA does not support custom isolation levels, so locks may not be taken when launching Jobs
+2019-11-01 00:27:47,137 INFO org.springframework.batch.core.repository.support.JobRepositoryFactoryBean [restartedMain] No database type set, using meta data indicating: MYSQL
+2019-11-01 00:27:47,161 INFO org.springframework.batch.core.launch.support.SimpleJobLauncher [restartedMain] No TaskExecutor has been set, defaulting to synchronous executor.
+2019-11-01 00:27:47,275 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [restartedMain] HHH000397: Using ASTQueryTranslatorFactory
+2019-11-01 00:27:47,572 WARN com.netflix.config.sources.URLConfigurationSource [restartedMain] No URLs will be polled as dynamic configuration sources.
+2019-11-01 00:27:47,572 INFO com.netflix.config.sources.URLConfigurationSource [restartedMain] To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2019-11-01 00:27:47,739 WARN org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration$JpaWebMvcConfiguration [restartedMain] spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-11-01 00:27:47,860 WARN org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration [restartedMain] Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2019-11-01 00:27:48,767 WARN org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] Unable to start LiveReload server
+2019-11-01 00:27:48,880 INFO org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver [restartedMain] Exposing 21 endpoint(s) beneath base path '/actuator'
+2019-11-01 00:27:48,965 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [restartedMain] Initializing ExecutorService 'taskScheduler'
+2019-11-01 00:27:49,125 INFO org.springframework.integration.monitor.IntegrationMBeanExporter [restartedMain] Registering MessageChannel nullChannel
+2019-11-01 00:27:49,144 INFO org.springframework.integration.monitor.IntegrationMBeanExporter [restartedMain] Registering MessageChannel errorChannel
+2019-11-01 00:27:49,220 INFO org.springframework.integration.monitor.IntegrationMBeanExporter [restartedMain] Registering MessageHandler errorLogger
+2019-11-01 00:27:49,262 INFO org.springframework.integration.endpoint.EventDrivenConsumer [restartedMain] Adding {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
+2019-11-01 00:27:49,263 INFO org.springframework.integration.channel.AbstractSubscribableChannel [restartedMain] Channel 'dvdtheque-rest-services-1.errorChannel' has 1 subscriber(s).
+2019-11-01 00:27:49,263 INFO org.springframework.integration.endpoint.AbstractEndpoint [restartedMain] started _org.springframework.integration.errorLogger
+2019-11-01 00:27:49,279 INFO org.springframework.cloud.netflix.eureka.InstanceInfoFactory [restartedMain] Setting initial instance status as: STARTING
+2019-11-01 00:27:49,327 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Initializing Eureka in region us-east-1
+2019-11-01 00:27:49,382 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [restartedMain] Using JSON encoding codec LegacyJacksonJson
+2019-11-01 00:27:49,382 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [restartedMain] Using JSON decoding codec LegacyJacksonJson
+2019-11-01 00:27:49,526 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [restartedMain] Using XML encoding codec XStreamXml
+2019-11-01 00:27:49,527 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [restartedMain] Using XML decoding codec XStreamXml
+2019-11-01 00:27:49,697 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [restartedMain] Resolving eureka endpoints via configuration
+2019-11-01 00:27:49,770 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Disable delta property : false
+2019-11-01 00:27:49,770 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Single vip registry refresh property : null
+2019-11-01 00:27:49,770 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Force full registry fetch : false
+2019-11-01 00:27:49,770 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Application is null : false
+2019-11-01 00:27:49,771 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Registered Applications size is zero : true
+2019-11-01 00:27:49,771 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Application version is -1: true
+2019-11-01 00:27:49,771 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Getting all instance registry info from the eureka server
+2019-11-01 00:27:49,992 INFO com.netflix.discovery.DiscoveryClient [restartedMain] The response status is 200
+2019-11-01 00:27:49,996 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Starting heartbeat executor: renew interval is: 5
+2019-11-01 00:27:50,000 INFO com.netflix.discovery.InstanceInfoReplicator [restartedMain] InstanceInfoReplicator onDemand update allowed rate per min is 4
+2019-11-01 00:27:50,004 INFO com.netflix.discovery.DiscoveryClient [restartedMain] Discovery Client initialized at timestamp 1572564470003 with initial instances count: 0
+2019-11-01 00:27:50,010 INFO org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry [restartedMain] Registering application DVDTHEQUE-REST-SERVICES with eureka with status UP
+2019-11-01 00:27:50,012 INFO com.netflix.discovery.DiscoveryClient$3 [restartedMain] Saw local status change event StatusChangeEvent [timestamp=1572564470012, current=UP, previous=STARTING]
+2019-11-01 00:27:50,013 WARN com.netflix.discovery.InstanceInfoReplicator [restartedMain] Ignoring onDemand update due to rate limiter
+2019-11-01 00:27:50,014 INFO org.springframework.core.log.CompositeLog [restartedMain] Starting...
+2019-11-01 00:27:50,070 INFO org.springframework.core.log.CompositeLog [restartedMain] Starting "system" session, StompBrokerRelay[ReactorNettyTcpClient[reactor.netty.tcp.TcpClientDoOn@254126c2]]
+2019-11-01 00:27:50,368 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [DiscoveryClient-InstanceInfoReplicator-0] Fetching config from server at : http://localhost:8888
+2019-11-01 00:27:50,421 INFO org.springframework.core.log.CompositeLog [restartedMain] Started.
+2019-11-01 00:27:50,457 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8083"]
+2019-11-01 00:27:50,495 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8083 (http) with context path ''
+2019-11-01 00:27:50,502 INFO org.springframework.cloud.netflix.eureka.serviceregistry.EurekaAutoServiceRegistration [restartedMain] Updating port to 8083
+2019-11-01 00:27:50,587 INFO org.springframework.core.log.CompositeLog [tcp-client-scheduler-4] "System" session connected.
+2019-11-01 00:27:50,592 INFO org.springframework.core.log.CompositeLog [tcp-client-scheduler-4] BrokerAvailabilityEvent[available=true, StompBrokerRelay[ReactorNettyTcpClient[reactor.netty.tcp.TcpClientDoOn@254126c2]]]
+2019-11-01 00:27:50,632 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started WebApplication in 12.659 seconds (JVM running for 13.21)
+2019-11-01 00:27:50,914 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [DiscoveryClient-InstanceInfoReplicator-0] Located environment: name=dvdtheque-rest-services, profiles=[dev], label=null, version=13688a30ff4d56f7d4e8f336d87a26f62dd62ee3, state=null
+2019-11-01 00:27:50,923 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-InstanceInfoReplicator-0] DiscoveryClient_DVDTHEQUE-REST-SERVICES/BLUECHIPIT-1:dvdtheque-rest-services:8083: registering service...
+2019-11-01 00:27:51,003 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-InstanceInfoReplicator-0] DiscoveryClient_DVDTHEQUE-REST-SERVICES/BLUECHIPIT-1:dvdtheque-rest-services:8083 - registration status: 204
+2019-11-01 00:28:19,998 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-CacheRefreshExecutor-0] Disable delta property : false
+2019-11-01 00:28:19,998 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-CacheRefreshExecutor-0] Single vip registry refresh property : null
+2019-11-01 00:28:19,999 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-CacheRefreshExecutor-0] Force full registry fetch : false
+2019-11-01 00:28:19,999 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-CacheRefreshExecutor-0] Application is null : false
+2019-11-01 00:28:19,999 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-CacheRefreshExecutor-0] Registered Applications size is zero : true
+2019-11-01 00:28:20,000 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-CacheRefreshExecutor-0] Application version is -1: false
+2019-11-01 00:28:20,000 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-CacheRefreshExecutor-0] Getting all instance registry info from the eureka server
+2019-11-01 00:28:20,039 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-CacheRefreshExecutor-0] The response status is 200
+2019-11-01 00:30:37,724 DEBUG org.springframework.boot.context.logging.ClasspathLoggingApplicationListener [restartedMain] Application started with classpath: [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:30:37,900 DEBUG org.springframework.boot.SpringApplication [restartedMain] Loading source class org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration
+2019-11-01 00:30:37,932 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Activated activeProfiles dev1
+2019-11-01 00:30:37,932 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Loaded config file 'file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/bootstrap.properties' (classpath:/bootstrap.properties)
+2019-11-01 00:30:37,933 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Matching URLs for reloading : [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:30:37,933 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Included patterns for restart : []
+2019-11-01 00:30:37,933 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Excluded patterns for restart : [/spring-boot-actuator/target/classes/, /spring-boot-devtools/target/classes/, /spring-boot/target/classes/, /spring-boot-starter-[\w-]+/, /spring-boot-autoconfigure/target/classes/, /spring-boot-starter/target/classes/]
+2019-11-01 00:30:37,933 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2019-11-01 00:30:38,292 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$d8abfc64] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:30:38,421 DEBUG org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener [restartedMain] 
+
+
+============================
+CONDITIONS EVALUATION REPORT
+============================
+
+
+Positive matches:
+-----------------
+
+   ConfigServiceBootstrapConfiguration#configServicePropertySource matched:
+      - @ConditionalOnProperty (spring.cloud.config.enabled) matched (OnPropertyCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.config.client.ConfigServicePropertySourceLocator; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor; SearchStrategy: all) found bean 'org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor' (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration#configurationPropertiesBeans matched:
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.context.properties.ConfigurationPropertiesBeans; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration#configurationPropertiesRebinder matched:
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.context.properties.ConfigurationPropertiesRebinder; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   EncryptionBootstrapConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.crypto.encrypt.TextEncryptor' (OnClassCondition)
+
+   PropertyPlaceholderAutoConfiguration#propertySourcesPlaceholderConfigurer matched:
+      - @ConditionalOnMissingBean (types: org.springframework.context.support.PropertySourcesPlaceholderConfigurer; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+   ConfigServiceBootstrapConfiguration.RetryConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.fail-fast) did not find property 'spring.cloud.config.fail-fast' (OnPropertyCondition)
+      Matched:
+         - @ConditionalOnClass found required classes 'org.springframework.retry.annotation.Retryable', 'org.aspectj.lang.annotation.Aspect', 'org.springframework.boot.autoconfigure.aop.AopAutoConfiguration' (OnClassCondition)
+
+   DiscoveryClientConfigServiceBootstrapConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.discovery.enabled) did not find property 'spring.cloud.config.discovery.enabled' (OnPropertyCondition)
+
+   EncryptionBootstrapConfiguration.RsaEncryptionConfiguration:
+      Did not match:
+         - Keystore nor key found in Environment (EncryptionBootstrapConfiguration.KeyCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.rsa.crypto.RsaSecretEncryptor' (OnClassCondition)
+
+   EncryptionBootstrapConfiguration.VanillaEncryptionConfiguration:
+      Did not match:
+         - @ConditionalOnMissingClass found unwanted class 'org.springframework.security.rsa.crypto.RsaSecretEncryptor' (OnClassCondition)
+
+   EurekaDiscoveryClientConfigServiceBootstrapConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.discovery.enabled) did not find property 'spring.cloud.config.discovery.enabled' (OnPropertyCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.cloud.config.client.ConfigServicePropertySourceLocator' (OnClassCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2019-11-01 00:30:38,425 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Creating new Restarter for thread Thread[main,5,main]
+2019-11-01 00:30:38,426 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Immediately restarting application
+2019-11-01 00:30:38,426 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Created RestartClassLoader org.springframework.boot.devtools.restart.classloader.RestartClassLoader@184127bf
+2019-11-01 00:30:38,426 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Starting application fr.fredos.dvdtheque.rest.controller.WebApplication with URLs [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:30:38,561 DEBUG org.springframework.boot.context.logging.ClasspathLoggingApplicationListener [restartedMain] Application started with classpath: [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:30:38,604 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [restartedMain] Fetching config from server at : http://localhost:8888
+2019-11-01 00:30:38,635 DEBUG org.springframework.core.log.CompositeLog [restartedMain] HTTP GET http://localhost:8888/dvdtheque-rest-services/dev1
+2019-11-01 00:30:38,731 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Accept=[application/json, application/*+json]
+2019-11-01 00:30:39,214 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Response 200 OK
+2019-11-01 00:30:39,215 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Reading to [org.springframework.cloud.config.environment.Environment]
+2019-11-01 00:30:39,238 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [restartedMain] Located environment: name=dvdtheque-rest-services, profiles=[dev1], label=null, version=d09a806515372de3eab5d35c2f8d13a671e4e090, state=null
+2019-11-01 00:30:39,238 INFO org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration [restartedMain] Located property source: CompositePropertySource {name='configService', propertySources=[MapPropertySource {name='configClient'}, MapPropertySource {name='https://github.com/fredo1975/spring-cloud-server-config.git/dvdtheque-rest-services-dev1.properties'}]}
+2019-11-01 00:30:39,337 INFO org.springframework.boot.SpringApplication [restartedMain] The following profiles are active: dev1
+2019-11-01 00:30:41,206 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-11-01 00:30:41,228 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 14ms. Found 0 repository interfaces.
+2019-11-01 00:30:41,360 WARN org.springframework.boot.actuate.endpoint.EndpointId [restartedMain] Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2019-11-01 00:30:41,663 INFO org.springframework.cloud.context.scope.GenericScope [restartedMain] BeanFactory id=4595347f-7fde-3dc6-8345-3901332e119b
+2019-11-01 00:30:41,682 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2019-11-01 00:30:41,690 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'taskScheduler' has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.
+2019-11-01 00:30:41,695 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2019-11-01 00:30:41,835 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$bc91f967] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:30:41,884 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.integration.config.IntegrationManagementConfiguration' of type [org.springframework.integration.config.IntegrationManagementConfiguration$$EnhancerBySpringCGLIB$$2783b496] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:30:41,894 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationJmxConfiguration' of type [org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationJmxConfiguration$$EnhancerBySpringCGLIB$$315bfb6] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:30:41,906 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration' of type [org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration$$EnhancerBySpringCGLIB$$3bfd6883] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:30:41,912 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'mbeanServer' of type [com.sun.jmx.mbeanserver.JmxMBeanServer] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:30:41,934 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'integrationDisposableAutoCreatedBeans' of type [org.springframework.integration.config.annotation.Disposables] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:30:41,978 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.hateoas.config.HateoasConfiguration' of type [org.springframework.hateoas.config.HateoasConfiguration$$EnhancerBySpringCGLIB$$3c124699] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:30:41,983 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$d8abfc64] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:30:42,622 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8083 (http)
+2019-11-01 00:30:42,640 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8083"]
+2019-11-01 00:30:42,666 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2019-11-01 00:30:42,666 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.26]
+2019-11-01 00:30:42,797 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2019-11-01 00:30:42,797 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 3434 ms
+2019-11-01 00:30:42,927 WARN com.netflix.config.sources.URLConfigurationSource [restartedMain] No URLs will be polled as dynamic configuration sources.
+2019-11-01 00:30:42,927 INFO com.netflix.config.sources.URLConfigurationSource [restartedMain] To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2019-11-01 00:30:42,943 INFO com.netflix.config.DynamicPropertyFactory [restartedMain] DynamicPropertyFactory is initialized with configuration sources: com.netflix.config.ConcurrentCompositeConfiguration@5a0bab06
+2019-11-01 00:30:43,178 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [LOCAL] [hazelcast-dev] [3.11.4] Prefer IPv4 stack is true, prefer IPv6 addresses is false
+2019-11-01 00:30:43,252 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [LOCAL] [hazelcast-dev] [3.11.4] Picked [192.168.1.24]:5701, using socket ServerSocket[addr=/0:0:0:0:0:0:0:0,localport=5701], bind any local is true
+2019-11-01 00:30:43,271 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Hazelcast 3.11.4 (20190509 - d5ad9d4) starting at [192.168.1.24]:5701
+2019-11-01 00:30:43,272 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Copyright (c) 2008-2019, Hazelcast, Inc. All Rights Reserved.
+2019-11-01 00:30:43,272 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] A non-empty group password is configured for the Hazelcast member. Starting with Hazelcast version 3.8.2, members with the same group name, but with different group passwords (that do not use authentication) form a cluster. The group password configuration will be removed completely in a future release.
+2019-11-01 00:30:43,614 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Backpressure is disabled
+2019-11-01 00:30:44,389 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Creating MulticastJoiner
+2019-11-01 00:30:44,590 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Starting 4 partition threads and 3 generic threads (1 dedicated for priority tasks)
+2019-11-01 00:30:44,592 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Diagnostics disabled. To enable add -Dhazelcast.diagnostics.enabled=true to the JVM arguments.
+2019-11-01 00:30:44,601 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] [192.168.1.24]:5701 is STARTING
+2019-11-01 00:30:47,583 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] 
+
+Members {size:1, ver:1} [
+	Member [192.168.1.24]:5701 - 6258378c-3e1f-4fe7-8d19-4bc966da7480 this
+]
+
+2019-11-01 00:30:47,644 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] [192.168.1.24]:5701 is STARTED
+2019-11-01 00:30:48,089 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [hz.hazelcast-instance.HealthMonitor] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] processors=4, physical.memory.total=7,9G, physical.memory.free=879,4M, swap.space.total=15,9G, swap.space.free=4,7G, heap.memory.used=123,6M, heap.memory.free=630,9M, heap.memory.total=754,5M, heap.memory.max=1,8G, heap.memory.used/total=16,38%, heap.memory.used/max=6,83%, minor.gc.count=14, minor.gc.time=162ms, major.gc.count=3, major.gc.time=247ms, load.process=87,44%, load.system=90,19%, load.systemAverage=n/a thread.count=44, thread.peakCount=44, cluster.timeDiff=0, event.q.size=0, executor.q.async.size=0, executor.q.client.size=0, executor.q.client.query.size=0, executor.q.client.blocking.size=0, executor.q.query.size=0, executor.q.scheduled.size=0, executor.q.io.size=0, executor.q.system.size=0, executor.q.operations.size=0, executor.q.priorityOperation.size=0, operations.completed.count=1, executor.q.mapLoad.size=0, executor.q.mapLoadAllKeys.size=0, executor.q.cluster.size=0, executor.q.response.size=0, operations.running.count=0, operations.pending.invocations.percentage=0,00%, operations.pending.invocations.count=0, proxy.count=0, clientEndpoint.count=0, connection.active.count=0, client.connection.count=0, connection.count=0
+2019-11-01 00:30:48,451 INFO org.springframework.boot.actuate.endpoint.web.ServletEndpointRegistrar [restartedMain] Registered '/actuator/jolokia' to jolokia-actuator-endpoint
+2019-11-01 00:30:48,577 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2019-11-01 00:30:48,723 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2019-11-01 00:30:48,784 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-11-01 00:30:48,856 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.3.12.Final}
+2019-11-01 00:30:48,858 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2019-11-01 00:30:49,044 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-11-01 00:30:49,196 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2019-11-01 00:30:49,978 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-11-01 00:30:50,594 WARN org.springframework.context.support.AbstractApplicationContext [restartedMain] Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'dvdthequeWebSocketController': Unsatisfied dependency expressed through field 'simpMessagingTemplate'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'org.springframework.messaging.simp.SimpMessagingTemplate' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2019-11-01 00:30:50,595 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Closing JPA EntityManagerFactory for persistence unit 'default'
+2019-11-01 00:30:50,599 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] [192.168.1.24]:5701 is SHUTTING_DOWN
+2019-11-01 00:30:50,605 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Shutting down multicast service...
+2019-11-01 00:30:50,606 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Shutting down connection manager...
+2019-11-01 00:30:50,609 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Shutting down node engine...
+2019-11-01 00:30:50,615 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Destroying node NodeExtension.
+2019-11-01 00:30:50,615 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Hazelcast Shutdown is completed in 13 ms.
+2019-11-01 00:30:50,616 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] [192.168.1.24]:5701 is SHUTDOWN
+2019-11-01 00:30:50,618 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Shutdown initiated...
+2019-11-01 00:30:50,622 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Shutdown completed.
+2019-11-01 00:30:50,623 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Stopping service [Tomcat]
+2019-11-01 00:30:50,638 INFO org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener [restartedMain] 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2019-11-01 00:30:51,186 ERROR org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter [restartedMain] 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field simpMessagingTemplate in fr.fredos.dvdtheque.websocket.controller.DvdthequeWebSocketController required a bean of type 'org.springframework.messaging.simp.SimpMessagingTemplate' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.messaging.simp.SimpMessagingTemplate' in your configuration.
+
+2019-11-01 00:35:03,803 DEBUG org.springframework.boot.context.logging.ClasspathLoggingApplicationListener [restartedMain] Application started with classpath: [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:35:03,971 DEBUG org.springframework.boot.SpringApplication [restartedMain] Loading source class org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration
+2019-11-01 00:35:04,007 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Activated activeProfiles dev1
+2019-11-01 00:35:04,007 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Loaded config file 'file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/bootstrap.properties' (classpath:/bootstrap.properties)
+2019-11-01 00:35:04,009 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Matching URLs for reloading : [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:35:04,010 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Included patterns for restart : []
+2019-11-01 00:35:04,010 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Excluded patterns for restart : [/spring-boot-actuator/target/classes/, /spring-boot-devtools/target/classes/, /spring-boot/target/classes/, /spring-boot-starter-[\w-]+/, /spring-boot-autoconfigure/target/classes/, /spring-boot-starter/target/classes/]
+2019-11-01 00:35:04,010 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2019-11-01 00:35:04,432 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.retry.annotation.RetryConfiguration' of type [org.springframework.retry.annotation.RetryConfiguration$$EnhancerBySpringCGLIB$$11c9dace] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:35:04,440 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$382045a6] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:35:04,552 DEBUG org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener [restartedMain] 
+
+
+============================
+CONDITIONS EVALUATION REPORT
+============================
+
+
+Positive matches:
+-----------------
+
+   AopAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.springframework.context.annotation.EnableAspectJAutoProxy', 'org.aspectj.lang.annotation.Aspect', 'org.aspectj.lang.reflect.Advice', 'org.aspectj.weaver.AnnotatedElement' (OnClassCondition)
+      - @ConditionalOnProperty (spring.aop.auto=true) matched (OnPropertyCondition)
+
+   AopAutoConfiguration.CglibAutoProxyConfiguration matched:
+      - @ConditionalOnProperty (spring.aop.proxy-target-class=true) matched (OnPropertyCondition)
+
+   ConfigServiceBootstrapConfiguration#configServicePropertySource matched:
+      - @ConditionalOnProperty (spring.cloud.config.enabled) matched (OnPropertyCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.config.client.ConfigServicePropertySourceLocator; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   ConfigServiceBootstrapConfiguration.RetryConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.springframework.retry.annotation.Retryable', 'org.aspectj.lang.annotation.Aspect', 'org.springframework.boot.autoconfigure.aop.AopAutoConfiguration' (OnClassCondition)
+      - @ConditionalOnProperty (spring.cloud.config.fail-fast) matched (OnPropertyCondition)
+
+   ConfigServiceBootstrapConfiguration.RetryConfiguration#configServerRetryInterceptor matched:
+      - @ConditionalOnMissingBean (names: configServerRetryInterceptor; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor; SearchStrategy: all) found bean 'org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor' (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration#configurationPropertiesBeans matched:
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.context.properties.ConfigurationPropertiesBeans; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration#configurationPropertiesRebinder matched:
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.context.properties.ConfigurationPropertiesRebinder; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   EncryptionBootstrapConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.crypto.encrypt.TextEncryptor' (OnClassCondition)
+
+   PropertyPlaceholderAutoConfiguration#propertySourcesPlaceholderConfigurer matched:
+      - @ConditionalOnMissingBean (types: org.springframework.context.support.PropertySourcesPlaceholderConfigurer; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+   AopAutoConfiguration.JdkDynamicAutoProxyConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.aop.proxy-target-class=false) did not find property 'proxy-target-class' (OnPropertyCondition)
+
+   DiscoveryClientConfigServiceBootstrapConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.discovery.enabled) did not find property 'spring.cloud.config.discovery.enabled' (OnPropertyCondition)
+
+   EncryptionBootstrapConfiguration.RsaEncryptionConfiguration:
+      Did not match:
+         - Keystore nor key found in Environment (EncryptionBootstrapConfiguration.KeyCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.rsa.crypto.RsaSecretEncryptor' (OnClassCondition)
+
+   EncryptionBootstrapConfiguration.VanillaEncryptionConfiguration:
+      Did not match:
+         - @ConditionalOnMissingClass found unwanted class 'org.springframework.security.rsa.crypto.RsaSecretEncryptor' (OnClassCondition)
+
+   EurekaDiscoveryClientConfigServiceBootstrapConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.discovery.enabled) did not find property 'spring.cloud.config.discovery.enabled' (OnPropertyCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.cloud.config.client.ConfigServicePropertySourceLocator' (OnClassCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2019-11-01 00:35:04,557 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Creating new Restarter for thread Thread[main,5,main]
+2019-11-01 00:35:04,557 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Immediately restarting application
+2019-11-01 00:35:04,558 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Created RestartClassLoader org.springframework.boot.devtools.restart.classloader.RestartClassLoader@78e21812
+2019-11-01 00:35:04,558 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Starting application fr.fredos.dvdtheque.rest.controller.WebApplication with URLs [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:35:04,669 DEBUG org.springframework.boot.context.logging.ClasspathLoggingApplicationListener [restartedMain] Application started with classpath: [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:35:04,711 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [restartedMain] Fetching config from server at : http://localhost:8888
+2019-11-01 00:35:04,741 DEBUG org.springframework.core.log.CompositeLog [restartedMain] HTTP GET http://localhost:8888/dvdtheque-rest-services/dev1
+2019-11-01 00:35:04,823 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Accept=[application/json, application/*+json]
+2019-11-01 00:35:05,316 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Response 200 OK
+2019-11-01 00:35:05,318 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Reading to [org.springframework.cloud.config.environment.Environment]
+2019-11-01 00:35:05,338 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [restartedMain] Located environment: name=dvdtheque-rest-services, profiles=[dev1], label=null, version=d09a806515372de3eab5d35c2f8d13a671e4e090, state=null
+2019-11-01 00:35:05,338 INFO org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration [restartedMain] Located property source: CompositePropertySource {name='configService', propertySources=[MapPropertySource {name='configClient'}, MapPropertySource {name='https://github.com/fredo1975/spring-cloud-server-config.git/dvdtheque-rest-services-dev1.properties'}]}
+2019-11-01 00:35:05,401 INFO org.springframework.boot.SpringApplication [restartedMain] The following profiles are active: dev1
+2019-11-01 00:35:07,116 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-11-01 00:35:07,145 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 22ms. Found 0 repository interfaces.
+2019-11-01 00:35:07,307 WARN org.springframework.boot.actuate.endpoint.EndpointId [restartedMain] Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2019-11-01 00:35:07,637 INFO org.springframework.cloud.context.scope.GenericScope [restartedMain] BeanFactory id=4595347f-7fde-3dc6-8345-3901332e119b
+2019-11-01 00:35:07,658 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2019-11-01 00:35:07,666 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'taskScheduler' has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.
+2019-11-01 00:35:07,673 INFO org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor [restartedMain] No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2019-11-01 00:35:07,777 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$1c0642a9] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:35:07,818 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.integration.config.IntegrationManagementConfiguration' of type [org.springframework.integration.config.IntegrationManagementConfiguration$$EnhancerBySpringCGLIB$$86f7fdd8] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:35:07,832 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationJmxConfiguration' of type [org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationJmxConfiguration$$EnhancerBySpringCGLIB$$628a08f8] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:35:07,844 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration' of type [org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration$$EnhancerBySpringCGLIB$$9b71b1c5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:35:07,851 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'mbeanServer' of type [com.sun.jmx.mbeanserver.JmxMBeanServer] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:35:07,874 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'integrationDisposableAutoCreatedBeans' of type [org.springframework.integration.config.annotation.Disposables] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:35:07,916 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.hateoas.config.HateoasConfiguration' of type [org.springframework.hateoas.config.HateoasConfiguration$$EnhancerBySpringCGLIB$$9b868fdb] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:35:07,922 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$382045a6] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:35:08,603 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8083 (http)
+2019-11-01 00:35:08,620 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8083"]
+2019-11-01 00:35:08,632 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2019-11-01 00:35:08,632 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.26]
+2019-11-01 00:35:08,760 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2019-11-01 00:35:08,761 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 3344 ms
+2019-11-01 00:35:08,899 WARN com.netflix.config.sources.URLConfigurationSource [restartedMain] No URLs will be polled as dynamic configuration sources.
+2019-11-01 00:35:08,900 INFO com.netflix.config.sources.URLConfigurationSource [restartedMain] To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2019-11-01 00:35:08,917 INFO com.netflix.config.DynamicPropertyFactory [restartedMain] DynamicPropertyFactory is initialized with configuration sources: com.netflix.config.ConcurrentCompositeConfiguration@11fe1b71
+2019-11-01 00:35:09,155 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [LOCAL] [hazelcast-dev] [3.11.4] Prefer IPv4 stack is true, prefer IPv6 addresses is false
+2019-11-01 00:35:09,226 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [LOCAL] [hazelcast-dev] [3.11.4] Picked [192.168.1.24]:5701, using socket ServerSocket[addr=/0:0:0:0:0:0:0:0,localport=5701], bind any local is true
+2019-11-01 00:35:09,247 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Hazelcast 3.11.4 (20190509 - d5ad9d4) starting at [192.168.1.24]:5701
+2019-11-01 00:35:09,248 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Copyright (c) 2008-2019, Hazelcast, Inc. All Rights Reserved.
+2019-11-01 00:35:09,248 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] A non-empty group password is configured for the Hazelcast member. Starting with Hazelcast version 3.8.2, members with the same group name, but with different group passwords (that do not use authentication) form a cluster. The group password configuration will be removed completely in a future release.
+2019-11-01 00:35:09,567 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Backpressure is disabled
+2019-11-01 00:35:10,340 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Creating MulticastJoiner
+2019-11-01 00:35:10,542 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Starting 4 partition threads and 3 generic threads (1 dedicated for priority tasks)
+2019-11-01 00:35:10,545 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Diagnostics disabled. To enable add -Dhazelcast.diagnostics.enabled=true to the JVM arguments.
+2019-11-01 00:35:10,552 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] [192.168.1.24]:5701 is STARTING
+2019-11-01 00:35:13,375 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] 
+
+Members {size:1, ver:1} [
+	Member [192.168.1.24]:5701 - 98147818-651a-4c9b-84f4-cd9f6fd8e9d3 this
+]
+
+2019-11-01 00:35:13,426 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] [192.168.1.24]:5701 is STARTED
+2019-11-01 00:35:13,994 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [hz.hazelcast-instance.HealthMonitor] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] processors=4, physical.memory.total=7,9G, physical.memory.free=672,4M, swap.space.total=15,9G, swap.space.free=4,4G, heap.memory.used=146,4M, heap.memory.free=610,6M, heap.memory.total=757,0M, heap.memory.max=1,8G, heap.memory.used/total=19,34%, heap.memory.used/max=8,09%, minor.gc.count=14, minor.gc.time=109ms, major.gc.count=3, major.gc.time=235ms, load.process=76,63%, load.system=77,06%, load.systemAverage=n/a thread.count=44, thread.peakCount=44, cluster.timeDiff=0, event.q.size=0, executor.q.async.size=0, executor.q.client.size=0, executor.q.client.query.size=0, executor.q.client.blocking.size=0, executor.q.query.size=0, executor.q.scheduled.size=0, executor.q.io.size=0, executor.q.system.size=0, executor.q.operations.size=0, executor.q.priorityOperation.size=0, operations.completed.count=1, executor.q.mapLoad.size=0, executor.q.mapLoadAllKeys.size=0, executor.q.cluster.size=0, executor.q.response.size=0, operations.running.count=0, operations.pending.invocations.percentage=0,00%, operations.pending.invocations.count=0, proxy.count=0, clientEndpoint.count=0, connection.active.count=0, client.connection.count=0, connection.count=0
+2019-11-01 00:35:14,149 INFO org.springframework.boot.actuate.endpoint.web.ServletEndpointRegistrar [restartedMain] Registered '/actuator/jolokia' to jolokia-actuator-endpoint
+2019-11-01 00:35:14,278 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2019-11-01 00:35:14,439 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2019-11-01 00:35:14,498 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-11-01 00:35:14,571 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.3.12.Final}
+2019-11-01 00:35:14,573 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2019-11-01 00:35:14,757 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-11-01 00:35:14,920 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2019-11-01 00:35:15,704 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-11-01 00:35:16,237 WARN org.springframework.context.support.AbstractApplicationContext [restartedMain] Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'dvdthequeWebSocketController': Unsatisfied dependency expressed through field 'simpMessagingTemplate'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'org.springframework.messaging.simp.SimpMessagingTemplate' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2019-11-01 00:35:16,237 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Closing JPA EntityManagerFactory for persistence unit 'default'
+2019-11-01 00:35:16,241 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] [192.168.1.24]:5701 is SHUTTING_DOWN
+2019-11-01 00:35:16,247 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Shutting down multicast service...
+2019-11-01 00:35:16,249 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Shutting down connection manager...
+2019-11-01 00:35:16,251 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Shutting down node engine...
+2019-11-01 00:35:16,258 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Destroying node NodeExtension.
+2019-11-01 00:35:16,258 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] Hazelcast Shutdown is completed in 14 ms.
+2019-11-01 00:35:16,259 INFO com.hazelcast.logging.StandardLoggerFactory$StandardLogger [restartedMain] [192.168.1.24]:5701 [hazelcast-dev] [3.11.4] [192.168.1.24]:5701 is SHUTDOWN
+2019-11-01 00:35:16,260 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Shutdown initiated...
+2019-11-01 00:35:16,265 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Shutdown completed.
+2019-11-01 00:35:16,266 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Stopping service [Tomcat]
+2019-11-01 00:35:16,280 INFO org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener [restartedMain] 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2019-11-01 00:35:16,648 ERROR org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter [restartedMain] 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field simpMessagingTemplate in fr.fredos.dvdtheque.websocket.controller.DvdthequeWebSocketController required a bean of type 'org.springframework.messaging.simp.SimpMessagingTemplate' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.messaging.simp.SimpMessagingTemplate' in your configuration.
+
+2019-11-01 00:39:23,077 DEBUG org.springframework.boot.context.logging.ClasspathLoggingApplicationListener [restartedMain] Application started with classpath: [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:39:23,283 DEBUG org.springframework.boot.SpringApplication [restartedMain] Loading source class org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration
+2019-11-01 00:39:23,321 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Activated activeProfiles dev1
+2019-11-01 00:39:23,322 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Loaded config file 'file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/bootstrap.properties' (classpath:/bootstrap.properties)
+2019-11-01 00:39:23,349 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Matching URLs for reloading : [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:39:23,349 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Included patterns for restart : []
+2019-11-01 00:39:23,349 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Excluded patterns for restart : [/spring-boot-actuator/target/classes/, /spring-boot-devtools/target/classes/, /spring-boot/target/classes/, /spring-boot-starter-[\w-]+/, /spring-boot-autoconfigure/target/classes/, /spring-boot-starter/target/classes/]
+2019-11-01 00:39:23,350 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2019-11-01 00:39:23,692 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.retry.annotation.RetryConfiguration' of type [org.springframework.retry.annotation.RetryConfiguration$$EnhancerBySpringCGLIB$$ef73e6ac] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:39:23,700 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$15ca5184] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-11-01 00:39:23,809 DEBUG org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener [restartedMain] 
+
+
+============================
+CONDITIONS EVALUATION REPORT
+============================
+
+
+Positive matches:
+-----------------
+
+   AopAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.springframework.context.annotation.EnableAspectJAutoProxy', 'org.aspectj.lang.annotation.Aspect', 'org.aspectj.lang.reflect.Advice', 'org.aspectj.weaver.AnnotatedElement' (OnClassCondition)
+      - @ConditionalOnProperty (spring.aop.auto=true) matched (OnPropertyCondition)
+
+   AopAutoConfiguration.CglibAutoProxyConfiguration matched:
+      - @ConditionalOnProperty (spring.aop.proxy-target-class=true) matched (OnPropertyCondition)
+
+   ConfigServiceBootstrapConfiguration#configServicePropertySource matched:
+      - @ConditionalOnProperty (spring.cloud.config.enabled) matched (OnPropertyCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.config.client.ConfigServicePropertySourceLocator; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   ConfigServiceBootstrapConfiguration.RetryConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.springframework.retry.annotation.Retryable', 'org.aspectj.lang.annotation.Aspect', 'org.springframework.boot.autoconfigure.aop.AopAutoConfiguration' (OnClassCondition)
+      - @ConditionalOnProperty (spring.cloud.config.fail-fast) matched (OnPropertyCondition)
+
+   ConfigServiceBootstrapConfiguration.RetryConfiguration#configServerRetryInterceptor matched:
+      - @ConditionalOnMissingBean (names: configServerRetryInterceptor; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor; SearchStrategy: all) found bean 'org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor' (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration#configurationPropertiesBeans matched:
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.context.properties.ConfigurationPropertiesBeans; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   ConfigurationPropertiesRebinderAutoConfiguration#configurationPropertiesRebinder matched:
+      - @ConditionalOnMissingBean (types: org.springframework.cloud.context.properties.ConfigurationPropertiesRebinder; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   EncryptionBootstrapConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.crypto.encrypt.TextEncryptor' (OnClassCondition)
+
+   PropertyPlaceholderAutoConfiguration#propertySourcesPlaceholderConfigurer matched:
+      - @ConditionalOnMissingBean (types: org.springframework.context.support.PropertySourcesPlaceholderConfigurer; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+   AopAutoConfiguration.JdkDynamicAutoProxyConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.aop.proxy-target-class=false) did not find property 'proxy-target-class' (OnPropertyCondition)
+
+   DiscoveryClientConfigServiceBootstrapConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.discovery.enabled) did not find property 'spring.cloud.config.discovery.enabled' (OnPropertyCondition)
+
+   EncryptionBootstrapConfiguration.RsaEncryptionConfiguration:
+      Did not match:
+         - Keystore nor key found in Environment (EncryptionBootstrapConfiguration.KeyCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.rsa.crypto.RsaSecretEncryptor' (OnClassCondition)
+
+   EncryptionBootstrapConfiguration.VanillaEncryptionConfiguration:
+      Did not match:
+         - @ConditionalOnMissingClass found unwanted class 'org.springframework.security.rsa.crypto.RsaSecretEncryptor' (OnClassCondition)
+
+   EurekaDiscoveryClientConfigServiceBootstrapConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.cloud.config.discovery.enabled) did not find property 'spring.cloud.config.discovery.enabled' (OnPropertyCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.cloud.config.client.ConfigServicePropertySourceLocator' (OnClassCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2019-11-01 00:39:23,814 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Creating new Restarter for thread Thread[main,5,main]
+2019-11-01 00:39:23,814 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Immediately restarting application
+2019-11-01 00:39:23,815 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Created RestartClassLoader org.springframework.boot.devtools.restart.classloader.RestartClassLoader@68def774
+2019-11-01 00:39:23,815 DEBUG org.springframework.boot.logging.DeferredLog [restartedMain] Starting application fr.fredos.dvdtheque.rest.controller.WebApplication with URLs [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:39:23,938 DEBUG org.springframework.boot.context.logging.ClasspathLoggingApplicationListener [restartedMain] Application started with classpath: [file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-rest-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-batch/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-commons/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-tmdb-service/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-services/target/classes/, file:/E:/dev/eclipse-09-2019/workspace/dvdtheque/dvdtheque-dao/target/classes/]
+2019-11-01 00:39:24,004 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [restartedMain] Fetching config from server at : http://localhost:8888
+2019-11-01 00:39:24,036 DEBUG org.springframework.core.log.CompositeLog [restartedMain] HTTP GET http://localhost:8888/dvdtheque-rest-services/dev1
+2019-11-01 00:39:24,114 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Accept=[application/json, application/*+json]
+2019-11-01 00:39:24,707 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Response 200 OK
+2019-11-01 00:39:24,709 DEBUG org.springframework.core.log.CompositeLog [restartedMain] Reading to [org.springframework.cloud.config.environment.Environment]
+2019-11-01 00:39:24,730 INFO org.springframework.cloud.config.client.ConfigServicePropertySourceLocator [restartedMain] Located environment: name=dvdtheque-rest-services, profiles=[dev1], label=null, version=d09a806515372de3eab5d35c2f8d13a671e4e090, state=null
+2019-11-01 00:39:24,730 INFO org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration [restartedMain] Located property source: CompositePropertySource {name='configService', propertySources=[MapPropertySource {name='configClient'}, MapPropertySource {name='https://github.com/fredo1975/spring-cloud-server-config.git/dvdtheque-rest-services-dev1.properties'}]}
