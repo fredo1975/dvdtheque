@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,11 +11,15 @@ import com.hazelcast.config.MaxSizeConfig;
 
 @Configuration
 public class HazelcastConfiguration {
+	@Value("${hazelcast.group.name}")
+	private String groupConfigName;
 	@Bean
 	public Config hazelCastConfig() {
-		return new Config().setInstanceName("hazelcast-instance")
-				.addMapConfig(new MapConfig().setName("films")
-						.setMaxSizeConfig(new MaxSizeConfig(200, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
-						.setEvictionPolicy(EvictionPolicy.LRU).setTimeToLiveSeconds(20));
+		Config config = new Config();
+		config.getGroupConfig().setName(groupConfigName);
+		config.setInstanceName("hazelcast-instance").addMapConfig(new MapConfig().setName("films")
+				.setMaxSizeConfig(new MaxSizeConfig(200, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
+				.setEvictionPolicy(EvictionPolicy.LRU).setTimeToLiveSeconds(20));
+		return config;
 	}
 }
