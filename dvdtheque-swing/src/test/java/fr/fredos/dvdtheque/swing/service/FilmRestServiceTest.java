@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,9 +46,13 @@ public class FilmRestServiceTest {
 		List<Film> allFilms = new ArrayList<Film>();
 		Film f = new Film(1l);
 		allFilms.add(f);
-		given(this.filmRestService.findAllFilms()).willReturn(allFilms);
+		
 		this.mockServer.expect(ExpectedCount.once(), requestTo("/films")).andExpect(method(HttpMethod.GET)).andRespond(
 				withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(mapper.writeValueAsString(allFilms)));
+				
+		this.mockServer.expect(ExpectedCount.once(), requestTo("/films")).andExpect(method(HttpMethod.GET)).andRespond(
+				withSuccess("[{\"id\":1,\"annee\":null,\"titre\":null,\"titreO\":null,\"dvd\":null,\"realisateurs\":[],\"acteurs\":[],\"ripped\":false,\"vu\":false,\"posterPath\":null,\"tmdbId\":null,\"overview\":null,\"runtime\":null,\"genres\":[],\"homepage\":null,\"alreadyInDvdtheque\":false}]", MediaType.APPLICATION_JSON));
+		given(this.filmRestService.findAllFilms()).willReturn(allFilms);
 		List<Film> films = this.filmRestService.findAllFilms();
 		assertThat(films).isEqualTo(allFilms);
 	}
