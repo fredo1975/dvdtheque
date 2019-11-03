@@ -35,7 +35,7 @@
 		<module>dvdtheque-discovery-server</module>
 		<module>dvdtheque-hystrix-dashboard</module>
 		<module>dvdtheque-admin-server</module>
-		<!--module>dvdtheque-api-gateway</module -->
+		<module>dvdtheque-api-gateway</module>
 	</modules>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
