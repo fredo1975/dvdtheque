@@ -5,4 +5,4 @@ spring:
         - id: dvdtheque-rest-services
           uri: http://localhost:8083/
           predicates:
-            - Path=/dvdtheque/films/**
+            - Path=/dvdtheque/**
