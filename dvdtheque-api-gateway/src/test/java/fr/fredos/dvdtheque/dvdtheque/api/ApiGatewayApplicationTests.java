@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.dvdtheque.api.gateway;
+package fr.fredos.dvdtheque.dvdtheque.api;
 
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
