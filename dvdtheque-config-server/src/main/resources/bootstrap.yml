@@ -1,0 +1,14 @@
+server.port: 8888
+spring:
+  application:
+    name: dvdtheque-server-config
+  profiles:
+    active: local
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/fredo1975/spring-cloud-server-config.git
+          skipSslValidation: true
+          clone-on-start: false
+          default-label: master
