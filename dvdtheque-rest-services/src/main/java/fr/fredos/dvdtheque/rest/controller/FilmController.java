@@ -26,7 +26,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,62 +67,51 @@ public class FilmController {
     private MultipartFileUtil multipartFileUtil;
     @Value("${eureka.instance.instance-id}")
     private String instanceId;
-	@CrossOrigin
+
 	@GetMapping("/films/byPersonne")
 	Personne findPersonne(@RequestParam(name="nom",required = false) String nom) {
 		return personneService.findPersonneByName(nom);
 	}
-	@CrossOrigin
 	@GetMapping("/films")
 	List<Film> findAllFilms() {
 		return filmService.findAllFilms();
 	}
-	@CrossOrigin
 	@GetMapping("/films/genres")
 	List<Genre> findAllGenres() {
 		return filmService.findAllGenres();
 	}
-	@CrossOrigin
 	@PutMapping("/films/cleanAllfilms")
 	void cleanAllFilms() {
 		filmService.cleanAllFilms();
 	}
-	@CrossOrigin
 	@GetMapping("/films/byTitre/{titre}")
 	Film findFilmByTitre(@PathVariable String titre) {
 		return filmService.findFilmByTitre(titre);
 	}
-	@CrossOrigin
 	@GetMapping("/films/tmdb/byTitre/{titre}")
 	Set<Film> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		return tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre);
 	}
-	@CrossOrigin
 	@GetMapping("/films/byId/{id}")
 	Film findFilmById(@PathVariable Long id) {
 		return filmService.findFilm(id);
 	}
-	@CrossOrigin
 	@GetMapping("/films/byTmdbId/{tmdbid}")
 	Boolean checkIfTmdbFilmExists(@PathVariable Long tmdbid) {
 		return filmService.checkIfTmdbFilmExists(tmdbid);
 	}
-	@CrossOrigin
 	@GetMapping("/realisateurs")
 	List<Personne> findAllRealisateurs() {
 		return personneService.findAllRealisateur();
 	}
-	@CrossOrigin
 	@GetMapping("/acteurs")
 	List<Personne> findAllActeurs() {
 		return personneService.findAllActeur();
 	}
-	@CrossOrigin
 	@GetMapping("/personnes")
 	List<Personne> findAllPersonne() {
 		return personneService.findAllPersonne();
 	}
-	@CrossOrigin
 	@PutMapping("/films/tmdb/{tmdbId}")
 	ResponseEntity<Film> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws Exception {
 		Film filmOptional = filmService.findFilm(film.getId());
@@ -134,7 +122,6 @@ public class FilmController {
 		Film replacedFilm = tmdbServiceClient.replaceFilm(tmdbId, filmOptional);
 		return ResponseEntity.ok(replacedFilm);
 	}
-	@CrossOrigin
 	@PutMapping("/films/update/{id}")
 	ResponseEntity<Object> updateFilm(@RequestBody Film film,@PathVariable Long id) {
 		Film filmOptional = filmService.findFilm(id);
@@ -148,8 +135,6 @@ public class FilmController {
 		filmService.updateFilm(film);
 		return ResponseEntity.noContent().build();
 	}
-	
-	@CrossOrigin
 	@PutMapping("/films/save/{tmdbId}")
 	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId) throws Exception {
 		Film savedFilm;
@@ -165,7 +150,6 @@ public class FilmController {
 		}
 		return ResponseEntity.badRequest().build();
 	}
-	@CrossOrigin
 	@PutMapping("/personnes/byId/{id}")
 	ResponseEntity<Object> updatePersonne(@RequestBody Personne p,@PathVariable Long id) {
 		Personne personne = personneService.findByPersonneId(id);
@@ -179,8 +163,6 @@ public class FilmController {
 		logger.info(personne.toString());
 		return ResponseEntity.noContent().build();
 	}
-	
-	@CrossOrigin
 	@PostMapping("/films/import")
 	ResponseEntity<Void> importFilmList(@RequestParam("file") MultipartFile file) {
 		File resFile = null;
@@ -202,7 +184,6 @@ public class FilmController {
 		
 		return ResponseEntity.noContent().build();
 	}
-	@CrossOrigin
 	@PostMapping("/films/export")
 	ResponseEntity<byte[]> exportFilmList() throws DvdthequeServerRestException, IOException{
 		HttpHeaders headers = new HttpHeaders();
