@@ -3,9 +3,6 @@ spring:
     gateway:
       routes:
         - id: dvdtheque-rest-services
-          uri: lb://dvdtheque-rest-services
-          port: 8083
+          uri: http://localhost:8083/
           predicates:
-            - Path=/films/**
-          filters:
-            - StripPrefix=2
+            - Path=/dvdtheque/films/**
