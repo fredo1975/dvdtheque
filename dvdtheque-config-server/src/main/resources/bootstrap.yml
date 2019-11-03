@@ -11,4 +11,4 @@ spring:
           uri: https://github.com/fredo1975/spring-cloud-server-config.git
           skipSslValidation: true
           clone-on-start: false
-          default-label: master
+          default-label: develop
