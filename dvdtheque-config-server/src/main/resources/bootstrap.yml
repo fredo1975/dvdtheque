@@ -7,7 +7,6 @@ spring:
     active: local
   cloud:
     config:
-      label: develop
       server:
         git:
           uri: https://github.com/fredo1975/spring-cloud-server-config.git
