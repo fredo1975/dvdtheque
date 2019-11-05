@@ -1,0 +1,14 @@
+server:
+  port: 8062
+spring:
+  application:
+    name: api-gateway-server
+  profiles:
+    active: local
+  cloud:
+    config:
+      uri: http://192.168.1.103:8888
+      fail-fast: true
+    devtools:
+      livereload:
+        port: 0

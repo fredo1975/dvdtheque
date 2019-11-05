@@ -8,8 +8,10 @@ pipeline {
     	VERSION = readMavenPom().getVersion()
     	def pom = readMavenPom file: 'pom.xml'
     	def NVERSION = pom.version.replace("-SNAPSHOT", "")
-    	def PROD_SERVER_IP = '192.168.1.100'
-    	def DEV_SERVER_IP = '192.168.1.103'
+    	def PROD_SERVER1_IP = '192.168.1.105'
+    	def PROD_SERVER2_IP = '192.168.1.106'
+    	def DEV_SERVER1_IP = '192.168.1.103'
+    	def DEV_SERVER2_IP = '192.168.1.101'
     	ACTION_TYPE = "${env.ACTION_TYPE}"
     }
     stages {
@@ -22,8 +24,9 @@ pipeline {
                     echo "pom = ${pom}"
                     echo "NVERSION = ${NVERSION}"
                     echo "DEV_VERSION = ${DEV_VERSION}"
-                    echo "PROD_SERVER_IP = ${PROD_SERVER_IP}"
-                    echo "DEV_SERVER_IP = ${DEV_SERVER_IP}"
+                    echo "PROD_SERVER1_IP = ${PROD_SERVER1_IP}"
+                    echo "DEV_SERVER1_IP = ${DEV_SERVER1_IP}"
+                    echo "DEV_SERVER2_IP = ${DEV_SERVER2_IP}"
                 '''
             }
         }
@@ -49,16 +52,32 @@ pipeline {
                 }
             }
         }
-        stage('Stopping Dev Rest service') {
+        stage('Stopping Dev1 Rest service') {
         	steps {
-	       		sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl stop dvdtheque-rest.service'
+	       		sh 'ssh jenkins@$DEV_SERVER1_IP sudo systemctl stop dvdtheque-rest.service'
 	       	}
 	    }
-	    stage('Stopping Prod Rest service') {
+	    stage('Stopping Dev2 Rest service') {
+        	steps {
+	       		sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl stop dvdtheque-rest.service'
+	       	}
+	    }
+	    stage('Stopping Prod1 Rest service') {
 	    	steps {
 	    		script {
 			    	if("${ACTION_TYPE}" == "release"){
-			    		sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-rest.service'
+			    		sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl stop dvdtheque-rest.service'
+			    	}else if ("${ACTION_TYPE}" == "release-noTest") {
+			    		sh 'echo nothing to do'
+			    	}
+		    	}
+	    	}
+	    }
+	    stage('Stopping Prod2 Rest service') {
+	    	steps {
+	    		script {
+			    	if("${ACTION_TYPE}" == "release"){
+			    		sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl stop dvdtheque-rest.service'
 			    	}else if ("${ACTION_TYPE}" == "release-noTest") {
 			    		sh 'echo nothing to do'
 			    	}
@@ -69,40 +88,75 @@ pipeline {
             steps {
                 script {
 			 		if("${ACTION_TYPE}" == "release"){
-			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$DEV_SERVER_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
-			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$PROD_SERVER_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
+			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$DEV_SERVER1_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
+			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$DEV_SERVER2_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
+			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$PROD_SERVER1_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
+			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$NVERSION.jar jenkins@$PROD_SERVER2_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
 			 		}else if ("${ACTION_TYPE}" == "release-noTest") {
-			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$VERSION.jar jenkins@$DEV_SERVER_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
+			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$VERSION.jar jenkins@$DEV_SERVER1_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
+			 			sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$VERSION.jar jenkins@$DEV_SERVER2_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
 			 		}
 			 	}
             }
         }
-        stage('Sarting Dev Rest service') {
+        stage('Sarting Dev1 Rest service') {
         	steps {
-	        	sh 'ssh jenkins@$DEV_SERVER_IP sudo systemctl start dvdtheque-rest.service'
+	        	sh 'ssh jenkins@$DEV_SERVER1_IP sudo systemctl start dvdtheque-rest.service'
 	        }
    		}
-   		stage('Sarting Prod Rest service') {
+   		stage('Sarting Dev2 Rest service') {
+        	steps {
+	        	sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl start dvdtheque-rest.service'
+	        }
+   		}
+   		stage('Sarting Prod1 Rest service') {
    			steps {
 	   			script {
 		   			if("${ACTION_TYPE}" == "release"){
-		   				sh 'ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-rest.service'
+		   				sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl start dvdtheque-rest.service'
 		   			}else if ("${ACTION_TYPE}" == "release-noTest") {
 		   				sh 'echo nothing to do'
 		   			}
 	   			}
 	   		}
    		}
-   		stage('Check status Dev Rest service') {
+   		stage('Sarting Prod2 Rest service') {
    			steps {
-	        	sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl status dvdtheque-rest.service"
+	   			script {
+		   			if("${ACTION_TYPE}" == "release"){
+		   				sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl start dvdtheque-rest.service'
+		   			}else if ("${ACTION_TYPE}" == "release-noTest") {
+		   				sh 'echo nothing to do'
+		   			}
+	   			}
+	   		}
+   		}
+   		stage('Check status Dev1 Rest service') {
+   			steps {
+	        	sh "ssh jenkins@$DEV_SERVER1_IP sudo systemctl status dvdtheque-rest.service"
 	        }
 	   	}
-		stage('Check status Prod Rest service') {
+	   	stage('Check status Dev2 Rest service') {
+   			steps {
+	        	sh "ssh jenkins@$DEV_SERVER2_IP sudo systemctl status dvdtheque-rest.service"
+	        }
+	   	}
+		stage('Check status Prod1 Rest service') {
 			steps {
 				script {
 				    if("${ACTION_TYPE}" == "release"){
-				         sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-server-config.service"
+				         sh "ssh jenkins@$PROD_SERVER1_IP sudo systemctl status dvdtheque-rest.service"
+				    }else if ("${ACTION_TYPE}" == "release-noTest") {
+				         sh 'echo nothing to do'
+				    }
+			    }
+			}
+		}
+		stage('Check status Prod2 Rest service') {
+			steps {
+				script {
+				    if("${ACTION_TYPE}" == "release"){
+				         sh "ssh jenkins@$PROD_SERVER2_IP sudo systemctl status dvdtheque-rest.service"
 				    }else if ("${ACTION_TYPE}" == "release-noTest") {
 				         sh 'echo nothing to do'
 				    }

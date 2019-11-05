@@ -14,7 +14,7 @@ import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 
 @Controller
-@ComponentScan({ "fr.fredos.dvdtheque" })
+@ComponentScan({ "fr.fredos.dvdtheque.websocket" })
 public class DvdthequeWebSocketController {
 	protected Logger logger = LoggerFactory.getLogger(DvdthequeWebSocketController.class);
 	@Autowired

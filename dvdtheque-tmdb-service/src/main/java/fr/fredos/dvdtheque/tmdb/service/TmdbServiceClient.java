@@ -1,7 +1,6 @@
 package fr.fredos.dvdtheque.tmdb.service;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
