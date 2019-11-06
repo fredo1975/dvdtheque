@@ -12,7 +12,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 @ComponentScan({"fr.fredos.dvdtheque"})
-@Profile({"local1","local2","dev1","dev2","prod"})
+@Profile({"local1","local2","dev1","dev2","prod1","prod2"})
 public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 	@Value("${stomp.relay.host}")
 	private String stompRelayHost;
