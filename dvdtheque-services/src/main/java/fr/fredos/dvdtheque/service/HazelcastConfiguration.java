@@ -16,11 +16,7 @@ public class HazelcastConfiguration {
 	@Bean
 	public Config hazelCastConfig() {
 		Config config = new Config();
-		config.getGroupConfig().setName(groupConfigName);
-		//config.setProperty("hazelcast.initial.min.cluster.size","2");
-		config.setInstanceName("hazelcast-instance").addMapConfig(new MapConfig().setName("films")
-				.setMaxSizeConfig(new MaxSizeConfig(200, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
-				.setEvictionPolicy(EvictionPolicy.LRU).setTimeToLiveSeconds(20));
+		
 		return config;
 	}
 }
