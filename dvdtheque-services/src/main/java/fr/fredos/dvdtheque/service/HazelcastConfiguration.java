@@ -28,7 +28,7 @@ public class HazelcastConfiguration {
 		//config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true);
 		config.getNetworkConfig().getInterfaces().setEnabled(true);
 		List<String> interfaces = new ArrayList<>();
-		interfaces.add("192.168.1.1-24");
+		interfaces.add("192.168.1.*");
 		//config.setProperty("hazelcast.initial.min.cluster.size","2");
 		config.getNetworkConfig().getInterfaces().setInterfaces(interfaces);
 		config.setInstanceName("hazelcast-instance").addMapConfig(new MapConfig().setName("films")
