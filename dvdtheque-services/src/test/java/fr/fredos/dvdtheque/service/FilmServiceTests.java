@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -62,13 +63,15 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public static final int RIP_DATE_OFFSET = -10;
 	public static final int RIP_DATE_OFFSET2 = -1;
 	@Autowired
-	protected FilmDao filmDao;
+	private FilmDao filmDao;
 	@Autowired
-	protected IFilmService filmService;
+	private IFilmService filmService;
 	@Autowired
-	protected IPersonneService personneService;
+	private IPersonneService personneService;
 	@Autowired
-	protected ExcelFilmHandler excelFilmHandler;
+	private ExcelFilmHandler excelFilmHandler;
+	@Autowired
+    private CacheManager cacheManager;
 	private void assertFilmIsNotNull(Film film, int ripDateOffset) {
 		assertNotNull(film);
 		assertNotNull(film.getId());
@@ -123,6 +126,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	public void findFilm() throws Exception {
+		logger.info("Using cache manager: " + cacheManager.getClass().getName());
 		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
 		film = filmService.findFilm(film.getId());
