@@ -23,6 +23,7 @@ public class HazelcastConfiguration {
 	public Config hazelCastConfig() {
 		Config config = new Config();
 		config.getGroupConfig().setName(groupConfigName);
+		config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
 		config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true);
 		config.getNetworkConfig().getInterfaces().setEnabled(true);
 		logger.info("config.getNetworkConfig().getJoin().getTcpIpConfig().isEnabled()="+config.getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
