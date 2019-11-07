@@ -16,7 +16,9 @@ public class HazelcastConfiguration {
 	@Bean
 	public Config hazelCastConfig() {
 		Config config = new Config();
+		config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
 		config.getGroupConfig().setName(groupConfigName);
+		//HazelcastInstance h1 = Hazelcast.newHazelcastInstance( config );
 		config.setInstanceName("hazelcast-instance").addMapConfig(new MapConfig().setName("films")
 				.setMaxSizeConfig(new MaxSizeConfig(200, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
 				.setEvictionPolicy(EvictionPolicy.LRU).setTimeToLiveSeconds(20));
