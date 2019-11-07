@@ -1,5 +1,8 @@
 package fr.fredos.dvdtheque.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +20,9 @@ public class HazelcastConfiguration {
 	public Config hazelCastConfig() {
 		Config config = new Config();
 		config.getGroupConfig().setName(groupConfigName);
-		config.getNetworkConfig().getInterfaces().addInterface("192.168.1.*");
+		List<String> interfaces = new ArrayList<>();
+		interfaces.add("192.168.1.*");
+		config.getNetworkConfig().getInterfaces().setInterfaces(interfaces);
 		//config.setProperty("hazelcast.initial.min.cluster.size","2");
 		config.setInstanceName("hazelcast-instance").addMapConfig(new MapConfig().setName("films")
 				.setMaxSizeConfig(new MaxSizeConfig(200, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
