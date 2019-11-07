@@ -24,7 +24,9 @@ public class HazelcastConfiguration {
 		Config config = new Config();
 		config.getGroupConfig().setName(groupConfigName);
 		config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true);
+		config.getNetworkConfig().getInterfaces().setEnabled(true);
 		logger.info("config.getNetworkConfig().getJoin().getTcpIpConfig().isEnabled()="+config.getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
+		logger.info("config.getNetworkConfig().getInterfaces().isEnabled()="+config.getNetworkConfig().getInterfaces().isEnabled());
 		List<String> interfaces = new ArrayList<>();
 		interfaces.add("192.168.1.*");
 		config.getNetworkConfig().getInterfaces().setInterfaces(interfaces);
