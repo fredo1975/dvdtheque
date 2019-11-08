@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 public class Film implements Serializable {
 	private static final long serialVersionUID = -1382161470818168805L;
 	@Transient
-	protected Logger logger = LoggerFactory.getLogger(Film.class);
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
