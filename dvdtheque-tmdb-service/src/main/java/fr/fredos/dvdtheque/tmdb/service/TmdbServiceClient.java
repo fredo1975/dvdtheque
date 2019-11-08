@@ -220,6 +220,8 @@ public class TmdbServiceClient {
 					Genre genre = filmService.findGenre(_g.getId());
 					if(genre == null) {
 						genre = filmService.saveGenre(new Genre(_g.getId(),_g.getName()));
+					}else {
+						genre = filmService.attachToSession(genre);
 					}
 					transformedfilm.getGenres().add(genre);
 				}else {

@@ -192,4 +192,9 @@ public class FilmDaoImpl implements FilmDao {
 		q.setParameter("tmdbId", tmdbId);
 		return ((Long)q.getSingleResult())==1;
 	}
+	@Override
+	public Genre attachToSession(Genre genre) {
+		//Genre genre = findGenre(id);
+		return this.entityManager.merge(genre);
+	}
 }
