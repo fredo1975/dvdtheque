@@ -42,15 +42,12 @@ public class Film implements Serializable {
 	@JoinColumn(name = "ID_DVD",nullable = true)
 	@ManyToOne(cascade=CascadeType.ALL)
 	private Dvd dvd;
-	@Transient
-	//@Column(name = "ORIGINE")
+	@Column(name = "ORIGINE")
 	private FilmOrigine origine;
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	private Set<Personne> realisateurs = new HashSet<>();
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	private Set<Personne> acteurs = new HashSet<>();
-	@Column(name = "RIPPED")
-	private boolean ripped;
 	@Column(name = "VU")
 	private boolean vu;
 	@Column(name = "POSTER_PATH")
@@ -123,18 +120,14 @@ public class Film implements Serializable {
 	public void setActeurs(Set<Personne> acteurs) {
 		this.acteurs = acteurs;
 	}
-	public boolean isRipped() {
-		return ripped;
-	}
+	
 	public String getOverview() {
 		return overview;
 	}
 	public void setOverview(String overview) {
 		this.overview = overview;
 	}
-	public void setRipped(boolean ripped) {
-		this.ripped = ripped;
-	}
+	
 	public boolean isVu() {
 		return vu;
 	}
@@ -209,9 +202,9 @@ public class Film implements Serializable {
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
-				+ ", origine=" + origine + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped="
-				+ ripped + ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview
-				+ ", runtime=" + runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
+				+ ", origine=" + origine + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", vu=" + vu
+				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
+				+ runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
 				+ alreadyInDvdtheque + "]";
 	}
 }

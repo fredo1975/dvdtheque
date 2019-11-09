@@ -129,7 +129,7 @@ public class FilmController {
 			return ResponseEntity.notFound().build();
 		}
 		// handle date rip
-		if(!filmOptional.isRipped() && film.isRipped()) {
+		if(!filmOptional.getDvd().isRipped() && film.getDvd().isRipped()) {
 			film.getDvd().setDateRip(new Date());
 		}
 		filmService.updateFilm(film);

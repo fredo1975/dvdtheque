@@ -153,10 +153,10 @@ public class FilmListView extends AbstractViewListenerHolder {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(rippedComboBox.getSelectedIndex()==0) {
-					FilmListView.this.selectedFilm.setRipped(true);
+					FilmListView.this.selectedFilm.getDvd().setRipped(true);
 					FilmListView.this.selectedFilm.getDvd().setDateRip(new Date());
 				}else {
-					FilmListView.this.selectedFilm.setRipped(false);
+					FilmListView.this.selectedFilm.getDvd().setRipped(false);
 					FilmListView.this.selectedFilm.getDvd().setDateRip(null);
 				}
 			}
@@ -294,7 +294,7 @@ public class FilmListView extends AbstractViewListenerHolder {
 		this.selectedFilm = film;
 		Object[] filmValues = { film.getTitre(), film.getTitreO(), film.getAnnee(), film.getDvd().getZone(),
 				film.getDvd().getAnnee(), film.getRealisateurs(), film.getActeurs(), film.getOverview(),
-				film.getTmdbId(), film.getDvd().getDateRip(), film.isRipped() };
+				film.getTmdbId(), film.getDvd().getDateRip(), film.getDvd().isRipped() };
 
 		for (int i = 0; i < this.filmLabels.length; i++) {
 			JLabel titreTextFieldLabel = new JLabel(this.filmLabels[i] + ": ");
@@ -350,7 +350,7 @@ public class FilmListView extends AbstractViewListenerHolder {
 				c.weightx = 1.0;
 				rightHalf.add(filmYearDvdComboBox, c);
 			}else if(i == 10) {
-				if(film.isRipped()) {
+				if(film.getDvd().isRipped()) {
 					rippedComboBox.setSelectedIndex(0);
 				}else {
 					rippedComboBox.setSelectedIndex(1);

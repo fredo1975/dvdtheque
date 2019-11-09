@@ -88,8 +88,8 @@ public class ExcelFilmHandler {
         addCell(film.getDvd().getZone().toString());
         addCell(film.getAnnee().toString());
         addCell(personneService.printPersonnes(film.getActeurs(),","));
-        addCell(film.isRipped()?"oui":"non");
-        if(film.isRipped() && film.getDvd().getDateRip() != null) {
+        addCell(film.getDvd().isRipped()?"oui":"non");
+        if(film.getDvd().isRipped() && film.getDvd().getDateRip() != null) {
         	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             addCell(sdf.format(film.getDvd().getDateRip()));
         }else {

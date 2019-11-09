@@ -93,7 +93,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = false)
 	public void updateFilm(Film film){
 		upperCaseTitre(film);
-		if(!film.isRipped()) {
+		if(!film.getDvd().isRipped()) {
 			film.getDvd().setDateRip(null);
 		}
 		filmDao.updateFilm(film);
@@ -209,99 +209,6 @@ public class FilmServiceImpl implements IFilmService {
 		}
 		return dvd;
 	}
-	
-	/** TEST PURPOSE **/
-	
-	private Set<Personne> buildActeurs(final Personne act1,final Personne act2,final Personne act3){
-		Set<Personne> acteurs = new HashSet<>();
-		acteurs.add(act1);
-		if(act2!=null) {
-			acteurs.add(act2);
-		}
-		if(act3!=null) {
-			acteurs.add(act3);
-		}
-		return acteurs;
-	}
-	private Set<Personne> buildRealisateurs(final Personne realisateur){
-		Set<Personne> realisateurs = new HashSet<>();
-		realisateurs.add(realisateur);
-		return realisateurs;
-	}
-	
-	private Film buildFilm(final String titre,
-			final Integer annee,
-			final Personne realisateur,
-			final Personne act1,
-			final Personne act2,
-			final Personne act3,
-			final Date ripDate, 
-			final DvdFormat dvdFormat, 
-			final Set<Genre> genres) {
-		Film film = new Film();
-		film.setAnnee(annee);
-		film.setRipped(true);
-		film.setTitre(titre);
-		film.setTitreO(titre);
-		film.setDvd(buildDvd(annee,null,null, ripDate, dvdFormat));
-		film.setRealisateurs(buildRealisateurs(realisateur));
-		film.setActeurs(buildActeurs(act1,act2,act3));
-		film.setTmdbId(new Long(100));
-		film.setOverview("Overview");
-		film.setGenres(genres);
-		return film;
-	}
-	//@Cacheable(value= "filmCache")
-	@Override
-	public Film createOrRetrieveFilm(final String titre,final Integer annee,
-			final String realNom,
-			final String act1Nom,
-			final String act2Nom,
-			final String act3Nom, 
-			final Date ripDate, 
-			final DvdFormat dvdFormat, 
-			final Genre genre1, 
-			final Genre genre2) {
-		Film film = findFilmByTitre(titre);
-		if(film == null) {
-			return createFilm(titre,annee, realNom, act1Nom, act2Nom, act3Nom, ripDate, dvdFormat, genre1, genre2);
-		}
-		return film;
-	}
-	private Genre createOrRetrieveGenre(Genre g) {
-		Genre genre = filmDao.findGenre(g.getTmdbId());
-		if(genre == null) {
-			genre = filmDao.saveGenre(g);
-		}
-		return genre;
-	}
-	private Film createFilm(final String titre,
-			final Integer annee,
-			final String realNom,
-			final String act1Nom,
-			final String act2Nom,
-			final String act3Nom,
-			final Date ripDate, 
-			final DvdFormat dvdFormat, 
-			final Genre genre1, 
-			final Genre genre2) {
-		Personne realisateur = null;
-		Personne acteur1 = null;
-		Personne acteur2 = null;
-		Personne acteur3 = null;
-		realisateur = personneService.createOrRetrievePersonne(realNom, null);
-		acteur1 = personneService.createOrRetrievePersonne(act1Nom, null);
-		acteur2 = personneService.createOrRetrievePersonne(act2Nom, null);
-		acteur3 = personneService.createOrRetrievePersonne(act3Nom, null);
-		Set<Genre> newGenres = new HashSet<Genre>(2);
-		newGenres.add(createOrRetrieveGenre(genre1));
-		newGenres.add(createOrRetrieveGenre(genre2));
-		Film film = buildFilm(titre,annee,realisateur,acteur1,acteur2,acteur3, ripDate, dvdFormat, newGenres);
-		Long idFilm = saveNewFilm(film);
-		film.setId(idFilm);
-		return film;
-	}
-	
 	@Override
 	public Boolean checkIfTmdbFilmExists(Long tmdbId) {
 		return this.filmDao.checkIfTmdbFilmExists(tmdbId);
