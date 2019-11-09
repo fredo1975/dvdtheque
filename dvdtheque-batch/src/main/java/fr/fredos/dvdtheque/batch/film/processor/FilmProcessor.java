@@ -17,6 +17,7 @@ import org.springframework.jms.core.JmsTemplate;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
@@ -57,20 +58,21 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			filmToSave = tmdbServiceClient.transformTmdbFilmToDvdThequeFilm(null, results, new HashSet<>(), true);
 		}
 		if(filmToSave != null) {
-			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null, DvdFormat.valueOf(item.getDvdFormat()));
-			filmToSave.setDvd(dvd);
-			//filmToSave.setTitreFromExcelFile(StringUtils.upperCase(item.getTitre()));
-			boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
-			if(!loadFromFile) {
-				filmToSave.setRipped(false);
-			}else {
-				if(StringUtils.isEmpty(item.getRipped())) {
-					filmToSave.setRipped(false);
+			if(item.getFilmFormat().equalsIgnoreCase(FilmOrigine.DVD.name())) {
+				Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null, DvdFormat.valueOf(item.getFilmFormat()));
+				filmToSave.setDvd(dvd);
+				boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
+				if(!loadFromFile) {
+					filmToSave.getDvd().setRipped(false);
 				}else {
-					filmToSave.setRipped(item.getRipped().equalsIgnoreCase("oui")?true:false);
-					if(item.getRipped().equalsIgnoreCase("oui") && StringUtils.isNotEmpty(item.getRipDate())) {
-						DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-						filmToSave.getDvd().setDateRip(sdf.parse(item.getRipDate()));
+					if(StringUtils.isEmpty(item.getRipped())) {
+						filmToSave.getDvd().setRipped(false);
+					}else {
+						filmToSave.getDvd().setRipped(item.getRipped().equalsIgnoreCase("oui")?true:false);
+						if(item.getRipped().equalsIgnoreCase("oui") && StringUtils.isNotEmpty(item.getRipDate())) {
+							DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+							filmToSave.getDvd().setDateRip(sdf.parse(item.getRipDate()));
+						}
 					}
 				}
 			}

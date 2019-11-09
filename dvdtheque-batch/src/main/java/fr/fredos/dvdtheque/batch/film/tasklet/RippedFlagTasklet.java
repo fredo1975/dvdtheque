@@ -52,7 +52,7 @@ public class RippedFlagTasklet implements Tasklet{
 	        		try {
 	        			Film film = filmService.findFilmByTitre(titre);
 	        			if(film != null) {
-	        				film.setRipped(true);
+	        				film.getDvd().setRipped(true);
 	        				film.getDvd().setDateRip(cal.getTime());
 	            			filmService.updateFilm(film);
 	            			logger.debug(film.toString());

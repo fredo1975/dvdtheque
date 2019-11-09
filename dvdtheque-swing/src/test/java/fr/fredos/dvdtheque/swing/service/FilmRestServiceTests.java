@@ -12,7 +12,6 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -91,7 +90,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 		assertFilmIsNotNull(film);
 		Film savedFilm = filmRestService.findFilmById(film.getId());
 		assertEquals(StringUtils.upperCase(film.getTitre()),savedFilm.getTitre());
-		assertFalse(film.isRipped());
+		assertFalse(film.getDvd().isRipped());
 	}
 	@Test
 	public void testUpdateFilm() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
@@ -100,11 +99,11 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 		Film f = filmRestService.findFilmById(film.getId());
 		assertNotNull(f);
 		//filmSaved.setTitre(TITRE_FILM_UPDATED_TMBD_ID_4780);
-		f.setRipped(true);
+		f.getDvd().setRipped(true);
 		filmRestService.updateFilm(f);
 		Film filmUpdated = filmRestService.findFilmById(f.getId());
 		assertNotNull(filmUpdated);
-		assertTrue(filmUpdated.isRipped());
+		assertTrue(filmUpdated.getDvd().isRipped());
 	}
 	@Test
 	public void testCheckIfTmdbFilmExists() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {

@@ -60,14 +60,14 @@ public class FilmDaoImpl implements FilmDao {
 		return (Film)q.getSingleResult();
 	}
 	public Film findFilmByTitre(String titre){
-		Query q = this.entityManager.createQuery("from Film where titre = UPPER(:titre)");
+		Query q = this.entityManager.createQuery("from Film where UPPER(titre) = UPPER(:titre)");
 		q.setParameter("titre", titre);
 		try {
 			return (Film)q.getSingleResult();
 		}catch(NoResultException nre) {
-			
+			logger.error(nre.getMessage());
 		}catch(NonUniqueResultException nre) {
-			
+			logger.error(nre.getMessage());
 		}
 		return null;
 	}
@@ -171,7 +171,7 @@ public class FilmDaoImpl implements FilmDao {
 		
 	}
 	public List<Film> getAllRippedFilms(){
-		Query query = this.entityManager.createQuery("from Film film where film.ripped=1");
+		Query query = this.entityManager.createQuery("from Film film left join fetch film.dvd dvd where dvd.ripped=1");
         return query.getResultList();
 	}
 	public void removeFilm(Film film) {

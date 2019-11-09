@@ -146,7 +146,7 @@ public class FilmDto implements Serializable {
 		if(!CollectionUtils.isEmpty(film.getRealisateurs())){
 			filmDto.getPersonnesFilm().setRealisateur(RealisateurDto.toDto(film.getRealisateurs().iterator().next()));
 		}
-		filmDto.setRipped(film.isRipped());
+		filmDto.setRipped(film.getDvd().isRipped());
 		filmDto.setPosterPath(film.getPosterPath());
 		filmDto.setTmdbId(film.getTmdbId());
 		return filmDto;
@@ -167,7 +167,7 @@ public class FilmDto implements Serializable {
 		film.setActeurs(acteurs);
 		realisateurs.add(PersonneDto.fromDto(this.getPersonnesFilm().getRealisateur().getPersonne()));
 		film.setRealisateurs(realisateurs);
-		film.setRipped(this.isRipped());
+		film.getDvd().setRipped(this.isRipped());
 		film.setPosterPath(this.getPosterPath());
 		film.setTmdbId(this.getTmdbId());
 		return film;

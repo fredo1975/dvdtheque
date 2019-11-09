@@ -107,7 +107,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
-				assertTrue(film.isRipped());
+				assertTrue(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
 			if(TITRE_FILM_2046.equals(film.getTitre())) {
@@ -117,7 +117,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
-				assertTrue(film.isRipped());
+				assertTrue(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
 			if(TITRE_FILM_40_ans.equals(film.getTitre())) {
@@ -127,7 +127,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
-				assertFalse(film.isRipped());
+				assertFalse(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
 			assertFilmIsNotNull(film);
