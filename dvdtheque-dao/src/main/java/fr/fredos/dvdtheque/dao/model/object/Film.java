@@ -21,6 +21,8 @@ import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+
 @Entity
 @Table(name = "FILM")
 public class Film implements Serializable {
@@ -37,9 +39,12 @@ public class Film implements Serializable {
 	private String titre;
 	@Column(name = "TITRE_O")
 	private String titreO;
-	@JoinColumn(name = "ID_DVD")
+	@JoinColumn(name = "ID_DVD",nullable = true)
 	@ManyToOne(cascade=CascadeType.ALL)
 	private Dvd dvd;
+	@Transient
+	//@Column(name = "ORIGINE")
+	private FilmOrigine origine;
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	private Set<Personne> realisateurs = new HashSet<>();
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
@@ -142,6 +147,12 @@ public class Film implements Serializable {
 	public void setHomepage(String homepage) {
 		this.homepage = homepage;
 	}
+	public FilmOrigine getOrigine() {
+		return origine;
+	}
+	public void setOrigine(FilmOrigine origine) {
+		this.origine = origine;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -198,9 +209,9 @@ public class Film implements Serializable {
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
-				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped + ", vu=" + vu
-				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
-				+ runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
+				+ ", origine=" + origine + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped="
+				+ ripped + ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview
+				+ ", runtime=" + runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
 				+ alreadyInDvdtheque + "]";
 	}
 }

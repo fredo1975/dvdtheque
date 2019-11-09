@@ -51,6 +51,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public static final String TITRE_FILM2 = "Lorem Ipsum2";
 	public static final String TITRE_FILM_UPDATED = "Lorem Ipsum updated";
 	public static final String TITRE_FILM_REUPDATED = "Lorem Ipsum reupdated";
+	public static final String TITRE_FILM_REREUPDATED = "Lorem Ipsum rereupdated";
+	public static final String TITRE_FILM_REREREUPDATED = "Lorem Ipsum rerereupdated";
 	public static final Integer ANNEE = 2015;
 	public static final String REAL_NOM = "toto titi";
 	public static final String REAL_NOM1 = "Dan VanHarp";
@@ -148,6 +150,10 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertFilmIsNotNull(film2, RIP_DATE_OFFSET);
 		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
 		assertFilmIsNotNull(film3, RIP_DATE_OFFSET);
+		/*Film film4 = filmService.createOrRetrieveFilm(TITRE_FILM_REREUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
+		assertFilmIsNotNull(film4, RIP_DATE_OFFSET);
+		Film film5 = filmService.createOrRetrieveFilm(TITRE_FILM_REREREUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
+		assertFilmIsNotNull(film5, RIP_DATE_OFFSET);*/
 		StopWatch watch = new StopWatch();
 		watch.start();
 		List<Film> films = filmService.findAllFilms();
