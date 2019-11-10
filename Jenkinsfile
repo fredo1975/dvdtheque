@@ -59,11 +59,21 @@ pipeline {
 	       		sh 'ssh jenkins@$DEV_SERVER1_IP sudo systemctl stop dvdtheque-rest.service'
 	       	}
 	    }
+	    stage('Check status Dev1 Rest service after stop') {
+   			steps {
+	        	sh "ssh jenkins@$DEV_SERVER1_IP sudo systemctl status dvdtheque-rest.service"
+	        }
+	   	}
 	    stage('Stopping Dev2 Rest service') {
         	steps {
 	       		sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl stop dvdtheque-rest.service'
 	       	}
 	    }
+	    stage('Check status Dev2 Rest service after stop') {
+   			steps {
+	        	sh "ssh jenkins@$DEV_SERVER2_IP sudo systemctl status dvdtheque-rest.service"
+	        }
+	   	}
 	    stage('Stopping Prod1 Rest service') {
 	    	steps {
 	    		script {
@@ -75,6 +85,17 @@ pipeline {
 		    	}
 	    	}
 	    }
+	    stage('Check status Prod1 Rest service after stop') {
+			steps {
+				script {
+				    if("${ACTION_TYPE}" == "prod"){
+				         sh "ssh jenkins@$PROD_SERVER1_IP sudo systemctl status dvdtheque-rest.service"
+				    }else if ("${ACTION_TYPE}" == "dev-noTest" || "${ACTION_TYPE}" == "dev") {
+				         sh 'echo nothing to do'
+				    }
+			    }
+			}
+		}
 	    stage('Stopping Prod2 Rest service') {
 	    	steps {
 	    		script {
@@ -86,6 +107,17 @@ pipeline {
 		    	}
 	    	}
 	    }
+		stage('Check status Prod2 Rest service after stop') {
+			steps {
+				script {
+				    if("${ACTION_TYPE}" == "prod"){
+				         sh "ssh jenkins@$PROD_SERVER2_IP sudo systemctl status dvdtheque-rest.service"
+				    }else if ("${ACTION_TYPE}" == "dev-noTest" || "${ACTION_TYPE}" == "dev") {
+				         sh 'echo nothing to do'
+				    }
+			    }
+			}
+		}
         stage('Copying dvdtheque-rest-services') {
             steps {
                 script {
@@ -133,17 +165,17 @@ pipeline {
 	   			}
 	   		}
    		}
-   		stage('Check status Dev1 Rest service') {
+   		stage('Check status Dev1 Rest service after start') {
    			steps {
 	        	sh "ssh jenkins@$DEV_SERVER1_IP sudo systemctl status dvdtheque-rest.service"
 	        }
 	   	}
-	   	stage('Check status Dev2 Rest service') {
+	   	stage('Check status Dev2 Rest service after start') {
    			steps {
 	        	sh "ssh jenkins@$DEV_SERVER2_IP sudo systemctl status dvdtheque-rest.service"
 	        }
 	   	}
-		stage('Check status Prod1 Rest service') {
+		stage('Check status Prod1 Rest service after start') {
 			steps {
 				script {
 				    if("${ACTION_TYPE}" == "prod"){
@@ -154,7 +186,7 @@ pipeline {
 			    }
 			}
 		}
-		stage('Check status Prod2 Rest service') {
+		stage('Check status Prod2 Rest service after start') {
 			steps {
 				script {
 				    if("${ACTION_TYPE}" == "prod"){
