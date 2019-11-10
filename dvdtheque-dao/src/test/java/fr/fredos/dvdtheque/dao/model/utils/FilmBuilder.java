@@ -13,6 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -42,6 +43,7 @@ public class FilmBuilder {
 	public static final String ACT4_TMBD_ID_1271 = "TOM WISDOM";
 	public static final String SHEET_NAME = "Films";
 	public static final String ZONE_DVD = "2";
+	public static final Long TMDBID = new Long(100);
 	public static final int RIP_DATE_OFFSET = -10;
 	public static final int RIP_DATE_OFFSET2 = -1;
 	public static Date createRipDate(int ripDateOffset) {
@@ -66,6 +68,8 @@ public class FilmBuilder {
 		private Genre genre1; 
 		private Genre genre2;
 		private boolean ripped;
+		private boolean vu;
+		private FilmOrigine origine;
 		
 		public Builder(String titre) {
             this.titre = titre;
@@ -118,6 +122,14 @@ public class FilmBuilder {
 			this.ripped = ripped;
 			return this;
 		}
+		public Builder setVu(boolean vu) {
+			this.vu = vu;
+			return this;
+		}
+		public Builder setOrigine(FilmOrigine origine) {
+			this.origine = origine;
+			return this;
+		}
 		public Film build() {
 			Film film = new Film();
 			Set<Personne> realisateurs = new HashSet<>();
@@ -149,29 +161,15 @@ public class FilmBuilder {
 			dvd.setZone(this.zone);
 			film.setDvd(dvd);
 			dvd.setRipped(this.ripped);
+			film.setOrigine(this.origine);
+			film.setVu(this.vu);
 			// hard coded
-			film.setTmdbId(new Long(100));
+			film.setTmdbId(TMDBID);
 			film.setOverview("Overview");
 			return film;
 		}
 	}
-	/*
-	public static void assertFilmIsNotNull(Film film, int ripDateOffset) {
-		assertNotNull(film);
-		assertNotNull(film.getId());
-		assertNotNull(film.getTitre());
-		assertNotNull(film.getAnnee());
-		assertNotNull(film.getDvd());
-		assertNotNull(film.getDvd().getDateRip());
-		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
-		assertTrue(film.getGenres().size() == 2);
-		assertEquals(clearDate(createRipDate(ripDateOffset)),film.getDvd().getDateRip());
-		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
-		assertTrue(film.getActeurs().size()==3||film.getActeurs().size()==2);
-		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
-		assertTrue(film.getRealisateurs().size()==1);
-		assertTrue(DvdFormat.DVD.equals(film.getDvd().getFormat()));
-	}*/
+	
 	public static void assertFilmIsNotNull(Film film, boolean dateRipNull, int ripDateOffset) {
 		assertNotNull(film);
 		assertNotNull(film.getId());

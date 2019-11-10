@@ -37,19 +37,18 @@ public class FilmControllerForImportFilmListTest {
 	@Autowired
 	ExcelFilmHandler excelFilmHandler;
 	private static final String IMPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "import";
-
+	private static final String contentType = "text/plain";
+	
 	@Test
 	public void testImportFilmListFromCsv() throws Exception {
 		Resource resource = new ClassPathResource("ListeDVD.csv");
 		File file = resource.getFile();
 		byte[] content = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
-		String contentType = "text/plain";
 		MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "ListDvd.csv", contentType, content);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(IMPORT_FILM_LIST_URI)
 				.file(mockMultipartFile);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
-
 	}
 	
 	@Test
@@ -57,12 +56,10 @@ public class FilmControllerForImportFilmListTest {
 		Resource resource = new ClassPathResource("ListeDVD.xlsx");
 		File file = resource.getFile();
 		byte[] bFile = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
-		String contentType = "text/plain";
 		MockMultipartFile mockMultipartFile = new MockMultipartFile("file", file.getName(), contentType, bFile);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(IMPORT_FILM_LIST_URI)
 				.file(mockMultipartFile);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
-
 	}
 }

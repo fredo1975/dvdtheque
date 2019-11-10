@@ -58,6 +58,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			filmToSave = tmdbServiceClient.transformTmdbFilmToDvdThequeFilm(null, results, new HashSet<>(), true);
 		}
 		if(filmToSave != null) {
+			filmToSave.setOrigine(FilmOrigine.valueOf(item.getOrigine()));
 			if(item.getFilmFormat().equalsIgnoreCase(FilmOrigine.DVD.name())) {
 				Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null, DvdFormat.valueOf(item.getFilmFormat()));
 				filmToSave.setDvd(dvd);

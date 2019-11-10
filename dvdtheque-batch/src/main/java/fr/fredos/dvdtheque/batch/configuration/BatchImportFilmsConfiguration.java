@@ -42,6 +42,7 @@ import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
+import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 
 @Configuration
 @EnableBatchProcessing
@@ -151,7 +152,7 @@ public class BatchImportFilmsConfiguration{
     	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_INIT, null,0l,JmsStatus.FILM_CSV_LINE_TOKENIZER_INIT.statusValue()));
         DelimitedLineTokenizer filmCsvImportFormatLineTokenizer = new DelimitedLineTokenizer();
         filmCsvImportFormatLineTokenizer.setDelimiter(";");
-        filmCsvImportFormatLineTokenizer.setNames(headerTab);
+        filmCsvImportFormatLineTokenizer.setNames(ExcelFilmHandler.EXCEL_HEADER_TAB);
         watch.stop();
         jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_COMPLETED, null,watch.getTime(),JmsStatus.FILM_CSV_LINE_TOKENIZER_COMPLETED.statusValue()));
 		logger.debug("createFilmCsvImportFormatLineTokenizer Time Elapsed: " + watch.getTime());

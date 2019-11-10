@@ -6,6 +6,7 @@ public class FilmCsvImportFormat {
 	}
 	private String realisateur;
 	private String titre;
+	private String origine;
 	private Integer zonedvd;
 	private Integer annee;
 	private String acteurs;
@@ -74,11 +75,16 @@ public class FilmCsvImportFormat {
 	public void setVu(String vu) {
 		this.vu = vu;
 	}
+	public String getOrigine() {
+		return origine;
+	}
+	public void setOrigine(String origine) {
+		this.origine = origine;
+	}
 	@Override
 	public String toString() {
-		return "FilmCsvImportFormat [realisateur=" + realisateur + ", titre=" + titre + ", zonedvd=" + zonedvd
-				+ ", annee=" + annee + ", acteurs=" + acteurs + ", ripped=" + ripped + ", ripDate=" + ripDate
-				+ ", filmFormat=" + filmFormat + ", tmdbId=" + tmdbId + ", vu=" + vu + "]";
+		return "FilmCsvImportFormat [realisateur=" + realisateur + ", titre=" + titre + ", origine=" + origine
+				+ ", zonedvd=" + zonedvd + ", annee=" + annee + ", acteurs=" + acteurs + ", ripped=" + ripped
+				+ ", ripDate=" + ripDate + ", filmFormat=" + filmFormat + ", tmdbId=" + tmdbId + ", vu=" + vu + "]";
 	}
-	
 }

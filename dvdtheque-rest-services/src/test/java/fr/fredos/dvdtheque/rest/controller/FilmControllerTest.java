@@ -43,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
@@ -113,6 +114,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -149,6 +151,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -188,6 +191,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -215,6 +219,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -251,6 +256,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -287,6 +293,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -322,6 +329,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -350,6 +358,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -384,6 +393,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -458,6 +468,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -486,6 +497,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -518,8 +530,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
+				.setVu(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -533,8 +547,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
 				.setRipped(true)
+				.setVu(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.BLUERAY)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
@@ -569,22 +585,31 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
                     	assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), StringUtils.upperCase(cellValue));
                     }
                     if(cell.getColumnIndex()==2) {
-                    	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
-                    }
-                    if(cell.getColumnIndex()==3) {
                     	assertEquals(FilmBuilder.ANNEE.toString(), cellValue);
                     }
-                    if(cell.getColumnIndex()==4) {
+                    if(cell.getColumnIndex()==3) {
                     	assertEquals(FilmBuilder.ACT3_TMBD_ID_4780 + ","+FilmBuilder.ACT1_TMBD_ID_4780 + "," + FilmBuilder.ACT2_TMBD_ID_4780, cellValue);
                     }
+                    if(cell.getColumnIndex()==4) {
+                    	assertEquals(FilmOrigine.DVD.name(), cellValue);
+                    }
                     if(cell.getColumnIndex()==5) {
-                    	assertEquals("oui", cellValue);
+                    	assertEquals(FilmBuilder.TMDBID.toString(), cellValue);
                     }
                     if(cell.getColumnIndex()==6) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==7) {
+                    	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
+                    }
+                    if(cell.getColumnIndex()==8) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==9) {
                     	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
                     	assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET2),Locale.FRANCE), cellValue);
                     }
-                    if(cell.getColumnIndex()==7) {
+                    if(cell.getColumnIndex()==10) {
                     	assertEquals(DvdFormat.BLUERAY.name(), cellValue);
                     }
                 });
@@ -598,22 +623,31 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
                     	assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), StringUtils.upperCase(cellValue));
                     }
                     if(cell.getColumnIndex()==2) {
-                    	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
-                    }
-                    if(cell.getColumnIndex()==3) {
                     	assertEquals(FilmBuilder.ANNEE.toString(), cellValue);
                     }
-                    if(cell.getColumnIndex()==4) {
+                    if(cell.getColumnIndex()==3) {
                     	assertEquals(FilmBuilder.ACT1_TMBD_ID_844 + "," + FilmBuilder.ACT2_TMBD_ID_844 + "," + FilmBuilder.ACT3_TMBD_ID_844, cellValue);
                     }
+                    if(cell.getColumnIndex()==4) {
+                    	assertEquals(FilmOrigine.DVD.name(), cellValue);
+                    }
                     if(cell.getColumnIndex()==5) {
-                    	assertEquals("oui", cellValue);
+                    	assertEquals(FilmBuilder.TMDBID.toString(), cellValue);
                     }
                     if(cell.getColumnIndex()==6) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==7) {
+                    	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
+                    }
+                    if(cell.getColumnIndex()==8) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==9) {
                     	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
                     	assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
                     }
-                    if(cell.getColumnIndex()==7) {
+                    if(cell.getColumnIndex()==10) {
                     	assertEquals(DvdFormat.DVD.name(), cellValue);
                     }
                 });
