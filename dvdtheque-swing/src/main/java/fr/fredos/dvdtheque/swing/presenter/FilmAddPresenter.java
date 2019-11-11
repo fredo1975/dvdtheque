@@ -22,6 +22,7 @@ import org.springframework.web.client.RestClientException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.swing.model.TmdbFilmTableModel;
 import fr.fredos.dvdtheque.swing.service.FilmRestService;
@@ -94,7 +95,7 @@ public class FilmAddPresenter implements FilmAddViewListener{
 				JOptionPane.showMessageDialog(filmAddViewPanel, "Ce film est déjà enregistré", "Chercher", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			Film filmSaved = filmRestService.saveTmdbFilm(tmdbFilmTableModel.getFilmAt(selectedRow).getId());
+			Film filmSaved = filmRestService.saveTmdbFilm(tmdbFilmTableModel.getFilmAt(selectedRow).getId(), FilmOrigine.DVD.name());
 			savedTmdbFilmsJLabel.setText(filmSaved.getTitre()+" sauvé");
 			savedTmdbFilmsJLabel.setVisible(true);
 		}
