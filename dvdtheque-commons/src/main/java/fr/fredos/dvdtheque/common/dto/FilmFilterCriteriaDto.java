@@ -8,18 +8,20 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import fr.fredos.dvdtheque.common.enums.FilmFilterCriteriaType;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 
 public class FilmFilterCriteriaDto {
 
 	private String titre;
 	private Integer annee;
 	private Set<FilmFilterCriteriaType> filmFilterCriteriaTypeSet;
-	private Long selectedRealisateur;
-	private Long selectedActeur;
-	private Boolean selectedRipped;
-	private Boolean selectedRippedSince;
-	public FilmFilterCriteriaDto(String titre, Integer annee, Long selectedRealisateur, Long selectedActeur,
-			Boolean selectedRipped, Boolean selectedRippedSince) {
+	private final Long selectedRealisateur;
+	private final Long selectedActeur;
+	private final Boolean selectedRipped;
+	private final Boolean selectedRippedSince;
+	private final FilmOrigine selectedFilmOrigine;
+	public FilmFilterCriteriaDto(final String titre, final Integer annee, final Long selectedRealisateur, final Long selectedActeur,
+			final Boolean selectedRipped, final Boolean selectedRippedSince, final FilmOrigine selectedFilmOrigine) {
 		super();
 		this.titre = titre;
 		this.annee = annee;
@@ -27,6 +29,7 @@ public class FilmFilterCriteriaDto {
 		this.selectedActeur = selectedActeur;
 		this.selectedRipped = selectedRipped;
 		this.selectedRippedSince = selectedRippedSince;
+		this.selectedFilmOrigine = selectedFilmOrigine;
 		applyFilmFilterCriteriaType();
 	}
 	private void applyFilmFilterCriteriaType() {
@@ -36,6 +39,7 @@ public class FilmFilterCriteriaDto {
 		Predicate<Boolean> filmFilterCriteriaTypeActeur = p -> selectedActeur!=null;
 		Predicate<Boolean> filmFilterCriteriaTypeRipped = p -> selectedRipped!=null;
 		Predicate<Boolean> filmFilterCriteriaTypeRippedSince = p -> selectedRippedSince!=null;
+		Predicate<Boolean> filmFilterCriteriaTypeFilmorigine = p -> selectedFilmOrigine!=null;
 		
 		if(filmFilterCriteriaTypeTitre.test(Boolean.TRUE)){
 			addFilmFilterCriteriaType(FilmFilterCriteriaType.TITRE);
@@ -55,6 +59,9 @@ public class FilmFilterCriteriaDto {
 		if(filmFilterCriteriaTypeRippedSince.test(Boolean.TRUE)){
 			addFilmFilterCriteriaType(FilmFilterCriteriaType.RIPPED_SINCE);
 		}
+		if(filmFilterCriteriaTypeFilmorigine.test(Boolean.TRUE)){
+			addFilmFilterCriteriaType(FilmFilterCriteriaType.ORIGINE);
+		}
 	}
 	public String getTitre() {
 		return titre;
@@ -71,13 +78,9 @@ public class FilmFilterCriteriaDto {
 	public Long getSelectedRealisateur() {
 		return selectedRealisateur;
 	}
-	public void setSelectedRealisateur(Long selectedRealisateur) {
-		this.selectedRealisateur = selectedRealisateur;
-	}
 	public Set<FilmFilterCriteriaType> getFilmFilterCriteriaTypeSet() {
 		return filmFilterCriteriaTypeSet;
 	}
-	
 	public void addFilmFilterCriteriaType(FilmFilterCriteriaType filmFilterCriteriaType) {
 		if(CollectionUtils.isEmpty(filmFilterCriteriaTypeSet)) {
 			filmFilterCriteriaTypeSet = new HashSet<>();
@@ -87,20 +90,13 @@ public class FilmFilterCriteriaDto {
 	public Long getSelectedActeur() {
 		return selectedActeur;
 	}
-	public void setSelectedActeur(Long selectedActeur) {
-		this.selectedActeur = selectedActeur;
-	}
 	public Boolean getSelectedRipped() {
 		return selectedRipped;
-	}
-	public void setSelectedRipped(Boolean selectedRipped) {
-		this.selectedRipped = selectedRipped;
 	}
 	public Boolean getSelectedRippedSince() {
 		return selectedRippedSince;
 	}
-	public void setSelectedRippedSince(Boolean selectedRippedSince) {
-		this.selectedRippedSince = selectedRippedSince;
+	public FilmOrigine getSelectedFilmOrigine() {
+		return selectedFilmOrigine;
 	}
-	
 }

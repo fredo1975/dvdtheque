@@ -26,8 +26,10 @@ import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.configuration.MessageConsumer;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
+import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 
 @SpringBootTest(classes = { BatchImportFilmsConfiguration.class,MessageConsumer.class,
 		RippedFlagTasklet.class,
@@ -106,8 +108,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
-				assertTrue(film.getDvd().isRipped());
-				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
+				assertTrue(FilmOrigine.EN_SALLE.equals(film.getOrigine()));
 			}
 			if(TITRE_FILM_2046.equals(film.getTitre())) {
 				is2046Exists = true;
@@ -129,7 +130,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertFalse(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
-			assertFilmIsNotNull(film);
+			FilmBuilder.assertFilmIsNotNull(film,true,0,false);
 		}
 		assertTrue(is2001odysseyExists);
 		assertTrue(is2046Exists);

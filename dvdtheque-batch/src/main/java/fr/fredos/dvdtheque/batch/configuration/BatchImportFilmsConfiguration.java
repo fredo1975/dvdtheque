@@ -48,7 +48,6 @@ import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 @EnableBatchProcessing
 public class BatchImportFilmsConfiguration{
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
-	String[] headerTab = new String[]{"realisateur", "titre", "zonedvd","annee","acteurs","ripped","ripdate","dvdformat","tmdbId","vu"};
 	@Autowired
 	protected JobBuilderFactory jobBuilderFactory;
     @Autowired
@@ -153,6 +152,7 @@ public class BatchImportFilmsConfiguration{
         DelimitedLineTokenizer filmCsvImportFormatLineTokenizer = new DelimitedLineTokenizer();
         filmCsvImportFormatLineTokenizer.setDelimiter(";");
         filmCsvImportFormatLineTokenizer.setNames(ExcelFilmHandler.EXCEL_HEADER_TAB);
+        filmCsvImportFormatLineTokenizer.setStrict(false);
         watch.stop();
         jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_COMPLETED, null,watch.getTime(),JmsStatus.FILM_CSV_LINE_TOKENIZER_COMPLETED.statusValue()));
 		logger.debug("createFilmCsvImportFormatLineTokenizer Time Elapsed: " + watch.getTime());

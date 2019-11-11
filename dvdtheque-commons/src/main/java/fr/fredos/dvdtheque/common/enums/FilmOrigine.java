@@ -1,5 +1,5 @@
 package fr.fredos.dvdtheque.common.enums;
 
 public enum FilmOrigine {
-	DVD, EN_SALLE, TV, PRET
+	DVD, EN_SALLE, TV, PRET, TOUS
 }

@@ -36,6 +36,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -136,11 +138,12 @@ public class FilmController {
 		return ResponseEntity.noContent().build();
 	}
 	@PutMapping("/films/save/{tmdbId}")
-	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId) throws Exception {
+	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
 		Film savedFilm;
 		logger.info("saveFilm - instanceId="+instanceId);
 		try {
-			savedFilm = tmdbServiceClient.saveTmbdFilm(tmdbId);
+			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			savedFilm = tmdbServiceClient.saveTmbdFilm(tmdbId, filmOrigine);
 			if(savedFilm==null) {
 				return ResponseEntity.notFound().build();
 			}
@@ -185,17 +188,31 @@ public class FilmController {
 		return ResponseEntity.noContent().build();
 	}
 	@PostMapping("/films/export")
-	ResponseEntity<byte[]> exportFilmList() throws DvdthequeServerRestException, IOException{
+	ResponseEntity<byte[]> exportFilmList(@RequestBody String origine) throws DvdthequeServerRestException, IOException{
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentLanguage(Locale.FRANCE);
     	headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 	    LocalDateTime localDate = LocalDateTime.now();
-	    String fileName = "ListeDVDExport" + "-" + localDate.getSecond() + ".xlsx";
-	    List<Film> list = filmService.findAllFilms();
-	    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
-        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
-        headers.setContentLength(excelContent.length);
-        return new ResponseEntity<byte[]>(excelContent, headers, HttpStatus.OK);
+	    String fileName = "ListeDVDExport" + "-" + localDate.getSecond() + "-" + origine + ".xlsx";
+	    try {
+	    	List<Film> list = null;
+	    	FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+	    	if(FilmOrigine.TOUS.equals(filmOrigine)) {
+	    		list = filmService.findAllFilms();
+	    	}else {
+	    		list = filmService.findAllFilmsByCriteria(new FilmFilterCriteriaDto(null,null,null,null,null, null, filmOrigine));
+	    	}
+	    	if(list == null) {
+	    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    	}
+		    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
+	        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+	        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+	        headers.setContentLength(excelContent.length);
+	        return new ResponseEntity<byte[]>(excelContent, headers, HttpStatus.OK);
+	    }catch (Exception e) {
+			logger.error(e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 }

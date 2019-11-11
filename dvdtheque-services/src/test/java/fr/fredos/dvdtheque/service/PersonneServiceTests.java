@@ -254,7 +254,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		film = filmService.findFilm(film.getId());
-		FilmBuilder.assertFilmIsNotNull(film,false,FilmBuilder.RIP_DATE_OFFSET);
+		FilmBuilder.assertFilmIsNotNull(film,false,FilmBuilder.RIP_DATE_OFFSET, true);
 	}
 	@Test
 	public void cleanAllPersonne() throws Exception {

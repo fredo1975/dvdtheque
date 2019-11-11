@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -103,10 +104,11 @@ public class TmdbServiceClient {
 	/**
 	 * we're creating a film from a TMDB film
 	 * @param tmdbId
+	 * @param filmOrigine TODO
 	 * @return
 	 * @throws Exception 
 	 */
-	public Film saveTmbdFilm(final Long tmdbId) throws Exception {
+	public Film saveTmbdFilm(final Long tmdbId, FilmOrigine filmOrigine) throws Exception {
 		if(this.filmService.checkIfTmdbFilmExists(tmdbId)) {
 			throw new Exception("Film with tmbdbId="+tmdbId+" already exists");
 		}
@@ -114,8 +116,11 @@ public class TmdbServiceClient {
 		if(results != null) {
 			Film filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);
 			filmToSave.setId(null);
-			Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), null, null, null, DvdFormat.DVD);
-			filmToSave.setDvd(dvd);
+			filmToSave.setOrigine(filmOrigine);
+			if(FilmOrigine.DVD.equals(filmOrigine)) {
+				Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), null, null, null, DvdFormat.DVD);
+				filmToSave.setDvd(dvd);
+			}
 			Long id = filmService.saveNewFilm(filmToSave);
 			filmToSave.setId(id);
 			return filmToSave;

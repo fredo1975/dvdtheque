@@ -25,6 +25,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
@@ -155,7 +156,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void savetmdbFilmTest() throws Exception {
-		Film film = client.saveTmbdFilm(13457l);
+		Film film = client.saveTmbdFilm(13457l, FilmOrigine.DVD);
 		assertFilmIsNotNull(film,true);
 		//assertEquals(new Integer(98), film.getRuntime());
 		logger.info("film = "+film.toString());

@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -92,7 +93,7 @@ public class ExcelFilmHandler {
         // 3
         addCell(personneService.printPersonnes(film.getActeurs(),","));
         // 4
-        addCell(film.getOrigine().name());
+        addCell(film.getOrigine()!=null?film.getOrigine().name():StringUtils.EMPTY);
         // 5
         addCell(film.getTmdbId().toString());
         // 6

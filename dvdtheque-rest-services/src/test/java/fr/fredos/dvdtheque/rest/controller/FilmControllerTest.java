@@ -136,7 +136,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 					.andExpect(MockMvcResultMatchers.status().isOk())
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
 			assertNotNull(resultActions);
-			FilmBuilder.assertFilmIsNotNull(filmToTest, true, FilmBuilder.RIP_DATE_OFFSET);
+			FilmBuilder.assertFilmIsNotNull(filmToTest, true, FilmBuilder.RIP_DATE_OFFSET, true);
 		}
 	}
 	@Test
@@ -264,7 +264,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET);
+		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, true);
 		List<Personne> allPersonne = personneService.findAllPersonne();
 		assertNotNull(allPersonne);
 		if (CollectionUtils.isNotEmpty(allPersonne)) {
@@ -374,7 +374,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
 		Film filmUpdated = filmService.findFilm(film.getId());
-		FilmBuilder.assertFilmIsNotNull(filmUpdated, true, FilmBuilder.RIP_DATE_OFFSET);
+		FilmBuilder.assertFilmIsNotNull(filmUpdated, true, FilmBuilder.RIP_DATE_OFFSET, true);
 		Results results = client.retrieveTmdbSearchResultsById(tmdbId1);
 		assertEquals(StringUtils.upperCase(results.getTitle()), filmUpdated.getTitre());
 		assertEquals(POSTER_PATH, filmUpdated.getPosterPath());
@@ -444,14 +444,27 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 
 	@Test
 	@Transactional
-	public void testSaveNewFilm() throws Exception {
+	public void testSaveNewFilmDvd() throws Exception {
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(SAVE_FILM_URI + tmdbId2)
-				.contentType(MediaType.APPLICATION_JSON);
+				.contentType(MediaType.APPLICATION_JSON).content(FilmOrigine.DVD.name());
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
 		Film filmSaved = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
-		FilmBuilder.assertFilmIsNotNull(filmSaved, true, FilmBuilder.RIP_DATE_OFFSET);
+		FilmBuilder.assertFilmIsNotNull(filmSaved, true, FilmBuilder.RIP_DATE_OFFSET, true);
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmSaved.getTitre());
+	}
+	
+	@Test
+	@Transactional
+	public void testSaveNewFilmEnSalle() throws Exception {
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(SAVE_FILM_URI + tmdbId2)
+				.contentType(MediaType.APPLICATION_JSON).content(FilmOrigine.EN_SALLE.name());
+		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
+		Film filmSaved = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
+		FilmBuilder.assertFilmIsNotNull(filmSaved, true, 0, false);
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmSaved.getTitre());
 	}
 
@@ -558,10 +571,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET2)).build();
 		Long filmId2 = filmService.saveNewFilm(film2);
 		assertNotNull(filmId2);
-		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET);
-		FilmBuilder.assertFilmIsNotNull(film2, false, FilmBuilder.RIP_DATE_OFFSET2);
-		//MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI);
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI);
+		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, true);
+		FilmBuilder.assertFilmIsNotNull(film2, false, FilmBuilder.RIP_DATE_OFFSET2, true);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI).content(FilmOrigine.DVD.name());
 		
 		MvcResult result = mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();

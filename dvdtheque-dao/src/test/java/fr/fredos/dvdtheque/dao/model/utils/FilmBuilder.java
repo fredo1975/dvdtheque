@@ -170,16 +170,19 @@ public class FilmBuilder {
 		}
 	}
 	
-	public static void assertFilmIsNotNull(Film film, boolean dateRipNull, int ripDateOffset) {
+	public static void assertFilmIsNotNull(Film film, boolean dateRipNull, int ripDateOffset, boolean isOrigineDvd) {
 		assertNotNull(film);
 		assertNotNull(film.getId());
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
-		assertNotNull(film.getDvd());
-		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
-		if (!dateRipNull) {
-			assertEquals(clearDate(createRipDate(ripDateOffset)), film.getDvd().getDateRip());
+		if(isOrigineDvd) {
+			assertNotNull(film.getDvd());
+			if (!dateRipNull) {
+				assertEquals(clearDate(createRipDate(ripDateOffset)), film.getDvd().getDateRip());
+			}
 		}
+		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
+		
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
 		assertTrue(film.getActeurs().size() >= 3);
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));

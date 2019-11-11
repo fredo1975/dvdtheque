@@ -97,11 +97,11 @@ public class FilmDaoImpl implements FilmDao {
     }
 	@SuppressWarnings("unchecked")
     public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {
-		StringBuilder sb = new StringBuilder("from Film film left join fetch film.acteurs act left join fetch film.realisateurs real ");
-		sb.append("left join fetch film.acteurs act2 ");
+		StringBuilder sb = new StringBuilder("select film from Film film ");
 		if(filmFilterCriteriaDto!=null) {
-			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.RIPPED_SINCE)) {
-				sb.append("left join fetch film.dvd dvd left join fetch film.genres g ");
+			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.ACTEUR)
+					&& filmFilterCriteriaDto.getSelectedActeur()!=null) {
+				sb.append("join film.acteurs act ");
 			}
 			sb.append("where 1=1 ");
 			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.TITRE)
@@ -123,6 +123,10 @@ public class FilmDaoImpl implements FilmDao {
 			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.RIPPED)
 					&& filmFilterCriteriaDto.getSelectedRipped()!=null) {
 				sb.append("and film.ripped=:ripped");
+			}
+			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.ORIGINE)
+					&& filmFilterCriteriaDto.getSelectedFilmOrigine()!=null) {
+				sb.append("and film.origine=:origine");
 			}
 		}
 		if(filmFilterCriteriaDto!=null 
@@ -152,9 +156,13 @@ public class FilmDaoImpl implements FilmDao {
 					&& filmFilterCriteriaDto.getSelectedRipped()!=null) {
 				query.setParameter("ripped", filmFilterCriteriaDto.getSelectedRipped());
 			}
+			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.ORIGINE)
+					&& filmFilterCriteriaDto.getSelectedFilmOrigine()!=null) {
+				query.setParameter("origine", filmFilterCriteriaDto.getSelectedFilmOrigine());
+			}
 		}
 		List<Film> l = new ArrayList<Film>(new HashSet<Film>(query.getResultList()));
-		Collections.sort(l, (f1,f2)->f2.getDvd().getDateRip().compareTo(f1.getDvd().getDateRip()));
+		//Collections.sort(l, (f1,f2)->f2.getDvd().getDateRip().compareTo(f1.getDvd().getDateRip()));
 		return l;
     }
 	public void cleanAllFilms() {
