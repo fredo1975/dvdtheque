@@ -57,7 +57,6 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     private TmdbServiceClient client;
 	private String titreTmdb= "2001";
 	private Long tmdbId;
-	private Long tmdbIdToSave;
     @Autowired
 	protected IFilmService filmService;
     @Autowired
@@ -138,6 +137,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))

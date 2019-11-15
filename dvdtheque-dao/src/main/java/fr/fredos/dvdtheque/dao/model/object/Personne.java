@@ -13,7 +13,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 @Entity
 @Table(name = "PERSONNE")
-public class Personne implements Serializable {
+public class Personne implements Serializable,Comparable<Personne> {
 	private static final long serialVersionUID = 1L;
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -99,5 +99,9 @@ public class Personne implements Serializable {
 	public String toString() {
 		return "Personne [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", dateN=" + dateN + ", profilePath="
 				+ profilePath + ", pays=" + pays + "]";
+	}
+	@Override
+	public int compareTo(Personne personne) {
+		return this.nom.compareTo(personne.nom);
 	}
 }

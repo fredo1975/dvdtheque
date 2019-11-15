@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
@@ -43,7 +44,7 @@ public class FilmBuilder {
 	public static final String ACT4_TMBD_ID_1271 = "TOM WISDOM";
 	public static final String SHEET_NAME = "Films";
 	public static final String ZONE_DVD = "2";
-	public static final Long TMDBID = new Long(100);
+	public static final Long TMDBID_844 = new Long(100);
 	public static final int RIP_DATE_OFFSET = -10;
 	public static final int RIP_DATE_OFFSET2 = -1;
 	public static Date createRipDate(int ripDateOffset) {
@@ -138,15 +139,21 @@ public class FilmBuilder {
 			Personne real = new Personne();
 			real.setNom(this.realNom);
 			realisateurs.add(real);
-			Personne act1 = new Personne();
-			Personne act2 = new Personne();
-			Personne act3 = new Personne();
-			act1.setNom(act1Nom);
-			act2.setNom(act2Nom);
-			act3.setNom(act3Nom);
-			acteurs.add(act1);
-			acteurs.add(act2);
-			acteurs.add(act3);
+			if(StringUtils.isNotEmpty(act1Nom)) {
+				Personne act1 = new Personne();
+				act1.setNom(act1Nom);
+				acteurs.add(act1);
+			}
+			if(StringUtils.isNotEmpty(act2Nom)) {
+				Personne act2 = new Personne();
+				act2.setNom(act2Nom);
+				acteurs.add(act2);
+			}
+			if(StringUtils.isNotEmpty(act3Nom)) {
+				Personne act3 = new Personne();
+				act3.setNom(act3Nom);
+				acteurs.add(act3);
+			}
 			film.setTitre(this.titre);
 			film.setTitreO(this.titreO);
 			film.setAnnee(this.annee);
@@ -164,7 +171,7 @@ public class FilmBuilder {
 			film.setOrigine(this.origine);
 			film.setVu(this.vu);
 			// hard coded
-			film.setTmdbId(TMDBID);
+			film.setTmdbId(TMDBID_844);
 			film.setOverview("Overview");
 			return film;
 		}

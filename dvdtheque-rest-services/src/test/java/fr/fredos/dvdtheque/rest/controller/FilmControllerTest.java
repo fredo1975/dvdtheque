@@ -6,14 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.Charset;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -77,10 +74,13 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String UPDATE_PERSONNE_URI = "/dvdtheque/personnes/byId/";
 	private static final String SEARCH_PERSONNE_URI = GET_ALL_FILMS_URI+"byPersonne";
 	private static final String SEARCH_ALL_REALISATEUR_URI = "/dvdtheque/realisateurs";
+	private static final String SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI = SEARCH_ALL_REALISATEUR_URI + "/byOrigine/";
 	private static final String SEARCH_ALL_ACTTEUR_URI = "/dvdtheque/acteurs";
+	private static final String SEARCH_ALL_ACTTEUR_BY_ORIGINE_URI = SEARCH_ALL_ACTTEUR_URI + "/byOrigine/";
 	private static final String SEARCH_FILM_BY_ID = GET_ALL_FILMS_URI+"byId/";
 	private static final String SEARCH_FILM_BY_TMDBID = GET_ALL_FILMS_URI+"byTmdbId/";
 	private static final String SEARCH_TMDB_FILM_BY_TITRE = GET_ALL_FILMS_URI+"tmdb/byTitre/";
+	private static final String SEARCH_FILMS_BY_ORIGINE = GET_ALL_FILMS_URI+"byOrigine/";
 	private static final String UPDATE_TMDB_FILM_BY_TMDBID = GET_ALL_FILMS_URI+"tmdb/";
 	private static final String SAVE_FILM_URI = GET_ALL_FILMS_URI+"save/";
 	private static final String UPDATE_FILM_URI = GET_ALL_FILMS_URI+"update/";
@@ -101,6 +101,43 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(GET_CLEAN_ALL_FILMS_URI)
 				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+	}
+	@Test
+	public void findAllFilmsByOrigine() throws Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		List<Film> allFilms = filmService.findAllFilms();
+		assertNotNull(allFilms);
+		if (CollectionUtils.isNotEmpty(allFilms)) {
+			assertTrue(allFilms.size()==1);
+			Film filmToTest = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
+			assertNotNull(filmToTest);
+			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name())
+					.contentType(MediaType.APPLICATION_JSON);
+			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+			ResultActions resultActions = mvc
+					.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name()).contentType(MediaType.APPLICATION_JSON))
+					.andExpect(MockMvcResultMatchers.status().isOk())
+					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
+			assertNotNull(resultActions);
+			FilmBuilder.assertFilmIsNotNull(filmToTest, true, FilmBuilder.RIP_DATE_OFFSET, true);
+		}
 	}
 	@Test
 	public void findAllFilms() throws Exception {
@@ -227,7 +264,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		List<Personne> allRealisateur = personneService.findAllRealisateur();
+		List<Personne> allRealisateur = filmService.findAllRealisateurs();
 		assertNotNull(allRealisateur);
 		if (CollectionUtils.isNotEmpty(allRealisateur)) {
 			Personne realisateur = allRealisateur.get(0);
@@ -239,6 +276,40 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 							.contentType(MediaType.APPLICATION_JSON))
 					.andExpect(MockMvcResultMatchers.status().isOk())
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(realisateur.getNom())));
+			assertNotNull(resultActions);
+		}
+	}
+	@Test
+	public void findAllRealisateursByOrigine() throws Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		List<Personne> allActeur = filmService.findAllRealisateursByOrigine(FilmOrigine.DVD);
+		assertNotNull(allActeur);
+		if (CollectionUtils.isNotEmpty(allActeur)) {
+			Personne acteur = allActeur.get(0);
+			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name())
+					.contentType(MediaType.APPLICATION_JSON);
+			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+			ResultActions resultActions = mvc
+					.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).contentType(MediaType.APPLICATION_JSON))
+					.andExpect(MockMvcResultMatchers.status().isOk())
+					.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(acteur.getNom())));
 			assertNotNull(resultActions);
 		}
 	}
@@ -301,7 +372,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		List<Personne> allActeur = personneService.findAllActeur();
+		List<Personne> allActeur = filmService.findAllActeurs();
 		assertNotNull(allActeur);
 		if (CollectionUtils.isNotEmpty(allActeur)) {
 			Personne acteur = allActeur.get(0);
@@ -310,6 +381,40 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
 			ResultActions resultActions = mvc
 					.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_URI).contentType(MediaType.APPLICATION_JSON))
+					.andExpect(MockMvcResultMatchers.status().isOk())
+					.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(acteur.getNom())));
+			assertNotNull(resultActions);
+		}
+	}
+	@Test
+	public void findAllActeursByOrigine() throws Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		List<Personne> allActeur = filmService.findAllActeursByOrigine(FilmOrigine.DVD);
+		assertNotNull(allActeur);
+		if (CollectionUtils.isNotEmpty(allActeur)) {
+			Personne acteur = allActeur.get(0);
+			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name())
+					.contentType(MediaType.APPLICATION_JSON);
+			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+			ResultActions resultActions = mvc
+					.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).contentType(MediaType.APPLICATION_JSON))
 					.andExpect(MockMvcResultMatchers.status().isOk())
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(acteur.getNom())));
 			assertNotNull(resultActions);
@@ -606,7 +711,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
                     	assertEquals(FilmOrigine.DVD.name(), cellValue);
                     }
                     if(cell.getColumnIndex()==5) {
-                    	assertEquals(FilmBuilder.TMDBID.toString(), cellValue);
+                    	assertEquals(FilmBuilder.TMDBID_844.toString(), cellValue);
                     }
                     if(cell.getColumnIndex()==6) {
                     	assertEquals("oui", cellValue);
@@ -644,7 +749,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
                     	assertEquals(FilmOrigine.DVD.name(), cellValue);
                     }
                     if(cell.getColumnIndex()==5) {
-                    	assertEquals(FilmBuilder.TMDBID.toString(), cellValue);
+                    	assertEquals(FilmBuilder.TMDBID_844.toString(), cellValue);
                     }
                     if(cell.getColumnIndex()==6) {
                     	assertEquals("oui", cellValue);

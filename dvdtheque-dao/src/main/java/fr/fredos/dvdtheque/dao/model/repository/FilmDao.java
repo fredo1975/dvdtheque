@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -26,5 +27,6 @@ public interface FilmDao {
 	void removeFilm(Film film);
 	Boolean checkIfTmdbFilmExists(Long tmdbId);
 	void cleanAllGenres();
-	public List<Genre> findAllGenres();
+	List<Genre> findAllGenres();
+	List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine);
 }

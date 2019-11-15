@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.FilmFilterCriteriaType;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -204,5 +205,12 @@ public class FilmDaoImpl implements FilmDao {
 	public Genre attachToSession(Genre genre) {
 		//Genre genre = findGenre(id);
 		return this.entityManager.merge(genre);
+	}
+	@Override
+	public List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine) {
+		StringBuilder sb = new StringBuilder("from Film film where film.origine = :origine ");
+		Query q = this.entityManager.createQuery(sb.toString());
+		q.setParameter("origine", filmOrigine);
+		return q.getResultList();
 	}
 }

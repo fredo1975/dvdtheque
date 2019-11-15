@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +35,10 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	@Autowired
 	protected IFilmService filmService;
 	
+	@Before
+	public void cleanAllCaches() {
+		personneService.cleanAllCaches();
+	}
 	@Test
 	public void getPersonneVersusLoadPersonne() throws Exception {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
@@ -81,56 +86,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		Personne personne = personneService.findByPersonneId(film.getRealisateurs().iterator().next().getId());
 		assertNotNull(personne);
 	}
-	@Test
-	public void findAllRealisateurs() {
-		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
-		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
-		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
-				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
-				.setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE)
-				.setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD)
-				.setGenre1(genre1)
-				.setGenre2(genre2)
-				.setZone(new Integer(2))
-				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
-		Long filmId = filmService.saveNewFilm(film);
-		assertNotNull(filmId);
-		List<Personne> realList = personneService.findAllRealisateur();
-		assertNotNull(realList);
-		assertTrue(CollectionUtils.isNotEmpty(realList));
-		assertTrue(realList.size()==1);
-	}
-	@Test
-	public void findAllActeurs() {
-		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
-		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
-		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
-				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
-				.setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE)
-				.setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD)
-				.setGenre1(genre1)
-				.setGenre2(genre2)
-				.setZone(new Integer(2))
-				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
-		Long filmId = filmService.saveNewFilm(film);
-		assertNotNull(filmId);
-		List<Personne> actList = personneService.findAllActeur();
-		assertNotNull(actList);
-		assertTrue(CollectionUtils.isNotEmpty(actList));
-		assertTrue(actList.size()==3);
-	}
+	
 	@Test
 	public void findRealisateurByFilm() throws Exception {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));

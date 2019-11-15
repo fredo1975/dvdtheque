@@ -17,10 +17,9 @@ public interface IPersonneService {
 	public Personne getPersonne(Long id);
 	public Personne loadPersonne(Long id);
 	public void cleanAllPersonnes();
-	public List<Personne> findAllRealisateur();
-	public List<Personne> findAllActeur();
 	public Personne createOrRetrievePersonne(String nom, String profilePath);
 	public Personne buildPersonne(String nom, String profilePath);
-	public Long createPersonne(final String nom);
 	public String printPersonnes(final Set<Personne> personnes, final String separator);
+	void cleanAllCaches();
+	Personne attachSessionPersonneByName(String nom);
 }
