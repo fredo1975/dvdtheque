@@ -6,8 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -16,10 +14,11 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -31,15 +30,15 @@ import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StopWatch;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
+import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 
 @RunWith(SpringRunner.class)
@@ -47,21 +46,7 @@ import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 @ActiveProfiles("local")
 public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceTests.class);
-	public static final String TITRE_FILM = "Lorem Ipsum";
-	public static final String TITRE_FILM2 = "Lorem Ipsum2";
-	public static final String TITRE_FILM_UPDATED = "Lorem Ipsum updated";
-	public static final String TITRE_FILM_REUPDATED = "Lorem Ipsum reupdated";
-	public static final Integer ANNEE = 2015;
-	public static final String REAL_NOM = "toto titi";
-	public static final String REAL_NOM1 = "Dan VanHarp";
-	public static final String ACT1_NOM = "tata tutu";
-	public static final String ACT2_NOM = "toitoi tuitui";
-	public static final String ACT3_NOM = "tuotuo tmitmi";
-	public static final String ACT4_NOM = "Graham Collins";
-	public static final String SHEET_NAME = "Films";
-	public static final String ZONE_DVD = "1";
-	public static final int RIP_DATE_OFFSET = -10;
-	public static final int RIP_DATE_OFFSET2 = -1;
+	
 	@Autowired
 	private FilmDao filmDao;
 	@Autowired
@@ -72,49 +57,80 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	private ExcelFilmHandler excelFilmHandler;
 	@Autowired
     private CacheManager cacheManager;
-	private void assertFilmIsNotNull(Film film, int ripDateOffset) {
-		assertNotNull(film);
-		assertNotNull(film.getId());
-		assertNotNull(film.getTitre());
-		assertNotNull(film.getAnnee());
-		assertNotNull(film.getDvd());
-		assertNotNull(film.getDvd().getDateRip());
-		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
-		assertTrue(film.getGenres().size() == 2);
-		assertEquals(filmService.clearDate(createRipDate(ripDateOffset)),film.getDvd().getDateRip());
-		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
-		assertTrue(film.getActeurs().size()==3||film.getActeurs().size()==2);
-		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
-		assertTrue(film.getRealisateurs().size()==1);
-		assertTrue(DvdFormat.DVD.equals(film.getDvd().getFormat()));
+	
+	@Before
+	public void cleanAllCaches() {
+		filmService.cleanAllCaches();
 	}
-	private Date createRipDate(int ripDateOffset) {
-		Calendar cal = Calendar.getInstance();
-		return DateUtils.addDays(cal.getTime(), ripDateOffset);
-	}
+	
 	@Test
-	public void saveFilm() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+	public void saveNewFilm() {
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, true);
 	}
+	
 	@Test
 	public void findFilmByTitre() throws Exception{
 		String methodName = "findFilmByTitre : ";
 		logger.debug(methodName + "start");
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
-		Film retrievedFilm = filmService.findFilmByTitre(TITRE_FILM);
-		assertFilmIsNotNull(retrievedFilm, RIP_DATE_OFFSET);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		Film retrievedFilm = filmService.findFilmByTitre(film.getTitre());
+		FilmBuilder.assertFilmIsNotNull(retrievedFilm, false,FilmBuilder.RIP_DATE_OFFSET, true);
 		logger.debug(methodName + "end");
 	}
+	
 	@Test
 	public void findFilmWithAllObjectGraph() throws Exception{
 		String methodName = "findFilmWithAllObjectGraph : ";
 		logger.debug(methodName + "start");
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
 		Film retrievedFilm = filmService.findFilmWithAllObjectGraph(film.getId());
-		assertFilmIsNotNull(retrievedFilm, RIP_DATE_OFFSET);
+		FilmBuilder.assertFilmIsNotNull(retrievedFilm,false, FilmBuilder.RIP_DATE_OFFSET, true);
 		logger.debug(methodName + "retrievedFilm ="+retrievedFilm.toString());
 		for(Personne acteur : retrievedFilm.getActeurs()){
 			logger.debug(methodName + " acteur="+acteur.toString());
@@ -124,47 +140,153 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		}
 		logger.debug(methodName + "end");
 	}
+	
 	@Test
 	public void findFilm() throws Exception {
 		logger.info("Using cache manager: " + cacheManager.getClass().getName());
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
 		film = filmService.findFilm(film.getId());
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, true);
 		assertNotNull(film.getDvd());
 	}
+	
 	@Test
 	public void findAllGenres() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
 		List<Genre> genres = filmService.findAllGenres();
 		assertTrue(CollectionUtils.isNotEmpty(genres));
 	}
+	
 	@Test
-	public void findAllFilms() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
-		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film2, RIP_DATE_OFFSET);
-		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film3, RIP_DATE_OFFSET);
-		StopWatch watch = new StopWatch();
-		watch.start();
-		List<Film> films = filmService.findAllFilms();
+	public void findAllDvd() throws Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId2 = filmService.saveNewFilm(film2);
+		assertNotNull(filmId2);
+		Film film3 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.EN_SALLE)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId3 = filmService.saveNewFilm(film3);
+		assertNotNull(filmId3);
+		Film film4 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREUPDATED)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.EN_SALLE)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId4 = filmService.saveNewFilm(film4);
+		assertNotNull(filmId4);
+		Film film5 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREREUPDATED)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.EN_SALLE)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId5 = filmService.saveNewFilm(film5);
+		assertNotNull(filmId5);
+		
+		List<Film> films = filmService.findAllFilmsByOrigine(FilmOrigine.DVD);
 		assertNotNull(films);
 		assertTrue(CollectionUtils.isNotEmpty(films));
-		assertTrue(films.size()==3);
-		for(Film f : films) {
-			logger.info(f.toString());
-		}
-		watch.stop();
-		logger.info(watch.prettyPrint());
-		filmService.cleanAllFilms();
+		assertTrue(films.size()==2);
+		
 	}
+	
 	@Test
 	public void findAllTmdbFilms() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
 		Set<Long> tmdbIds = new HashSet<>();
 		tmdbIds.add(film.getTmdbId());
 		Set<Long> films = filmService.findAllTmdbFilms(tmdbIds);
@@ -172,10 +294,26 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertTrue(CollectionUtils.isNotEmpty(films));
 		
 	}
+	
 	@Test
 	public void findAllRippedFilms() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
 		List<Film> films = filmService.getAllRippedFilms();
 		assertTrue(CollectionUtils.isNotEmpty(films));
 		for(Film f : films){
@@ -184,13 +322,25 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	
 	@Test
-	@Transactional
 	public void updateFilm(){
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
-		
-		film.setTitre(TITRE_FILM_UPDATED);
-		Personne real = personneService.buildPersonne(REAL_NOM1, null);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		film.setTitre(FilmBuilder.TITRE_FILM_TMBD_ID_4780);
+		Personne real = personneService.buildPersonne(FilmBuilder.REAL_NOM_TMBD_ID_4780, null);
 		assertNotNull(real);
 		Long idreal = personneService.savePersonne(real);
 		assertNotNull(idreal);
@@ -198,7 +348,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		film.getRealisateurs().clear();
 		film.getRealisateurs().add(real);
 		
-		Personne act = personneService.buildPersonne(ACT4_NOM, null);
+		Personne act = personneService.buildPersonne(FilmBuilder.ACT4_TMBD_ID_844, null);
 		assertNotNull(act);
 		Long idAct = personneService.savePersonne(act);
 		assertNotNull(idAct);
@@ -212,21 +362,59 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Film filmUpdated = filmService.findFilm(film.getId());
 		
 		assertNotNull(filmUpdated);
-		assertEquals(StringUtils.upperCase(TITRE_FILM_UPDATED), filmUpdated.getTitre());
-		assertEquals(REAL_NOM1, filmUpdated.getRealisateurs().iterator().next().getNom());
-		assertEquals(ACT4_NOM, filmUpdated.getActeurs().iterator().next().getNom());
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), filmUpdated.getTitre());
+		assertEquals(FilmBuilder.REAL_NOM_TMBD_ID_4780, filmUpdated.getRealisateurs().iterator().next().getNom());
+		assertEquals(FilmBuilder.ACT4_TMBD_ID_844, filmUpdated.getActeurs().iterator().next().getNom());
 		assertEquals(posterPath, filmUpdated.getPosterPath());
 	}
 	@Test
 	public void cleanAllFilms() {
 		String methodName = "cleanAllFilms : ";
 		logger.debug(methodName + "start");
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
-		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film2, RIP_DATE_OFFSET);
-		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film3, RIP_DATE_OFFSET);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId2 = filmService.saveNewFilm(film2);
+		assertNotNull(filmId2);
+		Film film3 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId3 = filmService.saveNewFilm(film3);
+		assertNotNull(filmId3);
 		filmService.cleanAllFilms();
 		assertTrue(CollectionUtils.isEmpty(filmService.findAllFilms()));
 		logger.debug(methodName + "end");
@@ -235,27 +423,97 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	public void findAllFilmsByCriteriaTitreService() {
 		String methodName = "findAllFilmsByCriteriaTtireService : ";
 		logger.debug(methodName + "start");
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
-		
-		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(StringUtils.left(TITRE_FILM, 5),null,null,null,null, null);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(StringUtils.left(FilmBuilder.TITRE_FILM_TMBD_ID_844, 5),null,null,null,null, null, null);
 		List<Film> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
 		assertNotNull(films);
 		for(Film f : films){
 			logger.debug(f.toString());
 		}
 		assertEquals(1, films.size());
-		assertEquals(StringUtils.upperCase(TITRE_FILM),films.get(0).getTitre());
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844),films.get(0).getTitre());
+		logger.debug(methodName + "end");
+	}
+	@Test
+	public void findAllFilmsByCriteriaFilmOrigineService() {
+		String methodName = "findAllFilmsByCriteriaFilmOrigineService : ";
+		logger.debug(methodName + "start");
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film dvdFilm = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long dvdFilmId = filmService.saveNewFilm(dvdFilm);
+		assertNotNull(dvdFilmId);
+		Film enSalleFilm = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_4780)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.EN_SALLE)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_4780)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long enSalleFilmId = filmService.saveNewFilm(enSalleFilm);
+		assertNotNull(enSalleFilmId);
+		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(null,null,null,null,null, null, FilmOrigine.EN_SALLE);
+		List<Film> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
+		assertNotNull(films);
+		for(Film f : films){
+			logger.debug(f.toString());
+		}
+		assertEquals(1, films.size());
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780),films.get(0).getTitre());
 		logger.debug(methodName + "end");
 	}
 	@Test
 	public void findAllFilmsByCriteriaActeursService() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
-		
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
 		Long selectedActeurId = film.getActeurs().iterator().next().getId();
 		logger.debug("selectedActeurId="+selectedActeurId);
-		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(null,null,null,selectedActeurId,null, null);
+		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(null,null,null,selectedActeurId,null, null, null);
 		List<Film> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
 		assertNotNull(films);
 		for(Film f2 : films){
@@ -272,10 +530,23 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	public void findAllFilmsByCriteriaDao() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
-		
-		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto("Lorem",null,null,null,null, null);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(StringUtils.left(FilmBuilder.TITRE_FILM_TMBD_ID_844, 2),null,null,null,null, null, null);
 		List<Film> films = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
 		assertNotNull(films);
 		for(Film f2 : films){
@@ -283,7 +554,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		}
 		assertEquals(1, films.size());
 		Film f2 = films.get(0);
-		assertEquals(StringUtils.upperCase(TITRE_FILM),f2.getTitre());
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844),f2.getTitre());
 		Set<Personne> realisateurSet = f2.getRealisateurs();
 		assertNotNull(realisateurSet);
 		assertEquals(1,realisateurSet.size());
@@ -294,13 +565,44 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertEquals(real.getPrenom(),realisateur.getPrenom());
 	}
 	@Test
+	@Ignore
 	public void findAllFilmsByCriteriaRippedSinceDao() {
-		Film film1 = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film1, RIP_DATE_OFFSET);
-		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM2, ANNEE,REAL_NOM1,ACT4_NOM,null,null, createRipDate(RIP_DATE_OFFSET2), DvdFormat.DVD, new Genre(27,"Horror"),new Genre(878,"Science Fiction"));
-		assertFilmIsNotNull(film2, RIP_DATE_OFFSET2);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_4780)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_4780)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET2)).build();
+		Long filmId2 = filmService.saveNewFilm(film2);
+		assertNotNull(filmId2);
 		
-		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(null,null,null,null,null, Boolean.TRUE);
+		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(null,null,null,null,null, Boolean.TRUE, null);
 		List<Film> films = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
 		assertNotNull(films);
 		for(Film f2 : films){
@@ -308,7 +610,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		}
 		assertEquals(2, films.size());
 		Film f2 = films.get(0);
-		assertEquals(StringUtils.upperCase(TITRE_FILM2),f2.getTitre());
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780),f2.getTitre());
 		Set<Personne> realisateurSet = f2.getRealisateurs();
 		assertNotNull(realisateurSet);
 		assertEquals(1,realisateurSet.size());
@@ -320,8 +622,22 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	public void removeFilmDao() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
 		Personne real = film.getRealisateurs().iterator().next();
 		assertNotNull(real);
 		filmDao.removeFilm(film);
@@ -331,8 +647,22 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	
 	@Test(expected = java.lang.Exception.class)
 	public void removeFilmService() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
 		filmService.removeFilm(film);
 		Film deletedFilm = filmService.findFilm(film.getId());
 		assertNull(deletedFilm);
@@ -340,21 +670,75 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	
 	@Test
 	public void checkIfTmdbFilmExists() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
 		Boolean exists = filmService.checkIfTmdbFilmExists(film.getTmdbId());
 		assertTrue(exists);
 	}
 	
 	@Test
 	public void testExcelToCsv() throws IOException {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
-		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film2, RIP_DATE_OFFSET);
-		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film3, RIP_DATE_OFFSET);
-		
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId2 = filmService.saveNewFilm(film2);
+		assertNotNull(filmId2);
+		Film film3 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId3 = filmService.saveNewFilm(film3);
+		assertNotNull(filmId3);
 		List<Film> list = filmService.findAllFilms();
 		assertNotNull(list);
 	    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
@@ -362,22 +746,68 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	    Workbook workBook = this.excelFilmHandler.createSheetFromByteArray(excelContent);
 	    assertNotNull(workBook);
 		workBook.forEach(sheet -> {
-        	assertEquals(SHEET_NAME, sheet.getSheetName());
+        	assertEquals(FilmBuilder.SHEET_NAME, sheet.getSheetName());
         });
 		Sheet sheet = workBook.getSheetAt(0);
-        assertEquals(SHEET_NAME, sheet.getSheetName());
+        assertEquals(FilmBuilder.SHEET_NAME, sheet.getSheetName());
         String csv = this.excelFilmHandler.createCsvFromExcel(workBook);
         assertNotNull(csv);
 	}
 	@Test
 	public void testCreateSXSSFWorkbookFromFilmList() throws IOException {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film, RIP_DATE_OFFSET);
-		Film film2 = filmService.createOrRetrieveFilm(TITRE_FILM_UPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film2, RIP_DATE_OFFSET);
-		Film film3 = filmService.createOrRetrieveFilm(TITRE_FILM_REUPDATED, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(RIP_DATE_OFFSET), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film3, RIP_DATE_OFFSET);
-		
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setVu(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_4780)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
+				.setRipped(true)
+				.setVu(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_4780)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId2 = filmService.saveNewFilm(film2);
+		assertNotNull(filmId2);
+		Film film3 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_1271)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_1271)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_1271)
+				.setRipped(true)
+				.setVu(false)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.EN_SALLE)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_1271)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId3 = filmService.saveNewFilm(film3);
+		assertNotNull(filmId3);
 		List<Film> list = filmService.findAllFilms();
 		assertNotNull(list);
 		
@@ -386,38 +816,49 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Workbook workBook = excelFilmHandler.createSheetFromByteArray(excelContent);
 		assertNotNull(workBook);
 		workBook.forEach(sheet -> {
-        	assertEquals(SHEET_NAME, sheet.getSheetName());
+        	assertEquals(FilmBuilder.SHEET_NAME, sheet.getSheetName());
         });
 		Sheet sheet = workBook.getSheetAt(0);
-        assertEquals(SHEET_NAME, sheet.getSheetName());
+        assertEquals(FilmBuilder.SHEET_NAME, sheet.getSheetName());
         DataFormatter dataFormatter = new DataFormatter();
         sheet.forEach(row -> {
         	if(row.getRowNum()==1) {
         		row.forEach(cell -> {
                     String cellValue = dataFormatter.formatCellValue(cell);
                     if(cell.getColumnIndex()==0) {
-                    	assertEquals(REAL_NOM, cellValue);
+                    	assertEquals(FilmBuilder.REAL_NOM_TMBD_ID_844, cellValue);
                     }
                     if(cell.getColumnIndex()==1) {
-                    	assertEquals(StringUtils.upperCase(TITRE_FILM), StringUtils.upperCase(cellValue));
+                    	assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), StringUtils.upperCase(cellValue));
                     }
                     if(cell.getColumnIndex()==2) {
-                    	assertEquals(ZONE_DVD, cellValue);
+                    	assertEquals(FilmBuilder.ANNEE, new Integer(cellValue));
                     }
                     if(cell.getColumnIndex()==3) {
-                    	assertEquals(ANNEE, new Integer(cellValue));
+                    	assertTrue(cellValue.contains(FilmBuilder.ACT1_TMBD_ID_844));
+                    	assertTrue(cellValue.contains(FilmBuilder.ACT2_TMBD_ID_844));
+                    	assertTrue(cellValue.contains(FilmBuilder.ACT3_TMBD_ID_844));
                     }
                     if(cell.getColumnIndex()==4) {
-                    	assertEquals(ACT1_NOM+","+ACT2_NOM+","+ACT3_NOM, cellValue);
+                    	assertEquals(FilmOrigine.DVD.name(), cellValue);
                     }
                     if(cell.getColumnIndex()==5) {
-                    	assertEquals("oui", cellValue);
+                    	assertEquals(FilmBuilder.TMDBID_844.toString(), cellValue);
                     }
                     if(cell.getColumnIndex()==6) {
-                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
-                    	assertEquals(df.print(createRipDate(RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
+                    	assertEquals("oui", cellValue);
                     }
                     if(cell.getColumnIndex()==7) {
+                    	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
+                    }
+                    if(cell.getColumnIndex()==8) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==9) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
+                    }
+                    if(cell.getColumnIndex()==10) {
                     	assertEquals(DvdFormat.DVD.name(), cellValue);
                     }
                 });
@@ -425,28 +866,40 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
         		row.forEach(cell -> {
                     String cellValue = dataFormatter.formatCellValue(cell);
                     if(cell.getColumnIndex()==0) {
-                    	assertEquals(REAL_NOM, cellValue);
+                    	assertEquals(FilmBuilder.REAL_NOM_TMBD_ID_1271, cellValue);
                     }
                     if(cell.getColumnIndex()==1) {
-                    	assertEquals(StringUtils.upperCase(TITRE_FILM_REUPDATED), StringUtils.upperCase(cellValue));
+                    	assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_1271), StringUtils.upperCase(cellValue));
                     }
+                    
                     if(cell.getColumnIndex()==2) {
-                    	assertEquals(ZONE_DVD, cellValue);
+                    	assertEquals(FilmBuilder.ANNEE, new Integer(cellValue));
                     }
                     if(cell.getColumnIndex()==3) {
-                    	assertEquals(ANNEE, new Integer(cellValue));
+                    	assertTrue(cellValue.contains(FilmBuilder.ACT1_TMBD_ID_1271));
+                    	assertTrue(cellValue.contains(FilmBuilder.ACT2_TMBD_ID_1271));
+                    	assertTrue(cellValue.contains(FilmBuilder.ACT3_TMBD_ID_1271));
                     }
                     if(cell.getColumnIndex()==4) {
-                    	assertEquals(ACT1_NOM+","+ACT2_NOM+","+ACT3_NOM, cellValue);
+                    	assertEquals(FilmOrigine.EN_SALLE.name(), cellValue);
                     }
                     if(cell.getColumnIndex()==5) {
-                    	assertEquals("oui", cellValue);
+                    	assertEquals(FilmBuilder.TMDBID_844.toString(), cellValue);
                     }
                     if(cell.getColumnIndex()==6) {
-                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
-                    	assertEquals(df.print(createRipDate(RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
+                    	assertEquals("non", cellValue);
                     }
                     if(cell.getColumnIndex()==7) {
+                    	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
+                    }
+                    if(cell.getColumnIndex()==8) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==9) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
+                    }
+                    if(cell.getColumnIndex()==10) {
                     	assertEquals(DvdFormat.DVD.name(), cellValue);
                     }
                 });
@@ -454,32 +907,184 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
         		row.forEach(cell -> {
                     String cellValue = dataFormatter.formatCellValue(cell);
                     if(cell.getColumnIndex()==0) {
-                    	assertEquals(REAL_NOM, cellValue);
+                    	assertEquals(FilmBuilder.REAL_NOM_TMBD_ID_4780, cellValue);
                     }
                     if(cell.getColumnIndex()==1) {
-                    	assertEquals(StringUtils.upperCase(TITRE_FILM_UPDATED), StringUtils.upperCase(cellValue));
+                    	assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), StringUtils.upperCase(cellValue));
                     }
                     if(cell.getColumnIndex()==2) {
-                    	assertEquals(ZONE_DVD, cellValue);
+                    	assertEquals(FilmBuilder.ANNEE, new Integer(cellValue));
                     }
                     if(cell.getColumnIndex()==3) {
-                    	assertEquals(ANNEE, new Integer(cellValue));
+                    	assertTrue(cellValue.contains(FilmBuilder.ACT3_TMBD_ID_4780));
+                    	assertTrue(cellValue.contains(FilmBuilder.ACT1_TMBD_ID_4780));
+                    	assertTrue(cellValue.contains(FilmBuilder.ACT2_TMBD_ID_4780));
                     }
                     if(cell.getColumnIndex()==4) {
-                    	assertEquals(ACT1_NOM+","+ACT2_NOM+","+ACT3_NOM, cellValue);
+                    	assertEquals(FilmOrigine.DVD.name(), cellValue);
                     }
                     if(cell.getColumnIndex()==5) {
-                    	assertEquals("oui", cellValue);
+                    	assertEquals(FilmBuilder.TMDBID_844.toString(), cellValue);
                     }
                     if(cell.getColumnIndex()==6) {
-                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
-                    	assertEquals(df.print(createRipDate(RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
+                    	assertEquals("oui", cellValue);
                     }
                     if(cell.getColumnIndex()==7) {
+                    	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
+                    }
+                    if(cell.getColumnIndex()==8) {
+                    	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==9) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
+                    }
+                    if(cell.getColumnIndex()==10) {
                     	assertEquals(DvdFormat.DVD.name(), cellValue);
                     }
                 });
         	}
         });
+	}
+	
+	@Test
+	public void findAllRealisateurs() {
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		List<Personne> realList = filmService.findAllRealisateurs();
+		assertNotNull(realList);
+		assertTrue(CollectionUtils.isNotEmpty(realList));
+		assertTrue(realList.size()==1);
+	}
+	@Test
+	public void findAllRealisateursByOrigine() {
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		List<Personne> realList = filmService.findAllRealisateursByOrigine(FilmOrigine.DVD);
+		assertNotNull(realList);
+		assertTrue(CollectionUtils.isNotEmpty(realList));
+		assertTrue(realList.size()==1);
+	}
+	@Test
+	public void findAllActeurs() {
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		List<Personne> actList = filmService.findAllActeurs();
+		assertNotNull(actList);
+		assertTrue(CollectionUtils.isNotEmpty(actList));
+		assertTrue(actList.size()==3);
+	}
+	@Test
+	public void findAllActeursByOrigine() {
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film filmDvd = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmDvdId = filmService.saveNewFilm(filmDvd);
+		assertNotNull(filmDvdId);
+		Film filmEnSalle = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_4780)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.EN_SALLE)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_4780)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmEnSalleId = filmService.saveNewFilm(filmEnSalle);
+		assertNotNull(filmEnSalleId);
+		List<Personne> actEnSalleIdList = filmService.findAllActeursByOrigine(FilmOrigine.EN_SALLE);
+		assertNotNull(actEnSalleIdList);
+		assertTrue(CollectionUtils.isNotEmpty(actEnSalleIdList));
+		assertTrue(actEnSalleIdList.size()==2);
+		List<Personne> actDvdIdList = filmService.findAllActeursByOrigine(FilmOrigine.DVD);
+		assertNotNull(actDvdIdList);
+		assertTrue(CollectionUtils.isNotEmpty(actDvdIdList));
+		assertTrue(actDvdIdList.size()==3);
+		
+		Film filmEnSalle2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_1271)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_1271)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_1271)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.EN_SALLE)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_1271)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmEnSalleId2 = filmService.saveNewFilm(filmEnSalle2);
+		assertNotNull(filmEnSalleId2);
+		actEnSalleIdList = filmService.findAllActeursByOrigine(FilmOrigine.EN_SALLE);
+		assertNotNull(actEnSalleIdList);
+		assertTrue(CollectionUtils.isNotEmpty(actEnSalleIdList));
+		assertTrue(actEnSalleIdList.size()==5);
 	}
 }

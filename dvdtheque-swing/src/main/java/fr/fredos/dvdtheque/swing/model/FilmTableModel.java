@@ -42,7 +42,7 @@ public class FilmTableModel extends AbstractTableModel {
 		for (Film film : filmList) {
 			// Icon ii = new ImageIcon(new URL(film.getPosterPath()));
 			data[i][0] = ImageUtils.getResizedIcon(film);
-			data[i][1] = film.isRipped();
+			data[i][1] = film.getDvd().isRipped();
 			this.filmMap.put(new Integer(i), film);
 			i++;
 		}

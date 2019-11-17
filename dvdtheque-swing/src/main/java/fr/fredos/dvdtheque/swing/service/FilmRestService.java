@@ -66,7 +66,7 @@ public class FilmRestService {
 	public void cleanAllFilms() {
 		this.restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(CLEAN_ALL_FILMS_URI), HttpMethod.PUT, null, Void.class);
 	}
-	public Film saveTmdbFilm(Long id) {
+	public Film saveTmdbFilm(Long id,String origine) {
 		try {
 			ResponseEntity<Film> response = this.restTemplate
 					  .exchange(environment.getRequiredProperty(DVDTHEQUE_BASE_URI)+environment.getRequiredProperty(ADD_TMDB_FILM_URI)+id, HttpMethod.PUT, new HttpEntity<>(id), Film.class);

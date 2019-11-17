@@ -1,15 +1,10 @@
 package fr.fredos.dvdtheque.rest.controller;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -21,8 +16,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StopWatch;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
+import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 
@@ -34,39 +31,31 @@ public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 	protected IFilmService filmService;
 	@Autowired
 	protected IPersonneService personneService;
-	public static final String TITRE_FILM = "Lorem Ipsum";
-	public static final String TITRE_FILM_UPDATED = "Lorem Ipsum updated";
-	public static final Integer ANNEE = 2015;
-	public static final String REAL_NOM = "toto titi";
-	public static final String REAL_NOM1 = "Dan VanHarp";
-	public static final String ACT1_NOM = "tata tutu";
-	public static final String ACT2_NOM = "toitoi tuitui";
-	public static final String ACT3_NOM = "tuotuo tmitmi";
-	public static final String ACT4_NOM = "Graham Collins";
-	public static final int RIP_DATE = -10;
-	private Date createRipDate() {
-		Calendar cal = Calendar.getInstance();
-		return DateUtils.addDays(cal.getTime(), RIP_DATE);
-	}
-	private void assertFilmIsNotNull(Film film) {
-		assertNotNull(film);
-		assertNotNull(film.getId());
-		assertNotNull(film.getTitre());
-		assertNotNull(film.getAnnee());
-		assertNotNull(film.getDvd());
-		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
-		assertTrue(film.getGenres().size() == 2);
-		assertEquals(filmService.clearDate(createRipDate()),film.getDvd().getDateRip());
-		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
-		assertTrue(film.getActeurs().size()==3);
-		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
-		assertTrue(film.getRealisateurs().size()==1);
+	@Before()
+	public void setUp() throws Exception {
+    	filmService.cleanAllFilms();
 	}
 	@Test
-	public void findAllFilm() throws Exception {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM, createRipDate(), DvdFormat.DVD, new Genre(28,"Action"),new Genre(35,"Comedy"));
-		assertFilmIsNotNull(film);
-		film = filmService.findFilmByTitre(TITRE_FILM);
+	public void findFilmByTitreAndfindAllFilmsTest() throws Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		film = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		assertNotNull(film);
 		StopWatch watch = new StopWatch();
 		logger.debug(watch.prettyPrint());

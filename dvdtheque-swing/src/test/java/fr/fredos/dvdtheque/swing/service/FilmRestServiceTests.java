@@ -28,10 +28,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
-//@Ignore
+@Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
@@ -69,7 +70,8 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	}
 	@Test
 	public void findAllFilmsRestService() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		Film film = filmRestService.saveTmdbFilm(tmdbId1);
+		filmRestService.cleanAllFilms();
+		Film film = filmRestService.saveTmdbFilm(tmdbId1, FilmOrigine.DVD.name());
 		assertFilmIsNotNull(film);
 		List<Film> filmList = filmRestService.findAllFilms();
 		assertNotNull(filmList);
@@ -78,7 +80,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	
 	@Test
 	public void findTmdbFilmByTitre() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		Film film = filmRestService.saveTmdbFilm(tmdbId2);
+		Film film = filmRestService.saveTmdbFilm(tmdbId2, FilmOrigine.DVD.name());
 		assertFilmIsNotNull(film);
 		Set<Film> filmSet = filmRestService.findTmdbFilmByTitre(film.getTitre());
 		assertNotNull(filmSet);
@@ -87,28 +89,28 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	
 	@Test
 	public void testAddTmdbFilm() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException{
-		Film film = filmRestService.saveTmdbFilm(tmdbId3);
+		Film film = filmRestService.saveTmdbFilm(tmdbId3, FilmOrigine.DVD.name());
 		assertFilmIsNotNull(film);
 		Film savedFilm = filmRestService.findFilmById(film.getId());
 		assertEquals(StringUtils.upperCase(film.getTitre()),savedFilm.getTitre());
-		assertFalse(film.isRipped());
+		assertFalse(film.getDvd().isRipped());
 	}
 	@Test
 	public void testUpdateFilm() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		Film film = filmRestService.saveTmdbFilm(tmdbId4);
+		Film film = filmRestService.saveTmdbFilm(tmdbId4, FilmOrigine.DVD.name());
 		assertFilmIsNotNull(film);
 		Film f = filmRestService.findFilmById(film.getId());
 		assertNotNull(f);
 		//filmSaved.setTitre(TITRE_FILM_UPDATED_TMBD_ID_4780);
-		f.setRipped(true);
+		f.getDvd().setRipped(true);
 		filmRestService.updateFilm(f);
 		Film filmUpdated = filmRestService.findFilmById(f.getId());
 		assertNotNull(filmUpdated);
-		assertTrue(filmUpdated.isRipped());
+		assertTrue(filmUpdated.getDvd().isRipped());
 	}
 	@Test
 	public void testCheckIfTmdbFilmExists() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
-		Film film = filmRestService.saveTmdbFilm(tmdbId5);
+		Film film = filmRestService.saveTmdbFilm(tmdbId5, FilmOrigine.DVD.name());
 		assertFilmIsNotNull(film);
 		Boolean exists = filmRestService.checkIfTmdbFilmExists(tmdbId5);
 		assertTrue(exists);

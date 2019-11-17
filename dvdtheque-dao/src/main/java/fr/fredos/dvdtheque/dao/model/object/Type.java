@@ -65,7 +65,7 @@ public class Type implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "Type [logger=" + logger + ", id=" + id + ", lib=" + lib + "]";
+		return "Type [id=" + id + ", lib=" + lib + "]";
 	}
 	
 }

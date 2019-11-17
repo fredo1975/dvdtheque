@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.FilmFilterCriteriaType;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -60,14 +61,14 @@ public class FilmDaoImpl implements FilmDao {
 		return (Film)q.getSingleResult();
 	}
 	public Film findFilmByTitre(String titre){
-		Query q = this.entityManager.createQuery("from Film where titre = UPPER(:titre)");
+		Query q = this.entityManager.createQuery("from Film where UPPER(titre) = UPPER(:titre)");
 		q.setParameter("titre", titre);
 		try {
 			return (Film)q.getSingleResult();
 		}catch(NoResultException nre) {
-			
+			logger.error(nre.getMessage());
 		}catch(NonUniqueResultException nre) {
-			
+			logger.error(nre.getMessage());
 		}
 		return null;
 	}
@@ -97,11 +98,11 @@ public class FilmDaoImpl implements FilmDao {
     }
 	@SuppressWarnings("unchecked")
     public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {
-		StringBuilder sb = new StringBuilder("from Film film left join fetch film.acteurs act left join fetch film.realisateurs real ");
-		sb.append("left join fetch film.acteurs act2 ");
+		StringBuilder sb = new StringBuilder("select film from Film film ");
 		if(filmFilterCriteriaDto!=null) {
-			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.RIPPED_SINCE)) {
-				sb.append("left join fetch film.dvd dvd left join fetch film.genres g ");
+			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.ACTEUR)
+					&& filmFilterCriteriaDto.getSelectedActeur()!=null) {
+				sb.append("join film.acteurs act ");
 			}
 			sb.append("where 1=1 ");
 			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.TITRE)
@@ -123,6 +124,10 @@ public class FilmDaoImpl implements FilmDao {
 			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.RIPPED)
 					&& filmFilterCriteriaDto.getSelectedRipped()!=null) {
 				sb.append("and film.ripped=:ripped");
+			}
+			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.ORIGINE)
+					&& filmFilterCriteriaDto.getSelectedFilmOrigine()!=null) {
+				sb.append("and film.origine=:origine");
 			}
 		}
 		if(filmFilterCriteriaDto!=null 
@@ -152,9 +157,13 @@ public class FilmDaoImpl implements FilmDao {
 					&& filmFilterCriteriaDto.getSelectedRipped()!=null) {
 				query.setParameter("ripped", filmFilterCriteriaDto.getSelectedRipped());
 			}
+			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.ORIGINE)
+					&& filmFilterCriteriaDto.getSelectedFilmOrigine()!=null) {
+				query.setParameter("origine", filmFilterCriteriaDto.getSelectedFilmOrigine());
+			}
 		}
 		List<Film> l = new ArrayList<Film>(new HashSet<Film>(query.getResultList()));
-		Collections.sort(l, (f1,f2)->f2.getDvd().getDateRip().compareTo(f1.getDvd().getDateRip()));
+		//Collections.sort(l, (f1,f2)->f2.getDvd().getDateRip().compareTo(f1.getDvd().getDateRip()));
 		return l;
     }
 	public void cleanAllFilms() {
@@ -171,7 +180,7 @@ public class FilmDaoImpl implements FilmDao {
 		
 	}
 	public List<Film> getAllRippedFilms(){
-		Query query = this.entityManager.createQuery("from Film film where film.ripped=1");
+		Query query = this.entityManager.createQuery("from Film film left join fetch film.dvd dvd where dvd.ripped=1");
         return query.getResultList();
 	}
 	public void removeFilm(Film film) {
@@ -196,5 +205,12 @@ public class FilmDaoImpl implements FilmDao {
 	public Genre attachToSession(Genre genre) {
 		//Genre genre = findGenre(id);
 		return this.entityManager.merge(genre);
+	}
+	@Override
+	public List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine) {
+		StringBuilder sb = new StringBuilder("from Film film where film.origine = :origine ");
+		Query q = this.entityManager.createQuery(sb.toString());
+		q.setParameter("origine", filmOrigine);
+		return q.getResultList();
 	}
 }

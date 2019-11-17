@@ -26,8 +26,10 @@ import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.configuration.MessageConsumer;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
+import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 
 @SpringBootTest(classes = { BatchImportFilmsConfiguration.class,MessageConsumer.class,
 		RippedFlagTasklet.class,
@@ -80,7 +82,6 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public void contextLoads() {
 	}
 	@Test
-	//@Ignore
 	public void launchCleanDBStep() throws Exception {
 		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchStep("cleanDBStep");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
@@ -95,45 +96,44 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 		List<Film> films = filmService.findAllFilms();
 		assertTrue(films.size()==7);
-		boolean odysseyExists = false;
-		boolean taxiDriverExists = false;
-		boolean eraserHeadExists = false;
+		boolean is2001odysseyExists = false;
+		boolean is2046Exists = false;
+		boolean is40ansExists = false;
 		
 		for(Film film : films) {
 			if(TITRE_FILM_2001.equals(film.getTitre())) {
-				odysseyExists = true;
+				is2001odysseyExists = true;
 				Personne real = film.getRealisateurs().iterator().next();
 				assertTrue(REAL_NOM.equals(real.getNom()));
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
-				assertTrue(film.isRipped());
-				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
+				assertTrue(FilmOrigine.EN_SALLE.equals(film.getOrigine()));
 			}
 			if(TITRE_FILM_2046.equals(film.getTitre())) {
-				taxiDriverExists = true;
+				is2046Exists = true;
 				Personne real = film.getRealisateurs().iterator().next();
 				assertTrue(REAL_NOM2.equals(real.getNom()));
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
-				assertTrue(film.isRipped());
+				assertTrue(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
 			if(TITRE_FILM_40_ans.equals(film.getTitre())) {
-				eraserHeadExists = true;
+				is40ansExists = true;
 				Personne real = film.getRealisateurs().iterator().next();
 				assertTrue(REAL_NOM3.equals(real.getNom()));
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
-				assertFalse(film.isRipped());
+				assertFalse(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
 			}
-			assertFilmIsNotNull(film);
+			FilmBuilder.assertFilmIsNotNull(film,true,0,false);
 		}
-		assertTrue(odysseyExists);
-		assertTrue(taxiDriverExists);
-		assertTrue(eraserHeadExists);
+		assertTrue(is2001odysseyExists);
+		assertTrue(is2046Exists);
+		assertTrue(is40ansExists);
 	}
 }

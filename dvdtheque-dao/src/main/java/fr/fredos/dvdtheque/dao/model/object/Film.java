@@ -21,12 +21,14 @@ import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+
 @Entity
 @Table(name = "FILM")
-public class Film implements Serializable {
+public class Film implements Serializable, Comparable<Film> {
 	private static final long serialVersionUID = -1382161470818168805L;
 	@Transient
-	protected Logger logger = LoggerFactory.getLogger(Film.class);
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -37,15 +39,15 @@ public class Film implements Serializable {
 	private String titre;
 	@Column(name = "TITRE_O")
 	private String titreO;
-	@JoinColumn(name = "ID_DVD")
+	@JoinColumn(name = "ID_DVD",nullable = true)
 	@ManyToOne(cascade=CascadeType.ALL)
 	private Dvd dvd;
+	@Column(name = "ORIGINE")
+	private FilmOrigine origine;
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	private Set<Personne> realisateurs = new HashSet<>();
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	private Set<Personne> acteurs = new HashSet<>();
-	@Column(name = "RIPPED")
-	private boolean ripped;
 	@Column(name = "VU")
 	private boolean vu;
 	@Column(name = "POSTER_PATH")
@@ -118,18 +120,14 @@ public class Film implements Serializable {
 	public void setActeurs(Set<Personne> acteurs) {
 		this.acteurs = acteurs;
 	}
-	public boolean isRipped() {
-		return ripped;
-	}
+	
 	public String getOverview() {
 		return overview;
 	}
 	public void setOverview(String overview) {
 		this.overview = overview;
 	}
-	public void setRipped(boolean ripped) {
-		this.ripped = ripped;
-	}
+	
 	public boolean isVu() {
 		return vu;
 	}
@@ -141,6 +139,12 @@ public class Film implements Serializable {
 	}
 	public void setHomepage(String homepage) {
 		this.homepage = homepage;
+	}
+	public FilmOrigine getOrigine() {
+		return origine;
+	}
+	public void setOrigine(FilmOrigine origine) {
+		this.origine = origine;
 	}
 	@Override
 	public int hashCode() {
@@ -198,9 +202,14 @@ public class Film implements Serializable {
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
-				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", ripped=" + ripped + ", vu=" + vu
+				+ ", origine=" + origine + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", vu=" + vu
 				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
 				+ runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
 				+ alreadyInDvdtheque + "]";
+	}
+	@Override
+	public int compareTo(Film film) {
+		// TODO Auto-generated method stub
+		return this.getTitre().compareTo(film.getTitre());
 	}
 }

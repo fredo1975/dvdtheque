@@ -42,12 +42,12 @@ import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
+import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 
 @Configuration
 @EnableBatchProcessing
 public class BatchImportFilmsConfiguration{
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
-	String[] headerTab = new String[]{"realisateur", "titre", "zonedvd","annee","acteurs","ripped","ripdate","dvdformat","tmdbId","vu"};
 	@Autowired
 	protected JobBuilderFactory jobBuilderFactory;
     @Autowired
@@ -151,7 +151,8 @@ public class BatchImportFilmsConfiguration{
     	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_INIT, null,0l,JmsStatus.FILM_CSV_LINE_TOKENIZER_INIT.statusValue()));
         DelimitedLineTokenizer filmCsvImportFormatLineTokenizer = new DelimitedLineTokenizer();
         filmCsvImportFormatLineTokenizer.setDelimiter(";");
-        filmCsvImportFormatLineTokenizer.setNames(headerTab);
+        filmCsvImportFormatLineTokenizer.setNames(ExcelFilmHandler.EXCEL_HEADER_TAB);
+        filmCsvImportFormatLineTokenizer.setStrict(false);
         watch.stop();
         jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_COMPLETED, null,watch.getTime(),JmsStatus.FILM_CSV_LINE_TOKENIZER_COMPLETED.statusValue()));
 		logger.debug("createFilmCsvImportFormatLineTokenizer Time Elapsed: " + watch.getTime());
@@ -174,7 +175,7 @@ public class BatchImportFilmsConfiguration{
     @Bean
     protected Step importFilmsStep() {
         return stepBuilderFactory.get("importFilmsStep")
-                .<FilmCsvImportFormat, Film>chunk(500)
+                .<FilmCsvImportFormat, Film>chunk(1000)
                 .reader(reader(null))
                 .processor(filmProcessor())
                 .writer(filmWriter())

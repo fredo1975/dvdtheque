@@ -36,6 +36,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -88,6 +90,20 @@ public class FilmController {
 	Film findFilmByTitre(@PathVariable String titre) {
 		return filmService.findFilmByTitre(titre);
 	}
+	@GetMapping("/films/byOrigine/{origine}")
+	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine) {
+		logger.info("findAllFilmsByOrigine - instanceId="+instanceId);
+		try {
+			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			if(FilmOrigine.TOUS.equals(filmOrigine)) {
+				return ResponseEntity.ok(filmService.findAllFilms());
+			}
+			return ResponseEntity.ok(filmService.findAllFilmsByOrigine(filmOrigine));
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return ResponseEntity.badRequest().build();
+	}
 	@GetMapping("/films/tmdb/byTitre/{titre}")
 	Set<Film> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		return tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre);
@@ -102,11 +118,39 @@ public class FilmController {
 	}
 	@GetMapping("/realisateurs")
 	List<Personne> findAllRealisateurs() {
-		return personneService.findAllRealisateur();
+		return filmService.findAllRealisateurs();
+	}
+	@GetMapping("/realisateurs/byOrigine/{origine}")
+	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@PathVariable String origine) {
+		logger.info("findAllRealisateursByOrigine - instanceId="+instanceId);
+		try {
+			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			if(FilmOrigine.TOUS.equals(filmOrigine)) {
+				return ResponseEntity.ok(filmService.findAllRealisateurs());
+			}
+			return ResponseEntity.ok(filmService.findAllRealisateursByOrigine(filmOrigine));
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/acteurs")
 	List<Personne> findAllActeurs() {
-		return personneService.findAllActeur();
+		return filmService.findAllActeurs();
+	}
+	@GetMapping("/acteurs/byOrigine/{origine}")
+	ResponseEntity<List<Personne>> findAllActeursByOrigine(@PathVariable String origine) {
+		logger.info("findAllActeursByOrigine - instanceId="+instanceId);
+		try {
+			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			if(FilmOrigine.TOUS.equals(filmOrigine)) {
+				return ResponseEntity.ok(filmService.findAllActeurs());
+			}
+			return ResponseEntity.ok(filmService.findAllActeursByOrigine(filmOrigine));
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/personnes")
 	List<Personne> findAllPersonne() {
@@ -114,38 +158,49 @@ public class FilmController {
 	}
 	@PutMapping("/films/tmdb/{tmdbId}")
 	ResponseEntity<Film> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws Exception {
-		Film filmOptional = filmService.findFilm(film.getId());
-
-		if(filmOptional==null) {
-			return ResponseEntity.notFound().build();
+		try {
+			Film filmOptional = filmService.findFilm(film.getId());
+	
+			if(filmOptional==null) {
+				return ResponseEntity.notFound().build();
+			}
+			Film replacedFilm = tmdbServiceClient.replaceFilm(tmdbId, filmOptional);
+			return ResponseEntity.ok(replacedFilm);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		}
-		Film replacedFilm = tmdbServiceClient.replaceFilm(tmdbId, filmOptional);
-		return ResponseEntity.ok(replacedFilm);
+		return ResponseEntity.badRequest().build();
 	}
 	@PutMapping("/films/update/{id}")
 	ResponseEntity<Object> updateFilm(@RequestBody Film film,@PathVariable Long id) {
-		Film filmOptional = filmService.findFilm(id);
-		if(filmOptional==null) {
-			return ResponseEntity.notFound().build();
+		try {
+			Film filmOptional = filmService.findFilm(id);
+			if(filmOptional==null) {
+				return ResponseEntity.notFound().build();
+			}
+			// handle date rip
+			if(filmOptional.getDvd() != null && !filmOptional.getDvd().isRipped() && film.getDvd().isRipped()) {
+				film.getDvd().setDateRip(new Date());
+			}
+			filmService.updateFilm(film);
+			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		}
-		// handle date rip
-		if(!filmOptional.isRipped() && film.isRipped()) {
-			film.getDvd().setDateRip(new Date());
-		}
-		filmService.updateFilm(film);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.badRequest().build();
 	}
 	@PutMapping("/films/save/{tmdbId}")
-	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId) throws Exception {
+	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
 		Film savedFilm;
 		logger.info("saveFilm - instanceId="+instanceId);
 		try {
-			savedFilm = tmdbServiceClient.saveTmbdFilm(tmdbId);
+			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			savedFilm = tmdbServiceClient.saveTmbdFilm(tmdbId, filmOrigine);
 			if(savedFilm==null) {
 				return ResponseEntity.notFound().build();
 			}
 			return ResponseEntity.ok(savedFilm);
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 		return ResponseEntity.badRequest().build();
@@ -185,17 +240,31 @@ public class FilmController {
 		return ResponseEntity.noContent().build();
 	}
 	@PostMapping("/films/export")
-	ResponseEntity<byte[]> exportFilmList() throws DvdthequeServerRestException, IOException{
+	ResponseEntity<byte[]> exportFilmList(@RequestBody String origine) throws DvdthequeServerRestException, IOException{
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentLanguage(Locale.FRANCE);
     	headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 	    LocalDateTime localDate = LocalDateTime.now();
-	    String fileName = "ListeDVDExport" + "-" + localDate.getSecond() + ".xlsx";
-	    List<Film> list = filmService.findAllFilms();
-	    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
-        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
-        headers.setContentLength(excelContent.length);
-        return new ResponseEntity<byte[]>(excelContent, headers, HttpStatus.OK);
+	    String fileName = "ListeDVDExport" + "-" + localDate.getSecond() + "-" + origine + ".xlsx";
+	    try {
+	    	List<Film> list = null;
+	    	FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+	    	if(FilmOrigine.TOUS.equals(filmOrigine)) {
+	    		list = filmService.findAllFilms();
+	    	}else {
+	    		list = filmService.findAllFilmsByCriteria(new FilmFilterCriteriaDto(null,null,null,null,null, null, filmOrigine));
+	    	}
+	    	if(list == null) {
+	    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    	}
+		    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
+	        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+	        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+	        headers.setContentLength(excelContent.length);
+	        return new ResponseEntity<byte[]>(excelContent, headers, HttpStatus.OK);
+	    }catch (Exception e) {
+			logger.error(e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 }

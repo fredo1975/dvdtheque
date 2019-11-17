@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.PersonneDao;
@@ -51,11 +52,27 @@ public class PersonneDaoImpl implements PersonneDao{
 		List<Film> filmList = q.getResultList();
 		Set<Personne> set = filmList.stream().flatMap(list->list.getRealisateurs().stream()).collect(Collectors.toSet());
 		List<Personne> l = new ArrayList<>(set);
-		Collections.sort(l, (p1,p2)->(p1.getPrenom()+" "+p1.getNom()).compareTo((p2.getPrenom()+" "+p2.getNom())));
+		return l;
+	}
+	public List<Personne> findAllRealisateursByOrigine(FilmOrigine filmOrigine){
+		Query q = this.em.createQuery("from Film f join fetch f.realisateurs real where f.origine=:origine");
+		q.setParameter("origine", filmOrigine);
+		List<Film> filmList = q.getResultList();
+		Set<Personne> set = filmList.stream().flatMap(list->list.getRealisateurs().stream()).collect(Collectors.toSet());
+		List<Personne> l = new ArrayList<>(set);
 		return l;
 	}
 	public List<Personne> findAllActeur(){
 		Query q = this.em.createQuery("from Film f join fetch f.acteurs act ");
+		List<Film> filmList = q.getResultList();
+		Set<Personne> set = filmList.stream().flatMap(list->list.getActeurs().stream()).collect(Collectors.toSet());
+		List<Personne> l = new ArrayList<>(set);
+		Collections.sort(l, (p1,p2)->(p1.getPrenom()+" "+p1.getNom()).compareTo((p2.getPrenom()+" "+p2.getNom())));
+		return l;
+	}
+	public List<Personne> findAllActeursByOrigine(FilmOrigine filmOrigine){
+		Query q = this.em.createQuery("from Film f join fetch f.acteurs act where f.origine=:origine");
+		q.setParameter("origine", filmOrigine);
 		List<Film> filmList = q.getResultList();
 		Set<Personne> set = filmList.stream().flatMap(list->list.getActeurs().stream()).collect(Collectors.toSet());
 		List<Personne> l = new ArrayList<>(set);

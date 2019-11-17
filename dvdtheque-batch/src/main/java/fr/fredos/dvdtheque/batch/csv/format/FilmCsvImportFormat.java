@@ -6,12 +6,13 @@ public class FilmCsvImportFormat {
 	}
 	private String realisateur;
 	private String titre;
+	private String origine;
 	private Integer zonedvd;
 	private Integer annee;
 	private String acteurs;
 	private String ripped;
 	private String ripDate;
-	private String dvdFormat;
+	private String filmFormat;
 	private Long tmdbId;
 	private String vu;
 	public String getRealisateur() {
@@ -56,11 +57,11 @@ public class FilmCsvImportFormat {
 	public void setRipDate(String ripDate) {
 		this.ripDate = ripDate;
 	}
-	public String getDvdFormat() {
-		return dvdFormat;
+	public String getFilmFormat() {
+		return filmFormat;
 	}
-	public void setDvdFormat(String dvdFormat) {
-		this.dvdFormat = dvdFormat;
+	public void setFilmFormat(String filmFormat) {
+		this.filmFormat = filmFormat;
 	}
 	public Long getTmdbId() {
 		return tmdbId;
@@ -74,10 +75,16 @@ public class FilmCsvImportFormat {
 	public void setVu(String vu) {
 		this.vu = vu;
 	}
+	public String getOrigine() {
+		return origine;
+	}
+	public void setOrigine(String origine) {
+		this.origine = origine;
+	}
 	@Override
 	public String toString() {
-		return "FilmCsvImportFormat [realisateur=" + realisateur + ", titre=" + titre + ", zonedvd=" + zonedvd
-				+ ", annee=" + annee + ", acteurs=" + acteurs + ", ripped=" + ripped + ", ripDate=" + ripDate
-				+ ", dvdFormat=" + dvdFormat + ", tmdbId=" + tmdbId + "]";
+		return "FilmCsvImportFormat [realisateur=" + realisateur + ", titre=" + titre + ", origine=" + origine
+				+ ", zonedvd=" + zonedvd + ", annee=" + annee + ", acteurs=" + acteurs + ", ripped=" + ripped
+				+ ", ripDate=" + ripDate + ", filmFormat=" + filmFormat + ", tmdbId=" + tmdbId + ", vu=" + vu + "]";
 	}
 }
