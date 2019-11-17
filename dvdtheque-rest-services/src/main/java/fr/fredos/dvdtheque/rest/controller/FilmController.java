@@ -92,7 +92,7 @@ public class FilmController {
 	}
 	@GetMapping("/films/byOrigine/{origine}")
 	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine) {
-		logger.info("saveFilm - instanceId="+instanceId);
+		logger.info("findAllFilmsByOrigine - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			return ResponseEntity.ok(filmService.findAllFilmsByOrigine(filmOrigine));

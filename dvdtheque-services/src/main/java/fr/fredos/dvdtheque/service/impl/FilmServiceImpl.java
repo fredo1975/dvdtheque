@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.StopWatch;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -82,7 +84,7 @@ public class FilmServiceImpl implements IFilmService {
 	@PostConstruct
 	public void init() {
 		mapFilms = instance.getMap(CACHE_FILM);
-		mapFilms.addIndex("id", true);
+		mapFilms.addIndex("id", false);
 		mapFilms.addIndex("origine", false);
 		mapFilms.addIndex("tmdbId", false);
 		// logger.info("films cache: " + mapFilms.size());
@@ -348,12 +350,18 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine) {
+		StopWatch watch = new StopWatch();
+		watch.start();
 		Predicate<Long, Film> predicate = Predicates.equal("origine", filmOrigine);
-		logger.info("films cache find");
+		logger.info("films cache find ");
 		Collection<Film> films = mapFilms.values(predicate);
 		logger.info("films cache size: " + films.size());
 		if (films.size() > 0) {
-			return films.stream().collect(Collectors.toList());
+			List<Film> list = films.stream().collect(Collectors.toList());
+			Collections.sort(list);
+			watch.stop();
+			logger.info("findAllFilmsByOrigine="+watch.prettyPrint());
+			return list;
 		}
 		logger.info("no films find");
 		List<Film> e = this.filmDao.findAllFilmsByOrigine(filmOrigine);
@@ -361,6 +369,8 @@ public class FilmServiceImpl implements IFilmService {
 		e.parallelStream().forEach(it -> {
 			mapFilms.putIfAbsent(it.getId(), it);
 		});
+		watch.stop();
+		logger.info("findAllFilmsByOrigine="+watch.prettyPrint());
 		return e;
 	}
 
@@ -394,7 +404,10 @@ public class FilmServiceImpl implements IFilmService {
 	
 	@Override
 	public List<Personne> findAllRealisateursByOrigine(FilmOrigine filmOrigine) {
-		Set<Personne> realisateursByOrigineToReturnSet = new ConcurrentSkipListSet<Personne>();
+		StopWatch watch = new StopWatch();
+		watch.start();
+		//Set<Personne> realisateursByOrigineToReturnSet = new ConcurrentSkipListSet<Personne>();
+		Set<Personne> realisateursByOrigineToReturnSet = new TreeSet<Personne>();
 		if(mapRealisateursByOrigine.size()>0 && mapRealisateursByOrigine.containsKey(filmOrigine)) {
 			Map<Long,Set<Personne>> realisateursByFilm = mapRealisateursByOrigine.get(filmOrigine);
 			if (realisateursByFilm.size() > 0) {
@@ -403,6 +416,8 @@ public class FilmServiceImpl implements IFilmService {
 				}
 				List<Personne> realisateursByOrigineToReturn = new ArrayList<>(realisateursByOrigineToReturnSet);
 				Collections.sort(realisateursByOrigineToReturn, (f1,f2)->f1.getNom().compareTo(f2.getNom()));
+				watch.stop();
+				logger.info("findAllRealisateursByOrigine="+watch.prettyPrint());
 				return realisateursByOrigineToReturn;
 			}
 		}
@@ -415,6 +430,8 @@ public class FilmServiceImpl implements IFilmService {
 			realisateursByOrigineToReturnSet.addAll(film.getRealisateurs());
 		});
 		mapRealisateursByOrigine.put(filmOrigine, map);
+		watch.stop();
+		logger.info("findAllRealisateursByOrigine="+watch.prettyPrint());
 		return new ArrayList<>(realisateursByOrigineToReturnSet);
 	}
 	
@@ -437,14 +454,19 @@ public class FilmServiceImpl implements IFilmService {
 	}
 	@Override
 	public List<Personne> findAllActeursByOrigine(FilmOrigine filmOrigine) {
-		ConcurrentSkipListSet<Personne> acteursByOrigineToReturnSet = new ConcurrentSkipListSet<Personne>();
+		StopWatch watch = new StopWatch();
+		watch.start();
+		//ConcurrentSkipListSet<Personne> acteursByOrigineToReturnSet = new ConcurrentSkipListSet<Personne>();
+		Set<Personne> acteursByOrigineToReturnSet = new TreeSet<Personne>();
 		if(mapActeursByOrigine.size()>0 && mapActeursByOrigine.containsKey(filmOrigine)) {
 			Map<Long,Set<Personne>> acteursByFilm = mapActeursByOrigine.get(filmOrigine);
-			logger.info("acteursByFilm cache size: " + acteursByFilm.size());
+			//logger.info("acteursByFilm cache size: " + acteursByFilm.size());
 			if (acteursByFilm.size() > 0) {
 				for(Set<Personne> set : acteursByFilm.values()) {
 					acteursByOrigineToReturnSet.addAll(set);
 				}
+				watch.stop();
+				logger.info("findAllActeursByOrigine = "+watch.prettyPrint());
 				return new ArrayList<>(acteursByOrigineToReturnSet);
 			}
 		}
@@ -457,6 +479,8 @@ public class FilmServiceImpl implements IFilmService {
 			acteursByOrigineToReturnSet.addAll(film.getActeurs());
 		});
 		mapActeursByOrigine.put(filmOrigine, map);
+		watch.stop();
+		logger.info("findAllActeursByOrigine="+watch.prettyPrint());
 		return new ArrayList<>(acteursByOrigineToReturnSet);
 		
 	}

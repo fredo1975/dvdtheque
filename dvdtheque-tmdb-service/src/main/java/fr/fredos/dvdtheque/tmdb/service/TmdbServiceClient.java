@@ -98,6 +98,7 @@ public class TmdbServiceClient {
 		}
 		Results results = retrieveTmdbSearchResultsById(tmdbId);
 		Film toUpdateFilm = transformTmdbFilmToDvdThequeFilm(film,results, new HashSet<Long>(), true);
+		toUpdateFilm.setOrigine(film.getOrigine());
 		filmService.updateFilm(toUpdateFilm);
 		return toUpdateFilm;
 	}

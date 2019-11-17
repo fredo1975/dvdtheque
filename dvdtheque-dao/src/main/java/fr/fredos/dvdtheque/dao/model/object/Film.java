@@ -25,7 +25,7 @@ import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 
 @Entity
 @Table(name = "FILM")
-public class Film implements Serializable {
+public class Film implements Serializable, Comparable<Film> {
 	private static final long serialVersionUID = -1382161470818168805L;
 	@Transient
 	protected Logger logger = LoggerFactory.getLogger(getClass());
@@ -206,5 +206,10 @@ public class Film implements Serializable {
 				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
 				+ runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
 				+ alreadyInDvdtheque + "]";
+	}
+	@Override
+	public int compareTo(Film film) {
+		// TODO Auto-generated method stub
+		return this.getTitre().compareTo(film.getTitre());
 	}
 }
