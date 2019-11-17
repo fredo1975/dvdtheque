@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.fredos.dvdtheque</groupId>
 	<artifactId>dvdtheque</artifactId>
-	<version>2.73.0-SNAPSHOT</version>
+	<version>2.72.0</version>
 	<packaging>pom</packaging>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
