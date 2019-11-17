@@ -181,7 +181,6 @@ public class FilmServiceImpl implements IFilmService {
 		mapFilms.put(id, film);
 		
 		handleMapPersonneByOrigine(PersonneType.ACTEUR,mapActeursByOrigine, film);
-		
 		handleMapPersonneByOrigine(PersonneType.REALISATEUR,mapRealisateursByOrigine, film);
 		
 		return id;
@@ -196,6 +195,8 @@ public class FilmServiceImpl implements IFilmService {
 		}
 		personnesByFilm.put(film.getId(), PersonneType.ACTEUR.equals(personneType)?film.getActeurs():film.getRealisateurs());
 		mapPersonnesByOrigine.put(film.getOrigine(), personnesByFilm);
+		
+		
 	}
 
 	@Override
@@ -352,26 +353,31 @@ public class FilmServiceImpl implements IFilmService {
 	public List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine) {
 		StopWatch watch = new StopWatch();
 		watch.start();
-		Predicate<Long, Film> predicate = Predicates.equal("origine", filmOrigine);
-		logger.info("films cache find ");
-		Collection<Film> films = mapFilms.values(predicate);
-		logger.info("films cache size: " + films.size());
-		if (films.size() > 0) {
-			List<Film> list = films.stream().collect(Collectors.toList());
-			Collections.sort(list);
+		if(FilmOrigine.TOUS.equals(filmOrigine)) {
+			return findAllFilms();
+		}else {
+			Predicate<Long, Film> predicate = Predicates.equal("origine", filmOrigine);
+			logger.info("films cache find ");
+			Collection<Film> films = mapFilms.values(predicate);
+			logger.info("films cache size: " + films.size());
+			if (films.size() > 0) {
+				List<Film> list = films.stream().collect(Collectors.toList());
+				Collections.sort(list);
+				watch.stop();
+				logger.info("findAllFilmsByOrigine="+watch.prettyPrint());
+				return list;
+			}
+			logger.info("no films find");
+			List<Film> e = this.filmDao.findAllFilmsByOrigine(filmOrigine);
+			logger.info("films size: " + e.size());
+			e.parallelStream().forEach(it -> {
+				mapFilms.putIfAbsent(it.getId(), it);
+			});
 			watch.stop();
 			logger.info("findAllFilmsByOrigine="+watch.prettyPrint());
-			return list;
+			return e;
 		}
-		logger.info("no films find");
-		List<Film> e = this.filmDao.findAllFilmsByOrigine(filmOrigine);
-		logger.info("films size: " + e.size());
-		e.parallelStream().forEach(it -> {
-			mapFilms.putIfAbsent(it.getId(), it);
-		});
-		watch.stop();
-		logger.info("findAllFilmsByOrigine="+watch.prettyPrint());
-		return e;
+		
 	}
 
 	@Override
@@ -386,20 +392,16 @@ public class FilmServiceImpl implements IFilmService {
 	
 	@Override
 	public List<Personne> findAllRealisateurs() {
-		Collection<Personne> personnes = mapRealisateurs.values();
-		logger.info("personnes cache size: " + personnes.size());
-		if (personnes.size() > 0) {
-			List<Personne> l = personnes.stream().collect(Collectors.toList());
-			Collections.sort(l, (f1,f2)->f1.getNom().compareTo(f2.getNom()));
-			return l;
+		Set<Personne> realisateurs = new ConcurrentSkipListSet<Personne>();
+		Collection<Film> films = mapFilms.values();
+		logger.info("films cache size: " + films.size());
+		if (films.size() > 0) {
+			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.REALISATEUR,films, realisateurs);
 		}
-		logger.info("personnes find");
-		List<Personne> personnesList = this.personneDao.findAllRealisateur();
-		logger.info("personnesList size: " + personnesList.size());
-		personnesList.parallelStream().forEach(it -> {
-			mapRealisateurs.putIfAbsent(it.getId(), it);
-		});
-		return personnesList;
+		logger.info("no films find");
+		List<Film> filmList = this.filmDao.findAllFilms();
+		logger.info("filmList size: " + filmList.size());
+		return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.REALISATEUR,filmList, realisateurs);
 	}
 	
 	@Override
@@ -437,20 +439,23 @@ public class FilmServiceImpl implements IFilmService {
 	
 	@Override
 	public List<Personne> findAllActeurs() {
-		Collection<Personne> personnes = mapActeurs.values();
-		logger.info("personnes cache size: " + personnes.size());
-		if (personnes.size() > 0) {
-			List<Personne> l = personnes.stream().collect(Collectors.toList());
-			Collections.sort(l, (f1,f2)->f1.getNom().compareTo(f2.getNom()));
-			return l;
+		Set<Personne> acteurs = new ConcurrentSkipListSet<Personne>();
+		Collection<Film> films = mapFilms.values();
+		logger.info("films cache size: " + films.size());
+		if (films.size() > 0) {
+			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,films, acteurs);
 		}
-		logger.info("no personnes find");
-		List<Personne> personnesList = this.personneDao.findAllActeur();
-		logger.info("personnesList size: " + personnesList.size());
-		personnesList.parallelStream().forEach(it -> {
-			mapRealisateurs.putIfAbsent(it.getId(), it);
+		logger.info("no films find");
+		List<Film> filmList = this.filmDao.findAllFilms();
+		logger.info("filmList size: " + filmList.size());
+		return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,filmList, acteurs);
+	}
+	
+	private List<Personne> iterateThroughFilmsToGetPersonnesListSorted(PersonneType personneType,Collection<Film> films,Set<Personne> personnes){
+		films.parallelStream().forEach(it -> {
+			personnes.addAll(PersonneType.ACTEUR.equals(personneType)?it.getActeurs():it.getRealisateurs());
 		});
-		return personnesList;
+		return personnes.stream().collect(Collectors.toList());
 	}
 	@Override
 	public List<Personne> findAllActeursByOrigine(FilmOrigine filmOrigine) {

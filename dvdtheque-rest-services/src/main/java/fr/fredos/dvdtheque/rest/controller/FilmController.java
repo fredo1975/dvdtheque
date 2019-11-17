@@ -95,6 +95,9 @@ public class FilmController {
 		logger.info("findAllFilmsByOrigine - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			if(FilmOrigine.TOUS.equals(filmOrigine)) {
+				return ResponseEntity.ok(filmService.findAllFilms());
+			}
 			return ResponseEntity.ok(filmService.findAllFilmsByOrigine(filmOrigine));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -122,6 +125,9 @@ public class FilmController {
 		logger.info("findAllRealisateursByOrigine - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			if(FilmOrigine.TOUS.equals(filmOrigine)) {
+				return ResponseEntity.ok(filmService.findAllRealisateurs());
+			}
 			return ResponseEntity.ok(filmService.findAllRealisateursByOrigine(filmOrigine));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -137,6 +143,9 @@ public class FilmController {
 		logger.info("findAllActeursByOrigine - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			if(FilmOrigine.TOUS.equals(filmOrigine)) {
+				return ResponseEntity.ok(filmService.findAllActeurs());
+			}
 			return ResponseEntity.ok(filmService.findAllActeursByOrigine(filmOrigine));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
