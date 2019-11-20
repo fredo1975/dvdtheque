@@ -516,7 +516,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
-				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_4780)));;
 		Film filmUpdated = filmService.findFilm(film.getId());
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), filmUpdated.getTitre());
 		assertFalse(filmUpdated.getDvd().isRipped());
