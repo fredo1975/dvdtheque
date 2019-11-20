@@ -152,17 +152,17 @@ public class FilmServiceImpl implements IFilmService {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void updateFilm(Film film) {
+	public Film updateFilm(Film film) {
 		upperCaseTitre(film);
 		if (film.getDvd() != null && !film.getDvd().isRipped()) {
 			film.getDvd().setDateRip(null);
 		}
-		filmDao.updateFilm(film);
+		Film mergedFilm = filmDao.updateFilm(film);
 		mapFilms.put(film.getId(), film);
 		
 		handleMapPersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, film);
 		handleMapPersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film);
-		
+		return mergedFilm;
 	}
 
 	private void upperCaseTitre(Film film) {

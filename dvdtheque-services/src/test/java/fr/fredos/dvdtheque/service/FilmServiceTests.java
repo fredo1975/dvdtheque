@@ -358,8 +358,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		
 		final String posterPath = "posterPath";
 		film.setPosterPath(posterPath);
-		filmService.updateFilm(film);
-		Film filmUpdated = filmService.findFilm(film.getId());
+		Film filmUpdated = filmService.updateFilm(film);
+		//Film filmUpdated = filmService.findFilm(film.getId());
 		
 		assertNotNull(filmUpdated);
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), filmUpdated.getTitre());
