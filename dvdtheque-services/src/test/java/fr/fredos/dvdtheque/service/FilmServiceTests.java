@@ -34,6 +34,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
@@ -63,6 +64,11 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		filmService.cleanAllCaches();
 	}
 	
+	private void assertCacheSize(final int mapActeursByOrigineSize,final int mapRealisateursByOrigineSize,final FilmOrigine filmOrigine) {
+		assertEquals(mapActeursByOrigineSize, filmService.findAllActeursByOrigine(filmOrigine).size());
+		assertEquals(mapRealisateursByOrigineSize, filmService.findAllRealisateursByOrigine(filmOrigine).size());
+	}
+	
 	@Test
 	public void saveNewFilm() {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
@@ -82,6 +88,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, true);
+		assertCacheSize(0, 0, FilmOrigine.EN_SALLE);
+		assertCacheSize(3, 1, FilmOrigine.DVD);
 	}
 	
 	@Test
@@ -366,6 +374,50 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertEquals(FilmBuilder.REAL_NOM_TMBD_ID_4780, filmUpdated.getRealisateurs().iterator().next().getNom());
 		assertEquals(FilmBuilder.ACT4_TMBD_ID_844, filmUpdated.getActeurs().iterator().next().getNom());
 		assertEquals(posterPath, filmUpdated.getPosterPath());
+		assertCacheSize(0, 0, FilmOrigine.EN_SALLE);
+		assertCacheSize(1, 1, FilmOrigine.DVD);
+	}
+	
+	@Test
+	public void transfertEnSalleToDvdFilm() throws Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.EN_SALLE)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		Film filmToUpdate = filmService.findFilm(film.getId());
+		assertNotNull(filmToUpdate);
+		logger.debug("filmToUpdate=" + filmToUpdate.toString());
+		filmToUpdate.setTitre(FilmBuilder.TITRE_FILM_TMBD_ID_4780);
+		filmToUpdate.setOrigine(FilmOrigine.DVD);
+		filmToUpdate.setDvd(new Dvd());
+		filmToUpdate.getDvd().setAnnee(2019);
+		filmToUpdate.getDvd().setEdition("");
+		filmToUpdate.getDvd().setFormat(DvdFormat.DVD);
+		filmToUpdate.getDvd().setZone(new Integer(1));
+		filmToUpdate.getDvd().setRipped(true);
+		Film filmUpdated = filmService.updateFilm(filmToUpdate);
+		//Film filmUpdated = filmService.findFilm(film.getId());
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), filmUpdated.getTitre());
+		assertEquals(FilmOrigine.DVD, filmUpdated.getOrigine());
+		assertEquals(DvdFormat.DVD, filmUpdated.getDvd().getFormat());
+		assertEquals(new Integer(1), filmUpdated.getDvd().getZone());
+		assertTrue(filmUpdated.getDvd().isRipped());
+		assertCacheSize(0, 0, FilmOrigine.EN_SALLE);
+		assertCacheSize(3, 1, FilmOrigine.DVD);
 	}
 	@Test
 	public void cleanAllFilms() {

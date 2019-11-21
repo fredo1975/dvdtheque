@@ -29,4 +29,5 @@ public interface FilmDao {
 	void cleanAllGenres();
 	List<Genre> findAllGenres();
 	List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine);
+	FilmOrigine findFilmOrigine(Long id);
 }
