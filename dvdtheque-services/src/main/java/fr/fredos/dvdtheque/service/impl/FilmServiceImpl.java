@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -152,17 +153,21 @@ public class FilmServiceImpl implements IFilmService {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void updateFilm(Film film) {
+	public Film updateFilm(Film film) {
 		upperCaseTitre(film);
 		if (film.getDvd() != null && !film.getDvd().isRipped()) {
 			film.getDvd().setDateRip(null);
 		}
-		filmDao.updateFilm(film);
+		FilmOrigine oldOrigine = filmDao.findFilmOrigine(film.getId());
+		Film mergedFilm = filmDao.updateFilm(film);
 		mapFilms.put(film.getId(), film);
-		
-		handleMapPersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, film);
-		handleMapPersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film);
-		
+		if(!oldOrigine.equals(film.getOrigine())) {
+			handleMapPersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, film,oldOrigine);
+			handleMapPersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film,oldOrigine);
+		}
+		handleMapPersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, film,null);
+		handleMapPersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film,null);
+		return mergedFilm;
 	}
 
 	private void upperCaseTitre(Film film) {
@@ -180,13 +185,21 @@ public class FilmServiceImpl implements IFilmService {
 		Long id = filmDao.saveNewFilm(film);
 		mapFilms.put(id, film);
 		
-		handleMapPersonneByOrigine(PersonneType.ACTEUR,mapActeursByOrigine, film);
-		handleMapPersonneByOrigine(PersonneType.REALISATEUR,mapRealisateursByOrigine, film);
+		handleMapPersonneByOrigine(PersonneType.ACTEUR,mapActeursByOrigine, film,null);
+		handleMapPersonneByOrigine(PersonneType.REALISATEUR,mapRealisateursByOrigine, film,null);
 		
 		return id;
 	}
 	
-	private void handleMapPersonneByOrigine(PersonneType personneType,IMap<FilmOrigine, Map<Long,Set<Personne>>> mapPersonnesByOrigine, final Film film) {
+	private void handleMapPersonneByOrigine(PersonneType personneType,IMap<FilmOrigine, Map<Long,Set<Personne>>> mapPersonnesByOrigine, final Film film,
+			final FilmOrigine oldOrigine) {
+		if(oldOrigine != null && mapPersonnesByOrigine.size()>0 && mapPersonnesByOrigine.containsKey(oldOrigine)) {
+			Map<Long,Set<Personne>> oldPersonnesByFilm = mapPersonnesByOrigine.get(oldOrigine);
+			Set<Personne> personnes = oldPersonnesByFilm.get(film.getId());
+			personnes.removeAll(personnes);
+			mapPersonnesByOrigine.put(oldOrigine, oldPersonnesByFilm);
+			logger.info(personnes.toString());
+		}
 		Map<Long,Set<Personne>> personnesByFilm;
 		if(mapPersonnesByOrigine.size()>0 && mapPersonnesByOrigine.containsKey(film.getOrigine())) {
 			personnesByFilm = mapPersonnesByOrigine.get(film.getOrigine());
@@ -195,10 +208,8 @@ public class FilmServiceImpl implements IFilmService {
 		}
 		personnesByFilm.put(film.getId(), PersonneType.ACTEUR.equals(personneType)?film.getActeurs():film.getRealisateurs());
 		mapPersonnesByOrigine.put(film.getOrigine(), personnesByFilm);
-		
-		
 	}
-
+	
 	@Override
 	@Transactional(readOnly = false)
 	public Genre saveGenre(Genre genre) {

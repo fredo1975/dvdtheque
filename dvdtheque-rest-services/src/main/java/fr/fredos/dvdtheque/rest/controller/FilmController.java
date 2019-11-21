@@ -172,7 +172,7 @@ public class FilmController {
 		return ResponseEntity.badRequest().build();
 	}
 	@PutMapping("/films/update/{id}")
-	ResponseEntity<Object> updateFilm(@RequestBody Film film,@PathVariable Long id) {
+	ResponseEntity<Film> updateFilm(@RequestBody Film film,@PathVariable Long id) {
 		try {
 			Film filmOptional = filmService.findFilm(id);
 			if(filmOptional==null) {
@@ -182,8 +182,8 @@ public class FilmController {
 			if(filmOptional.getDvd() != null && !filmOptional.getDvd().isRipped() && film.getDvd().isRipped()) {
 				film.getDvd().setDateRip(new Date());
 			}
-			filmService.updateFilm(film);
-			return ResponseEntity.noContent().build();
+			Film mergedFilm = filmService.updateFilm(film);
+			return ResponseEntity.ok(mergedFilm);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}

@@ -1,6 +1,5 @@
 package fr.fredos.dvdtheque.service;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +19,7 @@ public interface IFilmService {
 	Film findFilmWithAllObjectGraph(final Long id);
 	List<Film> findAllFilms();
 	Set<Long> findAllTmdbFilms(Set<Long> tmdbIds);
-	void updateFilm(Film film);
+	Film updateFilm(Film film);
 	Long saveNewFilm(Film film);
 	//public List<FilmDto> getAllFilmDtos();
 	void cleanAllFilms();

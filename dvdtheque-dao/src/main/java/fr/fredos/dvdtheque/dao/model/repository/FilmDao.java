@@ -17,7 +17,7 @@ public interface FilmDao {
 	Film findFilmByTitre(String titre);
 	Film findFilmWithAllObjectGraph(Long id);
 	Long saveNewFilm(Film film);
-	void updateFilm(Film film);
+	Film updateFilm(Film film);
 	Long saveDvd(Dvd dvd);
 	List<Film> findAllFilms();
 	Set<Long> findAllTmdbFilms(Set<Long> tmdbIds);
@@ -29,4 +29,5 @@ public interface FilmDao {
 	void cleanAllGenres();
 	List<Genre> findAllGenres();
 	List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine);
+	FilmOrigine findFilmOrigine(Long id);
 }

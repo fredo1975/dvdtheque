@@ -60,6 +60,11 @@ public class FilmDaoImpl implements FilmDao {
 		q.setParameter("id", id);
 		return (Film)q.getSingleResult();
 	}
+	public FilmOrigine findFilmOrigine(Long id){
+		Query q = this.entityManager.createQuery("select origine from Film film where film.id = :id");
+		q.setParameter("id", id);
+		return (FilmOrigine)q.getSingleResult();
+	}
 	public Film findFilmByTitre(String titre){
 		Query q = this.entityManager.createQuery("from Film where UPPER(titre) = UPPER(:titre)");
 		q.setParameter("titre", titre);
@@ -81,8 +86,8 @@ public class FilmDaoImpl implements FilmDao {
 		this.entityManager.persist(film);
 		return film.getId();
 	}
-	public void updateFilm(Film film){
-		this.entityManager.merge(film);
+	public Film updateFilm(Film film){
+		return this.entityManager.merge(film);
 	}
 	public Long saveDvd(Dvd dvd){
 		this.entityManager.persist(dvd);

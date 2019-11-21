@@ -39,8 +39,7 @@ public class TheMovieDbTasklet implements Tasklet{
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error(e1.getMessage());
 			}
 			try {
 				searchResults = tmdbServiceClient.retrieveTmdbSearchResults(film.getTitre());

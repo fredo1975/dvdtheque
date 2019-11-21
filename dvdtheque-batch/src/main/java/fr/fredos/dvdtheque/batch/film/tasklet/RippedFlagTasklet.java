@@ -54,8 +54,8 @@ public class RippedFlagTasklet implements Tasklet{
 	        			if(film != null) {
 	        				film.getDvd().setRipped(true);
 	        				film.getDvd().setDateRip(cal.getTime());
-	            			filmService.updateFilm(film);
-	            			logger.debug(film.toString());
+	            			Film mergedFilm = filmService.updateFilm(film);
+	            			logger.debug(mergedFilm.toString());
 	        			}
 	        		}catch(EmptyResultDataAccessException e) {
 	        			//logger.error(titre+" not found");
