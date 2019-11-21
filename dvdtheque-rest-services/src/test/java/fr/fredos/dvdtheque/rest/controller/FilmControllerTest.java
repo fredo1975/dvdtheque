@@ -93,6 +93,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/6ldXqZhCxcnzlgMU70CLPvZI8if.jpg";
 	public static final String SHEET_NAME = "Films";
 	
+	private void assertCacheSize(final int mapActeursByOrigineSize,final int mapRealisateursByOrigineSize,final FilmOrigine filmOrigine) {
+		assertEquals(mapActeursByOrigineSize, filmService.findAllActeursByOrigine(filmOrigine).size());
+		assertEquals(mapRealisateursByOrigineSize, filmService.findAllRealisateursByOrigine(filmOrigine).size());
+	}
 	@Before()
 	public void setUp() throws Exception {
     	filmService.cleanAllFilms();
@@ -522,6 +526,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film filmUpdated = filmService.findFilm(filmToUpdate.getId());
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), filmUpdated.getTitre());
 		assertFalse(filmUpdated.getDvd().isRipped());
+		assertCacheSize(0, 0, FilmOrigine.EN_SALLE);
+		assertCacheSize(3, 1, FilmOrigine.DVD);
 	}
 	
 	@Test
@@ -569,10 +575,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertEquals(DvdFormat.DVD, filmUpdated.getDvd().getFormat());
 		assertEquals(new Integer(1), filmUpdated.getDvd().getZone());
 		assertTrue(filmUpdated.getDvd().isRipped());
-		assertEquals(0, filmService.findAllActeursByOrigine(FilmOrigine.EN_SALLE));
-		assertEquals(0, filmService.findAllRealisateursByOrigine(FilmOrigine.EN_SALLE));
-		assertEquals(1, filmService.findAllActeursByOrigine(FilmOrigine.DVD));
-		assertEquals(3, filmService.findAllRealisateursByOrigine(FilmOrigine.DVD));
+		
+		assertCacheSize(0, 0, FilmOrigine.EN_SALLE);
+		assertCacheSize(3, 1, FilmOrigine.DVD);
 	}
 
 	@Test
@@ -624,6 +629,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film filmSaved = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		FilmBuilder.assertFilmIsNotNull(filmSaved, true, 0, false);
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmSaved.getTitre());
+		assertCacheSize(12, 1, FilmOrigine.EN_SALLE);
+		assertCacheSize(0, 0, FilmOrigine.DVD);
 	}
 
 	@Test
