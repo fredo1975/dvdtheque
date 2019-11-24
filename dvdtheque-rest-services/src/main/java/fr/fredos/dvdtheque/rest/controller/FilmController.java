@@ -189,6 +189,20 @@ public class FilmController {
 		}
 		return ResponseEntity.badRequest().build();
 	}
+	@PutMapping("/films/remove/{id}")
+	ResponseEntity<Film> removeFilm(@PathVariable Long id) {
+		try {
+			Film filmOptional = filmService.findFilm(id);
+			if(filmOptional==null) {
+				return ResponseEntity.notFound().build();
+			}
+			filmService.removeFilm(filmOptional);
+			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return ResponseEntity.badRequest().build();
+	}
 	@PutMapping("/films/save/{tmdbId}")
 	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
 		Film savedFilm;
