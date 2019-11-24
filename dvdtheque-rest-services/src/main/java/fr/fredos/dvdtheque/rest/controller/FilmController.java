@@ -190,17 +190,13 @@ public class FilmController {
 		return ResponseEntity.badRequest().build();
 	}
 	@PutMapping("/films/remove/{id}")
-	ResponseEntity<Film> removeFilm(@RequestBody Film film,@PathVariable Long id) {
+	ResponseEntity<Film> removeFilm(@PathVariable Long id) {
 		try {
 			Film filmOptional = filmService.findFilm(id);
 			if(filmOptional==null) {
 				return ResponseEntity.notFound().build();
 			}
-			// handle date rip
-			if(filmOptional.getDvd() != null && !filmOptional.getDvd().isRipped() && film.getDvd().isRipped()) {
-				film.getDvd().setDateRip(new Date());
-			}
-			filmService.removeFilm(film);
+			filmService.removeFilm(filmOptional);
 			return ResponseEntity.noContent().build();
 		} catch (Exception e) {
 			logger.error(e.getMessage());

@@ -558,11 +558,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(filmToRemove);
 		logger.debug("filmToRemove=" + filmToRemove.toString());
 		
-		ObjectMapper mapper = new ObjectMapper();
-		String filmJsonString = mapper.writeValueAsString(filmToRemove);
-		
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(REMOVE_FILM_URI + film.getId(), filmToRemove)
-				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(REMOVE_FILM_URI + film.getId())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		Film filmRemoved = filmService.findFilm(filmToRemove.getId());
