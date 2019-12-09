@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -70,7 +71,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	
 	@Test
-	public void saveNewFilm() {
+	public void saveNewFilm() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -79,6 +80,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -104,6 +106,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -129,6 +132,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -160,6 +164,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -183,6 +188,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -205,6 +211,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -219,6 +226,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -233,6 +241,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
@@ -247,6 +256,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
@@ -261,6 +271,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
@@ -287,6 +298,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -314,6 +326,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -330,7 +343,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	
 	@Test
-	public void updateFilm(){
+	public void updateFilm() throws ParseException{
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -339,6 +352,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -389,6 +403,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
@@ -420,7 +435,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertCacheSize(3, 1, FilmOrigine.DVD);
 	}
 	@Test
-	public void cleanAllFilms() {
+	public void cleanAllFilms() throws ParseException {
 		String methodName = "cleanAllFilms : ";
 		logger.debug(methodName + "start");
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
@@ -431,6 +446,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -445,6 +461,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -459,6 +476,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -472,7 +490,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(methodName + "end");
 	}
 	@Test
-	public void findAllFilmsByCriteriaTitreService() {
+	public void findAllFilmsByCriteriaTitreService() throws ParseException {
 		String methodName = "findAllFilmsByCriteriaTtireService : ";
 		logger.debug(methodName + "start");
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
@@ -483,6 +501,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -502,7 +521,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(methodName + "end");
 	}
 	@Test
-	public void findAllFilmsByCriteriaFilmOrigineService() {
+	public void findAllFilmsByCriteriaFilmOrigineService() throws ParseException {
 		String methodName = "findAllFilmsByCriteriaFilmOrigineService : ";
 		logger.debug(methodName + "start");
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
@@ -513,6 +532,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -527,6 +547,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
@@ -546,7 +567,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(methodName + "end");
 	}
 	@Test
-	public void findAllFilmsByCriteriaActeursService() {
+	public void findAllFilmsByCriteriaActeursService() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -555,6 +576,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -581,7 +603,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertEquals(selectedActeurId, acteur.getId());
 	}
 	@Test
-	public void findAllFilmsByCriteriaDao() {
+	public void findAllFilmsByCriteriaDao() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -590,6 +612,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -618,7 +641,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	@Test
 	@Ignore
-	public void findAllFilmsByCriteriaRippedSinceDao() {
+	public void findAllFilmsByCriteriaRippedSinceDao() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -628,6 +651,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -673,7 +697,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertEquals(real.getPrenom(),realisateur.getPrenom());
 	}
 	@Test
-	public void removeFilmDao() {
+	public void removeFilmDao() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -682,6 +706,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -698,7 +723,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	
 	@Test(expected = java.lang.Exception.class)
-	public void removeFilmService() {
+	public void removeFilmService() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -707,6 +732,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -721,7 +747,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	
 	@Test
-	public void checkIfTmdbFilmExists() {
+	public void checkIfTmdbFilmExists() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -730,6 +756,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -743,7 +770,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	
 	@Test
-	public void testExcelToCsv() throws IOException {
+	public void testExcelToCsv() throws IOException, ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -752,6 +779,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -767,6 +795,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -782,6 +811,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -806,7 +836,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
         assertNotNull(csv);
 	}
 	@Test
-	public void testCreateSXSSFWorkbookFromFilmList() throws IOException {
+	public void testCreateSXSSFWorkbookFromFilmList() throws IOException, ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -817,6 +847,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRipped(true)
 				.setVu(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -834,6 +865,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRipped(true)
 				.setVu(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -851,6 +883,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRipped(true)
 				.setVu(false)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
@@ -1000,7 +1033,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	
 	@Test
-	public void findAllRealisateurs() {
+	public void findAllRealisateurs() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -1010,6 +1043,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -1025,7 +1059,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertTrue(realList.size()==1);
 	}
 	@Test
-	public void findAllRealisateursByOrigine() {
+	public void findAllRealisateursByOrigine() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -1035,6 +1069,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -1050,7 +1085,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertTrue(realList.size()==1);
 	}
 	@Test
-	public void findAllActeurs() {
+	public void findAllActeurs() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -1060,6 +1095,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -1075,7 +1111,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertTrue(actList.size()==3);
 	}
 	@Test
-	public void findAllActeursByOrigine() {
+	public void findAllActeursByOrigine() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film filmDvd = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -1085,6 +1121,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -1100,6 +1137,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
@@ -1125,6 +1163,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_1271)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)

@@ -46,6 +46,7 @@ public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)

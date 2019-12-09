@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,6 +29,7 @@ public class FilmBuilder {
 	public static final String TITRE_FILM_REREUPDATED = "Again Lorem Ipsum rereupdated";
 	public static final String TITRE_FILM_REREREUPDATED = "Another Lorem Ipsum rerereupdated";
 	public static final Integer ANNEE = 2015;
+	public static final String DATE_SORTIE = "2015/08/01";
 	public static final String REAL_NOM_TMBD_ID_844 = "WONG KAR-WAI";
 	public static final String REAL_NOM_TMBD_ID_4780 = "BRIAN DE PALMA";
 	public static final String REAL_NOM_TMBD_ID_1271 = "ZACK SNYDER";
@@ -59,6 +62,7 @@ public class FilmBuilder {
 		private String titre;
 		private String titreO;
 		private Integer annee;
+		private Date dateSortie;
 		private String realNom;
 		private String act1Nom;
 		private String act2Nom;
@@ -81,6 +85,11 @@ public class FilmBuilder {
 		}
 		public Builder setAnnee(Integer annee) {
 			this.annee = annee;
+			return this;
+		}
+		public Builder setDateSortie(String dateSortie) throws ParseException {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+			this.dateSortie = sdf.parse(dateSortie);
 			return this;
 		}
 		public Builder setRealNom(String realNom) {
@@ -157,6 +166,7 @@ public class FilmBuilder {
 			film.setTitre(this.titre);
 			film.setTitreO(this.titreO);
 			film.setAnnee(this.annee);
+			film.setDateSortie(this.dateSortie);
 			film.setRealisateurs(realisateurs);
 			film.setActeurs(acteurs);
 			genres.add(this.genre1);
@@ -182,6 +192,7 @@ public class FilmBuilder {
 		assertNotNull(film.getId());
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
+		assertNotNull(film.getDateSortie());
 		if(isOrigineDvd) {
 			assertNotNull(film.getDvd());
 			if (!dateRipNull) {

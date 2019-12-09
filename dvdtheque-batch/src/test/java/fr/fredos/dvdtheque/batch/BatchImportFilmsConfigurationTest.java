@@ -61,6 +61,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		assertNotNull(film.getId());
 		assertNotNull(film.getTitre());
 		assertNotNull(film.getAnnee());
+		assertNotNull(film.getDateSortie());
 		assertNotNull(film.getDvd());
 		assertNotNull(film.getOverview());
 		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));

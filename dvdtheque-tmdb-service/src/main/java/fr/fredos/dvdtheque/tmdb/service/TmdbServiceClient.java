@@ -183,6 +183,7 @@ public class TmdbServiceClient {
 		}
 		if(StringUtils.isNotEmpty(results.getRelease_date())) {
 			transformedfilm.setAnnee(retrieveYearFromReleaseDate(results.getRelease_date()));
+			transformedfilm.setDateSortie(transformReleaseDate(results.getRelease_date()));
 		}
 		transformedfilm.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
 		transformedfilm.setTmdbId(results.getId());
@@ -262,6 +263,18 @@ public class TmdbServiceClient {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(releaseDate);
 			return cal.get(Calendar.YEAR);
+		} catch (ParseException e) {
+			throw e;
+		}
+	}
+	private static Date transformReleaseDate(final String dateInStrFormat) throws ParseException {
+		DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+		Date releaseDate;
+		try {
+			releaseDate = sdf.parse(dateInStrFormat);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(releaseDate);
+			return cal.getTime();
 		} catch (ParseException e) {
 			throw e;
 		}

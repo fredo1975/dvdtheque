@@ -136,6 +136,8 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.DATE_SORTIE)
+				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)

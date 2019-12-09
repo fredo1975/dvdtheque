@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.dao.model.object;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,6 +35,8 @@ public class Film implements Serializable, Comparable<Film> {
 	private Long id;
 	@Column(name = "ANNEE")
 	private Integer annee;
+	@Column(name = "DATE_SORTIE")
+	private Date dateSortie;
 	@Column(name = "TITRE")
 	@NotNull
 	private String titre;
@@ -71,13 +74,7 @@ public class Film implements Serializable, Comparable<Film> {
 		super();
 		this.id = id;
 	}
-	public Film(Long id, Integer annee, String titre, String titreO) {
-		super();
-		this.id = id;
-		this.annee = annee;
-		this.titre = titre;
-		this.titreO = titreO;
-	}
+	
 	public Long getId() {
 		return id;
 	}
@@ -146,6 +143,12 @@ public class Film implements Serializable, Comparable<Film> {
 	public void setOrigine(FilmOrigine origine) {
 		this.origine = origine;
 	}
+	public Date getDateSortie() {
+		return dateSortie;
+	}
+	public void setDateSortie(Date dateSortie) {
+		this.dateSortie = dateSortie;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -201,11 +204,11 @@ public class Film implements Serializable, Comparable<Film> {
 	}
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", annee=" + annee + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
-				+ ", origine=" + origine + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", vu=" + vu
-				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
-				+ runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
-				+ alreadyInDvdtheque + "]";
+		return "Film [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", titre=" + titre + ", titreO="
+				+ titreO + ", dvd=" + dvd + ", origine=" + origine + ", realisateurs=" + realisateurs + ", acteurs="
+				+ acteurs + ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview="
+				+ overview + ", runtime=" + runtime + ", genres=" + genres + ", homepage=" + homepage
+				+ ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
 	}
 	@Override
 	public int compareTo(Film film) {
