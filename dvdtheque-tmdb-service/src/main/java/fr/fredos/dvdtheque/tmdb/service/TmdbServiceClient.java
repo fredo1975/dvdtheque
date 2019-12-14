@@ -336,7 +336,6 @@ public class TmdbServiceClient {
 	
 	public Date retrieveTmdbFrReleaseDate(final Long idFilm) throws ParseException {
 		try {
-			//return restTemplate.getForObject(environment.getRequiredProperty(TMDB_MOVIE_QUERY)+idFilm+"/release_dates?api_key="+environment.getRequiredProperty(TMDB_API_KEY), ReleaseDates.class);
 			ReleaseDates relDates = restTemplate.getForObject(environment.getRequiredProperty(TMDB_MOVIE_QUERY)+idFilm+"/release_dates?api_key="+environment.getRequiredProperty(TMDB_API_KEY), ReleaseDates.class);
 			List<ReleaseDatesResults> releaseDatesResults = relDates.getResults();
 			ReleaseDatesResults frReleaseDatesResults = releaseDatesResults.stream().filter(relDate -> relDate.getIso_3166_1().equalsIgnoreCase("FR")).findAny().orElse(null);
