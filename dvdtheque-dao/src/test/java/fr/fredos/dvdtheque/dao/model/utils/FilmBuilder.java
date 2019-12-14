@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -208,7 +209,7 @@ public class FilmBuilder {
 		assertNotNull("film Should have a titre",film.getTitre());
 		assertNotNull("film Should have a année",film.getAnnee());
 		assertNotNull("film Should have a date sortie",film.getDateSortie());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd",Locale.FRANCE);
 		if(StringUtils.isNotEmpty(filmDateSortie)) {
 			Date _filmDateSortie = DateUtils.clearDate(sdf.parse(filmDateSortie));
 			assertEquals("date sortie should match",film.getDateSortie(), _filmDateSortie);

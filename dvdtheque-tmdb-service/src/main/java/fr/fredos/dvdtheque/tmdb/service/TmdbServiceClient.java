@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -347,8 +348,9 @@ public class TmdbServiceClient {
 				releaseDatesResultsValues = frReleaseDatesResults.getRelease_dates().get(0);
 			}
 			String pattern = "yyyy-MM-dd";
-			SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+			SimpleDateFormat sdf = new SimpleDateFormat(pattern,Locale.FRANCE);
 			return sdf.parse(releaseDatesResultsValues.getRelease_date());
+			//return org.apache.commons.lang.time.DateUtils.addDays(sdf.parse(releaseDatesResultsValues.getRelease_date()), 1);
 		} catch (RestClientException e) {
 			throw e;
 		}
