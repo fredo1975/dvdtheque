@@ -16,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
@@ -36,6 +38,7 @@ public class Film implements Serializable, Comparable<Film> {
 	@Column(name = "ANNEE")
 	private Integer annee;
 	@Column(name = "DATE_SORTIE")
+	@Temporal(TemporalType.DATE)
 	private Date dateSortie;
 	@Column(name = "TITRE")
 	@NotNull

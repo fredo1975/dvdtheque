@@ -30,6 +30,7 @@ public class Dvd implements Serializable {
 	@Column(name = "ANNEE")
 	private Integer annee;
 	@Column(name = "DATE_SORTIE")
+	@Temporal(TemporalType.DATE)
 	private Date dateSortie;
 	@Column(name = "ZONE")
 	private Integer zone;
