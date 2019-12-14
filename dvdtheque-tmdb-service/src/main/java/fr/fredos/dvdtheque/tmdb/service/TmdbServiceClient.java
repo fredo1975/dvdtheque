@@ -51,6 +51,9 @@ import fr.fredos.dvdtheque.tmdb.model.Crew;
 import fr.fredos.dvdtheque.tmdb.model.Genres;
 import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
 import fr.fredos.dvdtheque.tmdb.model.Posters;
+import fr.fredos.dvdtheque.tmdb.model.ReleaseDates;
+import fr.fredos.dvdtheque.tmdb.model.ReleaseDatesResults;
+import fr.fredos.dvdtheque.tmdb.model.ReleaseDatesResultsValues;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.model.SearchResults;
 
@@ -159,7 +162,7 @@ public class TmdbServiceClient {
 	 * @param film
 	 * @param results
 	 * @param tmdbFilmAlreadyInDvdthequeSet
-	 * @param persistPersonne TODO
+	 * @param persistPersonne
 	 * @return
 	 * @throws ParseException
 	 */
@@ -182,10 +185,9 @@ public class TmdbServiceClient {
 		if(film != null && film.getDvd() != null) {
 			transformedfilm.setDvd(film.getDvd());
 		}
-		if(StringUtils.isNotEmpty(results.getRelease_date())) {
-			transformedfilm.setAnnee(retrieveYearFromReleaseDate(results.getRelease_date()));
-			transformedfilm.setDateSortie(transformReleaseDate(results.getRelease_date()));
-		}
+		Date releaseDate = retrieveTmdbFrReleaseDate(results.getId());
+		transformedfilm.setAnnee(retrieveYearFromReleaseDate(releaseDate));
+		transformedfilm.setDateSortie(DateUtils.clearDate(releaseDate));
 		transformedfilm.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
 		transformedfilm.setTmdbId(results.getId());
 		transformedfilm.setOverview(results.getOverview());
@@ -256,26 +258,12 @@ public class TmdbServiceClient {
 		}
 		return res;
 	}
-	private static int retrieveYearFromReleaseDate(final String dateInStrFormat) throws ParseException {
-		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date releaseDate;
-		try {
-			releaseDate = sdf.parse(dateInStrFormat);
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(releaseDate);
-			return cal.get(Calendar.YEAR);
-		} catch (ParseException e) {
-			throw e;
-		}
+	private static int retrieveYearFromReleaseDate(final Date relDate) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(relDate);
+		return cal.get(Calendar.YEAR);
 	}
-	private static Date transformReleaseDate(final String dateInStrFormat) throws ParseException {
-		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		try {
-			return DateUtils.clearDate(sdf.parse(dateInStrFormat));
-		} catch (ParseException e) {
-			throw e;
-		}
-	}
+	
 	public Results filterSearchResultsByDateRelease(final Integer annee,
 			final List<Results> results) {
 		Results res = null;
@@ -284,13 +272,14 @@ public class TmdbServiceClient {
 				if(StringUtils.isEmpty(result.getRelease_date())) {
 					return false;
 				}
+				/*
 				try {
 					if(retrieveYearFromReleaseDate(result.getRelease_date()) == annee.intValue()) {
 						return true;
 					}
 				} catch (ParseException e) {
 					e.printStackTrace();
-				}
+				}*/
 				return false;
 			}).findAny().orElse(null);
 			if(res==null) {
@@ -340,6 +329,27 @@ public class TmdbServiceClient {
 	public Credits retrieveTmdbCredits(final Long idFilm) {
 		try {
 			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_MOVIE_QUERY)+idFilm+"/credits?api_key="+environment.getRequiredProperty(TMDB_API_KEY), Credits.class);
+		} catch (RestClientException e) {
+			throw e;
+		}
+	}
+	
+	public Date retrieveTmdbFrReleaseDate(final Long idFilm) throws ParseException {
+		try {
+			//return restTemplate.getForObject(environment.getRequiredProperty(TMDB_MOVIE_QUERY)+idFilm+"/release_dates?api_key="+environment.getRequiredProperty(TMDB_API_KEY), ReleaseDates.class);
+			ReleaseDates relDates = restTemplate.getForObject(environment.getRequiredProperty(TMDB_MOVIE_QUERY)+idFilm+"/release_dates?api_key="+environment.getRequiredProperty(TMDB_API_KEY), ReleaseDates.class);
+			List<ReleaseDatesResults> releaseDatesResults = relDates.getResults();
+			ReleaseDatesResults frReleaseDatesResults = releaseDatesResults.stream().filter(relDate -> relDate.getIso_3166_1().equalsIgnoreCase("FR")).findAny().orElse(null);
+			ReleaseDatesResultsValues releaseDatesResultsValues = null;
+			if(frReleaseDatesResults != null) {
+				releaseDatesResultsValues = frReleaseDatesResults.getRelease_dates().get(0);
+			}else {
+				frReleaseDatesResults = releaseDatesResults.stream().filter(relDate -> relDate.getIso_3166_1().equalsIgnoreCase("US")).findAny().orElse(null);
+				releaseDatesResultsValues = frReleaseDatesResults.getRelease_dates().get(0);
+			}
+			String pattern = "yyyy-MM-dd";
+			SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+			return sdf.parse(releaseDatesResultsValues.getRelease_date());
 		} catch (RestClientException e) {
 			throw e;
 		}
