@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.common.utils.DateUtils;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -269,12 +270,8 @@ public class TmdbServiceClient {
 	}
 	private static Date transformReleaseDate(final String dateInStrFormat) throws ParseException {
 		DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-		Date releaseDate;
 		try {
-			releaseDate = sdf.parse(dateInStrFormat);
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(releaseDate);
-			return cal.getTime();
+			return DateUtils.clearDate(sdf.parse(dateInStrFormat));
 		} catch (ParseException e) {
 			throw e;
 		}

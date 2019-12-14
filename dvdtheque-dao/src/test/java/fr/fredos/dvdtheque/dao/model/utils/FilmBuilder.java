@@ -13,10 +13,10 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.common.utils.DateUtils;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -29,7 +29,8 @@ public class FilmBuilder {
 	public static final String TITRE_FILM_REREUPDATED = "Again Lorem Ipsum rereupdated";
 	public static final String TITRE_FILM_REREREUPDATED = "Another Lorem Ipsum rerereupdated";
 	public static final Integer ANNEE = 2015;
-	public static final String DATE_SORTIE = "2015/08/01";
+	public static final String FILM_DATE_SORTIE = "2015/08/01";
+	public static final String DVD_DATE_SORTIE = "2015/12/01";
 	public static final String REAL_NOM_TMBD_ID_844 = "WONG KAR-WAI";
 	public static final String REAL_NOM_TMBD_ID_4780 = "BRIAN DE PALMA";
 	public static final String REAL_NOM_TMBD_ID_1271 = "ZACK SNYDER";
@@ -50,19 +51,27 @@ public class FilmBuilder {
 	public static final Long TMDBID_844 = new Long(100);
 	public static final int RIP_DATE_OFFSET = -10;
 	public static final int RIP_DATE_OFFSET2 = -1;
+	public static Long tmdbId1 = new Long(1271);
+	public static final String TMDBID1_DATE_SORTIE = "2007/01/07";
+	public static Long tmdbId2 = new Long(844);
+	public static final String TMDBID2_DATE_SORTIE = "2007/01/07";
+	public static Long tmdbId3 = new Long(4780);
+	public static final String TMDBID3_DATE_SORTIE = "2007/01/07";
+	
 	public static Date createRipDate(int ripDateOffset) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.MILLISECOND, 0);
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.HOUR, 0);
-		return DateUtils.addDays(cal.getTime(), ripDateOffset);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		return org.apache.commons.lang.time.DateUtils.addDays(cal.getTime(), ripDateOffset);
 	}
 	public static class Builder {
 		private String titre;
 		private String titreO;
 		private Integer annee;
 		private Date dateSortie;
+		private Date dvdDateSortie;
 		private String realNom;
 		private String act1Nom;
 		private String act2Nom;
@@ -132,6 +141,11 @@ public class FilmBuilder {
 			this.ripped = ripped;
 			return this;
 		}
+		public Builder setDvdDateSortie(String dateSortie) throws ParseException {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+			this.dvdDateSortie = sdf.parse(dateSortie);
+			return this;
+		}
 		public Builder setVu(boolean vu) {
 			this.vu = vu;
 			return this;
@@ -178,6 +192,7 @@ public class FilmBuilder {
 			dvd.setZone(this.zone);
 			film.setDvd(dvd);
 			dvd.setRipped(this.ripped);
+			dvd.setDateSortie(this.dvdDateSortie);
 			film.setOrigine(this.origine);
 			film.setVu(this.vu);
 			// hard coded
@@ -187,32 +202,36 @@ public class FilmBuilder {
 		}
 	}
 	
-	public static void assertFilmIsNotNull(Film film, boolean dateRipNull, int ripDateOffset, boolean isOrigineDvd) {
-		assertNotNull(film);
-		assertNotNull(film.getId());
-		assertNotNull(film.getTitre());
-		assertNotNull(film.getAnnee());
-		assertNotNull(film.getDateSortie());
-		if(isOrigineDvd) {
-			assertNotNull(film.getDvd());
+	public static void assertFilmIsNotNull(Film film, boolean dateRipNull, int ripDateOffset, FilmOrigine filmOrigine, String filmDateSortie) throws ParseException {
+		assertNotNull("film Should exists",film);
+		assertNotNull("film Should have an id",film.getId());
+		assertNotNull("film Should have a titre",film.getTitre());
+		assertNotNull("film Should have a année",film.getAnnee());
+		assertNotNull("film Should have a date sortie",film.getDateSortie());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+		if(StringUtils.isNotEmpty(filmDateSortie)) {
+			Date _filmDateSortie = DateUtils.clearDate(sdf.parse(filmDateSortie));
+			assertEquals("date sortie should match",film.getDateSortie(), _filmDateSortie);
+		}else {
+			Date _filmDateSortie = DateUtils.clearDate(sdf.parse(FILM_DATE_SORTIE));
+			assertEquals("date sortie should match",film.getDateSortie(), _filmDateSortie);
+		}
+		
+		if(FilmOrigine.DVD == filmOrigine) {
+			assertNotNull("dvd Should exists",film.getDvd());
 			if (!dateRipNull) {
-				assertEquals(clearDate(createRipDate(ripDateOffset)), film.getDvd().getDateRip());
+				assertEquals("now -10 days should match",DateUtils.clearDate(createRipDate(ripDateOffset)), film.getDvd().getDateRip());
+			}
+			if(film.getDvd().getDateSortie() != null) {
+				Date dvdDateSortie = sdf.parse(DVD_DATE_SORTIE);
+				assertEquals("dvd date sortie should match",film.getDvd().getDateSortie(), dvdDateSortie);
 			}
 		}
-		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
-		
-		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
-		assertTrue(film.getActeurs().size() >= 3);
-		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
-		assertTrue(film.getRealisateurs().size() == 1);
+		assertTrue("genres Should exists",CollectionUtils.isNotEmpty(film.getGenres()));
+		assertTrue("actors Should exists",CollectionUtils.isNotEmpty(film.getActeurs()));
+		assertTrue("there Should be at least 3 actors",film.getActeurs().size() >= 3);
+		assertTrue("realisateur Should exists",CollectionUtils.isNotEmpty(film.getRealisateurs()));
+		assertTrue("Should be 1 realisateur",film.getRealisateurs().size() == 1);
 	}
-	public static Date clearDate(Date dateToClear) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(dateToClear);
-		cal.set(Calendar.MILLISECOND, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.HOUR, 0);
-		return cal.getTime();
-	}
+	
 }
