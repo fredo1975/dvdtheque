@@ -677,6 +677,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film filmSaved = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		//FilmBuilder.assertFilmIsNotNull(filmSaved, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD);
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmSaved.getTitre());
+		FilmBuilder.assertFilmIsNotNull(filmSaved, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID2_DATE_SORTIE);
 	}
 	
 	@Test

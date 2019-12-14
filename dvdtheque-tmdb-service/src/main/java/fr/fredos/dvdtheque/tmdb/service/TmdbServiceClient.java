@@ -257,7 +257,7 @@ public class TmdbServiceClient {
 		return res;
 	}
 	private static int retrieveYearFromReleaseDate(final String dateInStrFormat) throws ParseException {
-		DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date releaseDate;
 		try {
 			releaseDate = sdf.parse(dateInStrFormat);
@@ -269,7 +269,7 @@ public class TmdbServiceClient {
 		}
 	}
 	private static Date transformReleaseDate(final String dateInStrFormat) throws ParseException {
-		DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			return DateUtils.clearDate(sdf.parse(dateInStrFormat));
 		} catch (ParseException e) {
