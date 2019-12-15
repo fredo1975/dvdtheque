@@ -339,18 +339,21 @@ public class TmdbServiceClient {
 		try {
 			ReleaseDates relDates = restTemplate.getForObject(environment.getRequiredProperty(TMDB_MOVIE_QUERY)+idFilm+"/release_dates?api_key="+environment.getRequiredProperty(TMDB_API_KEY), ReleaseDates.class);
 			List<ReleaseDatesResults> releaseDatesResults = relDates.getResults();
-			ReleaseDatesResults frReleaseDatesResults = releaseDatesResults.stream().filter(relDate -> relDate.getIso_3166_1().equalsIgnoreCase("FR")).findAny().orElse(null);
-			ReleaseDatesResultsValues releaseDatesResultsValues = null;
-			if(frReleaseDatesResults != null) {
+			if(CollectionUtils.isNotEmpty(releaseDatesResults)) {
+				ReleaseDatesResultsValues releaseDatesResultsValues = null;
+				ReleaseDatesResults frReleaseDatesResults = releaseDatesResults.stream().filter(relDate -> relDate.getIso_3166_1().equalsIgnoreCase("FR")).findAny().orElse(null);
+				if(frReleaseDatesResults == null) {
+					frReleaseDatesResults = releaseDatesResults.stream().filter(relDate -> relDate.getIso_3166_1().equalsIgnoreCase("US")).findAny().orElse(null);
+				}
+				if(frReleaseDatesResults == null) {
+					frReleaseDatesResults = releaseDatesResults.get(0);
+				}
 				releaseDatesResultsValues = frReleaseDatesResults.getRelease_dates().get(0);
-			}else {
-				frReleaseDatesResults = releaseDatesResults.stream().filter(relDate -> relDate.getIso_3166_1().equalsIgnoreCase("US")).findAny().orElse(null);
-				releaseDatesResultsValues = frReleaseDatesResults.getRelease_dates().get(0);
+				String pattern = "yyyy-MM-dd";
+				SimpleDateFormat sdf = new SimpleDateFormat(pattern,Locale.FRANCE);
+				return sdf.parse(releaseDatesResultsValues.getRelease_date());
 			}
-			String pattern = "yyyy-MM-dd";
-			SimpleDateFormat sdf = new SimpleDateFormat(pattern,Locale.FRANCE);
-			return sdf.parse(releaseDatesResultsValues.getRelease_date());
-			//return org.apache.commons.lang.time.DateUtils.addDays(sdf.parse(releaseDatesResultsValues.getRelease_date()), 1);
+			return null;
 		} catch (RestClientException e) {
 			throw e;
 		}
