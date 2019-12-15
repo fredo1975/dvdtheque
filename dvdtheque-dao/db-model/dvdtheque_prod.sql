@@ -12,12 +12,12 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 
--- Listage de la structure de la base pour dvdtheque
-DROP DATABASE IF EXISTS `dvdtheque`;
-CREATE DATABASE IF NOT EXISTS `dvdtheque` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `dvdtheque`;
+-- Listage de la structure de la base pour dvdtheque_prod
+DROP DATABASE IF EXISTS `dvdtheque_prod`;
+CREATE DATABASE IF NOT EXISTS `dvdtheque_prod` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `dvdtheque_prod`;
 
--- Listage de la structure de la table dvdtheque. BATCH_JOB_EXECUTION
+-- Listage de la structure de la table dvdtheque_prod. BATCH_JOB_EXECUTION
 DROP TABLE IF EXISTS `BATCH_JOB_EXECUTION`;
 CREATE TABLE IF NOT EXISTS `BATCH_JOB_EXECUTION` (
   `JOB_EXECUTION_ID` bigint(20) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `BATCH_JOB_EXECUTION` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. BATCH_JOB_EXECUTION_CONTEXT
+-- Listage de la structure de la table dvdtheque_prod. BATCH_JOB_EXECUTION_CONTEXT
 DROP TABLE IF EXISTS `BATCH_JOB_EXECUTION_CONTEXT`;
 CREATE TABLE IF NOT EXISTS `BATCH_JOB_EXECUTION_CONTEXT` (
   `JOB_EXECUTION_ID` bigint(20) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `BATCH_JOB_EXECUTION_CONTEXT` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. BATCH_JOB_EXECUTION_PARAMS
+-- Listage de la structure de la table dvdtheque_prod. BATCH_JOB_EXECUTION_PARAMS
 DROP TABLE IF EXISTS `BATCH_JOB_EXECUTION_PARAMS`;
 CREATE TABLE IF NOT EXISTS `BATCH_JOB_EXECUTION_PARAMS` (
   `JOB_EXECUTION_ID` bigint(20) NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `BATCH_JOB_EXECUTION_PARAMS` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. BATCH_JOB_EXECUTION_SEQ
+-- Listage de la structure de la table dvdtheque_prod. BATCH_JOB_EXECUTION_SEQ
 DROP TABLE IF EXISTS `BATCH_JOB_EXECUTION_SEQ`;
 CREATE TABLE IF NOT EXISTS `BATCH_JOB_EXECUTION_SEQ` (
   `ID` bigint(20) NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `BATCH_JOB_EXECUTION_SEQ` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. BATCH_JOB_INSTANCE
+-- Listage de la structure de la table dvdtheque_prod. BATCH_JOB_INSTANCE
 DROP TABLE IF EXISTS `BATCH_JOB_INSTANCE`;
 CREATE TABLE IF NOT EXISTS `BATCH_JOB_INSTANCE` (
   `JOB_INSTANCE_ID` bigint(20) NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `BATCH_JOB_INSTANCE` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. BATCH_JOB_SEQ
+-- Listage de la structure de la table dvdtheque_prod. BATCH_JOB_SEQ
 DROP TABLE IF EXISTS `BATCH_JOB_SEQ`;
 CREATE TABLE IF NOT EXISTS `BATCH_JOB_SEQ` (
   `ID` bigint(20) NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `BATCH_JOB_SEQ` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. BATCH_STEP_EXECUTION
+-- Listage de la structure de la table dvdtheque_prod. BATCH_STEP_EXECUTION
 DROP TABLE IF EXISTS `BATCH_STEP_EXECUTION`;
 CREATE TABLE IF NOT EXISTS `BATCH_STEP_EXECUTION` (
   `STEP_EXECUTION_ID` bigint(20) NOT NULL,
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `BATCH_STEP_EXECUTION` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. BATCH_STEP_EXECUTION_CONTEXT
+-- Listage de la structure de la table dvdtheque_prod. BATCH_STEP_EXECUTION_CONTEXT
 DROP TABLE IF EXISTS `BATCH_STEP_EXECUTION_CONTEXT`;
 CREATE TABLE IF NOT EXISTS `BATCH_STEP_EXECUTION_CONTEXT` (
   `STEP_EXECUTION_ID` bigint(20) NOT NULL,
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `BATCH_STEP_EXECUTION_CONTEXT` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. BATCH_STEP_EXECUTION_SEQ
+-- Listage de la structure de la table dvdtheque_prod. BATCH_STEP_EXECUTION_SEQ
 DROP TABLE IF EXISTS `BATCH_STEP_EXECUTION_SEQ`;
 CREATE TABLE IF NOT EXISTS `BATCH_STEP_EXECUTION_SEQ` (
   `ID` bigint(20) NOT NULL,
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `BATCH_STEP_EXECUTION_SEQ` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. DVD
+-- Listage de la structure de la table dvdtheque_prod. DVD
 DROP TABLE IF EXISTS `DVD`;
 CREATE TABLE IF NOT EXISTS `DVD` (
   `ID` bigint(11) NOT NULL AUTO_INCREMENT,
@@ -153,17 +153,17 @@ CREATE TABLE IF NOT EXISTS `DVD` (
   `RIPPED` tinyint(1) NOT NULL,
   `DATE_SORTIE` date DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=72609 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=879 DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. FILM
+-- Listage de la structure de la table dvdtheque_prod. FILM
 DROP TABLE IF EXISTS `FILM`;
 CREATE TABLE IF NOT EXISTS `FILM` (
   `ID` bigint(11) NOT NULL AUTO_INCREMENT,
-  `VU` tinyint(4) NOT NULL DEFAULT '1',
-  `HOMEPAGE` varchar(255) DEFAULT '1',
   `ANNEE` int(11) NOT NULL,
   `TITRE` varchar(255) NOT NULL,
+  `VU` tinyint(4) NOT NULL,
+  `HOMEPAGE` varchar(255) DEFAULT NULL,
   `TITRE_O` varchar(255) DEFAULT NULL,
   `ID_DVD` int(11) DEFAULT NULL,
   `ORIGINE` int(11) NOT NULL,
@@ -173,22 +173,20 @@ CREATE TABLE IF NOT EXISTS `FILM` (
   `RUNTIME` int(11) DEFAULT NULL,
   `DATE_SORTIE` date NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=73999 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1142 DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. FILM_acteurs
+-- Listage de la structure de la table dvdtheque_prod. FILM_acteurs
 DROP TABLE IF EXISTS `FILM_acteurs`;
 CREATE TABLE IF NOT EXISTS `FILM_acteurs` (
   `FILM_ID` bigint(20) NOT NULL,
   `ACTEURS_ID` bigint(20) NOT NULL,
   PRIMARY KEY (`FILM_ID`,`ACTEURS_ID`),
-  KEY `FK_ACTEURS_ID` (`ACTEURS_ID`),
-  CONSTRAINT `FK_ACTEURS_ID` FOREIGN KEY (`ACTEURS_ID`) REFERENCES `PERSONNE` (`ID`),
-  CONSTRAINT `FK_FILM_ID` FOREIGN KEY (`FILM_ID`) REFERENCES `FILM` (`ID`)
+  KEY `FK_ACTEURS_ID` (`ACTEURS_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. FILM_genres
+-- Listage de la structure de la table dvdtheque_prod. FILM_genres
 DROP TABLE IF EXISTS `FILM_genres`;
 CREATE TABLE IF NOT EXISTS `FILM_genres` (
   `FILM_ID` bigint(20) NOT NULL,
@@ -199,28 +197,27 @@ CREATE TABLE IF NOT EXISTS `FILM_genres` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. FILM_realisateurs
+-- Listage de la structure de la table dvdtheque_prod. FILM_realisateurs
 DROP TABLE IF EXISTS `FILM_realisateurs`;
 CREATE TABLE IF NOT EXISTS `FILM_realisateurs` (
   `FILM_ID` bigint(20) NOT NULL,
   `REALISATEURS_ID` bigint(20) NOT NULL,
   PRIMARY KEY (`FILM_ID`,`REALISATEURS_ID`),
-  KEY `FK_REALISATEURS_ID` (`REALISATEURS_ID`),
-  CONSTRAINT `FK_REALISATEURS_ID` FOREIGN KEY (`REALISATEURS_ID`) REFERENCES `PERSONNE` (`ID`)
+  KEY `FK_REALISATEURS_ID` (`REALISATEURS_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. GENRE
+-- Listage de la structure de la table dvdtheque_prod. GENRE
 DROP TABLE IF EXISTS `GENRE`;
 CREATE TABLE IF NOT EXISTS `GENRE` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `NAME` varchar(2500) DEFAULT NULL,
-  `TMDB_ID` int(11) NOT NULL,
+  `TMDB_ID` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=13462 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=167 DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. PERSONNE
+-- Listage de la structure de la table dvdtheque_prod. PERSONNE
 DROP TABLE IF EXISTS `PERSONNE`;
 CREATE TABLE IF NOT EXISTS `PERSONNE` (
   `ID` bigint(11) NOT NULL AUTO_INCREMENT,
@@ -230,10 +227,10 @@ CREATE TABLE IF NOT EXISTS `PERSONNE` (
   `ID_PAYS` int(11) DEFAULT NULL,
   `PROFILE_PATH` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=450979 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15666 DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. ROLES
+-- Listage de la structure de la table dvdtheque_prod. ROLES
 DROP TABLE IF EXISTS `ROLES`;
 CREATE TABLE IF NOT EXISTS `ROLES` (
   `ID` int(11) NOT NULL,
@@ -242,7 +239,7 @@ CREATE TABLE IF NOT EXISTS `ROLES` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. USER
+-- Listage de la structure de la table dvdtheque_prod. USER
 DROP TABLE IF EXISTS `USER`;
 CREATE TABLE IF NOT EXISTS `USER` (
   `ID` int(11) NOT NULL,
@@ -255,7 +252,7 @@ CREATE TABLE IF NOT EXISTS `USER` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
--- Listage de la structure de la table dvdtheque. USERROLES
+-- Listage de la structure de la table dvdtheque_prod. USERROLES
 DROP TABLE IF EXISTS `USERROLES`;
 CREATE TABLE IF NOT EXISTS `USERROLES` (
   `ID` int(11) NOT NULL,
