@@ -2,10 +2,12 @@ package fr.fredos.dvdtheque.batch;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +29,7 @@ import fr.fredos.dvdtheque.batch.configuration.MessageConsumer;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.common.utils.DateUtils;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
@@ -55,19 +58,6 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public static final String ACT2_NOM = "LEONARD ROSSITER";
 	public static final String ACT3_NOM = "ROBERT BEATTY";
 	public static final String ACT4_NOM = "FRANK MILLER";
-	
-	private void assertFilmIsNotNull(Film film) {
-		assertNotNull(film);
-		assertNotNull(film.getId());
-		assertNotNull(film.getTitre());
-		assertNotNull(film.getAnnee());
-		assertNotNull(film.getDvd());
-		assertNotNull(film.getOverview());
-		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
-		assertTrue(film.getActeurs().size()>7);
-		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
-		assertTrue(film.getRealisateurs().size()==1);
-	}
 	
 	@Before
 	public void init() {
@@ -109,6 +99,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
 				assertTrue(FilmOrigine.EN_SALLE.equals(film.getOrigine()));
+				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.EN_SALLE, "1968/09/26");
 			}
 			if(TITRE_FILM_2046.equals(film.getTitre())) {
 				is2046Exists = true;
@@ -117,8 +108,9 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
-				assertTrue(film.getDvd().isRipped());
+				assertFalse(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
+				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.DVD, "2004/10/20");
 			}
 			if(TITRE_FILM_40_ans.equals(film.getTitre())) {
 				is40ansExists = true;
@@ -127,10 +119,14 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
-				assertFalse(film.getDvd().isRipped());
+				assertTrue(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+				Date ripDate = DateUtils.clearDate(sdf.parse("2019/07/24"));
+				ChronoUnit.DAYS.between(ripDate.toInstant(),new Date().toInstant());
+				long temp = ChronoUnit.DAYS.between(new Date().toInstant(),ripDate.toInstant());
+				FilmBuilder.assertFilmIsNotNull(film,false,Long.valueOf(temp).intValue(),FilmOrigine.DVD, "2013/03/13");
 			}
-			FilmBuilder.assertFilmIsNotNull(film,true,0,false);
 		}
 		assertTrue(is2001odysseyExists);
 		assertTrue(is2046Exists);

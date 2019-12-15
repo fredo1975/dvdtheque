@@ -29,6 +29,9 @@ public class Dvd implements Serializable {
 	private Long id;
 	@Column(name = "ANNEE")
 	private Integer annee;
+	@Column(name = "DATE_SORTIE")
+	@Temporal(TemporalType.DATE)
+	private Date dateSortie;
 	@Column(name = "ZONE")
 	private Integer zone;
 	@Column(name = "EDITION")
@@ -82,6 +85,12 @@ public class Dvd implements Serializable {
 	public void setRipped(boolean ripped) {
 		this.ripped = ripped;
 	}
+	public Date getDateSortie() {
+		return dateSortie;
+	}
+	public void setDateSortie(Date dateSortie) {
+		this.dateSortie = dateSortie;
+	}
 	public Dvd() {
 		super();
 	}
@@ -110,7 +119,7 @@ public class Dvd implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "Dvd [id=" + id + ", annee=" + annee + ", zone=" + zone + ", edition=" + edition + ", dateRip=" + dateRip
-				+ ", format=" + format + ", ripped=" + ripped + "]";
+		return "Dvd [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", zone=" + zone + ", edition="
+				+ edition + ", dateRip=" + dateRip + ", format=" + format + ", ripped=" + ripped + "]";
 	}
 }

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
@@ -32,6 +33,7 @@ import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
+import fr.fredos.dvdtheque.tmdb.model.ReleaseDates;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.model.SearchResults;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
@@ -55,8 +57,6 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 	public static final int RIP_DATE = -10;
 	@Autowired
     private TmdbServiceClient client;
-	private String titreTmdb= "2001";
-	private Long tmdbId;
     @Autowired
 	protected IFilmService filmService;
     @Autowired
@@ -67,7 +67,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     	filmService.cleanAllFilms();
 	}
     
-    private void assertResultsIsNotNull(Results res) {
+	private void assertResultsIsNotNull(Results res) {
 		assertNotNull(res);
 		assertNotNull(res.getId());
 		assertNotNull(res.getOriginal_title());
@@ -98,16 +98,10 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue(film.getRealisateurs().size()==1);
 	}
-    private Results getResultsByFilmTitre(Film film) {
-    	SearchResults searchResults = client.retrieveTmdbSearchResults(film.getTitre());
-		assertNotNull(searchResults);
-		assertNotNull(searchResults.getResults());
-		return client.filterSearchResultsByDateRelease(film.getAnnee(), searchResults.getResults());
-    }
+    
 	@Test
-	@Ignore
     public void retrieveTmdbResultsTest() {
-		Results res = client.retrieveTmdbSearchResultsById(this.tmdbId);
+		Results res = client.retrieveTmdbSearchResultsById(FilmBuilder.tmdbId1);
 		assertResultsIsNotNull(res);
 		logger.info("tmdb id = "+res.getId().toString());
     }
@@ -121,9 +115,19 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void retrieveTmdbResultsByTmdbIdTest() {
-		Results res = client.retrieveTmdbSearchResultsById(Long.valueOf(55));
+		Results res = client.retrieveTmdbSearchResultsById(FilmBuilder.tmdbId1);
 		assertResultsIsNotNull(res);
 		logger.info("res = "+res.toString());
+    }
+	@Test
+    public void retrieveTmdbFrReleaseDateTest() throws ParseException {
+		Date res = client.retrieveTmdbFrReleaseDate(FilmBuilder.tmdbId1);
+		assertNotNull(res);
+		String relDate = FilmBuilder.TMDBID1_DATE_SORTIE;
+		String pattern = "yyyy/MM/dd";
+		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+		Date realDate = sdf.parse(relDate);
+		assertEquals("Release date should match",realDate,res);
     }
 	@Test
     public void replaceFilmTest() throws Exception {
@@ -136,6 +140,8 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -145,10 +151,10 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		Boolean exists = filmService.checkIfTmdbFilmExists(612152l);
+		Boolean exists = filmService.checkIfTmdbFilmExists(FilmBuilder.tmdbId1);
 		if(!exists) {
-			film = client.replaceFilm(612152l, film);
-			assertFilmIsNotNull(film,true);
+			film = client.replaceFilm(FilmBuilder.tmdbId1, film);
+			FilmBuilder.assertFilmIsNotNull(film, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID1_DATE_SORTIE);
 			logger.info("film = "+film.toString()+" replaced");
 		}else {
 			logger.info("film = "+film.toString()+" already existing");
@@ -156,49 +162,31 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void savetmdbFilmTest() throws Exception {
-		Film film = client.saveTmbdFilm(13457l, FilmOrigine.DVD);
-		assertFilmIsNotNull(film,true);
-		//assertEquals(new Integer(98), film.getRuntime());
-		logger.info("film = "+film.toString());
+		Film film = client.saveTmbdFilm(FilmBuilder.tmdbId1, FilmOrigine.DVD);
+		FilmBuilder.assertFilmIsNotNull(film, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID1_DATE_SORTIE);
     }
 	@Test
 	@Ignore
     public void retrieveTmdbFilmListToDvdthequeFilmListTest() throws ParseException {
-		Set<Film> filmSet = client.retrieveTmdbFilmListToDvdthequeFilmList(titreTmdb);
+		Set<Film> filmSet = client.retrieveTmdbFilmListToDvdthequeFilmList(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		assertNotNull(filmSet);
 		assertTrue(CollectionUtils.isNotEmpty(filmSet));
 		for(Film film : filmSet) {
 			logger.info("film = "+film.toString());
 		}
     }
-	/*
-	@Test
-    public void retrieveTmdbPosterPathTest() {
-		Film film = filmService.createOrRetrieveFilm(TITRE_FILM, ANNEE,REAL_NOM,ACT1_NOM,ACT2_NOM,ACT3_NOM);
-		assertFilmIsNotNull(film);
-		
-		assertNotNull(film);
-		assertNotNull(film.getTitre());
-		Results res = getResultsByFilmTitre(film);
-		assertResultsIsNotNull(res);
-		logger.info("tmdb id = "+res.getId().toString());
-		
-		ImagesResults imagesResults = client.retrieveTmdbImagesResults(res.getId());
-		assertNotNull(imagesResults);
-		String posterPath = client.retrieveTmdbFrPosterPathUrl(imagesResults);
-		logger.info("posterPath="+posterPath);
-    }*/
+	
 	@Test
     public void retrieveTmdbCreditsTest() {
-		Results res = client.retrieveTmdbSearchResultsById(335070l);
+		Results res = client.retrieveTmdbSearchResultsById(FilmBuilder.tmdbId1);
 		assertResultsIsNotNull(res);
 		
 		Credits credits = client.retrieveTmdbCredits(res.getId());
 		assertNotNull(credits.getCast());
 		assertNotNull(credits.getCrew());
-		logger.info("credits.getCast()="+credits.getCast());
+		/*logger.info("credits.getCast()="+credits.getCast());
 		logger.info("credits.getCrew()="+credits.getCrew());
-		logger.info("directors="+client.retrieveTmdbDirectors(credits));
+		logger.info("directors="+client.retrieveTmdbDirectors(credits));*/
 		assertTrue(CollectionUtils.isNotEmpty(client.retrieveTmdbDirectors(credits)));
     }
 }
