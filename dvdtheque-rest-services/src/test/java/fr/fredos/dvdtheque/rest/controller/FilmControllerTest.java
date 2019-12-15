@@ -216,13 +216,13 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 	@Test
 	public void findTmdbFilmByTitre() throws Exception {
-		String titre = "BROADWAY OR BUST";
+		String titre = "PARASITE";
 		Film film = new Film();
 		film.setTitre(titre);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(SEARCH_TMDB_FILM_BY_TITRE + titre)
 				.contentType(MediaType.APPLICATION_JSON);
 		ResultActions resultActions = mvc.perform(builder).andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is("BROADWAY OR BUST")));
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is("PARASITE")));
 		assertNotNull(resultActions);
 	}
 

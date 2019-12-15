@@ -255,6 +255,11 @@ public class TmdbServiceClient {
 			Set<Long> tmdbFilmAlreadyInDvdthequeSet = filmService.findAllTmdbFilms(tmdbIds);
 			for(Results results : searchResults.getResults()) {
 				res.add(transformTmdbFilmToDvdThequeFilm(null,results,tmdbFilmAlreadyInDvdthequeSet, false));
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return res;
@@ -353,7 +358,7 @@ public class TmdbServiceClient {
 				SimpleDateFormat sdf = new SimpleDateFormat(pattern,Locale.FRANCE);
 				return sdf.parse(releaseDatesResultsValues.getRelease_date());
 			}
-			return null;
+			return DateUtils.clearDate(new Date());
 		} catch (RestClientException e) {
 			throw e;
 		}
