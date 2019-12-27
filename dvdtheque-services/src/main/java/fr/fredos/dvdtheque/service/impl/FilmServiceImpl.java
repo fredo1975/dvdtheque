@@ -367,7 +367,7 @@ public class FilmServiceImpl implements IFilmService {
 		if (zone != null) {
 			dvd.setZone(zone);
 		} else {
-			dvd.setZone(1);
+			dvd.setZone(21);
 		}
 		if (StringUtils.isEmpty(edition)) {
 			dvd.setEdition("edition");
