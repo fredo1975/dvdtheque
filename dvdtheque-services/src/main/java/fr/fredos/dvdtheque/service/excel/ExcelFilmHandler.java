@@ -101,7 +101,12 @@ public class ExcelFilmHandler {
         
         if(film.getDvd() != null) {
         	// 7
-        	addCell(film.getDvd().getZone().toString());
+        	if(film.getDvd().getZone() != null) {
+        		addCell(film.getDvd().getZone().toString());
+        	}else {
+        		addCell("");
+        	}
+        	
         	// 8
             addCell(film.getDvd().isRipped()?"oui":"non");
             // 9
@@ -112,7 +117,11 @@ public class ExcelFilmHandler {
             	addCell("");
             }
             // 10
-            addCell(film.getDvd().getFormat().name());
+            if(film.getDvd().getFormat() != null) {
+            	addCell(film.getDvd().getFormat().name());
+            }else {
+            	addCell("");
+            }
             // 11
             if(film.getDvd() != null && film.getDvd().getDateSortie() != null) {
             	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
