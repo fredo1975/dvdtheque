@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -940,7 +941,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_1271)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE2).build();
 		Long filmId3 = filmService.saveNewFilm(film3);
 		assertNotNull(filmId3);
 		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null);
@@ -958,6 +959,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
         assertEquals(FilmBuilder.SHEET_NAME, sheet.getSheetName());
         DataFormatter dataFormatter = new DataFormatter();
         sheet.forEach(row -> {
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd",Locale.FRANCE);
         	if(row.getRowNum()==1) {
         		row.forEach(cell -> {
                     String cellValue = dataFormatter.formatCellValue(cell);
@@ -996,6 +998,16 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
                     }
                     if(cell.getColumnIndex()==10) {
                     	assertEquals(DvdFormat.DVD.name(), cellValue);
+                    }
+                    if(cell.getColumnIndex()==11) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	Date sortie = null;
+                    	try {
+							sortie = sdf.parse(FilmBuilder.DVD_DATE_SORTIE);
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+                    	assertEquals(df.print(sortie, Locale.FRANCE), cellValue);
                     }
                 });
         	}else if(row.getRowNum()==2) {
@@ -1038,6 +1050,16 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
                     if(cell.getColumnIndex()==10) {
                     	assertEquals(DvdFormat.DVD.name(), cellValue);
                     }
+                    if(cell.getColumnIndex()==11) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	Date sortie = null;
+                    	try {
+							sortie = sdf.parse(FilmBuilder.DVD_DATE_SORTIE2);
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+                    	assertEquals(df.print(sortie, Locale.FRANCE), cellValue);
+                    }
                 });
         	}else if(row.getRowNum()==3) {
         		row.forEach(cell -> {
@@ -1077,6 +1099,16 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
                     }
                     if(cell.getColumnIndex()==10) {
                     	assertEquals(DvdFormat.DVD.name(), cellValue);
+                    }
+                    if(cell.getColumnIndex()==11) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	Date sortie = null;
+                    	try {
+							sortie = sdf.parse(FilmBuilder.DVD_DATE_SORTIE);
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+                    	assertEquals(df.print(sortie, Locale.FRANCE), cellValue);
                     }
                 });
         	}

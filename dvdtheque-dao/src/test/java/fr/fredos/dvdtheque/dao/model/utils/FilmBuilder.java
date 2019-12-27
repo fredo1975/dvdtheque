@@ -32,6 +32,7 @@ public class FilmBuilder {
 	public static final Integer ANNEE = 2015;
 	public static final String FILM_DATE_SORTIE = "2015/08/01";
 	public static final String DVD_DATE_SORTIE = "2015/12/01";
+	public static final String DVD_DATE_SORTIE2 = "2017/11/15";
 	public static final String REAL_NOM_TMBD_ID_844 = "WONG KAR-WAI";
 	public static final String REAL_NOM_TMBD_ID_4780 = "BRIAN DE PALMA";
 	public static final String REAL_NOM_TMBD_ID_1271 = "ZACK SNYDER";
