@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.service;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +28,7 @@ public interface IFilmService {
 	List<Film> getAllRippedFilms();
 	List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto);
 	void removeFilm(Film film);
-	Dvd buildDvd(final Integer annee,final Integer zone,final String edition,final Date ripDate,final DvdFormat dvdFormat);
+	Dvd buildDvd(final Integer annee,final Integer zone,final String edition,final Date ripDate,final DvdFormat dvdFormat, String dateSortieDvd) throws ParseException;
 	Boolean checkIfTmdbFilmExists(final Long tmdbId);
 	Genre findGenre(int id);
 	Genre attachToSession(Genre genre);

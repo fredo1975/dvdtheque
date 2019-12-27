@@ -12,7 +12,7 @@ public class FilmCsvImportFormat {
 	private String acteurs;
 	private String ripped;
 	private String ripDate;
-	private String dateSortie;
+	private String dateSortieDvd;
 	private String filmFormat;
 	private Long tmdbId;
 	private String vu;
@@ -82,17 +82,17 @@ public class FilmCsvImportFormat {
 	public void setOrigine(String origine) {
 		this.origine = origine;
 	}
-	public String getDateSortie() {
-		return dateSortie;
+	public String getDateSortieDvd() {
+		return dateSortieDvd;
 	}
-	public void setDateSortie(String dateSortie) {
-		this.dateSortie = dateSortie;
+	public void setDateSortieDvd(String dateSortieDvd) {
+		this.dateSortieDvd = dateSortieDvd;
 	}
 	@Override
 	public String toString() {
 		return "FilmCsvImportFormat [realisateur=" + realisateur + ", titre=" + titre + ", origine=" + origine
 				+ ", zonedvd=" + zonedvd + ", annee=" + annee + ", acteurs=" + acteurs + ", ripped=" + ripped
-				+ ", ripDate=" + ripDate + ", dateSortie=" + dateSortie + ", filmFormat=" + filmFormat + ", tmdbId="
-				+ tmdbId + ", vu=" + vu + "]";
+				+ ", ripDate=" + ripDate + ", dateSortieDvd=" + dateSortieDvd + ", filmFormat=" + filmFormat
+				+ ", tmdbId=" + tmdbId + ", vu=" + vu + "]";
 	}
 }

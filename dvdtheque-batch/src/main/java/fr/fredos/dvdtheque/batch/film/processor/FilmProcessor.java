@@ -49,8 +49,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			throw e1;
 		}
 		Film filmToSave = null;
 		Results results = tmdbServiceClient.retrieveTmdbSearchResultsById(item.getTmdbId());
@@ -60,7 +59,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 		if(filmToSave != null) {
 			filmToSave.setOrigine(FilmOrigine.valueOf(item.getOrigine()));
 			if(item.getOrigine().equalsIgnoreCase(FilmOrigine.DVD.name())) {
-				Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null, DvdFormat.valueOf(item.getFilmFormat()));
+				Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null, DvdFormat.valueOf(item.getFilmFormat()), item.getDateSortieDvd());
 				filmToSave.setDvd(dvd);
 				boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
 				if(!loadFromFile) {

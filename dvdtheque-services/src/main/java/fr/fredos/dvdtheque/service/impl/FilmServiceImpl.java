@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -355,8 +358,8 @@ public class FilmServiceImpl implements IFilmService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Dvd buildDvd(final Integer annee, final Integer zone, final String edition, Date ripDate,
-			DvdFormat dvdFormat) {
+	public Dvd buildDvd(final Integer annee, final Integer zone, final String edition, final Date ripDate,
+			final DvdFormat dvdFormat, final String dateSortieDvd) throws ParseException {
 		Dvd dvd = new Dvd();
 		if (annee != null) {
 			dvd.setAnnee(annee);
@@ -376,6 +379,10 @@ public class FilmServiceImpl implements IFilmService {
 		}
 		if (dvdFormat != null) {
 			dvd.setFormat(dvdFormat);
+		}
+		if(StringUtils.isNotEmpty(dateSortieDvd)) {
+			DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			dvd.setDateSortie(sdf.parse(dateSortieDvd));
 		}
 		return dvd;
 	}
