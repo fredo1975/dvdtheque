@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IPersonneService;
 @Component
@@ -101,14 +102,19 @@ public class ExcelFilmHandler {
         
         if(film.getDvd() != null) {
         	// 7
-        	if(film.getDvd().getZone() != null) {
+        	if(film.getDvd().getZone() != null && FilmOrigine.DVD.equals(film.getOrigine())) {
         		addCell(film.getDvd().getZone().toString());
         	}else {
         		addCell("");
         	}
         	
         	// 8
-            addCell(film.getDvd().isRipped()?"oui":"non");
+        	if(FilmOrigine.DVD.equals(film.getOrigine())) {
+        		addCell(film.getDvd().isRipped()?"oui":"non");
+        	}else {
+            	addCell("");
+            }
+            
             // 9
             if(film.getDvd().isRipped() && film.getDvd().getDateRip() != null) {
             	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -117,7 +123,7 @@ public class ExcelFilmHandler {
             	addCell("");
             }
             // 10
-            if(film.getDvd().getFormat() != null) {
+            if(film.getDvd().getFormat() != null && FilmOrigine.DVD.equals(film.getOrigine())) {
             	addCell(film.getDvd().getFormat().name());
             }else {
             	addCell("");
