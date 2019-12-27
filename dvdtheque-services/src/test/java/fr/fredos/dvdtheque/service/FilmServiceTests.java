@@ -1038,17 +1038,17 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
                     	assertEquals("non", cellValue);
                     }
                     if(cell.getColumnIndex()==7) {
-                    	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
+                    	assertEquals(StringUtils.EMPTY, cellValue);
                     }
                     if(cell.getColumnIndex()==8) {
-                    	assertEquals("oui", cellValue);
+                    	assertEquals(StringUtils.EMPTY, cellValue);
                     }
                     if(cell.getColumnIndex()==9) {
                     	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
                     	assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
                     }
                     if(cell.getColumnIndex()==10) {
-                    	assertEquals(DvdFormat.DVD.name(), cellValue);
+                    	assertEquals(StringUtils.EMPTY, cellValue);
                     }
                     if(cell.getColumnIndex()==11) {
                     	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
