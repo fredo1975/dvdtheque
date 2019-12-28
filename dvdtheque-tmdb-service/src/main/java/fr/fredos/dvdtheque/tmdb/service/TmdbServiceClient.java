@@ -124,7 +124,7 @@ public class TmdbServiceClient {
 			filmToSave.setId(null);
 			filmToSave.setOrigine(filmOrigine);
 			if(FilmOrigine.DVD.equals(filmOrigine)) {
-				Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), null, null, null, DvdFormat.DVD, null);
+				Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), new Integer(2), null, null, DvdFormat.DVD, null);
 				dvd.setRipped(true);
 				filmToSave.setDvd(dvd);
 			}
