@@ -7,6 +7,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -820,6 +823,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
         assertEquals(SHEET_NAME, sheet.getSheetName());
         DataFormatter dataFormatter = new DataFormatter();
         sheet.forEach(row -> {
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd",Locale.FRANCE);
         	if(row.getRowNum()==2) {
         		row.forEach(cell -> {
                     String cellValue = dataFormatter.formatCellValue(cell);
@@ -856,6 +860,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
                     }
                     if(cell.getColumnIndex()==10) {
                     	assertEquals(DvdFormat.BLUERAY.name(), cellValue);
+                    }
+                    if(cell.getColumnIndex()==11) {
+                    	assertEquals(StringUtils.EMPTY, cellValue);
                     }
                 });
         	}else if(row.getRowNum()==1){
@@ -894,6 +901,16 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
                     }
                     if(cell.getColumnIndex()==10) {
                     	assertEquals(DvdFormat.DVD.name(), cellValue);
+                    }
+                    if(cell.getColumnIndex()==11) {
+                    	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+                    	Date sortie = null;
+                    	try {
+							sortie = sdf.parse(FilmBuilder.DVD_DATE_SORTIE);
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+                    	assertEquals(df.print(sortie, Locale.FRANCE), cellValue);
                     }
                 });
         	}

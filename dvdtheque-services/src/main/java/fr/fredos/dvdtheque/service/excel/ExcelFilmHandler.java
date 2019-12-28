@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IPersonneService;
 @Component
@@ -38,7 +39,7 @@ public class ExcelFilmHandler {
 	private SXSSFSheet sheet;
     private Integer currentRowNumber;
     private Integer currentColumnNumber;
-    public static final String[] EXCEL_HEADER_TAB = new String[]{"Realisateur", "Titre", "Annee","Acteurs","Origine Film", "TMDB ID", "Vu", "Zonedvd","Rippé","RIP Date","Dvd Format"};
+    public static final String[] EXCEL_HEADER_TAB = new String[]{"Realisateur", "Titre", "Annee","Acteurs","Origine Film", "TMDB ID", "Vu", "Zonedvd","Rippé","RIP Date","Dvd Format", "Date Sortie DVD"};
     @Autowired
 	protected IPersonneService personneService;
     @Bean
@@ -101,9 +102,19 @@ public class ExcelFilmHandler {
         
         if(film.getDvd() != null) {
         	// 7
-        	addCell(film.getDvd().getZone().toString());
+        	if(film.getDvd().getZone() != null && FilmOrigine.DVD.equals(film.getOrigine())) {
+        		addCell(film.getDvd().getZone().toString());
+        	}else {
+        		addCell("");
+        	}
+        	
         	// 8
-            addCell(film.getDvd().isRipped()?"oui":"non");
+        	if(FilmOrigine.DVD.equals(film.getOrigine())) {
+        		addCell(film.getDvd().isRipped()?"oui":"non");
+        	}else {
+            	addCell("");
+            }
+            
             // 9
             if(film.getDvd().isRipped() && film.getDvd().getDateRip() != null) {
             	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -112,7 +123,18 @@ public class ExcelFilmHandler {
             	addCell("");
             }
             // 10
-            addCell(film.getDvd().getFormat().name());
+            if(film.getDvd().getFormat() != null && FilmOrigine.DVD.equals(film.getOrigine())) {
+            	addCell(film.getDvd().getFormat().name());
+            }else {
+            	addCell("");
+            }
+            // 11
+            if(film.getDvd() != null && film.getDvd().getDateSortie() != null) {
+            	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                addCell(sdf.format(film.getDvd().getDateSortie()));
+            }else {
+            	addCell("");
+            }
         }
     }
     public SXSSFWorkbook createSXSSFWorkbookFromFilmList(List<Film> list) throws IOException {
