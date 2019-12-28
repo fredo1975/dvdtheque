@@ -58,8 +58,13 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 		}
 		if(filmToSave != null) {
 			filmToSave.setOrigine(FilmOrigine.valueOf(item.getOrigine()));
-			if(item.getOrigine().equalsIgnoreCase(FilmOrigine.DVD.name())) {
-				Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), item.getZonedvd(), null, null, DvdFormat.valueOf(item.getFilmFormat()), item.getDateSortieDvd());
+			if(item.getOrigine().equalsIgnoreCase(FilmOrigine.DVD.name()) || item.getOrigine().equalsIgnoreCase(FilmOrigine.EN_SALLE.name())) {
+				Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), 
+						item.getZonedvd(), 
+						null, 
+						null, 
+						StringUtils.isNotEmpty(item.getFilmFormat())?DvdFormat.valueOf(item.getFilmFormat()):null, 
+								item.getDateSortieDvd());
 				filmToSave.setDvd(dvd);
 				boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
 				if(!loadFromFile) {
