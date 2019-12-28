@@ -130,7 +130,7 @@ public class ExcelFilmHandler {
             }
             // 11
             if(film.getDvd() != null && film.getDvd().getDateSortie() != null) {
-            	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            	DateFormat sdf = new SimpleDateFormat("dd/MM/yy");
                 addCell(sdf.format(film.getDvd().getDateSortie()));
             }else {
             	addCell("");
