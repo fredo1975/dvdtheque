@@ -42,7 +42,7 @@ public class TheMovieDbTasklet implements Tasklet{
 				logger.error(e1.getMessage());
 			}
 			try {
-				searchResults = tmdbServiceClient.retrieveTmdbSearchResults(film.getTitre());
+				searchResults = tmdbServiceClient.retrieveTmdbSearchResults(film.getTitre(), null);
 				if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
 					Results res = tmdbServiceClient.filterSearchResultsByDateRelease(film.getAnnee(), searchResults.getResults());
 					ImagesResults imagesResults = tmdbServiceClient.retrieveTmdbImagesResults(res.getId());
