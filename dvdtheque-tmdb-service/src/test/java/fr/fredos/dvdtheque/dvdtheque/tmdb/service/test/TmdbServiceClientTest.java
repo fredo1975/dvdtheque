@@ -166,13 +166,13 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		FilmBuilder.assertFilmIsNotNull(film, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID1_DATE_SORTIE);
     }
 	@Test
-	@Ignore
     public void retrieveTmdbFilmListToDvdthequeFilmListTest() throws ParseException {
-		Set<Film> filmSet = client.retrieveTmdbFilmListToDvdthequeFilmList(FilmBuilder.TITRE_FILM_TMBD_ID_844);
+		Set<Film> filmSet = client.retrieveTmdbFilmListToDvdthequeFilmList(FilmBuilder.TITRE_FILM_FOR_SEARCH_BY_TITRE);
 		assertNotNull(filmSet);
 		assertTrue(CollectionUtils.isNotEmpty(filmSet));
+		assertTrue(filmSet.size()>=129);
 		for(Film film : filmSet) {
-			logger.info("film = "+film.toString());
+			logger.debug("film = "+film.toString());
 		}
     }
 	

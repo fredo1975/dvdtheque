@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -151,9 +150,12 @@ public class TmdbServiceClient {
 		return null;
 		
 	}
-	public SearchResults retrieveTmdbSearchResults(final String titre) {
+	public SearchResults retrieveTmdbSearchResults(final String titre, Integer page) {
+		if(page == null) {
+			page = Integer.valueOf(1);
+		}
 		try {
-			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_MOVIE_QUERY)+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&query="+titre+"&language=fr", SearchResults.class);
+			return restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_MOVIE_QUERY)+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&query="+titre+"&language=fr&page="+page, SearchResults.class);
 		} catch (RestClientException e) {
 			throw e;
 		}
@@ -247,23 +249,34 @@ public class TmdbServiceClient {
 		}
 		return transformedfilm;
 	}
+	private void addResultsToSet(Set<Results> results, final SearchResults searchResults) {
+		results.addAll(searchResults.getResults());
+	}
 	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{
-		SearchResults searchResults = retrieveTmdbSearchResults(titre);
-		Set<Film> res = null;
+		Set<Film> films = null;
+		Set<Results> results = null;
+		Integer firstPage = Integer.valueOf(1);
+		SearchResults searchResults = retrieveTmdbSearchResults(titre, firstPage);
 		if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
-			res = new HashSet<>(searchResults.getResults().size());
-			Set<Long> tmdbIds = searchResults.getResults().stream().map(r -> r.getId()).collect(Collectors.toSet());
+			films = new HashSet<>(searchResults.getTotal_results().intValue());
+			results = new HashSet<>(searchResults.getTotal_results().intValue());
+			addResultsToSet(results, searchResults);
+		}
+		while(firstPage.intValue() <= searchResults.getTotal_pages()) {
+			firstPage = firstPage + Integer.valueOf(1);
+			searchResults = retrieveTmdbSearchResults(titre, firstPage);
+			addResultsToSet(results, searchResults);
+		}
+		
+		if(CollectionUtils.isNotEmpty(results)) {
+			films = new HashSet<>(results.size());
+			Set<Long> tmdbIds = results.stream().map(r -> r.getId()).collect(Collectors.toSet());
 			Set<Long> tmdbFilmAlreadyInDvdthequeSet = filmService.findAllTmdbFilms(tmdbIds);
-			for(Results results : searchResults.getResults()) {
-				res.add(transformTmdbFilmToDvdThequeFilm(null,results,tmdbFilmAlreadyInDvdthequeSet, false));
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+			for(Results res : results) {
+				films.add(transformTmdbFilmToDvdThequeFilm(null,res,tmdbFilmAlreadyInDvdthequeSet, false));
 			}
 		}
-		return res;
+		return films;
 	}
 	private static int retrieveYearFromReleaseDate(final Date relDate) {
 		Calendar cal = Calendar.getInstance();
