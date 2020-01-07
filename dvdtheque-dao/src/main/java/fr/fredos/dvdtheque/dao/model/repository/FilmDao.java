@@ -20,6 +20,7 @@ public interface FilmDao {
 	Film updateFilm(Film film);
 	Long saveDvd(Dvd dvd);
 	List<Film> findAllFilms();
+	List<Film> findAllLastAddedFilms(final int rowNumber);
 	Set<Long> findAllTmdbFilms(Set<Long> tmdbIds);
 	List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto);
 	void cleanAllFilms();
@@ -29,5 +30,6 @@ public interface FilmDao {
 	void cleanAllGenres();
 	List<Genre> findAllGenres();
 	List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine);
+	List<Film> findAllLastAddedFilmsByOrigine(FilmOrigine filmOrigine,final int rowNumber);
 	FilmOrigine findFilmOrigine(Long id);
 }

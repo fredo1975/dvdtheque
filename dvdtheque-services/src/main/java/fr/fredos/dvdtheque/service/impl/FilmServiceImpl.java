@@ -45,12 +45,12 @@ import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.enums.PersonneType;
+import fr.fredos.dvdtheque.common.utils.DateUtils;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
-import fr.fredos.dvdtheque.dao.model.repository.PersonneDao;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.service.dto.FilmDto;
@@ -81,8 +81,6 @@ public class FilmServiceImpl implements IFilmService {
 	private IPersonneService personneService;
 	@Autowired
 	private HazelcastInstance instance;
-	@Autowired
-	private PersonneDao personneDao;
 	
 	@PostConstruct
 	public void init() {
@@ -127,18 +125,18 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Transactional(readOnly = true, noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })
-	public Film findFilmByTitre(String titre) {
+	public Film findFilmByTitre(final String titre) {
 		return filmDao.findFilmByTitre(titre);
 	}
 
 	@Transactional(readOnly = true)
-	public Film findFilmWithAllObjectGraph(Long id) {
+	public Film findFilmWithAllObjectGraph(final Long id) {
 		return filmDao.findFilmWithAllObjectGraph(id);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Film findFilm(Long id) {
+	public Film findFilm(final Long id) {
 		Film film = mapFilms.get(id);
 		if (film != null)
 			return film;
@@ -172,7 +170,7 @@ public class FilmServiceImpl implements IFilmService {
 		return mergedFilm;
 	}
 
-	private void upperCaseTitre(Film film) {
+	private void upperCaseTitre(final Film film) {
 		final String titre = StringUtils.upperCase(film.getTitre());
 		film.setTitre(titre);
 		final String titreO = StringUtils.upperCase(film.getTitreO());
@@ -182,6 +180,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Override
 	@Transactional(readOnly = false)
 	public Long saveNewFilm(Film film) {
+		film.setDateInsertion(DateUtils.clearDate(new Date()));
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
 		upperCaseTitre(film);
 		Long id = filmDao.saveNewFilm(film);
@@ -199,7 +198,7 @@ public class FilmServiceImpl implements IFilmService {
 	 * @param film
 	 * @param origine
 	 */
-	private void removePersonnesFromCachePersonnesByOrigine(PersonneType personneType,
+	private void removePersonnesFromCachePersonnesByOrigine(final PersonneType personneType,
 			IMap<FilmOrigine, Map<Long,Set<Personne>>> mapPersonnesByOrigine, 
 			final Film film,
 			final FilmOrigine origine) {
@@ -215,7 +214,7 @@ public class FilmServiceImpl implements IFilmService {
 	 * @param mapPersonnesByOrigine
 	 * @param film
 	 */
-	private void addPersonnesToCachePersonnesByOrigine(PersonneType personneType,
+	private void addPersonnesToCachePersonnesByOrigine(final PersonneType personneType,
 			IMap<FilmOrigine, Map<Long,Set<Personne>>> mapPersonnesByOrigine, 
 			final Film film) {
 		Map<Long,Set<Personne>> personnesByFilm;
@@ -234,7 +233,7 @@ public class FilmServiceImpl implements IFilmService {
 	 * @param film
 	 * @param oldOrigine
 	 */
-	private void handleCachePersonneByOrigine(PersonneType personneType,IMap<FilmOrigine, Map<Long,Set<Personne>>> mapPersonnesByOrigine, 
+	private void handleCachePersonneByOrigine(final PersonneType personneType,IMap<FilmOrigine, Map<Long,Set<Personne>>> mapPersonnesByOrigine, 
 			final Film film,
 			final FilmOrigine oldOrigine) {
 		if(oldOrigine != null && mapPersonnesByOrigine.size()>0 && mapPersonnesByOrigine.containsKey(oldOrigine)) {
@@ -245,7 +244,7 @@ public class FilmServiceImpl implements IFilmService {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public Genre saveGenre(Genre genre) {
+	public Genre saveGenre(final Genre genre) {
 		Genre persistedGenre = filmDao.saveGenre(genre);
 		mapGenres.put(persistedGenre.getId(), persistedGenre);
 		return persistedGenre;
@@ -309,7 +308,7 @@ public class FilmServiceImpl implements IFilmService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {
+	public List<Film> findAllFilmsByCriteria(final FilmFilterCriteriaDto filmFilterCriteriaDto) {
 		List<Film> filmList = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
 		filmList.sort(Comparator.comparing(Film::getTitre));
 		return filmList;
@@ -326,7 +325,7 @@ public class FilmServiceImpl implements IFilmService {
 		removePersonnesFromCachePersonnesByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film, film.getOrigine());
 	}
 
-	public static void saveImage(String imageUrl, String destinationFile) throws IOException {
+	public static void saveImage(final String imageUrl, final String destinationFile) throws IOException {
 		URL url = new URL(imageUrl);
 		InputStream is = url.openStream();
 		OutputStream os = new FileOutputStream(destinationFile);
@@ -346,7 +345,7 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Override
-	public Date clearDate(Date dateToClear) {
+	public Date clearDate(final Date dateToClear) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(dateToClear);
 		cal.set(Calendar.MILLISECOND, 0);
@@ -388,19 +387,19 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Override
-	public Boolean checkIfTmdbFilmExists(Long tmdbId) {
+	public Boolean checkIfTmdbFilmExists(final Long tmdbId) {
 		return this.filmDao.checkIfTmdbFilmExists(tmdbId);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Genre attachToSession(Genre genre) {
+	public Genre attachToSession(final Genre genre) {
 		return this.filmDao.attachToSession(genre);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine) {
+	public List<Film> findAllFilmsByOrigine(final FilmOrigine filmOrigine) {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		if(FilmOrigine.TOUS.equals(filmOrigine)) {
@@ -427,7 +426,54 @@ public class FilmServiceImpl implements IFilmService {
 			logger.info("findAllFilmsByOrigine="+watch.prettyPrint());
 			return e;
 		}
-		
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public List<Film> findAllLastAddedFilms(final int rowNumber) {
+		Collection<Film> films = mapFilms.values();
+		logger.info("films cache size: " + films.size());
+		if (films.size() > 0) {
+			List<Film> l = films.stream().limit(rowNumber).collect(Collectors.toList());
+			Collections.sort(l, (f1,f2)->f1.getDateInsertion().compareTo(f2.getDateInsertion()));
+			return l;
+		}
+		logger.info("no films find");
+		List<Film> filmList = this.filmDao.findAllLastAddedFilms(rowNumber);
+		logger.info("filmList size: " + filmList.size());
+		filmList.parallelStream().forEach(it -> {
+			mapFilms.putIfAbsent(it.getId(), it);
+		});
+		return filmList;
+	}
+	@Transactional(readOnly = true)
+	@Override
+	public List<Film> findAllLastAddedFilmsByOrigine(final FilmOrigine filmOrigine, final int rowNumber) {
+		StopWatch watch = new StopWatch();
+		watch.start();
+		if(FilmOrigine.TOUS.equals(filmOrigine)) {
+			return findAllLastAddedFilms(rowNumber);
+		}else {
+			Predicate<Long, Film> predicate = Predicates.equal("origine", filmOrigine);
+			logger.info("films cache find ");
+			Collection<Film> films = mapFilms.values(predicate);
+			logger.info("films cache size: " + films.size());
+			if (films.size() > 0) {
+				List<Film> list = films.stream().limit(rowNumber).collect(Collectors.toList());
+				Collections.sort(list);
+				watch.stop();
+				logger.info("findAllLastAddedFilmsByOrigine="+watch.prettyPrint());
+				return list;
+			}
+			logger.info("no films find");
+			List<Film> e = this.filmDao.findAllLastAddedFilmsByOrigine(filmOrigine, rowNumber);
+			logger.info("films size: " + e.size());
+			e.parallelStream().forEach(it -> {
+				mapFilms.putIfAbsent(it.getId(), it);
+			});
+			watch.stop();
+			logger.info("findAllLastAddedFilmsByOrigine="+watch.prettyPrint());
+			return e;
+		}
 	}
 
 	@Override
@@ -455,7 +501,7 @@ public class FilmServiceImpl implements IFilmService {
 	}
 	
 	@Override
-	public List<Personne> findAllRealisateursByOrigine(FilmOrigine filmOrigine) {
+	public List<Personne> findAllRealisateursByOrigine(final FilmOrigine filmOrigine) {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		//Set<Personne> realisateursByOrigineToReturnSet = new ConcurrentSkipListSet<Personne>();
@@ -501,14 +547,14 @@ public class FilmServiceImpl implements IFilmService {
 		return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,filmList, acteurs);
 	}
 	
-	private List<Personne> iterateThroughFilmsToGetPersonnesListSorted(PersonneType personneType,Collection<Film> films,Set<Personne> personnes){
+	private List<Personne> iterateThroughFilmsToGetPersonnesListSorted(final PersonneType personneType,final Collection<Film> films,final Set<Personne> personnes){
 		films.parallelStream().forEach(it -> {
 			personnes.addAll(PersonneType.ACTEUR.equals(personneType)?it.getActeurs():it.getRealisateurs());
 		});
 		return personnes.stream().collect(Collectors.toList());
 	}
 	@Override
-	public List<Personne> findAllActeursByOrigine(FilmOrigine filmOrigine) {
+	public List<Personne> findAllActeursByOrigine(final FilmOrigine filmOrigine) {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		//ConcurrentSkipListSet<Personne> acteursByOrigineToReturnSet = new ConcurrentSkipListSet<Personne>();
