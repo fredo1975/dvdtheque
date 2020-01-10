@@ -36,11 +36,11 @@ public interface IFilmService {
 	Genre attachToSession(final Genre genre);
 	Genre saveGenre(final Genre genre);
 	List<Genre> findAllGenres();
-	List<Film> findAllFilmsByOrigine(final FilmOrigine filmOrigine, FilmDisplayTypeParam filmDisplayTypeParam);
+	List<Film> findAllFilmsByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Film> findAllLastAddedFilmsByOrigine(final FilmOrigine filmOrigine, final int rowNumber);
 	void cleanAllCaches();
 	List<Personne> findAllRealisateurs(FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Personne> findAllActeurs(FilmDisplayTypeParam filmDisplayTypeParam);
-	List<Personne> findAllActeursByOrigine(final FilmOrigine filmOrigine, FilmDisplayTypeParam filmDisplayTypeParam);
-	List<Personne> findAllRealisateursByOrigine(final FilmOrigine filmOrigine, FilmDisplayTypeParam filmDisplayTypeParam);
+	List<Personne> findAllActeursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
+	List<Personne> findAllRealisateursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
 }

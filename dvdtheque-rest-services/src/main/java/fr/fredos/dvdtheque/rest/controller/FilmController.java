@@ -79,10 +79,10 @@ public class FilmController {
 		return personneService.findPersonneByName(nom);
 	}
 	@GetMapping("/films")
-	ResponseEntity<List<Film>> findAllFilms(@PathVariable String displayType) {
+	ResponseEntity<List<Film>> findAllFilms(@RequestBody String displayType) {
 		try {
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize);
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,0,FilmOrigine.TOUS);
 			return ResponseEntity.ok(filmService.findAllFilms(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -107,11 +107,8 @@ public class FilmController {
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize);
-			if(FilmOrigine.TOUS.equals(filmOrigine)) {
-				return ResponseEntity.ok(filmService.findAllFilms(filmDisplayTypeParam));
-			}
-			return ResponseEntity.ok(filmService.findAllFilmsByOrigine(filmOrigine,filmDisplayTypeParam));
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize,filmOrigine);
+			return ResponseEntity.ok(filmService.findAllFilmsByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -131,7 +128,7 @@ public class FilmController {
 	}
 	@GetMapping("/realisateurs")
 	List<Personne> findAllRealisateurs() {
-		return filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
+		return filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.TOUS));
 	}
 	@GetMapping("/realisateurs/byOrigine/{origine}")
 	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@RequestBody String displayType,@PathVariable String origine) {
@@ -139,11 +136,8 @@ public class FilmController {
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize);
-			if(FilmOrigine.TOUS.equals(filmOrigine)) {
-				return ResponseEntity.ok(filmService.findAllRealisateurs(filmDisplayTypeParam));
-			}
-			return ResponseEntity.ok(filmService.findAllRealisateursByOrigine(filmOrigine, filmDisplayTypeParam));
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize,filmOrigine);
+			return ResponseEntity.ok(filmService.findAllRealisateursByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -151,7 +145,7 @@ public class FilmController {
 	}
 	@GetMapping("/acteurs")
 	List<Personne> findAllActeurs() {
-		return filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
+		return filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.TOUS));
 	}
 	@GetMapping("/acteurs/byOrigine/{origine}")
 	ResponseEntity<List<Personne>> findAllActeursByOrigine(@RequestBody String displayType,@PathVariable String origine) {
@@ -159,11 +153,11 @@ public class FilmController {
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize);
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize,filmOrigine);
 			if(FilmOrigine.TOUS.equals(filmOrigine)) {
 				return ResponseEntity.ok(filmService.findAllActeurs(filmDisplayTypeParam));
 			}
-			return ResponseEntity.ok(filmService.findAllActeursByOrigine(filmOrigine, filmDisplayTypeParam));
+			return ResponseEntity.ok(filmService.findAllActeursByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}

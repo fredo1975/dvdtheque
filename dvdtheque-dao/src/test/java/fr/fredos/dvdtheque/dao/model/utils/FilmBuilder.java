@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
 import fr.fredos.dvdtheque.common.utils.DateUtils;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -207,7 +209,13 @@ public class FilmBuilder {
 			return film;
 		}
 	}
-	
+	public static void assertCacheSize(final int mapActeursByOrigineSize, final int mapRealisateursByOrigineSize,
+			final FilmDisplayTypeParam filmDisplayTypeParam, 
+			final List<Personne> acteursList, 
+			final List<Personne> realisateursList) {
+		assertEquals(mapActeursByOrigineSize, acteursList.size());
+		assertEquals(mapRealisateursByOrigineSize, realisateursList.size());
+	}
 	public static void assertFilmIsNotNull(Film film, boolean dateRipNull, int ripDateOffset, FilmOrigine filmOrigine, String filmDateSortie) throws ParseException {
 		assertNotNull("film Should exists",film);
 		assertNotNull("film Should have an id",film.getId());

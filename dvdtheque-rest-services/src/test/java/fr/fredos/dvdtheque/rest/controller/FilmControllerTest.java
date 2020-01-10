@@ -99,11 +99,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/6ldXqZhCxcnzlgMU70CLPvZI8if.jpg";
 	public static final String SHEET_NAME = "Films";
 
-	private void assertCacheSize(final int mapActeursByOrigineSize, final int mapRealisateursByOrigineSize,
-			final FilmOrigine filmOrigine) {
-		assertEquals(mapActeursByOrigineSize, filmService.findAllActeursByOrigine(filmOrigine, null).size());
-		assertEquals(mapRealisateursByOrigineSize, filmService.findAllRealisateursByOrigine(filmOrigine, null).size());
-	}
 
 	@Before()
 	public void setUp() throws Exception {
@@ -206,7 +201,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		FilmBuilder.assertFilmIsNotNull(film5, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.TV, null);
 		assertNotNull(filmId5);
 		
-		List<Film> dvdFilms = filmService.findAllFilmsByOrigine(FilmOrigine.DVD,new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
+		List<Film> dvdFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.DVD));
 		assertNotNull("dvdFilms size should be 2", dvdFilms);
 		assertTrue("dvdFilms size should be 2", dvdFilms.size() == 2);
 		Film _dvdFilm1 = dvdFilms.get(0);
@@ -222,7 +217,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_dvdFilm1.getTitre())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(_dvdFilm2.getTitre())));
 		
-		List<Film> enSalleFilms = filmService.findAllFilmsByOrigine(FilmOrigine.EN_SALLE,new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
+		List<Film> enSalleFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.EN_SALLE));
 		assertNotNull("enSalleFilms size should be 2", dvdFilms);
 		assertTrue("enSalleFilms size should be 2", enSalleFilms.size() == 2);
 		Film _enSalleFilmsfilm1 = enSalleFilms.get(0);
@@ -238,7 +233,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_enSalleFilmsfilm1.getTitre())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(_enSalleFilmsfilm2.getTitre())));
 		
-		List<Film> tvFilms = filmService.findAllFilmsByOrigine(FilmOrigine.TV,new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
+		List<Film> tvFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.TV));
 		assertNotNull("tvFilms size should be 1", tvFilms);
 		assertTrue("tvFilms size should be 1", tvFilms.size() == 1);
 		Film _tvFilm1 = tvFilms.get(0);
@@ -253,7 +248,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_tvFilm1.getTitre())));
 		
 		
-		List<Film> allFilms = filmService.findAllFilmsByOrigine(FilmOrigine.TOUS,new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
+		List<Film> allFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.TOUS));
 		assertNotNull("allFilms size should be 5", allFilms);
 		assertTrue("allFilms size should be 5", allFilms.size() == 5);
 		Film _film1 = allFilms.get(0);
@@ -283,32 +278,155 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844).setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844).setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844).setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE).setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD).setGenre1(genre1).setGenre2(genre2).setZone(new Integer(2))
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1).setGenre2(genre2)
+				.setZone(new Integer(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
 				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		List<Film> allFilms = filmService.findAllFilms(null);
-		assertNotNull(allFilms);
-		if (CollectionUtils.isNotEmpty(allFilms)) {
-			assertTrue(allFilms.size() == 1);
-			Film filmToTest = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
-			assertNotNull(filmToTest);
-			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-					.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name()).contentType(MediaType.APPLICATION_JSON);
-			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
-			ResultActions resultActions = mvc
-					.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name())
-							.contentType(MediaType.APPLICATION_JSON))
-					.andExpect(MockMvcResultMatchers.status().isOk())
-					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
-			assertNotNull(resultActions);
-			FilmBuilder.assertFilmIsNotNull(filmToTest, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
-		}
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
+		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_4780)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId2 = filmService.saveNewFilm(film2);
+		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
+		assertNotNull(filmId2);
+		Film film3 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_1271)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_1271)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_1271)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setOrigine(FilmOrigine.EN_SALLE)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setZone(new Integer(2))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId3 = filmService.saveNewFilm(film3);
+		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null);
+		assertNotNull(filmId3);
+		Film film4 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREUPDATED)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setOrigine(FilmOrigine.EN_SALLE)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setZone(new Integer(2))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId4 = filmService.saveNewFilm(film4);
+		FilmBuilder.assertFilmIsNotNull(film4, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null);
+		assertNotNull(filmId4);
+		Film film5 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREREUPDATED)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setOrigine(FilmOrigine.TV)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.build();
+		Long filmId5 = filmService.saveNewFilm(film5);
+		FilmBuilder.assertFilmIsNotNull(film5, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.TV, null);
+		assertNotNull(filmId5);
+		
+		List<Film> dvdFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.LAST_ADDED,1,FilmOrigine.DVD));
+		assertNotNull("dvdFilms size should be 1", dvdFilms);
+		assertTrue("dvdFilms size should be 1", dvdFilms.size() == 1);
+		Film _dvdFilm1 = dvdFilms.get(0);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name(), FilmDisplayType.LAST_ADDED.name())
+				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name());
+		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+		mvc.perform(MockMvcRequestBuilders
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name(), FilmDisplayType.LAST_ADDED.name())
+						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name()))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_dvdFilm1.getTitre())));
+		
+		List<Film> enSalleFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.LAST_ADDED,1,FilmOrigine.EN_SALLE));
+		assertNotNull("enSalleFilms size should be 1", dvdFilms);
+		assertTrue("enSalleFilms size should be 1", enSalleFilms.size() == 1);
+		Film _enSalleFilmsfilm1 = enSalleFilms.get(0);
+		MockHttpServletRequestBuilder enSallebuilder = MockMvcRequestBuilders
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name(), FilmDisplayType.LAST_ADDED.name())
+				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name());
+		mvc.perform(enSallebuilder).andExpect(MockMvcResultMatchers.status().isOk());
+		mvc.perform(MockMvcRequestBuilders
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name(), FilmDisplayType.LAST_ADDED.name())
+						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name()))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_enSalleFilmsfilm1.getTitre())));
+		
+		List<Film> tvFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.LAST_ADDED,1,FilmOrigine.TV));
+		assertNotNull("tvFilms size should be 1", tvFilms);
+		assertTrue("tvFilms size should be 1", tvFilms.size() == 1);
+		Film _tvFilm1 = tvFilms.get(0);
+		MockHttpServletRequestBuilder tvBuilder = MockMvcRequestBuilders
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name(), FilmDisplayType.LAST_ADDED.name())
+				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name());
+		mvc.perform(tvBuilder).andExpect(MockMvcResultMatchers.status().isOk());
+		mvc.perform(MockMvcRequestBuilders
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name(), FilmDisplayType.LAST_ADDED.name())
+						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name()))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_tvFilm1.getTitre())));
+		
+		
+		List<Film> allFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.LAST_ADDED,5,FilmOrigine.TOUS));
+		assertNotNull("allFilms size should be 5", allFilms);
+		assertTrue("allFilms size should be 5", allFilms.size() == 5);
+		Film _film1 = allFilms.get(0);
+		Film _film2 = allFilms.get(1);
+		Film _film3 = allFilms.get(2);
+		Film _film4 = allFilms.get(3);
+		Film _film5 = allFilms.get(4);
+		
+		MockHttpServletRequestBuilder allBuilder = MockMvcRequestBuilders
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name(), FilmDisplayType.LAST_ADDED.name())
+				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name());
+		mvc.perform(allBuilder).andExpect(MockMvcResultMatchers.status().isOk());
+		mvc.perform(MockMvcRequestBuilders
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name(), FilmDisplayType.ALL.name())
+						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name()))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_film1.getTitre())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(_film2.getTitre())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[2].titre", Is.is(_film3.getTitre())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[3].titre", Is.is(_film4.getTitre())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[4].titre", Is.is(_film5.getTitre())));
 	}
 
 	@Test
@@ -316,31 +434,38 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844).setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844).setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844).setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE).setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD).setGenre1(genre1).setGenre2(genre2).setZone(new Integer(2))
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
 				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		List<Film> allFilms = filmService.findAllFilms(null);
+		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL, 0, FilmOrigine.TOUS);
+		List<Film> allFilms = filmService.findAllFilms(filmDisplayTypeParam);
 		assertNotNull(allFilms);
-		if (CollectionUtils.isNotEmpty(allFilms)) {
-			assertTrue(allFilms.size() == 1);
-			Film filmToTest = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
-			assertNotNull(filmToTest);
-			MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_FILMS_URI)
-					.contentType(MediaType.APPLICATION_JSON);
-			mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
-			ResultActions resultActions = mvc
-					.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI).contentType(MediaType.APPLICATION_JSON))
-					.andExpect(MockMvcResultMatchers.status().isOk())
-					.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
-			assertNotNull(resultActions);
-			FilmBuilder.assertFilmIsNotNull(filmToTest, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
-		}
+		assertTrue(allFilms.size() == 1);
+		Film filmToTest = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
+		assertNotNull(filmToTest);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_FILMS_URI,FilmDisplayType.ALL.name())
+				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name());
+		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+		ResultActions resultActions = mvc
+				.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI,FilmDisplayType.ALL.name()).contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name()))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
+		assertNotNull(resultActions);
+		FilmBuilder.assertFilmIsNotNull(filmToTest, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE);
 	}
 
 	@Test
@@ -439,17 +564,26 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844).setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844).setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844).setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE).setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD).setGenre1(genre1).setGenre2(genre2).setZone(new Integer(2))
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
 				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
-		List<Personne> allRealisateurs = filmService.findAllRealisateursByOrigine(FilmOrigine.DVD, null);
+		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE);
+		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL, 0, FilmOrigine.TOUS);
+		List<Personne> allRealisateurs = filmService.findAllRealisateursByFilmDisplayType(filmDisplayTypeParam);
 		assertNotNull("allActeur size should be 3", allRealisateurs);
 		assertTrue("allActeur size should be 3", allRealisateurs.size() == 1);
 		Personne real1 = allRealisateurs.get(0);
@@ -471,10 +605,17 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844).setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844).setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844).setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE).setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD).setGenre1(genre1).setGenre2(genre2).setZone(new Integer(2))
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1).setGenre2(genre2)
+				.setZone(new Integer(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
 				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
@@ -536,18 +677,26 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844).setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844).setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844).setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE).setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD).setGenre1(genre1).setGenre2(genre2).setZone(new Integer(2))
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
 				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
-		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL, 0);
-		List<Personne> allActeur = filmService.findAllActeursByOrigine(FilmOrigine.DVD, filmDisplayTypeParam);
+		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL, 0,FilmOrigine.DVD);
+		List<Personne> allActeur = filmService.findAllActeursByFilmDisplayType(filmDisplayTypeParam);
 		assertNotNull("allActeur size should be 3", allActeur);
 		assertTrue("allActeur size should be 3", allActeur.size() == 3);
 		Personne acteur1 = allActeur.get(0);
@@ -631,22 +780,29 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844).setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844).setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844).setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE).setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD).setGenre1(genre1).setGenre2(genre2).setZone(new Integer(2))
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1).setGenre2(genre2)
+				.setZone(new Integer(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
 				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
+		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE);
 		Film filmToUpdate = filmService.findFilm(film.getId());
 		assertNotNull(filmToUpdate);
 		logger.debug("filmToUpdate=" + filmToUpdate.toString());
 		filmToUpdate.setTitre(FilmBuilder.TITRE_FILM_TMBD_ID_4780);
 		filmToUpdate.getDvd().setRipped(false);
-		FilmBuilder.assertFilmIsNotNull(filmToUpdate, true, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
+		FilmBuilder.assertFilmIsNotNull(filmToUpdate, true, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE);
 		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate)
@@ -657,8 +813,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film filmUpdated = filmService.findFilm(filmToUpdate.getId());
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), filmUpdated.getTitre());
 		assertFalse(filmUpdated.getDvd().isRipped());
-		assertCacheSize(0, 0, FilmOrigine.EN_SALLE);
-		assertCacheSize(3, 1, FilmOrigine.DVD);
+		FilmDisplayTypeParam enSalleDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.EN_SALLE);
+		FilmDisplayTypeParam dvdDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.DVD);
+		FilmBuilder.assertCacheSize(0, 0, enSalleDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(enSalleDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(enSalleDisplayTypeParam));
+		FilmBuilder.assertCacheSize(3, 1, dvdDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(dvdDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(dvdDisplayTypeParam));
 	}
 
 	@Test(expected = java.lang.Exception.class)
@@ -687,7 +845,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		Film filmRemoved = filmService.findFilm(filmToRemove.getId());
 		assertNull(filmRemoved);
-		assertCacheSize(0, 0, FilmOrigine.DVD);
+		FilmDisplayTypeParam dvdDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.DVD);
+		FilmBuilder.assertCacheSize(0, 0, dvdDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(dvdDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(dvdDisplayTypeParam));
 	}
 
 	@Test
@@ -730,9 +889,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertEquals(DvdFormat.DVD, filmUpdated.getDvd().getFormat());
 		assertEquals(new Integer(1), filmUpdated.getDvd().getZone());
 		assertTrue(filmUpdated.getDvd().isRipped());
-
-		assertCacheSize(0, 0, FilmOrigine.EN_SALLE);
-		assertCacheSize(3, 1, FilmOrigine.DVD);
+		FilmDisplayTypeParam enSalleDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.EN_SALLE);
+		FilmDisplayTypeParam dvdDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.DVD);
+		FilmBuilder.assertCacheSize(0, 0, enSalleDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(enSalleDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(enSalleDisplayTypeParam));
+		FilmBuilder.assertCacheSize(3, 1, dvdDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(dvdDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(dvdDisplayTypeParam));
 	}
 
 	@Test
@@ -787,8 +947,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		// FilmBuilder.assertFilmIsNotNull(filmSaved, false,
 		// FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE);
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmSaved.getTitre());
-		assertCacheSize(12, 1, FilmOrigine.EN_SALLE);
-		assertCacheSize(0, 0, FilmOrigine.DVD);
+		FilmDisplayTypeParam enSalleDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.EN_SALLE);
+		FilmDisplayTypeParam dvdDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.DVD);
+		FilmBuilder.assertCacheSize(12, 1, enSalleDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(enSalleDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(enSalleDisplayTypeParam));
+		FilmBuilder.assertCacheSize(0, 0, dvdDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(dvdDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(dvdDisplayTypeParam));
 	}
 
 	@Test
