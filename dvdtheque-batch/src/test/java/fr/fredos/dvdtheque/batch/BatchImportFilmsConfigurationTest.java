@@ -84,7 +84,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		jobParametersBuilder.addString("INPUT_FILE_PATH", environment.getRequiredProperty(LISTE_DVD_FILE_NAME));
 		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchJob(jobParametersBuilder.toJobParameters());
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-		List<Film> films = filmService.findAllFilms();
+		List<Film> films = filmService.findAllFilms(null);
 		assertTrue(films.size()==7);
 		boolean is2001odysseyExists = false;
 		boolean is2046Exists = false;

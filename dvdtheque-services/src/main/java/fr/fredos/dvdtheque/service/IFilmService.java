@@ -8,6 +8,7 @@ import java.util.Set;
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -18,7 +19,7 @@ public interface IFilmService {
 	Date clearDate(final Date dateToClear);
 	Film findFilm(Long id);
 	Film findFilmWithAllObjectGraph(final Long id);
-	List<Film> findAllFilms();
+	List<Film> findAllFilms(FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Film> findAllLastAddedFilms(final int rowNumber);
 	Set<Long> findAllTmdbFilms(final Set<Long> tmdbIds);
 	Film updateFilm(Film film);
@@ -35,11 +36,11 @@ public interface IFilmService {
 	Genre attachToSession(final Genre genre);
 	Genre saveGenre(final Genre genre);
 	List<Genre> findAllGenres();
-	List<Film> findAllFilmsByOrigine(final FilmOrigine filmOrigine);
+	List<Film> findAllFilmsByOrigine(final FilmOrigine filmOrigine, FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Film> findAllLastAddedFilmsByOrigine(final FilmOrigine filmOrigine, final int rowNumber);
 	void cleanAllCaches();
-	List<Personne> findAllRealisateurs();
-	List<Personne> findAllActeurs();
-	List<Personne> findAllActeursByOrigine(final FilmOrigine filmOrigine);
-	List<Personne> findAllRealisateursByOrigine(final FilmOrigine filmOrigine);
+	List<Personne> findAllRealisateurs(FilmDisplayTypeParam filmDisplayTypeParam);
+	List<Personne> findAllActeurs(FilmDisplayTypeParam filmDisplayTypeParam);
+	List<Personne> findAllActeursByOrigine(final FilmOrigine filmOrigine, FilmDisplayTypeParam filmDisplayTypeParam);
+	List<Personne> findAllRealisateursByOrigine(final FilmOrigine filmOrigine, FilmDisplayTypeParam filmDisplayTypeParam);
 }

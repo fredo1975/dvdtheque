@@ -189,13 +189,16 @@ public class FilmBuilder {
 			genres.add(this.genre1);
 			genres.add(this.genre2);
 			film.setGenres(genres);
-			Dvd dvd = new Dvd();
-			dvd.setDateRip(this.ripDate);
-			dvd.setFormat(this.dvdFormat);
-			dvd.setZone(this.zone);
-			film.setDvd(dvd);
-			dvd.setRipped(this.ripped);
-			dvd.setDateSortie(this.dvdDateSortie);
+			if(this.ripDate!=null || this.dvdFormat!=null || this.zone!=null || this.ripped==true || this.dvdDateSortie!=null) {
+				Dvd dvd = new Dvd();
+				dvd.setDateRip(this.ripDate);
+				dvd.setFormat(this.dvdFormat);
+				dvd.setZone(this.zone);
+				dvd.setRipped(this.ripped);
+				dvd.setDateSortie(this.dvdDateSortie);
+				film.setDvd(dvd);
+			}
+			
 			film.setOrigine(this.origine);
 			film.setVu(this.vu);
 			// hard coded
@@ -214,10 +217,10 @@ public class FilmBuilder {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd",Locale.FRANCE);
 		if(StringUtils.isNotEmpty(filmDateSortie)) {
 			Date _filmDateSortie = DateUtils.clearDate(sdf.parse(filmDateSortie));
-			assertEquals("date sortie should match",film.getDateSortie(), _filmDateSortie);
+			assertEquals("film date sortie should match",film.getDateSortie(), _filmDateSortie);
 		}else {
 			Date _filmDateSortie = DateUtils.clearDate(sdf.parse(FILM_DATE_SORTIE));
-			assertEquals("date sortie should match",film.getDateSortie(), _filmDateSortie);
+			assertEquals("film date sortie should match",film.getDateSortie(), _filmDateSortie);
 		}
 		
 		if(FilmOrigine.DVD == filmOrigine) {

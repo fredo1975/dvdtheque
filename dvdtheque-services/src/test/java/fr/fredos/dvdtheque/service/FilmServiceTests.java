@@ -37,7 +37,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -69,8 +71,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	
 	private void assertCacheSize(final int mapActeursByOrigineSize,final int mapRealisateursByOrigineSize,final FilmOrigine filmOrigine) {
-		assertEquals(mapActeursByOrigineSize, filmService.findAllActeursByOrigine(filmOrigine).size());
-		assertEquals(mapRealisateursByOrigineSize, filmService.findAllRealisateursByOrigine(filmOrigine).size());
+		assertEquals(mapActeursByOrigineSize, filmService.findAllActeursByOrigine(filmOrigine, null).size());
+		assertEquals(mapRealisateursByOrigineSize, filmService.findAllRealisateursByOrigine(filmOrigine, null).size());
 	}
 	
 	@Test
@@ -291,21 +293,21 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		FilmBuilder.assertFilmIsNotNull(film5, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.TV, null);
 		assertNotNull(filmId5);
 		
-		List<Film> dvdFilms = filmService.findAllFilmsByOrigine(FilmOrigine.DVD);
+		List<Film> dvdFilms = filmService.findAllFilmsByOrigine(FilmOrigine.DVD,new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
 		assertNotNull(dvdFilms);
 		assertTrue(CollectionUtils.isNotEmpty(dvdFilms));
 		assertTrue(dvdFilms.size()==2);
 		for(Film dvd : dvdFilms) {
 			FilmBuilder.assertFilmIsNotNull(dvd, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
 		}
-		List<Film> enSalleFilms = filmService.findAllFilmsByOrigine(FilmOrigine.EN_SALLE);
+		List<Film> enSalleFilms = filmService.findAllFilmsByOrigine(FilmOrigine.EN_SALLE,new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
 		assertNotNull(enSalleFilms);
 		assertTrue(CollectionUtils.isNotEmpty(enSalleFilms));
 		assertTrue(enSalleFilms.size()==2);
 		for(Film enSalle : enSalleFilms) {
 			FilmBuilder.assertFilmIsNotNull(enSalle, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null);
 		}
-		List<Film> tvFilms = filmService.findAllFilmsByOrigine(FilmOrigine.TV);
+		List<Film> tvFilms = filmService.findAllFilmsByOrigine(FilmOrigine.TV,new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
 		assertNotNull(tvFilms);
 		assertTrue(CollectionUtils.isNotEmpty(tvFilms));
 		assertTrue(tvFilms.size()==1);
@@ -523,7 +525,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertNotNull(filmId3);
 		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
 		filmService.cleanAllFilms();
-		assertTrue(CollectionUtils.isEmpty(filmService.findAllFilms()));
+		assertTrue(CollectionUtils.isEmpty(filmService.findAllFilms(null)));
 		logger.debug(methodName + "end");
 	}
 	@Test
@@ -870,7 +872,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Long filmId3 = filmService.saveNewFilm(film3);
 		assertNotNull(filmId3);
 		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
-		List<Film> list = filmService.findAllFilms();
+		List<Film> list = filmService.findAllFilms(new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
 		assertNotNull(list);
 	    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
 	    assertNotNull(excelContent);
@@ -945,7 +947,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Long filmId3 = filmService.saveNewFilm(film3);
 		assertNotNull(filmId3);
 		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null);
-		List<Film> list = filmService.findAllFilms();
+		List<Film> list = filmService.findAllFilms(new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
 		assertNotNull(list);
 		
 		byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
@@ -1137,7 +1139,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
-		List<Personne> realList = filmService.findAllRealisateurs();
+		List<Personne> realList = filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
 		assertNotNull(realList);
 		assertTrue(CollectionUtils.isNotEmpty(realList));
 		assertTrue(realList.size()==1);
@@ -1163,8 +1165,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
-		List<Personne> realList = filmService.findAllRealisateursByOrigine(FilmOrigine.DVD);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE);
+		List<Personne> realList = filmService.findAllRealisateursByOrigine(FilmOrigine.DVD, new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
 		assertNotNull(realList);
 		assertTrue(CollectionUtils.isNotEmpty(realList));
 		assertTrue(realList.size()==1);
@@ -1190,8 +1192,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
-		List<Personne> actList = filmService.findAllActeurs();
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE);
+		List<Personne> actList = filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
 		assertNotNull(actList);
 		assertTrue(CollectionUtils.isNotEmpty(actList));
 		assertTrue(actList.size()==3);
@@ -1217,7 +1219,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmDvdId = filmService.saveNewFilm(filmDvd);
 		assertNotNull(filmDvdId);
-		FilmBuilder.assertFilmIsNotNull(filmDvd, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
+		FilmBuilder.assertFilmIsNotNull(filmDvd, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE);
 		Film filmEnSalle = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
 				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_4780)
@@ -1235,12 +1237,12 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmEnSalleId = filmService.saveNewFilm(filmEnSalle);
 		assertNotNull(filmEnSalleId);
-		FilmBuilder.assertFilmIsNotNull(filmEnSalle, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null);
-		List<Personne> actEnSalleIdList = filmService.findAllActeursByOrigine(FilmOrigine.EN_SALLE);
+		FilmBuilder.assertFilmIsNotNull(filmEnSalle, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE);
+		List<Personne> actEnSalleIdList = filmService.findAllActeursByOrigine(FilmOrigine.EN_SALLE, null);
 		assertNotNull(actEnSalleIdList);
 		assertTrue(CollectionUtils.isNotEmpty(actEnSalleIdList));
 		assertTrue(actEnSalleIdList.size()==3);
-		List<Personne> actDvdIdList = filmService.findAllActeursByOrigine(FilmOrigine.DVD);
+		List<Personne> actDvdIdList = filmService.findAllActeursByOrigine(FilmOrigine.DVD, null);
 		assertNotNull(actDvdIdList);
 		assertTrue(CollectionUtils.isNotEmpty(actDvdIdList));
 		assertTrue(actDvdIdList.size()==3);
@@ -1262,8 +1264,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmEnSalleId2 = filmService.saveNewFilm(filmEnSalle2);
 		assertNotNull(filmEnSalleId2);
-		FilmBuilder.assertFilmIsNotNull(filmEnSalle2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null);
-		actEnSalleIdList = filmService.findAllActeursByOrigine(FilmOrigine.EN_SALLE);
+		FilmBuilder.assertFilmIsNotNull(filmEnSalle2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE);
+		actEnSalleIdList = filmService.findAllActeursByOrigine(FilmOrigine.EN_SALLE, new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
 		assertNotNull(actEnSalleIdList);
 		assertTrue(CollectionUtils.isNotEmpty(actEnSalleIdList));
 		assertTrue(actEnSalleIdList.size()==6);
@@ -1289,7 +1291,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE);
 		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
 				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
@@ -1304,7 +1306,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId2 = filmService.saveNewFilm(film2);
-		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
+		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE);
 		assertNotNull(filmId2);
 		Film film3 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -1320,7 +1322,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId3 = filmService.saveNewFilm(film3);
-		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null);
+		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE);
 		assertNotNull(filmId3);
 		Film film4 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREUPDATED)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -1336,7 +1338,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId4 = filmService.saveNewFilm(film4);
-		FilmBuilder.assertFilmIsNotNull(film4, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null);
+		FilmBuilder.assertFilmIsNotNull(film4, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE);
 		assertNotNull(filmId4);
 		Film film5 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREREUPDATED)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -1350,9 +1352,9 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.FILM_DATE_SORTIE).build();
 		Long filmId5 = filmService.saveNewFilm(film5);
-		FilmBuilder.assertFilmIsNotNull(film5, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.TV, null);
+		FilmBuilder.assertFilmIsNotNull(film5, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.TV, FilmBuilder.FILM_DATE_SORTIE);
 		assertNotNull(filmId5);
 		List<Film> l = filmService.findAllLastAddedFilms(rowNumber);
 		assertTrue(CollectionUtils.isNotEmpty(l));
@@ -1379,7 +1381,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE);
 		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
 				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
@@ -1394,7 +1396,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId2 = filmService.saveNewFilm(film2);
-		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
+		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE);
 		assertNotNull(filmId2);
 		Film film3 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -1410,7 +1412,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId3 = filmService.saveNewFilm(film3);
-		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null);
+		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE);
 		assertNotNull(filmId3);
 		Film film4 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREUPDATED)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -1426,7 +1428,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId4 = filmService.saveNewFilm(film4);
-		FilmBuilder.assertFilmIsNotNull(film4, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null);
+		FilmBuilder.assertFilmIsNotNull(film4, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE);
 		assertNotNull(filmId4);
 		Film film5 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREREUPDATED)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -1442,7 +1444,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId5 = filmService.saveNewFilm(film5);
-		FilmBuilder.assertFilmIsNotNull(film5, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.TV, null);
+		FilmBuilder.assertFilmIsNotNull(film5, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.TV, FilmBuilder.FILM_DATE_SORTIE);
 		assertNotNull(filmId5);
 		List<Film> l = filmService.findAllLastAddedFilmsByOrigine(FilmOrigine.DVD, rowNumber);
 		assertTrue(CollectionUtils.isNotEmpty(l));

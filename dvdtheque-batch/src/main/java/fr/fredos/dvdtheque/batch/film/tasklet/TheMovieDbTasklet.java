@@ -32,7 +32,7 @@ public class TheMovieDbTasklet implements Tasklet{
     private TmdbServiceClient tmdbServiceClient;
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		List<Film> filmList = filmService.findAllFilms();
+		List<Film> filmList = filmService.findAllFilms(null);
 		filmList.forEach(film->{
 			logger.info(film.toString());
 			SearchResults searchResults = null;

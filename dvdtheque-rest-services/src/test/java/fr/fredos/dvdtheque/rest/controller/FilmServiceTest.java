@@ -62,7 +62,7 @@ public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		StopWatch watch = new StopWatch();
 		logger.debug(watch.prettyPrint());
 		watch.start();
-		List<Film> films = filmService.findAllFilms();
+		List<Film> films = filmService.findAllFilms(null);
 		assertNotNull(films);
 		watch.stop();
 		logger.debug(watch.prettyPrint());

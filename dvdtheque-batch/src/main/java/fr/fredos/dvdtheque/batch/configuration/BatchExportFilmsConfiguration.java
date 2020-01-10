@@ -40,7 +40,7 @@ public class BatchExportFilmsConfiguration {
 	}
     @Bean
     protected ListItemReader<Film> dbFilmReader() {
-    	return new ListItemReader<>(filmService.findAllFilms());
+    	return new ListItemReader<>(filmService.findAllFilms(null));
     }
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

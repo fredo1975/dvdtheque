@@ -37,8 +37,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
+import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
+import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
@@ -69,14 +71,23 @@ public class FilmController {
     private MultipartFileUtil multipartFileUtil;
     @Value("${eureka.instance.instance-id}")
     private String instanceId;
+    @Value("${limit.film.size}")
+    private int limitFilmSize;
 
 	@GetMapping("/films/byPersonne")
 	Personne findPersonne(@RequestParam(name="nom",required = false) String nom) {
 		return personneService.findPersonneByName(nom);
 	}
 	@GetMapping("/films")
-	List<Film> findAllFilms() {
-		return filmService.findAllFilms();
+	ResponseEntity<List<Film>> findAllFilms(@PathVariable String displayType) {
+		try {
+			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize);
+			return ResponseEntity.ok(filmService.findAllFilms(filmDisplayTypeParam));
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/films/genres")
 	List<Genre> findAllGenres() {
@@ -91,14 +102,16 @@ public class FilmController {
 		return filmService.findFilmByTitre(titre);
 	}
 	@GetMapping("/films/byOrigine/{origine}")
-	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine) {
+	ResponseEntity<List<Film>> findAllFilmsByOrigine(@RequestBody String displayType,@PathVariable String origine) {
 		logger.info("findAllFilmsByOrigine - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize);
 			if(FilmOrigine.TOUS.equals(filmOrigine)) {
-				return ResponseEntity.ok(filmService.findAllFilms());
+				return ResponseEntity.ok(filmService.findAllFilms(filmDisplayTypeParam));
 			}
-			return ResponseEntity.ok(filmService.findAllFilmsByOrigine(filmOrigine));
+			return ResponseEntity.ok(filmService.findAllFilmsByOrigine(filmOrigine,filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -118,17 +131,19 @@ public class FilmController {
 	}
 	@GetMapping("/realisateurs")
 	List<Personne> findAllRealisateurs() {
-		return filmService.findAllRealisateurs();
+		return filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
 	}
 	@GetMapping("/realisateurs/byOrigine/{origine}")
-	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@PathVariable String origine) {
+	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@RequestBody String displayType,@PathVariable String origine) {
 		logger.info("findAllRealisateursByOrigine - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize);
 			if(FilmOrigine.TOUS.equals(filmOrigine)) {
-				return ResponseEntity.ok(filmService.findAllRealisateurs());
+				return ResponseEntity.ok(filmService.findAllRealisateurs(filmDisplayTypeParam));
 			}
-			return ResponseEntity.ok(filmService.findAllRealisateursByOrigine(filmOrigine));
+			return ResponseEntity.ok(filmService.findAllRealisateursByOrigine(filmOrigine, filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -136,17 +151,19 @@ public class FilmController {
 	}
 	@GetMapping("/acteurs")
 	List<Personne> findAllActeurs() {
-		return filmService.findAllActeurs();
+		return filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0));
 	}
 	@GetMapping("/acteurs/byOrigine/{origine}")
-	ResponseEntity<List<Personne>> findAllActeursByOrigine(@PathVariable String origine) {
+	ResponseEntity<List<Personne>> findAllActeursByOrigine(@RequestBody String displayType,@PathVariable String origine) {
 		logger.info("findAllActeursByOrigine - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize);
 			if(FilmOrigine.TOUS.equals(filmOrigine)) {
-				return ResponseEntity.ok(filmService.findAllActeurs());
+				return ResponseEntity.ok(filmService.findAllActeurs(filmDisplayTypeParam));
 			}
-			return ResponseEntity.ok(filmService.findAllActeursByOrigine(filmOrigine));
+			return ResponseEntity.ok(filmService.findAllActeursByOrigine(filmOrigine, filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -264,7 +281,7 @@ public class FilmController {
 	    	List<Film> list = null;
 	    	FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 	    	if(FilmOrigine.TOUS.equals(filmOrigine)) {
-	    		list = filmService.findAllFilms();
+	    		list = filmService.findAllFilms(null);
 	    	}else {
 	    		list = filmService.findAllFilmsByCriteria(new FilmFilterCriteriaDto(null,null,null,null,null, null, filmOrigine));
 	    	}

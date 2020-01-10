@@ -89,7 +89,7 @@ public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContext
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null);
-		List<Film> filmList = filmService.findAllFilms();
+		List<Film> filmList = filmService.findAllFilms(null);
 		assertNotNull(filmList);
 		logger.debug("filmList ="+filmList.toString());
 	}
