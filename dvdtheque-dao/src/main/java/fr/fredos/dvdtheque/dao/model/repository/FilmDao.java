@@ -15,6 +15,7 @@ public interface FilmDao {
 	Genre attachToSession(Genre genre);
 	Genre saveGenre(Genre genre);
 	Film findFilmByTitre(String titre);
+	public Film findFilmByTitreWithoutSpecialsCharacters(final String titre);
 	Film findFilmWithAllObjectGraph(Long id);
 	Long saveNewFilm(Film film);
 	Film updateFilm(Film film);

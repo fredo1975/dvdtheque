@@ -77,6 +77,18 @@ public class FilmDaoImpl implements FilmDao {
 		}
 		return null;
 	}
+	public Film findFilmByTitreWithoutSpecialsCharacters(final String titre){
+		Query q = this.entityManager.createQuery("from Film where UPPER(REPLACE(REPLACE(titre, ':', ''),'  ',' ')) = UPPER(:titre)");
+		q.setParameter("titre", titre);
+		try {
+			return (Film)q.getSingleResult();
+		}catch(NoResultException nre) {
+			logger.error(nre.getMessage());
+		}catch(NonUniqueResultException nre) {
+			logger.error(nre.getMessage());
+		}
+		return null;
+	}
 	public Film findFilmWithAllObjectGraph(final Long id){
 		Query q = this.entityManager.createQuery("from Film where id = :id ");
 		q.setParameter("id", id);

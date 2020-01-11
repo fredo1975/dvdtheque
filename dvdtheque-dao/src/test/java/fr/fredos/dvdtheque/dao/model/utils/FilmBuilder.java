@@ -27,6 +27,7 @@ import fr.fredos.dvdtheque.dao.model.object.Personne;
 
 public class FilmBuilder {
 	public static final String TITRE_FILM_TMBD_ID_844 = "2046";
+	public static final String TITRE_FILM_TMBD_ID_62 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_FILM_TMBD_ID_4780 = "OBSESSION";
 	public static final String TITRE_FILM_TMBD_ID_1271 = "300";
 	public static final String TITRE_FILM_FOR_SEARCH_BY_TITRE = "vacances";

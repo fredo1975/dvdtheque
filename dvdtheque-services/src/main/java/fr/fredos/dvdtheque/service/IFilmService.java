@@ -27,6 +27,7 @@ public interface IFilmService {
 	//public List<FilmDto> getAllFilmDtos();
 	void cleanAllFilms();
 	Film findFilmByTitre(final String titre);
+	Film findFilmByTitreWithoutSpecialsCharacters(final String titre);
 	List<Film> getAllRippedFilms();
 	List<Film> findAllFilmsByCriteria(final FilmFilterCriteriaDto filmFilterCriteriaDto);
 	void removeFilm(Film film);

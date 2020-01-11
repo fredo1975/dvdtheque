@@ -26,6 +26,7 @@ import org.springframework.core.env.Environment;
 
 import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.configuration.MessageConsumer;
+import fr.fredos.dvdtheque.batch.film.tasklet.RetrieveDateInsertionTasklet;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -36,6 +37,7 @@ import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 
 @SpringBootTest(classes = { BatchImportFilmsConfiguration.class,MessageConsumer.class,
 		RippedFlagTasklet.class,
+		RetrieveDateInsertionTasklet.class,
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
@@ -110,7 +112,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(acteurs.size()>7);
 				assertFalse(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
-				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.DVD, "2004/10/20", "2019/08/01");
+				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.DVD, "2004/10/20", "2018/06/18");
 			}
 			if(TITRE_FILM_40_ans.equals(film.getTitre())) {
 				is40ansExists = true;

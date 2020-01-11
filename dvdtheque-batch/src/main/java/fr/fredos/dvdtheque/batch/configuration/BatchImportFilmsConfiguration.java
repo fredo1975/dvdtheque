@@ -56,6 +56,9 @@ public class BatchImportFilmsConfiguration{
     @Qualifier("rippedFlagTasklet")
     protected Tasklet rippedFlagTasklet;
     @Autowired
+    @Qualifier("retrieveDateInsertionTasklet")
+    protected Tasklet retrieveDateInsertionTasklet;
+    @Autowired
     private JmsTemplate jmsTemplate;
 	@Autowired
     private Topic topic;
@@ -101,7 +104,7 @@ public class BatchImportFilmsConfiguration{
 	@Bean
 	public Job importFilmsJob() {
 		return jobBuilderFactory.get("importFilms").incrementer(new RunIdIncrementer()).start(cleanDBStep())
-				.next(importFilmsStep()).next(setRippedFlagStep()).build();
+				.next(importFilmsStep()).next(setRippedFlagStep()).next(setRetrieveDateInsertionStep()).build();
 	}
 	
     @Bean
@@ -112,7 +115,10 @@ public class BatchImportFilmsConfiguration{
     protected Step setRippedFlagStep() {
     	return stepBuilderFactory.get("rippedFlagStep").tasklet(rippedFlagTasklet).build();
     }
-    
+    @Bean
+    protected Step setRetrieveDateInsertionStep() {
+    	return stepBuilderFactory.get("retrieveDateInsertionStep").tasklet(retrieveDateInsertionTasklet).build();
+    }
     @Bean
     @StepScope
     public FlatFileItemReader<FilmCsvImportFormat> reader(@Value("#{jobParameters[INPUT_FILE_PATH]}") String inputFilePath) {

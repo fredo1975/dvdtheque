@@ -126,6 +126,34 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	}
 	
 	@Test
+	public void findFilmByTitreWithoutSpecialsCharacters() throws Exception{
+		String methodName = "findFilmByTitreWithoutSpecialsCharacters : ";
+		logger.debug(methodName + "start");
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_62)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_62)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		String titre = StringUtils.replace(film.getTitre(), ":", "");
+		Film retrievedFilm = filmService.findFilmByTitreWithoutSpecialsCharacters(titre);
+		FilmBuilder.assertFilmIsNotNull(retrievedFilm, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		logger.debug(methodName + "end");
+	}
+	
+	@Test
 	public void findFilmWithAllObjectGraph() throws Exception{
 		String methodName = "findFilmWithAllObjectGraph : ";
 		logger.debug(methodName + "start");

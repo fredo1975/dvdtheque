@@ -15,14 +15,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -49,7 +47,6 @@ import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.enums.PersonneType;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
-import fr.fredos.dvdtheque.common.utils.DateUtils;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -131,6 +128,11 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = true, noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })
 	public Film findFilmByTitre(final String titre) {
 		return filmDao.findFilmByTitre(titre);
+	}
+	
+	@Transactional(readOnly = true, noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })
+	public Film findFilmByTitreWithoutSpecialsCharacters(final String titre) {
+		return filmDao.findFilmByTitreWithoutSpecialsCharacters(titre);
 	}
 
 	@Transactional(readOnly = true)
