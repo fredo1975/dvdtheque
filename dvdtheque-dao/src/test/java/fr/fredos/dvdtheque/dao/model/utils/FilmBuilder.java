@@ -267,5 +267,17 @@ public class FilmBuilder {
 		assertTrue("realisateur Should exists",CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue("Should be 1 realisateur",film.getRealisateurs().size() == 1);
 	}
-	
+	public static String createDateInsertion(Date dateInsertion, String pattern) {
+		String resultPattern=null;
+		if(StringUtils.isEmpty(pattern)) {
+			resultPattern = "yyyy/MM/dd";
+		}else {
+			resultPattern = pattern;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat(resultPattern);
+		if(dateInsertion == null) {
+			return sdf.format(new Date());
+		}
+		return sdf.format(dateInsertion);
+	}
 }

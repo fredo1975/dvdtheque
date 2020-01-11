@@ -163,9 +163,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 	@Test
     public void savetmdbFilmTest() throws Exception {
 		Film film = client.saveTmbdFilm(FilmBuilder.tmdbId1, FilmOrigine.DVD);
-		String pattern = "yyyy/MM/dd";
-		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-		String dateInsertion = sdf.format(new Date());
+		String dateInsertion = FilmBuilder.createDateInsertion(null, null);
 		FilmBuilder.assertFilmIsNotNull(film, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID1_DATE_SORTIE, dateInsertion);
     }
 	@Test

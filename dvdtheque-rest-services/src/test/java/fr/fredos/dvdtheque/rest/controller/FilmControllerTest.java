@@ -786,7 +786,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.TMDBID1_DATE_SORTIE)
+				.setDateSortie(FilmBuilder.TMDBID1_DATE_SORTIE).setDateInsertion(FilmBuilder.createDateInsertion(new Date(), null))
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1).setGenre2(genre2)
@@ -808,7 +808,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
 		Film filmUpdated = filmService.findFilm(film.getId());
 		FilmBuilder.assertFilmIsNotNull(filmUpdated, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD,
-				FilmBuilder.TMDBID1_DATE_SORTIE, null);
+				FilmBuilder.TMDBID1_DATE_SORTIE, FilmBuilder.createDateInsertion(null, null));
 		Results results = client.retrieveTmdbSearchResultsById(FilmBuilder.tmdbId1);
 		assertEquals(StringUtils.upperCase(results.getTitle()), filmUpdated.getTitre());
 		assertEquals(POSTER_PATH, filmUpdated.getPosterPath());
@@ -984,7 +984,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		// FilmBuilder.assertFilmIsNotNull(filmSaved, false,
 		// FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD);
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmSaved.getTitre());
-		FilmBuilder.assertFilmIsNotNull(filmSaved, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID2_DATE_SORTIE, null);
+		String dateInsertion = FilmBuilder.createDateInsertion(null, null);
+		FilmBuilder.assertFilmIsNotNull(filmSaved, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID2_DATE_SORTIE, dateInsertion);
 	}
 
 	@Test
@@ -1151,21 +1152,31 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 					if (cell.getColumnIndex() == 6) {
 						assertEquals("oui", cellValue);
 					}
-					if (cell.getColumnIndex() == 7) {
+					if(cell.getColumnIndex()==7) {
+						final SimpleDateFormat sdfInsert = new SimpleDateFormat("yyyy/MM/dd");
+                    	String dateInsertion=null;
+                    	try {
+                    		dateInsertion=FilmBuilder.createDateInsertion(sdfInsert.parse(FilmBuilder.FILM_DATE_INSERTION), "dd/MM/yyyy");
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+                    	assertEquals(dateInsertion, cellValue);
+                    }
+					if (cell.getColumnIndex() == 8) {
 						assertEquals(FilmBuilder.ZONE_DVD, cellValue);
 					}
-					if (cell.getColumnIndex() == 8) {
+					if (cell.getColumnIndex() == 9) {
 						assertEquals("oui", cellValue);
 					}
-					if (cell.getColumnIndex() == 9) {
+					if (cell.getColumnIndex() == 10) {
 						final DateFormatter df = new DateFormatter("dd/MM/yyyy");
 						assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET2), Locale.FRANCE),
 								cellValue);
 					}
-					if (cell.getColumnIndex() == 10) {
+					if (cell.getColumnIndex() == 11) {
 						assertEquals(DvdFormat.BLUERAY.name(), cellValue);
 					}
-					if (cell.getColumnIndex() == 11) {
+					if (cell.getColumnIndex() == 12) {
 						assertEquals(StringUtils.EMPTY, cellValue);
 					}
 				});
@@ -1195,21 +1206,31 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 					if (cell.getColumnIndex() == 6) {
 						assertEquals("oui", cellValue);
 					}
-					if (cell.getColumnIndex() == 7) {
+					if(cell.getColumnIndex()==7) {
+						final SimpleDateFormat sdfInsert = new SimpleDateFormat("yyyy/MM/dd");
+                    	String dateInsertion=null;
+                    	try {
+                    		dateInsertion=FilmBuilder.createDateInsertion(sdfInsert.parse(FilmBuilder.FILM_DATE_INSERTION), "dd/MM/yyyy");
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+                    	assertEquals(dateInsertion, cellValue);
+                    }
+					if (cell.getColumnIndex() == 8) {
 						assertEquals(FilmBuilder.ZONE_DVD, cellValue);
 					}
-					if (cell.getColumnIndex() == 8) {
+					if (cell.getColumnIndex() == 9) {
 						assertEquals("oui", cellValue);
 					}
-					if (cell.getColumnIndex() == 9) {
+					if (cell.getColumnIndex() == 10) {
 						final DateFormatter df = new DateFormatter("dd/MM/yyyy");
 						assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET), Locale.FRANCE),
 								cellValue);
 					}
-					if (cell.getColumnIndex() == 10) {
+					if (cell.getColumnIndex() == 11) {
 						assertEquals(DvdFormat.DVD.name(), cellValue);
 					}
-					if (cell.getColumnIndex() == 11) {
+					if (cell.getColumnIndex() == 12) {
 						final DateFormatter df = new DateFormatter("dd/MM/yyyy");
 						Date sortie = null;
 						try {

@@ -993,6 +993,16 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
                     if(cell.getColumnIndex()==6) {
                     	assertEquals("oui", cellValue);
                     }
+                    if(cell.getColumnIndex()==7) {
+                    	final SimpleDateFormat sdfInsert = new SimpleDateFormat("yyyy/MM/dd");
+                    	String dateInsertion=null;
+                    	try {
+                    		dateInsertion=FilmBuilder.createDateInsertion(sdfInsert.parse(FilmBuilder.FILM_DATE_INSERTION), "dd/MM/yyyy");
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+                    	assertEquals(dateInsertion, cellValue);
+                    }
                     if(cell.getColumnIndex()==8) {
                     	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
                     }
@@ -1044,6 +1054,16 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
                     if(cell.getColumnIndex()==6) {
                     	assertEquals("non", cellValue);
                     }
+                    if(cell.getColumnIndex()==7) {
+                    	final SimpleDateFormat sdfInsert = new SimpleDateFormat("yyyy/MM/dd");
+                    	String dateInsertion=null;
+                    	try {
+                    		dateInsertion=FilmBuilder.createDateInsertion(sdfInsert.parse(FilmBuilder.FILM_DATE_INSERTION), "dd/MM/yyyy");
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+                    	assertEquals(dateInsertion, cellValue);
+                    }
                     if(cell.getColumnIndex()==8) {
                     	assertEquals(StringUtils.EMPTY, cellValue);
                     }
@@ -1093,6 +1113,16 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
                     }
                     if(cell.getColumnIndex()==6) {
                     	assertEquals("oui", cellValue);
+                    }
+                    if(cell.getColumnIndex()==7) {
+                    	final SimpleDateFormat sdfInsert = new SimpleDateFormat("yyyy/MM/dd");
+                    	String dateInsertion=null;
+                    	try {
+                    		dateInsertion=FilmBuilder.createDateInsertion(sdfInsert.parse(FilmBuilder.FILM_DATE_INSERTION), "dd/MM/yyyy");
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+                    	assertEquals(dateInsertion, cellValue);
                     }
                     if(cell.getColumnIndex()==8) {
                     	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
