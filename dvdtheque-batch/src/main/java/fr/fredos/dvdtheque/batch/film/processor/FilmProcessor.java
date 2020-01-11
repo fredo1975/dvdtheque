@@ -94,7 +94,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			}else {
 				Calendar cal = Calendar.getInstance(Locale.FRANCE);
 				cal.add(Calendar.YEAR, 2019);
-				cal.add(Calendar.MONTH, 8);
+				cal.add(Calendar.MONTH, 7);
 				cal.add(Calendar.DAY_OF_MONTH, 1);
 				cal.add(Calendar.MINUTE, 0);
 				cal.add(Calendar.SECOND, 0);
