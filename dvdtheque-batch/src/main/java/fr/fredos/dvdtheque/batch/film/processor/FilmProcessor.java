@@ -3,7 +3,6 @@ package fr.fredos.dvdtheque.batch.film.processor;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
 
@@ -93,12 +92,13 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 				filmToSave.setDateInsertion(sdf.parse(item.getDateInsertion()));
 			}else {
 				Calendar cal = Calendar.getInstance(Locale.FRANCE);
-				cal.add(Calendar.YEAR, 2019);
-				cal.add(Calendar.MONTH, 7);
-				cal.add(Calendar.DAY_OF_MONTH, 1);
-				cal.add(Calendar.MINUTE, 0);
-				cal.add(Calendar.SECOND, 0);
-				cal.add(Calendar.MILLISECOND, 0);
+				cal.set(Calendar.YEAR, 2019);
+				cal.set(Calendar.MONTH, 7);
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
 				filmToSave.setDateInsertion(cal.getTime());
 			}
 			

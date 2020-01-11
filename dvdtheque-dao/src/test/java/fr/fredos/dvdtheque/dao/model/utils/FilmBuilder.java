@@ -66,7 +66,7 @@ public class FilmBuilder {
 	public static final String TMDBID3_DATE_SORTIE = "2007/01/07";
 	
 	public static Date createRipDate(int ripDateOffset) {
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(Locale.FRANCE);
 		cal.set(Calendar.MILLISECOND, 0);
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MINUTE, 0);

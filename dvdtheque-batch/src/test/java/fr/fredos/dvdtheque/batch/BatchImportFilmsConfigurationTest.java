@@ -9,6 +9,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -123,10 +124,9 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(acteurs.size()>7);
 				assertTrue(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd",Locale.FRANCE);
 				Date ripDate = DateUtils.clearDate(sdf.parse("2019/07/24"));
-				ChronoUnit.DAYS.between(ripDate.toInstant(),new Date().toInstant());
-				long temp = ChronoUnit.DAYS.between(new Date().toInstant(),ripDate.toInstant());
+				long temp = ChronoUnit.DAYS.between(DateUtils.clearDate(new Date()).toInstant(),DateUtils.clearDate(ripDate).toInstant());
 				FilmBuilder.assertFilmIsNotNull(film,false,Long.valueOf(temp).intValue(),FilmOrigine.DVD, "2013/03/13", "2019/08/01");
 			}
 		}
