@@ -148,8 +148,9 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		String titre = StringUtils.replace(film.getTitre(), ":", "");
+		titre = StringUtils.replace(titre, "  ", " ");
 		Film retrievedFilm = filmService.findFilmByTitreWithoutSpecialsCharacters(titre);
-		FilmBuilder.assertFilmIsNotNull(retrievedFilm, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		FilmBuilder.assertFilmIsNotNull(retrievedFilm, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
 		logger.debug(methodName + "end");
 	}
 	

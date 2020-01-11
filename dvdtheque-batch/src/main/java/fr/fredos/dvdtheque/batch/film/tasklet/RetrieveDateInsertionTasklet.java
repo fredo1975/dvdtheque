@@ -20,6 +20,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import fr.fredos.dvdtheque.common.utils.DateUtils;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 
@@ -52,7 +53,7 @@ public class RetrieveDateInsertionTasklet implements Tasklet{
 	        		try {
 	        			Film film = filmService.findFilmByTitreWithoutSpecialsCharacters(titre);
 	        			if(film != null) {
-	        				Date dateInsertion = new Date(millis);
+	        				Date dateInsertion = DateUtils.clearDate(new Date(millis));
 	        				film.setDateInsertion(dateInsertion);
 	            			Film mergedFilm = filmService.updateFilm(film);
 	            			logger.debug(mergedFilm.toString());

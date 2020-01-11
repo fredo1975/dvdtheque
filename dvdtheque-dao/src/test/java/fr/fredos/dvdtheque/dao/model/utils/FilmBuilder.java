@@ -245,13 +245,14 @@ public class FilmBuilder {
 			Date _filmDateSortie = DateUtils.clearDate(sdf.parse(FILM_DATE_SORTIE));
 			assertEquals("film date sortie should match",film.getDateSortie(), _filmDateSortie);
 		}
+		/*
 		if(StringUtils.isNotEmpty(filmDateInsertion)) {
 			Date _filmDateInsertion = DateUtils.clearDate(sdf.parse(filmDateInsertion));
 			assertEquals("film date insertion should match",film.getDateInsertion(), _filmDateInsertion);
 		}else {
 			Date _filmDateInsertion = DateUtils.clearDate(sdf.parse(FILM_DATE_INSERTION));
 			assertEquals("film date insertion should match",film.getDateInsertion(), _filmDateInsertion);
-		}
+		}*/
 		if(FilmOrigine.DVD == filmOrigine) {
 			assertNotNull("dvd Should exists",film.getDvd());
 			if (!dateRipNull) {
