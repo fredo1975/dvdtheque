@@ -184,7 +184,6 @@ public class FilmServiceImpl implements IFilmService {
 	@Override
 	@Transactional(readOnly = false)
 	public Long saveNewFilm(Film film) {
-		film.setDateInsertion(DateUtils.clearDate(new Date()));
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
 		upperCaseTitre(film);
 		Long id = filmDao.saveNewFilm(film);

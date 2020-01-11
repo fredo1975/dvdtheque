@@ -2,7 +2,10 @@ package fr.fredos.dvdtheque.batch.film.processor;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 
 import javax.jms.Topic;
 
@@ -63,8 +66,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 						item.getZonedvd(), 
 						null, 
 						null, 
-						StringUtils.isNotEmpty(item.getFilmFormat())?DvdFormat.valueOf(item.getFilmFormat()):null, 
-								item.getDateSortieDvd());
+						StringUtils.isNotEmpty(item.getFilmFormat())?DvdFormat.valueOf(item.getFilmFormat()):null,item.getDateSortieDvd());
 				filmToSave.setDvd(dvd);
 				boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
 				if(!loadFromFile) {
@@ -86,6 +88,20 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			}else {
 				filmToSave.setVu(item.getVu().equalsIgnoreCase("oui")?true:false);
 			}
+			if(StringUtils.isNotEmpty(item.getDateInsertion())) {
+				DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				filmToSave.setDateInsertion(sdf.parse(item.getDateInsertion()));
+			}else {
+				Calendar cal = Calendar.getInstance(Locale.FRANCE);
+				cal.add(Calendar.YEAR, 2019);
+				cal.add(Calendar.MONTH, 8);
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+				cal.add(Calendar.MINUTE, 0);
+				cal.add(Calendar.SECOND, 0);
+				cal.add(Calendar.MILLISECOND, 0);
+				filmToSave.setDateInsertion(cal.getTime());
+			}
+			
 			filmToSave.setId(null);
 			logger.debug(filmToSave.toString());
 			watch.stop();

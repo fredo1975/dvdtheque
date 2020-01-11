@@ -140,7 +140,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
@@ -154,7 +154,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		Boolean exists = filmService.checkIfTmdbFilmExists(FilmBuilder.tmdbId1);
 		if(!exists) {
 			film = client.replaceFilm(FilmBuilder.tmdbId1, film);
-			FilmBuilder.assertFilmIsNotNull(film, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID1_DATE_SORTIE);
+			FilmBuilder.assertFilmIsNotNull(film, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID1_DATE_SORTIE, null);
 			logger.info("film = "+film.toString()+" replaced");
 		}else {
 			logger.info("film = "+film.toString()+" already existing");
@@ -163,7 +163,10 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 	@Test
     public void savetmdbFilmTest() throws Exception {
 		Film film = client.saveTmbdFilm(FilmBuilder.tmdbId1, FilmOrigine.DVD);
-		FilmBuilder.assertFilmIsNotNull(film, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID1_DATE_SORTIE);
+		String pattern = "yyyy/MM/dd";
+		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+		String dateInsertion = sdf.format(new Date());
+		FilmBuilder.assertFilmIsNotNull(film, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID1_DATE_SORTIE, dateInsertion);
     }
 	@Test
     public void retrieveTmdbFilmListToDvdthequeFilmListTest() throws ParseException {

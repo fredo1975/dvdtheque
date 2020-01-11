@@ -275,7 +275,8 @@ public class FilmController {
 	    	List<Film> list = null;
 	    	FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 	    	if(FilmOrigine.TOUS.equals(filmOrigine)) {
-	    		list = filmService.findAllFilms(null);
+	    		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL, 0, FilmOrigine.TOUS);
+	    		list = filmService.findAllFilms(filmDisplayTypeParam);
 	    	}else {
 	    		list = filmService.findAllFilmsByCriteria(new FilmFilterCriteriaDto(null,null,null,null,null, null, filmOrigine));
 	    	}

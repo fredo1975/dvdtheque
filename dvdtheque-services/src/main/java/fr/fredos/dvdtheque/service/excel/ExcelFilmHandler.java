@@ -39,7 +39,7 @@ public class ExcelFilmHandler {
 	private SXSSFSheet sheet;
     private Integer currentRowNumber;
     private Integer currentColumnNumber;
-    public static final String[] EXCEL_HEADER_TAB = new String[]{"Realisateur", "Titre", "Annee","Acteurs","Origine Film", "TMDB ID", "Vu", "Zonedvd","Rippé","RIP Date","Dvd Format", "Date Sortie DVD"};
+    public static final String[] EXCEL_HEADER_TAB = new String[]{"Realisateur", "Titre", "Annee","Acteurs","Origine Film", "TMDB ID", "Vu","Date insertion", "Zonedvd","Rippé","RIP Date","Dvd Format","Date Sortie DVD"};
     @Autowired
 	protected IPersonneService personneService;
     @Bean
@@ -99,36 +99,42 @@ public class ExcelFilmHandler {
         addCell(film.getTmdbId().toString());
         // 6
         addCell(film.isVu()?"oui":"non");
-        
+        // 7
+        if(film.getDateInsertion() != null) {
+        	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        	addCell(sdf.format(film.getDateInsertion()));
+        }else {
+        	addCell("");
+        }
         if(film.getDvd() != null) {
-        	// 7
+        	// 8
         	if(film.getDvd().getZone() != null && FilmOrigine.DVD.equals(film.getOrigine())) {
         		addCell(film.getDvd().getZone().toString());
         	}else {
         		addCell("");
         	}
         	
-        	// 8
+        	// 9
         	if(FilmOrigine.DVD.equals(film.getOrigine())) {
         		addCell(film.getDvd().isRipped()?"oui":"non");
         	}else {
             	addCell("");
             }
             
-            // 9
+            // 10
             if(film.getDvd().isRipped() && film.getDvd().getDateRip() != null) {
             	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 addCell(sdf.format(film.getDvd().getDateRip()));
             }else {
             	addCell("");
             }
-            // 10
+            // 11
             if(film.getDvd().getFormat() != null && FilmOrigine.DVD.equals(film.getOrigine())) {
             	addCell(film.getDvd().getFormat().name());
             }else {
             	addCell("");
             }
-            // 11
+            // 12
             if(film.getDvd() != null && film.getDvd().getDateSortie() != null) {
             	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 addCell(sdf.format(film.getDvd().getDateSortie()));

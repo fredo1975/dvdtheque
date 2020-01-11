@@ -51,7 +51,7 @@ public class BatchExportFilmsConfiguration {
     @Bean
     protected Step exportFilmsStep() {
         return stepBuilderFactory.get("exportFilms")
-                .<Film, Film>chunk(500).reader(dbFilmReader())
+                .<Film, Film>chunk(800).reader(dbFilmReader())
                 .writer(excelFilmWriter())
                 .build();
     }
