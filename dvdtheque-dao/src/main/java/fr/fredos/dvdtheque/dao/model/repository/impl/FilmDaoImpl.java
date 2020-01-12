@@ -32,7 +32,7 @@ public class FilmDaoImpl implements FilmDao {
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}
-	public Genre findGenre(int tmdbId){
+	public Genre findGenre(final int tmdbId){
 		Query q = this.entityManager.createQuery("from Genre g where g.tmdbId = :tmdbId");
 		q.setParameter("tmdbId", tmdbId);
 		Genre g = null;
@@ -55,17 +55,17 @@ public class FilmDaoImpl implements FilmDao {
 	public void removeGenres() {
 		
 	}
-	public Film findFilm(Long id){
+	public Film findFilm(final Long id){
 		Query q = this.entityManager.createQuery("from Film film join fetch film.realisateurs real where film.id = :id");
 		q.setParameter("id", id);
 		return (Film)q.getSingleResult();
 	}
-	public FilmOrigine findFilmOrigine(Long id){
+	public FilmOrigine findFilmOrigine(final Long id){
 		Query q = this.entityManager.createQuery("select origine from Film film where film.id = :id");
 		q.setParameter("id", id);
 		return (FilmOrigine)q.getSingleResult();
 	}
-	public Film findFilmByTitre(String titre){
+	public Film findFilmByTitre(final String titre){
 		Query q = this.entityManager.createQuery("from Film where UPPER(titre) = UPPER(:titre)");
 		q.setParameter("titre", titre);
 		try {
@@ -77,19 +77,31 @@ public class FilmDaoImpl implements FilmDao {
 		}
 		return null;
 	}
-	public Film findFilmWithAllObjectGraph(Long id){
+	public Film findFilmByTitreWithoutSpecialsCharacters(final String titre){
+		Query q = this.entityManager.createQuery("from Film where UPPER(REPLACE(REPLACE(titre, ':', ''),'  ',' ')) = UPPER(:titre)");
+		q.setParameter("titre", titre);
+		try {
+			return (Film)q.getSingleResult();
+		}catch(NoResultException nre) {
+			logger.error(nre.getMessage());
+		}catch(NonUniqueResultException nre) {
+			logger.error(nre.getMessage());
+		}
+		return null;
+	}
+	public Film findFilmWithAllObjectGraph(final Long id){
 		Query q = this.entityManager.createQuery("from Film where id = :id ");
 		q.setParameter("id", id);
 		return (Film)q.getSingleResult();
 	}
-	public Long saveNewFilm(Film film){
+	public Long saveNewFilm(final Film film){
 		this.entityManager.persist(film);
 		return film.getId();
 	}
-	public Film updateFilm(Film film){
+	public Film updateFilm(final Film film){
 		return this.entityManager.merge(film);
 	}
-	public Long saveDvd(Dvd dvd){
+	public Long saveDvd(final Dvd dvd){
 		this.entityManager.persist(dvd);
 		return dvd.getId();
 	}
@@ -102,7 +114,7 @@ public class FilmDaoImpl implements FilmDao {
 		return l;
     }
 	@SuppressWarnings("unchecked")
-    public List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto) {
+    public List<Film> findAllFilmsByCriteria(final FilmFilterCriteriaDto filmFilterCriteriaDto) {
 		StringBuilder sb = new StringBuilder("select film from Film film ");
 		if(filmFilterCriteriaDto!=null) {
 			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.ACTEUR)
@@ -193,29 +205,48 @@ public class FilmDaoImpl implements FilmDao {
 		//this.entityManager.flush();
 	}
 	@Override
-	public Set<Long> findAllTmdbFilms(Set<Long> tmdbIds) {
+	public Set<Long> findAllTmdbFilms(final Set<Long> tmdbIds) {
 		StringBuilder sb = new StringBuilder("select film.tmdbId from Film film where film.tmdbId in (:tmdbIds) ");
 		Query q = this.entityManager.createQuery(sb.toString());
 		q.setParameter("tmdbIds", tmdbIds);
 		return new HashSet<Long>(q.getResultList());
 	}
 	@Override
-	public Boolean checkIfTmdbFilmExists(Long tmdbId) {
+	public Boolean checkIfTmdbFilmExists(final Long tmdbId) {
 		StringBuilder sb = new StringBuilder("select count(1) from Film film where film.tmdbId = :tmdbId ");
 		Query q = this.entityManager.createQuery(sb.toString());
 		q.setParameter("tmdbId", tmdbId);
 		return ((Long)q.getSingleResult())==1;
 	}
 	@Override
-	public Genre attachToSession(Genre genre) {
+	public Genre attachToSession(final Genre genre) {
 		//Genre genre = findGenre(id);
 		return this.entityManager.merge(genre);
 	}
 	@Override
-	public List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine) {
+	public List<Film> findAllFilmsByOrigine(final FilmOrigine filmOrigine) {
 		StringBuilder sb = new StringBuilder("from Film film where film.origine = :origine ");
 		Query q = this.entityManager.createQuery(sb.toString());
 		q.setParameter("origine", filmOrigine);
 		return q.getResultList();
 	}
+	@SuppressWarnings("unchecked")
+    public List<Film> findAllLastAddedFilms(final int rowNumber) {
+		Query q = this.entityManager.createQuery("from Film film order by dateInsertion desc LIMIT :rowNumber ");
+		q.setParameter("rowNumber", rowNumber);
+        Set<Film> set = new HashSet<>(q.getResultList());
+        List<Film> l = new ArrayList<>(set);
+        Collections.sort(l, (f1,f2)->f1.getTitre().compareTo(f2.getTitre()));
+		return l;
+    }
+	@SuppressWarnings("unchecked")
+    public List<Film> findAllLastAddedFilmsByOrigine(final FilmOrigine filmOrigine,final int rowNumber) {
+		Query q = this.entityManager.createQuery("from Film film where film.origine = :origine order by dateInsertion desc LIMIT :rowNumber");
+		q.setParameter("origine", filmOrigine);
+		q.setParameter("rowNumber", rowNumber);
+        Set<Film> set = new HashSet<>(q.getResultList());
+        List<Film> l = new ArrayList<>(set);
+        Collections.sort(l, (f1,f2)->f1.getTitre().compareTo(f2.getTitre()));
+		return l;
+    }
 }

@@ -40,6 +40,9 @@ public class Film implements Serializable, Comparable<Film> {
 	@Column(name = "DATE_SORTIE")
 	@Temporal(TemporalType.DATE)
 	private Date dateSortie;
+	@Column(name = "DATE_INSERTION")
+	@Temporal(TemporalType.DATE)
+	private Date dateInsertion;
 	@Column(name = "TITRE")
 	@NotNull
 	private String titre;
@@ -152,6 +155,12 @@ public class Film implements Serializable, Comparable<Film> {
 	public void setDateSortie(Date dateSortie) {
 		this.dateSortie = dateSortie;
 	}
+	public Date getDateInsertion() {
+		return dateInsertion;
+	}
+	public void setDateInsertion(Date dateInsertion) {
+		this.dateInsertion = dateInsertion;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -207,15 +216,15 @@ public class Film implements Serializable, Comparable<Film> {
 	}
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", titre=" + titre + ", titreO="
-				+ titreO + ", dvd=" + dvd + ", origine=" + origine + ", realisateurs=" + realisateurs + ", acteurs="
-				+ acteurs + ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview="
-				+ overview + ", runtime=" + runtime + ", genres=" + genres + ", homepage=" + homepage
-				+ ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
+		return "Film [logger=" + logger + ", id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie
+				+ ", dateInsertion=" + dateInsertion + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
+				+ ", origine=" + origine + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", vu=" + vu
+				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
+				+ runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
+				+ alreadyInDvdtheque + "]";
 	}
 	@Override
 	public int compareTo(Film film) {
-		// TODO Auto-generated method stub
 		return this.getTitre().compareTo(film.getTitre());
 	}
 }

@@ -15,11 +15,13 @@ public interface FilmDao {
 	Genre attachToSession(Genre genre);
 	Genre saveGenre(Genre genre);
 	Film findFilmByTitre(String titre);
+	public Film findFilmByTitreWithoutSpecialsCharacters(final String titre);
 	Film findFilmWithAllObjectGraph(Long id);
 	Long saveNewFilm(Film film);
 	Film updateFilm(Film film);
 	Long saveDvd(Dvd dvd);
 	List<Film> findAllFilms();
+	List<Film> findAllLastAddedFilms(final int rowNumber);
 	Set<Long> findAllTmdbFilms(Set<Long> tmdbIds);
 	List<Film> findAllFilmsByCriteria(FilmFilterCriteriaDto filmFilterCriteriaDto);
 	void cleanAllFilms();
@@ -29,5 +31,6 @@ public interface FilmDao {
 	void cleanAllGenres();
 	List<Genre> findAllGenres();
 	List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine);
+	List<Film> findAllLastAddedFilmsByOrigine(FilmOrigine filmOrigine,final int rowNumber);
 	FilmOrigine findFilmOrigine(Long id);
 }

@@ -9,6 +9,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -26,6 +27,7 @@ import org.springframework.core.env.Environment;
 
 import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.configuration.MessageConsumer;
+import fr.fredos.dvdtheque.batch.film.tasklet.RetrieveDateInsertionTasklet;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -36,6 +38,7 @@ import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 
 @SpringBootTest(classes = { BatchImportFilmsConfiguration.class,MessageConsumer.class,
 		RippedFlagTasklet.class,
+		RetrieveDateInsertionTasklet.class,
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
@@ -84,7 +87,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		jobParametersBuilder.addString("INPUT_FILE_PATH", environment.getRequiredProperty(LISTE_DVD_FILE_NAME));
 		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchJob(jobParametersBuilder.toJobParameters());
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-		List<Film> films = filmService.findAllFilms();
+		List<Film> films = filmService.findAllFilms(null);
 		assertTrue(films.size()==7);
 		boolean is2001odysseyExists = false;
 		boolean is2046Exists = false;
@@ -99,7 +102,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
 				assertTrue(FilmOrigine.EN_SALLE.equals(film.getOrigine()));
-				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.EN_SALLE, "1968/09/26");
+				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.EN_SALLE, "1968/09/26", "2019/08/01");
 			}
 			if(TITRE_FILM_2046.equals(film.getTitre())) {
 				is2046Exists = true;
@@ -110,7 +113,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(acteurs.size()>7);
 				assertFalse(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
-				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.DVD, "2004/10/20");
+				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.DVD, "2004/10/20", "2018/06/18");
 			}
 			if(TITRE_FILM_40_ans.equals(film.getTitre())) {
 				is40ansExists = true;
@@ -121,11 +124,10 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				assertTrue(acteurs.size()>7);
 				assertTrue(film.getDvd().isRipped());
 				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd",Locale.FRANCE);
 				Date ripDate = DateUtils.clearDate(sdf.parse("2019/07/24"));
-				ChronoUnit.DAYS.between(ripDate.toInstant(),new Date().toInstant());
-				long temp = ChronoUnit.DAYS.between(new Date().toInstant(),ripDate.toInstant());
-				FilmBuilder.assertFilmIsNotNull(film,false,Long.valueOf(temp).intValue(),FilmOrigine.DVD, "2013/03/13");
+				long temp = ChronoUnit.DAYS.between(DateUtils.clearDate(new Date()).toInstant(),DateUtils.clearDate(ripDate).toInstant());
+				FilmBuilder.assertFilmIsNotNull(film,false,Long.valueOf(temp).intValue(),FilmOrigine.DVD, "2013/03/13", "2019/08/01");
 			}
 		}
 		assertTrue(is2001odysseyExists);

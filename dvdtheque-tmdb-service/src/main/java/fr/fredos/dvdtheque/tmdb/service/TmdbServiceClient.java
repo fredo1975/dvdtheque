@@ -128,6 +128,7 @@ public class TmdbServiceClient {
 				dvd.setDateRip(new Date());
 				filmToSave.setDvd(dvd);
 			}
+			filmToSave.setDateInsertion(DateUtils.clearDate(new Date()));
 			Long id = filmService.saveNewFilm(filmToSave);
 			filmToSave.setId(id);
 			return filmToSave;
@@ -178,6 +179,7 @@ public class TmdbServiceClient {
 		Film transformedfilm = new Film();
 		if(film != null && film.getId() != null) {
 			transformedfilm.setId(film.getId());
+			transformedfilm.setDateInsertion(film.getDateInsertion());
 		}
 		if(film == null) {
 			transformedfilm.setId(results.getId());

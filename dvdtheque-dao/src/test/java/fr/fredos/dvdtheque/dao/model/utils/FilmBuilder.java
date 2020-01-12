@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
 import fr.fredos.dvdtheque.common.utils.DateUtils;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -25,6 +27,7 @@ import fr.fredos.dvdtheque.dao.model.object.Personne;
 
 public class FilmBuilder {
 	public static final String TITRE_FILM_TMBD_ID_844 = "2046";
+	public static final String TITRE_FILM_TMBD_ID_62 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_FILM_TMBD_ID_4780 = "OBSESSION";
 	public static final String TITRE_FILM_TMBD_ID_1271 = "300";
 	public static final String TITRE_FILM_FOR_SEARCH_BY_TITRE = "vacances";
@@ -32,6 +35,7 @@ public class FilmBuilder {
 	public static final String TITRE_FILM_REREREUPDATED = "Another Lorem Ipsum rerereupdated";
 	public static final Integer ANNEE = 2015;
 	public static final String FILM_DATE_SORTIE = "2015/08/01";
+	public static final String FILM_DATE_INSERTION = "2019/08/01";
 	public static final String DVD_DATE_SORTIE = "2015/12/01";
 	public static final String DVD_DATE_SORTIE2 = "2017/11/15";
 	public static final String REAL_NOM_TMBD_ID_844 = "WONG KAR-WAI";
@@ -62,7 +66,7 @@ public class FilmBuilder {
 	public static final String TMDBID3_DATE_SORTIE = "2007/01/07";
 	
 	public static Date createRipDate(int ripDateOffset) {
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(Locale.FRANCE);
 		cal.set(Calendar.MILLISECOND, 0);
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MINUTE, 0);
@@ -74,6 +78,7 @@ public class FilmBuilder {
 		private String titreO;
 		private Integer annee;
 		private Date dateSortie;
+		private Date dateInsertion;
 		private Date dvdDateSortie;
 		private String realNom;
 		private String act1Nom;
@@ -102,6 +107,11 @@ public class FilmBuilder {
 		public Builder setDateSortie(String dateSortie) throws ParseException {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 			this.dateSortie = sdf.parse(dateSortie);
+			return this;
+		}
+		public Builder setDateInsertion(String dateInsertion) throws ParseException {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+			this.dateInsertion = sdf.parse(dateInsertion);
 			return this;
 		}
 		public Builder setRealNom(String realNom) {
@@ -184,18 +194,22 @@ public class FilmBuilder {
 			film.setTitreO(this.titreO);
 			film.setAnnee(this.annee);
 			film.setDateSortie(this.dateSortie);
+			film.setDateInsertion(this.dateInsertion);
 			film.setRealisateurs(realisateurs);
 			film.setActeurs(acteurs);
 			genres.add(this.genre1);
 			genres.add(this.genre2);
 			film.setGenres(genres);
-			Dvd dvd = new Dvd();
-			dvd.setDateRip(this.ripDate);
-			dvd.setFormat(this.dvdFormat);
-			dvd.setZone(this.zone);
-			film.setDvd(dvd);
-			dvd.setRipped(this.ripped);
-			dvd.setDateSortie(this.dvdDateSortie);
+			if(this.ripDate!=null || this.dvdFormat!=null || this.zone!=null || this.ripped==true || this.dvdDateSortie!=null) {
+				Dvd dvd = new Dvd();
+				dvd.setDateRip(this.ripDate);
+				dvd.setFormat(this.dvdFormat);
+				dvd.setZone(this.zone);
+				dvd.setRipped(this.ripped);
+				dvd.setDateSortie(this.dvdDateSortie);
+				film.setDvd(dvd);
+			}
+			
 			film.setOrigine(this.origine);
 			film.setVu(this.vu);
 			// hard coded
@@ -204,22 +218,41 @@ public class FilmBuilder {
 			return film;
 		}
 	}
-	
-	public static void assertFilmIsNotNull(Film film, boolean dateRipNull, int ripDateOffset, FilmOrigine filmOrigine, String filmDateSortie) throws ParseException {
+	public static void assertCacheSize(final int mapActeursByOrigineSize, final int mapRealisateursByOrigineSize,
+			final FilmDisplayTypeParam filmDisplayTypeParam, 
+			final List<Personne> acteursList, 
+			final List<Personne> realisateursList) {
+		assertEquals(mapActeursByOrigineSize, acteursList.size());
+		assertEquals(mapRealisateursByOrigineSize, realisateursList.size());
+	}
+	public static void assertFilmIsNotNull(final Film film, 
+			final boolean dateRipNull, 
+			final int ripDateOffset, 
+			final FilmOrigine filmOrigine, 
+			final String filmDateSortie, 
+			final String filmDateInsertion) throws ParseException {
 		assertNotNull("film Should exists",film);
 		assertNotNull("film Should have an id",film.getId());
 		assertNotNull("film Should have a titre",film.getTitre());
 		assertNotNull("film Should have a année",film.getAnnee());
 		assertNotNull("film Should have a date sortie",film.getDateSortie());
+		assertNotNull("film Should have a date insertion",film.getDateInsertion());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd",Locale.FRANCE);
 		if(StringUtils.isNotEmpty(filmDateSortie)) {
 			Date _filmDateSortie = DateUtils.clearDate(sdf.parse(filmDateSortie));
-			assertEquals("date sortie should match",film.getDateSortie(), _filmDateSortie);
+			assertEquals("film date sortie should match",film.getDateSortie(), _filmDateSortie);
 		}else {
 			Date _filmDateSortie = DateUtils.clearDate(sdf.parse(FILM_DATE_SORTIE));
-			assertEquals("date sortie should match",film.getDateSortie(), _filmDateSortie);
+			assertEquals("film date sortie should match",film.getDateSortie(), _filmDateSortie);
 		}
-		
+		/*
+		if(StringUtils.isNotEmpty(filmDateInsertion)) {
+			Date _filmDateInsertion = DateUtils.clearDate(sdf.parse(filmDateInsertion));
+			assertEquals("film date insertion should match",film.getDateInsertion(), _filmDateInsertion);
+		}else {
+			Date _filmDateInsertion = DateUtils.clearDate(sdf.parse(FILM_DATE_INSERTION));
+			assertEquals("film date insertion should match",film.getDateInsertion(), _filmDateInsertion);
+		}*/
 		if(FilmOrigine.DVD == filmOrigine) {
 			assertNotNull("dvd Should exists",film.getDvd());
 			if (!dateRipNull) {
@@ -236,5 +269,17 @@ public class FilmBuilder {
 		assertTrue("realisateur Should exists",CollectionUtils.isNotEmpty(film.getRealisateurs()));
 		assertTrue("Should be 1 realisateur",film.getRealisateurs().size() == 1);
 	}
-	
+	public static String createDateInsertion(Date dateInsertion, String pattern) {
+		String resultPattern=null;
+		if(StringUtils.isEmpty(pattern)) {
+			resultPattern = "yyyy/MM/dd";
+		}else {
+			resultPattern = pattern;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat(resultPattern);
+		if(dateInsertion == null) {
+			return sdf.format(new Date());
+		}
+		return sdf.format(dateInsertion);
+	}
 }
