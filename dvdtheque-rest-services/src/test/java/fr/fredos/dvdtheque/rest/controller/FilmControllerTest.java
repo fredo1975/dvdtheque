@@ -207,12 +207,12 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film _dvdFilm1 = dvdFilms.get(0);
 		Film _dvdFilm2 = dvdFilms.get(1);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name(), FilmDisplayType.ALL.name())
-				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name());
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name(), FilmDisplayType.ALL.name()).param("displayType", FilmDisplayType.ALL.name())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
 		mvc.perform(MockMvcRequestBuilders
-						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name(), FilmDisplayType.ALL.name())
-						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name()))
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.ALL.name())
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_dvdFilm1.getTitre())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(_dvdFilm2.getTitre())));
@@ -223,12 +223,12 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film _enSalleFilmsfilm1 = enSalleFilms.get(0);
 		Film _enSalleFilmsfilm2 = enSalleFilms.get(1);
 		MockHttpServletRequestBuilder enSallebuilder = MockMvcRequestBuilders
-				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name(), FilmDisplayType.ALL.name())
-				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name());
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name()).param("displayType", FilmDisplayType.ALL.name())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(enSallebuilder).andExpect(MockMvcResultMatchers.status().isOk());
 		mvc.perform(MockMvcRequestBuilders
-						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name(), FilmDisplayType.ALL.name())
-						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name()))
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name()).param("displayType", FilmDisplayType.ALL.name())
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_enSalleFilmsfilm1.getTitre())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(_enSalleFilmsfilm2.getTitre())));
@@ -238,12 +238,12 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertTrue("tvFilms size should be 1", tvFilms.size() == 1);
 		Film _tvFilm1 = tvFilms.get(0);
 		MockHttpServletRequestBuilder tvBuilder = MockMvcRequestBuilders
-				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name(), FilmDisplayType.ALL.name())
-				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name());
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name()).param("displayType", FilmDisplayType.ALL.name())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(tvBuilder).andExpect(MockMvcResultMatchers.status().isOk());
 		mvc.perform(MockMvcRequestBuilders
-						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name(), FilmDisplayType.ALL.name())
-						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name()))
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name()).param("displayType", FilmDisplayType.ALL.name())
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_tvFilm1.getTitre())));
 		
@@ -258,12 +258,12 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film _film5 = allFilms.get(4);
 		
 		MockHttpServletRequestBuilder allBuilder = MockMvcRequestBuilders
-				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name(), FilmDisplayType.ALL.name())
-				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name());
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.ALL.name())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(allBuilder).andExpect(MockMvcResultMatchers.status().isOk());
 		mvc.perform(MockMvcRequestBuilders
-						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name(), FilmDisplayType.ALL.name())
-						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name()))
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.ALL.name())
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_film1.getTitre())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(_film2.getTitre())))
@@ -277,6 +277,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	public void findAllLastAddedFilmsByOrigine() throws Exception {
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
+		final String dateInsertion1 = "2014/08/01";
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
 				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
@@ -284,7 +285,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(dateInsertion1)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1).setGenre2(genre2)
@@ -295,13 +296,14 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		final String dateInsertion2 = "2014/09/01";
 		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
 				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_4780)
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(dateInsertion2)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -312,13 +314,14 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Long filmId2 = filmService.saveNewFilm(film2);
 		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		assertNotNull(filmId2);
+		final String dateInsertion3 = "2014/10/01";
 		Film film3 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
 				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_1271)
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_1271)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_1271)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(dateInsertion3)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
@@ -329,13 +332,14 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Long filmId3 = filmService.saveNewFilm(film3);
 		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE, null);
 		assertNotNull(filmId3);
+		final String dateInsertion4 = "2014/11/01";
 		Film film4 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREUPDATED)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
 				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(dateInsertion4)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
@@ -346,13 +350,14 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Long filmId4 = filmService.saveNewFilm(film4);
 		FilmBuilder.assertFilmIsNotNull(film4, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE, null);
 		assertNotNull(filmId4);
+		final String dateInsertion5 = "2014/12/01";
 		Film film5 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREREUPDATED)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
 				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(dateInsertion5)
 				.setOrigine(FilmOrigine.TV)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
@@ -365,68 +370,55 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		List<Film> dvdFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.LAST_ADDED,1,FilmOrigine.DVD));
 		assertNotNull("dvdFilms size should be 1", dvdFilms);
 		assertTrue("dvdFilms size should be 1", dvdFilms.size() == 1);
-		Film _dvdFilm1 = dvdFilms.get(0);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name(), FilmDisplayType.LAST_ADDED.name())
-				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name());
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.LAST_ADDED.name())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
 		mvc.perform(MockMvcRequestBuilders
-						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name(), FilmDisplayType.LAST_ADDED.name())
-						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name()))
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.LAST_ADDED.name())
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_dvdFilm1.getTitre())));
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film2.getTitre())));
 		
 		List<Film> enSalleFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.LAST_ADDED,1,FilmOrigine.EN_SALLE));
 		assertNotNull("enSalleFilms size should be 1", dvdFilms);
 		assertTrue("enSalleFilms size should be 1", enSalleFilms.size() == 1);
-		Film _enSalleFilmsfilm1 = enSalleFilms.get(0);
 		MockHttpServletRequestBuilder enSallebuilder = MockMvcRequestBuilders
-				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name(), FilmDisplayType.LAST_ADDED.name())
-				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name());
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name()).param("displayType", FilmDisplayType.LAST_ADDED.name())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(enSallebuilder).andExpect(MockMvcResultMatchers.status().isOk());
 		mvc.perform(MockMvcRequestBuilders
-						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name(), FilmDisplayType.LAST_ADDED.name())
-						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name()))
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name()).param("displayType", FilmDisplayType.LAST_ADDED.name())
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_enSalleFilmsfilm1.getTitre())));
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film4.getTitre())));
 		
 		List<Film> tvFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.LAST_ADDED,1,FilmOrigine.TV));
 		assertNotNull("tvFilms size should be 1", tvFilms);
 		assertTrue("tvFilms size should be 1", tvFilms.size() == 1);
-		Film _tvFilm1 = tvFilms.get(0);
 		MockHttpServletRequestBuilder tvBuilder = MockMvcRequestBuilders
-				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name(), FilmDisplayType.LAST_ADDED.name())
-				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name());
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name()).param("displayType", FilmDisplayType.LAST_ADDED.name())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(tvBuilder).andExpect(MockMvcResultMatchers.status().isOk());
 		mvc.perform(MockMvcRequestBuilders
-						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name(), FilmDisplayType.LAST_ADDED.name())
-						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name()))
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name()).param("displayType", FilmDisplayType.LAST_ADDED.name())
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_tvFilm1.getTitre())));
-		
-		
-		List<Film> allFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.LAST_ADDED,5,FilmOrigine.TOUS));
-		assertNotNull("allFilms size should be 5", allFilms);
-		assertTrue("allFilms size should be 5", allFilms.size() == 5);
-		Film _film1 = allFilms.get(0);
-		Film _film2 = allFilms.get(1);
-		Film _film3 = allFilms.get(2);
-		Film _film4 = allFilms.get(3);
-		Film _film5 = allFilms.get(4);
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film5.getTitre())));
 		
 		MockHttpServletRequestBuilder allBuilder = MockMvcRequestBuilders
-				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name(), FilmDisplayType.LAST_ADDED.name())
-				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name());
+				.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.LAST_ADDED.name())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(allBuilder).andExpect(MockMvcResultMatchers.status().isOk());
 		mvc.perform(MockMvcRequestBuilders
-						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name(), FilmDisplayType.ALL.name())
-						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.LAST_ADDED.name()))
+						.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.LAST_ADDED.name())
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_film1.getTitre())))
-				.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(_film2.getTitre())))
-				.andExpect(MockMvcResultMatchers.jsonPath("$[2].titre", Is.is(_film3.getTitre())))
-				.andExpect(MockMvcResultMatchers.jsonPath("$[3].titre", Is.is(_film4.getTitre())))
-				.andExpect(MockMvcResultMatchers.jsonPath("$[4].titre", Is.is(_film5.getTitre())));
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film5.getTitre())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(film4.getTitre())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[2].titre", Is.is(film3.getTitre())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[3].titre", Is.is(film2.getTitre())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[4].titre", Is.is(film.getTitre())));
 	}
 
 	@Test
@@ -451,21 +443,19 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL, 0, FilmOrigine.TOUS);
-		List<Film> allFilms = filmService.findAllFilms(filmDisplayTypeParam);
-		assertNotNull(allFilms);
-		assertTrue(allFilms.size() == 1);
+		
 		Film filmToTest = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		assertNotNull(filmToTest);
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_FILMS_URI,FilmDisplayType.ALL.name())
-				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name());
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(GET_ALL_FILMS_URI).param("displayType", FilmDisplayType.ALL.name())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
 		ResultActions resultActions = mvc
-				.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI,FilmDisplayType.ALL.name()).contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name()))
+				.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI).param("displayType", FilmDisplayType.ALL.name())
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(filmToTest.getTitre())));
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film.getTitre())));
 		assertNotNull(resultActions);
-		FilmBuilder.assertFilmIsNotNull(filmToTest, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		FilmBuilder.assertFilmIsNotNull(filmToTest, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
 	}
 
 	@Test
@@ -607,12 +597,12 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertTrue("allActeur size should be 3", allRealisateurs.size() == 1);
 		Personne real1 = allRealisateurs.get(0);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-				.get(SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name(), FilmDisplayType.ALL.name())
-				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name());
+				.get(SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.ALL.name())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
 		ResultActions resultActions = mvc
-				.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name(), FilmDisplayType.ALL.name())
-						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name()))
+				.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.ALL.name())
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(real1.getNom())));
 		assertNotNull(resultActions);
@@ -729,13 +719,13 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Personne acteur2 = allActeur.get(1);
 		Personne acteur3 = allActeur.get(2);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-				.get(SEARCH_ALL_ACTTEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name(), FilmDisplayType.ALL.name())
-				.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name());
+				.get(SEARCH_ALL_ACTTEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.ALL.name())
+				.contentType(MediaType.APPLICATION_JSON);
 		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
 		ResultActions resultActions = mvc
 				.perform(MockMvcRequestBuilders
-						.get(SEARCH_ALL_ACTTEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name(), filmDisplayTypeParam)
-						.contentType(MediaType.APPLICATION_JSON).content(FilmDisplayType.ALL.name()))
+						.get(SEARCH_ALL_ACTTEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.ALL.name())
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(acteur1.getNom())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[1].nom", Is.is(acteur2.getNom())))

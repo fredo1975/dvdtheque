@@ -92,7 +92,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 				filmToSave.setDateInsertion(sdf.parse(item.getDateInsertion()));
 			}else {
 				Calendar cal = Calendar.getInstance(Locale.FRANCE);
-				cal.set(Calendar.YEAR, 2019);
+				cal.set(Calendar.YEAR, 2018);
 				cal.set(Calendar.MONTH, 7);
 				cal.set(Calendar.DAY_OF_MONTH, 1);
 				cal.set(Calendar.MINUTE, 0);

@@ -48,7 +48,7 @@ public class RetrieveDateInsertionTasklet implements Tasklet{
 	        	Calendar cal = Calendar.getInstance(Locale.FRANCE);
 	        	cal.setTimeInMillis(millis);
 	        	String extension = StringUtils.substringAfter(name, ".");
-	        	if(extension.equalsIgnoreCase("mkv")) {
+	        	//if(extension.equalsIgnoreCase("mkv")) {
 	        		String titre = StringUtils.substringBefore(name, ".");
 	        		try {
 	        			Film film = filmService.findFilmByTitreWithoutSpecialsCharacters(titre);
@@ -64,7 +64,7 @@ public class RetrieveDateInsertionTasklet implements Tasklet{
 	        		}catch(EmptyResultDataAccessException e) {
 	        			//logger.error(titre+" not found");
 	        		}
-	        	}
+	        	//}
 	        }
 		}else {
 			logger.info("nothing to do");

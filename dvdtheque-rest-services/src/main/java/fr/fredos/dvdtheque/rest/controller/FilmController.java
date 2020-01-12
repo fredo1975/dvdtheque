@@ -79,7 +79,7 @@ public class FilmController {
 		return personneService.findPersonneByName(nom);
 	}
 	@GetMapping("/films")
-	ResponseEntity<List<Film>> findAllFilms(@RequestBody String displayType) {
+	ResponseEntity<List<Film>> findAllFilms(@RequestParam(name="displayType",required = false) String displayType) {
 		try {
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
 			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,0,FilmOrigine.TOUS);
@@ -102,7 +102,7 @@ public class FilmController {
 		return filmService.findFilmByTitre(titre);
 	}
 	@GetMapping("/films/byOrigine/{origine}")
-	ResponseEntity<List<Film>> findAllFilmsByOrigine(@RequestBody String displayType,@PathVariable String origine) {
+	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.info("findAllFilmsByOrigine - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
@@ -131,7 +131,7 @@ public class FilmController {
 		return filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.TOUS));
 	}
 	@GetMapping("/realisateurs/byOrigine/{origine}")
-	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@RequestBody String displayType,@PathVariable String origine) {
+	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.info("findAllRealisateursByOrigine - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
@@ -148,7 +148,7 @@ public class FilmController {
 		return filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.TOUS));
 	}
 	@GetMapping("/acteurs/byOrigine/{origine}")
-	ResponseEntity<List<Personne>> findAllActeursByOrigine(@RequestBody String displayType,@PathVariable String origine) {
+	ResponseEntity<List<Personne>> findAllActeursByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.info("findAllActeursByOrigine - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);

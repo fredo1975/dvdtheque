@@ -414,7 +414,7 @@ public class FilmServiceImpl implements IFilmService {
 			Collections.sort(list);
 			return list;
 		}else {
-			return films.stream().limit(filmDisplayTypeParam.getLimitFilmSize()).sorted(Comparator.comparing(Film::getDateInsertion)).collect(Collectors.toList());
+			return films.stream().sorted(Comparator.comparing(Film::getDateInsertion).reversed()).limit(filmDisplayTypeParam.getLimitFilmSize()).collect(Collectors.toList());
 		}
 		
 	}
