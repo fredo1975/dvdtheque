@@ -176,6 +176,9 @@ public class FilmController {
 				return ResponseEntity.notFound().build();
 			}
 			Film replacedFilm = tmdbServiceClient.replaceFilm(tmdbId, filmOptional);
+			if(replacedFilm == null) {
+				return ResponseEntity.badRequest().build();
+			}
 			return ResponseEntity.ok(replacedFilm);
 		} catch (Exception e) {
 			logger.error(e.getMessage());

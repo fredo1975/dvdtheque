@@ -60,6 +60,7 @@ import fr.fredos.dvdtheque.tmdb.model.SearchResults;
 @Service
 public class TmdbServiceClient {
 	protected Logger logger = LoggerFactory.getLogger(TmdbServiceClient.class);
+	private final static String TMDB_DATE_PATTERN = "yyyy-MM-dd";
 	@Autowired
     Environment environment;
 	@Autowired
@@ -102,9 +103,12 @@ public class TmdbServiceClient {
 		}
 		Results results = retrieveTmdbSearchResultsById(tmdbId);
 		Film toUpdateFilm = transformTmdbFilmToDvdThequeFilm(film,results, new HashSet<Long>(), true);
-		toUpdateFilm.setOrigine(film.getOrigine());
-		filmService.updateFilm(toUpdateFilm);
-		return toUpdateFilm;
+		if(toUpdateFilm != null) {
+			toUpdateFilm.setOrigine(film.getOrigine());
+			filmService.updateFilm(toUpdateFilm);
+			return toUpdateFilm;
+		}
+		return null;
 	}
 	/**
 	 * we're creating a film from a TMDB film
@@ -120,18 +124,20 @@ public class TmdbServiceClient {
 		Results results = retrieveTmdbSearchResultsById(tmdbId);
 		if(results != null) {
 			Film filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);
-			filmToSave.setId(null);
-			filmToSave.setOrigine(filmOrigine);
-			if(FilmOrigine.DVD.equals(filmOrigine)) {
-				Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), new Integer(2), null, null, DvdFormat.DVD, null);
-				dvd.setRipped(true);
-				dvd.setDateRip(new Date());
-				filmToSave.setDvd(dvd);
+			if(filmToSave != null) {
+				filmToSave.setId(null);
+				filmToSave.setOrigine(filmOrigine);
+				if(FilmOrigine.DVD.equals(filmOrigine)) {
+					Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), new Integer(2), null, null, DvdFormat.DVD, null);
+					dvd.setRipped(true);
+					dvd.setDateRip(new Date());
+					filmToSave.setDvd(dvd);
+				}
+				filmToSave.setDateInsertion(DateUtils.clearDate(new Date()));
+				Long id = filmService.saveNewFilm(filmToSave);
+				filmToSave.setId(id);
+				return filmToSave;
 			}
-			filmToSave.setDateInsertion(DateUtils.clearDate(new Date()));
-			Long id = filmService.saveNewFilm(filmToSave);
-			filmToSave.setId(id);
-			return filmToSave;
 		}
 		return null;
 	}
@@ -192,13 +198,31 @@ public class TmdbServiceClient {
 		if(film != null && film.getDvd() != null) {
 			transformedfilm.setDvd(film.getDvd());
 		}
-		Date releaseDate = retrieveTmdbFrReleaseDate(results.getId());
+		Date releaseDate = null;
+		try {
+			releaseDate = retrieveTmdbFrReleaseDate(results.getId());
+		}catch(RestClientException e) {
+			logger.error(e.getMessage()+" for id="+results.getId());
+			SimpleDateFormat sdf = new SimpleDateFormat(TMDB_DATE_PATTERN,Locale.FRANCE);
+			if(StringUtils.isNotEmpty(results.getRelease_date())) {
+				releaseDate = sdf.parse(results.getRelease_date());
+			}else {
+				releaseDate = sdf.parse("2000/01/01");
+			}
+		}
 		transformedfilm.setAnnee(retrieveYearFromReleaseDate(releaseDate));
 		transformedfilm.setDateSortie(DateUtils.clearDate(releaseDate));
 		transformedfilm.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
 		transformedfilm.setTmdbId(results.getId());
 		transformedfilm.setOverview(results.getOverview());
-		Credits credits = retrieveTmdbCredits(results.getId());
+		Credits credits = null;
+		try {
+			credits = retrieveTmdbCredits(results.getId());
+		}catch(Exception e) {
+			logger.error(e.getMessage()+" for id="+results.getId()+" won't be displayed");
+			return null;
+		}
+		
 		if(CollectionUtils.isNotEmpty(credits.getCast())) {
 			int i=1;
 			for(Cast cast : credits.getCast()) {
@@ -276,7 +300,10 @@ public class TmdbServiceClient {
 			Set<Long> tmdbIds = results.stream().map(r -> r.getId()).collect(Collectors.toSet());
 			Set<Long> tmdbFilmAlreadyInDvdthequeSet = filmService.findAllTmdbFilms(tmdbIds);
 			for(Results res : results) {
-				films.add(transformTmdbFilmToDvdThequeFilm(null,res,tmdbFilmAlreadyInDvdthequeSet, false));
+				Film transformedFilm = transformTmdbFilmToDvdThequeFilm(null,res,tmdbFilmAlreadyInDvdthequeSet, false);
+				if(transformedFilm != null) {
+					films.add(transformedFilm);
+				}
 			}
 		}
 		return films;
@@ -371,8 +398,7 @@ public class TmdbServiceClient {
 					frReleaseDatesResults = releaseDatesResults.get(0);
 				}
 				releaseDatesResultsValues = frReleaseDatesResults.getRelease_dates().get(0);
-				String pattern = "yyyy-MM-dd";
-				SimpleDateFormat sdf = new SimpleDateFormat(pattern,Locale.FRANCE);
+				SimpleDateFormat sdf = new SimpleDateFormat(TMDB_DATE_PATTERN,Locale.FRANCE);
 				return sdf.parse(releaseDatesResultsValues.getRelease_date());
 			}
 			return DateUtils.clearDate(new Date());
