@@ -128,7 +128,7 @@ public class FilmController {
 	}
 	@GetMapping("/realisateurs")
 	List<Personne> findAllRealisateurs() {
-		return filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.TOUS));
+		return filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS));
 	}
 	@GetMapping("/realisateurs/byOrigine/{origine}")
 	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
@@ -145,7 +145,7 @@ public class FilmController {
 	}
 	@GetMapping("/acteurs")
 	List<Personne> findAllActeurs() {
-		return filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.ALL,0,FilmOrigine.TOUS));
+		return filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS));
 	}
 	@GetMapping("/acteurs/byOrigine/{origine}")
 	ResponseEntity<List<Personne>> findAllActeursByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
@@ -278,7 +278,7 @@ public class FilmController {
 	    	List<Film> list = null;
 	    	FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 	    	if(FilmOrigine.TOUS.equals(filmOrigine)) {
-	    		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.ALL, 0, FilmOrigine.TOUS);
+	    		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS, 0, FilmOrigine.TOUS);
 	    		list = filmService.findAllFilms(filmDisplayTypeParam);
 	    	}else {
 	    		list = filmService.findAllFilmsByCriteria(new FilmFilterCriteriaDto(null,null,null,null,null, null, filmOrigine));

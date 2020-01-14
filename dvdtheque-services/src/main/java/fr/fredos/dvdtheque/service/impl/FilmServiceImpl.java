@@ -269,7 +269,7 @@ public class FilmServiceImpl implements IFilmService {
 		filmList.parallelStream().forEach(it -> {
 			mapFilms.putIfAbsent(it.getId(), it);
 		});
-		if(filmDisplayTypeParam == null || FilmDisplayType.ALL.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+		if(filmDisplayTypeParam == null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 			return filmList;
 		}
 		return sortListAccordingToFilmDisplayType(filmList,filmDisplayTypeParam);
@@ -409,11 +409,11 @@ public class FilmServiceImpl implements IFilmService {
 	 * @return
 	 */
 	private List<Film> sortListAccordingToFilmDisplayType(Collection<Film> films, final FilmDisplayTypeParam filmDisplayTypeParam) {
-		if(filmDisplayTypeParam==null || FilmDisplayType.ALL.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+		if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 			List<Film> list = films.stream().collect(Collectors.toList());
 			Collections.sort(list);
 			return list;
-		}else if(FilmDisplayType.LAST_NOT_SEEN_ADDED.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+		}else if(FilmDisplayType.DERNIERS_AJOUTS_NON_VUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 			return films.stream().sorted(Comparator.comparing(Film::getDateInsertion).reversed()).limit(filmDisplayTypeParam.getLimitFilmSize()).filter(f->!f.isVu()).collect(Collectors.toList());
 		}else {
 			return films.stream().sorted(Comparator.comparing(Film::getDateInsertion).reversed()).limit(filmDisplayTypeParam.getLimitFilmSize()).collect(Collectors.toList());
@@ -513,7 +513,7 @@ public class FilmServiceImpl implements IFilmService {
 		Collection<Film> films = mapFilms.values();
 		logger.info("films cache size: " + films.size());
 		if (films.size() > 0) {
-			if(filmDisplayTypeParam!=null && FilmDisplayType.LAST_ADDED.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+			if(filmDisplayTypeParam!=null && FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 				List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
 				return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.REALISATEUR,sortedFilms, realisateurs);
 			}
@@ -522,7 +522,7 @@ public class FilmServiceImpl implements IFilmService {
 		logger.info("no films find");
 		List<Film> filmList = this.filmDao.findAllFilms();
 		logger.info("filmList size: " + filmList.size());
-		if(FilmDisplayType.LAST_ADDED.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+		if(FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
 			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.REALISATEUR,sortedFilms, realisateurs);
 		}
@@ -542,7 +542,7 @@ public class FilmServiceImpl implements IFilmService {
 			Map<Film,Set<Personne>> realisateursByFilm = mapRealisateursByOrigine.get(filmDisplayTypeParam.getFilmOrigine());
 			if (realisateursByFilm.size() > 0) {
 				Collection<Film> films = realisateursByFilm.keySet();
-				if(filmDisplayTypeParam==null || FilmDisplayType.ALL.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+				if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 					for(Set<Personne> set : realisateursByFilm.values()) {
 						realisateursByOrigineToReturnSet.addAll(set);
 					}
@@ -581,7 +581,7 @@ public class FilmServiceImpl implements IFilmService {
 		Collection<Film> films = mapFilms.values();
 		logger.info("films cache size: " + films.size());
 		if (films.size() > 0) {
-			if(filmDisplayTypeParam!=null && FilmDisplayType.LAST_ADDED.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+			if(filmDisplayTypeParam!=null && FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 				List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
 				return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,sortedFilms, acteurs);
 			}
@@ -590,7 +590,7 @@ public class FilmServiceImpl implements IFilmService {
 		logger.info("no films find");
 		List<Film> filmList = this.filmDao.findAllFilms();
 		logger.info("filmList size: " + filmList.size());
-		if(FilmDisplayType.LAST_ADDED.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+		if(FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
 			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,sortedFilms, acteurs);
 		}
@@ -617,7 +617,7 @@ public class FilmServiceImpl implements IFilmService {
 			//logger.info("acteursByFilm cache size: " + acteursByFilm.size());
 			if (acteursByFilm.size() > 0) {
 				Collection<Film> films = acteursByFilm.keySet();
-				if(filmDisplayTypeParam==null || FilmDisplayType.ALL.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+				if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 					for(Set<Personne> set : acteursByFilm.values()) {
 						acteursByOrigineToReturnSet.addAll(set);
 					}
