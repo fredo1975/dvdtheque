@@ -413,6 +413,8 @@ public class FilmServiceImpl implements IFilmService {
 			List<Film> list = films.stream().collect(Collectors.toList());
 			Collections.sort(list);
 			return list;
+		}else if(FilmDisplayType.LAST_NOT_SEEN_ADDED.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+			return films.stream().sorted(Comparator.comparing(Film::getDateInsertion).reversed()).limit(filmDisplayTypeParam.getLimitFilmSize()).filter(f->!f.isVu()).collect(Collectors.toList());
 		}else {
 			return films.stream().sorted(Comparator.comparing(Film::getDateInsertion).reversed()).limit(filmDisplayTypeParam.getLimitFilmSize()).collect(Collectors.toList());
 		}
