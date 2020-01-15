@@ -1,5 +1,5 @@
 package fr.fredos.dvdtheque.common.enums;
 
 public enum FilmDisplayType {
-	ALL, LAST_ADDED
+	TOUS, DERNIERS_AJOUTS, DERNIERS_AJOUTS_NON_VUS
 }
