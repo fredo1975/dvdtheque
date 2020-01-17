@@ -137,6 +137,9 @@ public class FilmController {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
 			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize,filmOrigine);
+			if(FilmOrigine.TOUS.equals(filmOrigine)) {
+				return ResponseEntity.ok(filmService.findAllRealisateurs(filmDisplayTypeParam));
+			}
 			return ResponseEntity.ok(filmService.findAllRealisateursByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(e.getMessage());

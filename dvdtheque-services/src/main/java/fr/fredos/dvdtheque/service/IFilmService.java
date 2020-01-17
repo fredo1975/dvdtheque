@@ -20,7 +20,6 @@ public interface IFilmService {
 	Film findFilm(Long id);
 	Film findFilmWithAllObjectGraph(final Long id);
 	List<Film> findAllFilms(FilmDisplayTypeParam filmDisplayTypeParam);
-	List<Film> findAllLastAddedFilms(final int rowNumber);
 	Set<Long> findAllTmdbFilms(final Set<Long> tmdbIds);
 	Film updateFilm(Film film);
 	Long saveNewFilm(Film film);
@@ -38,7 +37,6 @@ public interface IFilmService {
 	Genre saveGenre(final Genre genre);
 	List<Genre> findAllGenres();
 	List<Film> findAllFilmsByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
-	List<Film> findAllLastAddedFilmsByOrigine(final FilmOrigine filmOrigine, final int rowNumber);
 	void cleanAllCaches();
 	List<Personne> findAllRealisateurs(FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Personne> findAllActeurs(FilmDisplayTypeParam filmDisplayTypeParam);
