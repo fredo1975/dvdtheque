@@ -495,13 +495,13 @@ public class FilmServiceImpl implements IFilmService {
 		//Set<Personne> realisateursByOrigineToReturnSet = new ConcurrentSkipListSet<Personne>();
 		Set<Personne> realisateursByOrigineToReturnSet = new TreeSet<Personne>();
 		if(mapRealisateursByOrigine.size() == 0) {
-			logger.info("findAllRealisateursByFilmDisplayType no realisateurs by origine find");
+			logger.debug("findAllRealisateursByFilmDisplayType no realisateurs by origine find");
 			List<Film> films = findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
 			createPersonneMap(PersonneType.REALISATEUR,films, realisateursByOrigineToReturnSet,mapRealisateursByOrigine);
 		}else {
 			Map<Film,Set<Personne>> realisateursByFilm = mapRealisateursByOrigine.get(filmDisplayTypeParam.getFilmOrigine());
-			logger.info("findAllRealisateursByFilmDisplayType realisateursByFilm cache size: " + realisateursByFilm.values().size());
-			if (realisateursByFilm.size() > 0) {
+			if (MapUtils.isNotEmpty(realisateursByFilm) && realisateursByFilm.size() > 0) {
+				logger.debug("findAllRealisateursByFilmDisplayType realisateursByFilm cache size: " + realisateursByFilm.values().size());
 				Collection<Film> films = realisateursByFilm.keySet();
 				if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 					for(Set<Personne> set : realisateursByFilm.values()) {
@@ -575,7 +575,7 @@ public class FilmServiceImpl implements IFilmService {
 		Set<Personne> acteursByOrigineToReturnSet = new TreeSet<Personne>();
 		//ConcurrentSkipListSet<Personne> acteursByOrigineToReturnSet = new ConcurrentSkipListSet<Personne>();
 		if(mapActeursByOrigine.size() == 0) {
-			logger.info("findAllActeursByFilmDisplayType no acteurs by origine found");
+			logger.debug("findAllActeursByFilmDisplayType no acteurs by origine found");
 			List<Film> films = findAllFilms(filmDisplayTypeParam);
 			if(CollectionUtils.isEmpty(films)) {
 				logger.error("findAllActeursByFilmDisplayType mapFilms should have been initialized");
@@ -584,8 +584,8 @@ public class FilmServiceImpl implements IFilmService {
 			createPersonneMap(PersonneType.ACTEUR, films, acteursByOrigineToReturnSet,mapActeursByOrigine);
 		}else{
 			Map<Film,Set<Personne>> acteursByFilm = mapActeursByOrigine.get(filmDisplayTypeParam.getFilmOrigine());
-			logger.info("findAllActeursByFilmDisplayType acteursByFilm cache size: " + acteursByFilm.values().size());
-			if (acteursByFilm.size() > 0) {
+			if (MapUtils.isNotEmpty(acteursByFilm) && acteursByFilm.size() > 0) {
+				logger.debug("findAllActeursByFilmDisplayType acteursByFilm cache size: " + acteursByFilm.values().size());
 				Collection<Film> films = acteursByFilm.keySet();
 				if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 					for(Set<Personne> set : acteursByFilm.values()) {
