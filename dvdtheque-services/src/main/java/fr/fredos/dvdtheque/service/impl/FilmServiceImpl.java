@@ -268,9 +268,9 @@ public class FilmServiceImpl implements IFilmService {
 		if (films.size() > 0) {
 			return sortListAccordingToFilmDisplayType(films,filmDisplayTypeParam);
 		}
-		logger.info("no films find");
+		logger.debug("no films find");
 		List<Film> filmList = this.filmDao.findAllFilms();
-		logger.info("filmList size: " + filmList.size());
+		logger.debug("filmList size: " + filmList.size());
 		filmList.parallelStream().forEach(it -> {
 			mapFilms.putIfAbsent(it.getId(), it);
 		});
@@ -284,15 +284,15 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = true)
 	public List<Genre> findAllGenres() {
 		Collection<Genre> genres = mapGenres.values();
-		logger.info("genres cache size: " + genres.size());
+		logger.debug("genres cache size: " + genres.size());
 		if (genres.size() > 0) {
 			List<Genre> l = genres.stream().collect(Collectors.toList());
 			Collections.sort(l, (f1,f2)->f1.getName().compareTo(f2.getName()));
 			return l;
 		}
-		logger.info("no genres find");
+		logger.debug("no genres find");
 		List<Genre> e = this.filmDao.findAllGenres();
-		logger.info("genres size: " + e.size());
+		logger.debug("genres size: " + e.size());
 		e.parallelStream().forEach(it -> {
 			mapGenres.putIfAbsent(it.getId(), it);
 		});
@@ -438,15 +438,15 @@ public class FilmServiceImpl implements IFilmService {
 			Predicate<Long, Film> predicate = Predicates.equal("origine", filmDisplayTypeParam.getFilmOrigine());
 			//logger.info("findAllFilmsByFilmDisplayType films cache find ");
 			Collection<Film> films = mapFilms.values(predicate);
-			logger.info("findAllFilmsByFilmDisplayType films cache size: " + films.size());
+			logger.debug("findAllFilmsByFilmDisplayType films cache size: " + films.size());
 			if (films.size() > 0) {
 				watch.stop();
 				logger.info("findAllFilmsByFilmDisplayType="+watch.prettyPrint());
 				return sortListAccordingToFilmDisplayType(films,filmDisplayTypeParam);
 			}
-			logger.info("no films find");
+			logger.debug("no films find");
 			List<Film> filmsRes = this.filmDao.findAllFilmsByOrigine(filmDisplayTypeParam.getFilmOrigine());
-			logger.info("findAllFilmsByFilmDisplayType films size: " + filmsRes.size());
+			logger.debug("findAllFilmsByFilmDisplayType films size: " + filmsRes.size());
 			filmsRes.parallelStream().forEach(it -> {
 				mapFilms.putIfAbsent(it.getId(), it);
 			});
@@ -478,9 +478,9 @@ public class FilmServiceImpl implements IFilmService {
 			}
 			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.REALISATEUR,films, realisateurs);
 		}
-		logger.info("findAllRealisateurs no films find");
+		logger.debug("findAllRealisateurs no films find");
 		List<Film> filmList = this.filmDao.findAllFilms();
-		logger.info("findAllRealisateurs filmList size: " + filmList.size());
+		logger.debug("findAllRealisateurs filmList size: " + filmList.size());
 		if(FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
 			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.REALISATEUR,sortedFilms, realisateurs);
@@ -532,9 +532,9 @@ public class FilmServiceImpl implements IFilmService {
 			}
 			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,films, acteurs);
 		}
-		logger.info("findAllActeurs no films find");
+		logger.debug("findAllActeurs no films find");
 		List<Film> filmList = this.filmDao.findAllFilms();
-		logger.info("findAllActeurs filmList size: " + filmList.size());
+		logger.debug("findAllActeurs filmList size: " + filmList.size());
 		if(FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
 			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,sortedFilms, acteurs);
