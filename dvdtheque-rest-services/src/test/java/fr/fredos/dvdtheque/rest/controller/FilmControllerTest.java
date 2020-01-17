@@ -593,8 +593,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS, 0, FilmOrigine.TOUS);
 		List<Personne> allRealisateurs = filmService.findAllRealisateursByFilmDisplayType(filmDisplayTypeParam);
-		assertNotNull("allActeur size should be 3", allRealisateurs);
-		assertTrue("allActeur size should be 3", allRealisateurs.size() == 1);
+		assertNotNull("allRealisateurs size should be 1", allRealisateurs);
+		assertTrue("allRealisateurs size should be 1", allRealisateurs.size() == 1);
 		Personne real1 = allRealisateurs.get(0);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
 				.get(SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.TOUS.name())

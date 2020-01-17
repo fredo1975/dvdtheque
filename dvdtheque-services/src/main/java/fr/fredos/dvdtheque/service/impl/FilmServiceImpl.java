@@ -499,7 +499,13 @@ public class FilmServiceImpl implements IFilmService {
 			List<Film> films = findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
 			createPersonneMap(PersonneType.REALISATEUR,films, realisateursByOrigineToReturnSet,mapRealisateursByOrigine);
 		}else {
-			Map<Film,Set<Personne>> realisateursByFilm = mapRealisateursByOrigine.get(filmDisplayTypeParam.getFilmOrigine());
+			Map<Film,Set<Personne>> realisateursByFilm = null;
+			if(FilmOrigine.TOUS == filmDisplayTypeParam.getFilmOrigine()) {
+				Collection<Map<Film,Set<Personne>>> col = mapRealisateursByOrigine.values();
+				realisateursByFilm = col.iterator().next();
+			}else {
+				realisateursByFilm = mapRealisateursByOrigine.get(filmDisplayTypeParam.getFilmOrigine());
+			}
 			if (MapUtils.isNotEmpty(realisateursByFilm) && realisateursByFilm.size() > 0) {
 				logger.debug("findAllRealisateursByFilmDisplayType realisateursByFilm cache size: " + realisateursByFilm.values().size());
 				Collection<Film> films = realisateursByFilm.keySet();
