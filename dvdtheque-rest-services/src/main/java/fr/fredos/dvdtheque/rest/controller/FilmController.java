@@ -48,6 +48,7 @@ import fr.fredos.dvdtheque.rest.file.util.MultipartFileUtil;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
+import fr.fredos.dvdtheque.service.model.FilmListParam;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 @RestController
@@ -103,12 +104,25 @@ public class FilmController {
 	}
 	@GetMapping("/films/byOrigine/{origine}")
 	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
-		logger.info("findAllFilmsByOrigine - instanceId="+instanceId);
+		logger.debug("findAllFilmsByOrigine - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
 			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize,filmOrigine);
 			return ResponseEntity.ok(filmService.findAllFilmsByFilmDisplayType(filmDisplayTypeParam));
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return ResponseEntity.badRequest().build();
+	}
+	@GetMapping("/filmListParam/byOrigine/{origine}")
+	ResponseEntity<FilmListParam> findFilmListParamByFilmDisplayTypeParam(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
+		logger.debug("findFilmListParamByFilmDisplayType - instanceId="+instanceId);
+		try {
+			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
+			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize,filmOrigine);
+			return ResponseEntity.ok(filmService.findFilmListParamByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -137,6 +151,9 @@ public class FilmController {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
 			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize,filmOrigine);
+			if(FilmOrigine.TOUS.equals(filmOrigine)) {
+				return ResponseEntity.ok(filmService.findAllRealisateurs(filmDisplayTypeParam));
+			}
 			return ResponseEntity.ok(filmService.findAllRealisateursByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(e.getMessage());

@@ -225,9 +225,14 @@ public class FilmDaoImpl implements FilmDao {
 	}
 	@Override
 	public List<Film> findAllFilmsByOrigine(final FilmOrigine filmOrigine) {
-		StringBuilder sb = new StringBuilder("from Film film where film.origine = :origine ");
+		StringBuilder sb = new StringBuilder("from Film film ");
+		if(!FilmOrigine.TOUS.equals(filmOrigine)) {
+			sb.append("where film.origine = :origine");
+		}
 		Query q = this.entityManager.createQuery(sb.toString());
-		q.setParameter("origine", filmOrigine);
+		if(!FilmOrigine.TOUS.equals(filmOrigine)) {
+			q.setParameter("origine", filmOrigine);
+		}
 		return q.getResultList();
 	}
 	@SuppressWarnings("unchecked")

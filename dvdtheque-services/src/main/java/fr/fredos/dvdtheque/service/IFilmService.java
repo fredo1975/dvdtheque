@@ -7,12 +7,12 @@ import java.util.Set;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
-import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
+import fr.fredos.dvdtheque.service.model.FilmListParam;
 
 public interface IFilmService {
 	public static final String CACHE_DIST_FILM = "dist-film";
@@ -20,7 +20,6 @@ public interface IFilmService {
 	Film findFilm(Long id);
 	Film findFilmWithAllObjectGraph(final Long id);
 	List<Film> findAllFilms(FilmDisplayTypeParam filmDisplayTypeParam);
-	List<Film> findAllLastAddedFilms(final int rowNumber);
 	Set<Long> findAllTmdbFilms(final Set<Long> tmdbIds);
 	Film updateFilm(Film film);
 	Long saveNewFilm(Film film);
@@ -38,10 +37,10 @@ public interface IFilmService {
 	Genre saveGenre(final Genre genre);
 	List<Genre> findAllGenres();
 	List<Film> findAllFilmsByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
-	List<Film> findAllLastAddedFilmsByOrigine(final FilmOrigine filmOrigine, final int rowNumber);
 	void cleanAllCaches();
 	List<Personne> findAllRealisateurs(FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Personne> findAllActeurs(FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Personne> findAllActeursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Personne> findAllRealisateursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
+	FilmListParam findFilmListParamByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam);
 }
