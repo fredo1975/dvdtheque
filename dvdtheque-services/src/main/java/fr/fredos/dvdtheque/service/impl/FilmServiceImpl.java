@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +55,9 @@ import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
-import fr.fredos.dvdtheque.service.dto.FilmDto;
+import fr.fredos.dvdtheque.service.model.FilmDto;
+import fr.fredos.dvdtheque.service.model.FilmListParam;
+import fr.fredos.dvdtheque.service.model.FilmListParamBuilder;
 
 @Service("filmService")
 @CacheConfig(cacheNames = "films")
@@ -589,7 +590,13 @@ public class FilmServiceImpl implements IFilmService {
 			}
 			createPersonneMap(PersonneType.ACTEUR, films, acteursByOrigineToReturnSet,mapActeursByOrigine);
 		}else{
-			Map<Film,Set<Personne>> acteursByFilm = mapActeursByOrigine.get(filmDisplayTypeParam.getFilmOrigine());
+			Map<Film,Set<Personne>> acteursByFilm = null;
+			if(FilmOrigine.TOUS == filmDisplayTypeParam.getFilmOrigine()) {
+				Collection<Map<Film,Set<Personne>>> col = mapRealisateursByOrigine.values();
+				acteursByFilm = col.iterator().next();
+			}else {
+				acteursByFilm = mapActeursByOrigine.get(filmDisplayTypeParam.getFilmOrigine());
+			}
 			if (MapUtils.isNotEmpty(acteursByFilm) && acteursByFilm.size() > 0) {
 				logger.debug("findAllActeursByFilmDisplayType acteursByFilm cache size: " + acteursByFilm.values().size());
 				Collection<Film> films = acteursByFilm.keySet();
@@ -608,5 +615,25 @@ public class FilmServiceImpl implements IFilmService {
 		watch.stop();
 		logger.info("findAllActeursByFilmDisplayType="+watch.prettyPrint());
 		return new ArrayList<>(acteursByOrigineToReturnSet);
+	}
+	@Override
+	public FilmListParam findFilmListParamByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam) {
+		StopWatch watch = new StopWatch();
+		watch.start();
+		List<Personne> realisateurs = this.findAllRealisateursByFilmDisplayType(filmDisplayTypeParam);
+		List<Personne> acteurs = this.findAllActeursByFilmDisplayType(filmDisplayTypeParam);
+		int realisateursLength = realisateurs.size();
+		int acteursLength = acteurs.size();
+		FilmListParam filmListParam = new FilmListParamBuilder.Builder()
+				.setFilms(this.findAllFilmsByFilmDisplayType(filmDisplayTypeParam))
+				.setActeurs(acteurs)
+				.setRealisateurs(realisateurs)
+				.setActeursLength(acteursLength)
+				.setRealisateursLength(realisateursLength)
+				.setGenres(this.findAllGenres())
+				.build();
+		watch.stop();
+		logger.info("findFilmListParamByFilmDisplayType="+watch.prettyPrint());
+		return filmListParam;
 	}
 }

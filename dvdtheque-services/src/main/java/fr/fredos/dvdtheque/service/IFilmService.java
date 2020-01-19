@@ -7,12 +7,12 @@ import java.util.Set;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
-import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
+import fr.fredos.dvdtheque.service.model.FilmListParam;
 
 public interface IFilmService {
 	public static final String CACHE_DIST_FILM = "dist-film";
@@ -42,4 +42,5 @@ public interface IFilmService {
 	List<Personne> findAllActeurs(FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Personne> findAllActeursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Personne> findAllRealisateursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
+	FilmListParam findFilmListParamByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam);
 }

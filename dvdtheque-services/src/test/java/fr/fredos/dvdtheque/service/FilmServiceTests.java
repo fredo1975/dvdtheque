@@ -47,6 +47,7 @@ import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
 import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
+import fr.fredos.dvdtheque.service.model.FilmListParam;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class})
@@ -1335,6 +1336,141 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertTrue(actEnSalleIdList.size()==6);
 	}
 	
+	@Test
+	public void findFilmListParamByFilmDisplayType() throws ParseException {
+		final int rowNumber = 3;
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		final String dateInsertion1 = "2014/08/01";
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(dateInsertion1)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setVu(Boolean.TRUE.booleanValue())
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		final String dateInsertion2 = "2014/09/01";
+		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_4780)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(dateInsertion2)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setVu(Boolean.TRUE.booleanValue())
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_4780)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.build();
+		Long filmId2 = filmService.saveNewFilm(film2);
+		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		assertNotNull(filmId2);
+		final String dateInsertion3 = "2014/10/01";
+		Film film3 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_1271)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_1271)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_1271)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_1271)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(dateInsertion3)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setVu(Boolean.TRUE.booleanValue())
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_1271)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.build();
+		Long filmId3 = filmService.saveNewFilm(film3);
+		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE, null);
+		assertNotNull(filmId3);
+		final String dateInsertion4 = "2014/11/01";
+		Film film4 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREUPDATED)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_4780)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(dateInsertion4)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.EN_SALLE)
+				.setVu(Boolean.TRUE.booleanValue())
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.build();
+		Long filmId4 = filmService.saveNewFilm(film4);
+		FilmBuilder.assertFilmIsNotNull(film4, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE, null);
+		assertNotNull(filmId4);
+		final String dateInsertion5 = "2014/12/01";
+		Film film5 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_REREREUPDATED)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(dateInsertion5)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.TV)
+				.setVu(Boolean.TRUE.booleanValue())
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.build();
+		Long filmId5 = filmService.saveNewFilm(film5);
+		FilmBuilder.assertFilmIsNotNull(film5, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.TV, FilmBuilder.FILM_DATE_SORTIE, null);
+		assertNotNull(filmId5);
+		
+		FilmListParam filmListParam = filmService.findFilmListParamByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.DERNIERS_AJOUTS,rowNumber,FilmOrigine.TOUS));
+		assertNotNull(filmListParam);
+		assertTrue(CollectionUtils.isNotEmpty(filmListParam.getFilms()));
+		assertTrue("list should be equals to "+rowNumber,filmListParam.getFilms().size()==rowNumber);
+		Film f1 = filmListParam.getFilms().get(0);
+		assertEquals(film5, f1);
+		Film f2 = filmListParam.getFilms().get(1);
+		assertEquals(film4, f2);
+		Film f3 = filmListParam.getFilms().get(2);
+		assertEquals(film3, f3);
+		
+		assertNotNull(filmListParam.getRealisateurs());
+		assertTrue(CollectionUtils.isNotEmpty(filmListParam.getRealisateurs()));
+		assertTrue("realisateurs list should be "+rowNumber,filmListParam.getRealisateurs().size()==rowNumber);
+		assertTrue("realisateurLength should be "+rowNumber,filmListParam.getRealisateursLength()==rowNumber);
+		
+		assertNotNull(filmListParam.getActeurs());
+		assertTrue(CollectionUtils.isNotEmpty(filmListParam.getActeurs()));
+		assertTrue("acteurs list should be 9",filmListParam.getActeurs().size()==9);
+		assertTrue("acteurLength list should be 9",filmListParam.getActeursLength()==9);
+		
+		assertNotNull(filmListParam.getGenres());
+		assertTrue("genres list should be 2",filmListParam.getGenres().size()==2);
+	}
 	@Test
 	public void findAllLastAddedFilmsByOrigine() throws ParseException {
 		final int rowNumber = 3;
