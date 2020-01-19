@@ -502,8 +502,12 @@ public class FilmServiceImpl implements IFilmService {
 		}else {
 			Map<Film,Set<Personne>> realisateursByFilm = null;
 			if(FilmOrigine.TOUS == filmDisplayTypeParam.getFilmOrigine()) {
-				Collection<Map<Film,Set<Personne>>> col = mapRealisateursByOrigine.values();
-				realisateursByFilm = col.iterator().next();
+				realisateursByFilm = new HashMap<Film, Set<Personne>>();
+				for(Map.Entry<FilmOrigine,Map<Film,Set<Personne>>> entry : mapRealisateursByOrigine.entrySet()) {
+					for(Map.Entry<Film,Set<Personne>> entry2 : entry.getValue().entrySet()) {
+						realisateursByFilm.put(entry2.getKey(),entry2.getValue());
+					}
+				}
 			}else {
 				realisateursByFilm = mapRealisateursByOrigine.get(filmDisplayTypeParam.getFilmOrigine());
 			}
@@ -592,8 +596,12 @@ public class FilmServiceImpl implements IFilmService {
 		}else{
 			Map<Film,Set<Personne>> acteursByFilm = null;
 			if(FilmOrigine.TOUS == filmDisplayTypeParam.getFilmOrigine()) {
-				Collection<Map<Film,Set<Personne>>> col = mapRealisateursByOrigine.values();
-				acteursByFilm = col.iterator().next();
+				acteursByFilm = new HashMap<Film, Set<Personne>>();
+				for(Map.Entry<FilmOrigine,Map<Film,Set<Personne>>> entry : mapActeursByOrigine.entrySet()) {
+					for(Map.Entry<Film,Set<Personne>> entry2 : entry.getValue().entrySet()) {
+						acteursByFilm.put(entry2.getKey(),entry2.getValue());
+					}
+				}
 			}else {
 				acteursByFilm = mapActeursByOrigine.get(filmDisplayTypeParam.getFilmOrigine());
 			}
