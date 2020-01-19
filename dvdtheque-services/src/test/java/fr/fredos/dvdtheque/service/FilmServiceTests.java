@@ -1460,8 +1460,8 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		
 		assertNotNull(filmListParam.getRealisateurs());
 		assertTrue(CollectionUtils.isNotEmpty(filmListParam.getRealisateurs()));
-		assertTrue("realisateurs list should be "+rowNumber,filmListParam.getRealisateurs().size()==rowNumber);
-		assertTrue("realisateurLength should be "+rowNumber,filmListParam.getRealisateursLength()==rowNumber);
+		assertTrue("realisateurs list should be 2",filmListParam.getRealisateurs().size()==2);
+		assertTrue("realisateurLength should be 2",filmListParam.getRealisateursLength()==2);
 		
 		assertNotNull(filmListParam.getActeurs());
 		assertTrue(CollectionUtils.isNotEmpty(filmListParam.getActeurs()));
