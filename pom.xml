@@ -23,6 +23,7 @@
 		<module>dvdtheque-dao</module>
 		<module>dvdtheque-services</module>
 		<module>dvdtheque-tmdb-service</module>
+		<module>dvdtheque-allocine-service</module>
 		<!-- module>dvdtheque-jms-publisher</module -->
 		<module>dvdtheque-jms-receiver-test</module>
 		<module>dvdtheque-batch</module>
