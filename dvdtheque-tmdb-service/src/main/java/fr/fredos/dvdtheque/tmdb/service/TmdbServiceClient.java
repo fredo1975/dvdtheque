@@ -285,7 +285,6 @@ public class TmdbServiceClient {
 		Integer firstPage = Integer.valueOf(1);
 		SearchResults searchResults = retrieveTmdbSearchResults(titre, firstPage);
 		if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
-			films = new HashSet<>(searchResults.getTotal_results().intValue());
 			results = new HashSet<>(searchResults.getTotal_results().intValue());
 			addResultsToSet(results, searchResults);
 		}

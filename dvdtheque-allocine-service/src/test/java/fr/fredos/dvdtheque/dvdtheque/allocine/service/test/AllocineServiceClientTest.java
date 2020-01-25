@@ -3,6 +3,8 @@ package fr.fredos.dvdtheque.dvdtheque.allocine.service.test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.allocine.model.SearchResults;
 import fr.fredos.dvdtheque.allocine.service.AllocineServiceClient;
+import fr.fredos.dvdtheque.dao.model.object.CritiquesPresse;
 import fr.fredos.dvdtheque.service.IFilmService;
 
 @RunWith(SpringRunner.class)
@@ -71,5 +74,11 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
     	SearchResults searchReviewFeedResults = client.retrieveAllocineReviewFeedByCode(code,1);
     	assertSearchReviewFeedResultsIsNotNull(searchReviewFeedResults);
     	logger.info("allocine feed = "+searchResults.getFeed());
+    }
+    
+    @Test
+    public void retrieveReviewListToCritiquesPresseListTest() {
+    	List<CritiquesPresse> critiquesPresseList = client.retrieveReviewListToCritiquesPresseList(TITRE);
+    	assertTrue(CollectionUtils.isNotEmpty(critiquesPresseList));
     }
 }

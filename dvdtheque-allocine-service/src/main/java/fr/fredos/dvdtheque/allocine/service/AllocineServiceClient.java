@@ -1,5 +1,12 @@
 package fr.fredos.dvdtheque.allocine.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +15,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import fr.fredos.dvdtheque.allocine.model.Review;
 import fr.fredos.dvdtheque.allocine.model.SearchResults;
+import fr.fredos.dvdtheque.dao.model.object.CritiquesPresse;
 import fr.fredos.dvdtheque.service.IFilmService;
 
 @Service
@@ -54,5 +63,61 @@ public class AllocineServiceClient {
 			logger.error("desk-press "+code+" not found");
 		}
 		return null;
+	}
+	private void addSearchResultsToSet(Set<Review> reviewsSet, final SearchResults searchReviewFeedResults) {
+		reviewsSet.addAll(searchReviewFeedResults.getFeed().getReview());
+	}
+	/**
+	 * 
+	 * @param review
+	 * @return
+	 */
+	private CritiquesPresse transformReviewToCritiquesPresse(final Review review) {
+		CritiquesPresse critiquesPresse = new CritiquesPresse();
+		critiquesPresse.setAuteur(review.getAuthor());
+		critiquesPresse.setCode(review.getCode());
+		critiquesPresse.setCritique(review.getBody());
+		if(review.getNewsSource() != null && StringUtils.isNotEmpty(review.getNewsSource().getName())) {
+			critiquesPresse.setNomSource(review.getNewsSource().getName());
+		}
+		critiquesPresse.setNote(review.getRating());
+		return critiquesPresse;
+	}
+	/**
+	 * 
+	 * @param title
+	 * @return
+	 */
+	public List<CritiquesPresse> retrieveReviewListToCritiquesPresseList(final String title){
+		Set<Review> reviewsSet = null;
+		Integer firstPage = Integer.valueOf(1);
+		List<CritiquesPresse> critiquePresseList = new ArrayList<>();
+		SearchResults searchMovieResults = retrieveAllocineMovieFeedByTitle(title);
+		if(searchMovieResults != null && searchMovieResults.getFeed() != null && searchMovieResults.getFeed().getMovie() != null && searchMovieResults.getFeed().getMovie().get(0) != null) {
+			int code = searchMovieResults.getFeed().getMovie().get(0).getCode();
+			if(code != 0) {
+				SearchResults searchReviewFeedResults = retrieveAllocineReviewFeedByCode(code,1);
+				if(searchReviewFeedResults != null && searchReviewFeedResults.getFeed() != null && searchReviewFeedResults.getFeed().getReview() != null && searchReviewFeedResults.getFeed().getReview().get(0) != null) {
+					reviewsSet = new HashSet<>(searchMovieResults.getFeed().getTotalResults().intValue());
+					addSearchResultsToSet(reviewsSet, searchReviewFeedResults);
+				}
+				int nbPages = searchReviewFeedResults.getFeed().getTotalResults()/searchReviewFeedResults.getFeed().getCount();
+				while(firstPage.intValue() < nbPages) {
+					firstPage = firstPage + Integer.valueOf(1);
+					searchReviewFeedResults = retrieveAllocineReviewFeedByCode(code, firstPage);
+					addSearchResultsToSet(reviewsSet, searchReviewFeedResults);
+				}
+				if(CollectionUtils.isNotEmpty(reviewsSet)) {
+					for(Review review : reviewsSet) {
+						CritiquesPresse transformedCritiquesPresse = transformReviewToCritiquesPresse(review);
+						if(transformedCritiquesPresse != null) {
+							critiquePresseList.add(transformedCritiquesPresse);
+						}
+					}
+					
+				}
+			}
+		}
+		return critiquePresseList;
 	}
 }
