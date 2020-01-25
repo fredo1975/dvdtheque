@@ -1,7 +1,9 @@
 package fr.fredos.dvdtheque.dvdtheque.allocine.service.test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,14 +39,11 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
     
     private void assertSearchResultsIsNotNull(SearchResults res) {
 		assertNotNull(res);
-		/*
-		assertNotNull(res.getId());
-		assertNotNull(res.getOriginal_title());
-		assertNotNull(res.getPoster_path());
-		assertNotNull(res.getTitle());
-		assertNotNull(res.getRelease_date());
-		assertNotNull(res.getOverview());
-		assertNotNull(res.getRuntime());*/
+		assertNotNull(res.getFeed());
+		assertNotNull(res.getFeed().getMovie());
+		assertTrue(CollectionUtils.isNotEmpty(res.getFeed().getMovie()));
+		assertNotNull(res.getFeed().getMovie().get(0));
+		assertNotNull(res.getFeed().getMovie().get(0).getCode());
 	}
     
     @Test

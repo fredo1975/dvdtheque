@@ -7,7 +7,7 @@ public class Feed {
 	private Integer count;
 	//private Results results;
 	private Integer totalResults;
-	private List<Movie> movieList;
+	private List<Movie> movie;
 	
 	public Integer getPage() {
 		return page;
@@ -22,8 +22,8 @@ public class Feed {
 	public Integer getTotalResults() {
 		return totalResults;
 	}
-	public List<Movie> getMovieList() {
-		return movieList;
+	public List<Movie> getMovie() {
+		return movie;
 	}
 	@Override
 	public String toString() {
