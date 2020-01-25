@@ -26,7 +26,7 @@ import fr.fredos.dvdtheque.service.IFilmService;
 @ActiveProfiles("local")
 public class AllocineServiceClientTest extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(AllocineServiceClientTest.class);
-	
+	private static final String TITRE = "avatar";
 	@Autowired
     private AllocineServiceClient client;
     @Autowired
@@ -37,7 +37,7 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
     	filmService.cleanAllFilms();
 	}
     
-    private void assertSearchResultsIsNotNull(SearchResults res) {
+    private void assertSearchMovieFeedResultsIsNotNull(SearchResults res) {
 		assertNotNull(res);
 		assertNotNull(res.getFeed());
 		assertNotNull(res.getFeed().getMovie());
@@ -46,11 +46,30 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
 		assertNotNull(res.getFeed().getMovie().get(0).getCode());
 	}
     
+    private void assertSearchReviewFeedResultsIsNotNull(SearchResults res) {
+		assertNotNull(res);
+		assertNotNull(res.getFeed());
+		assertNotNull(res.getFeed().getReview());
+		assertTrue(CollectionUtils.isNotEmpty(res.getFeed().getReview()));
+		assertNotNull(res.getFeed().getReview().get(0));
+		assertNotNull(res.getFeed().getReview().get(0).getNewsSource());
+		assertNotNull(res.getFeed().getReview().get(0).getNewsSource().getCode());
+	}
+    
     @Test
-    public void retrieveFeedTest() {
-    	final String titre = "avatar";
-    	SearchResults searchResults = client.retrieveAllocineFeedByTtile(titre);
-    	assertSearchResultsIsNotNull(searchResults);
+    public void retrieveAllocineMovieFeedByTitleTest() {
+    	SearchResults searchResults = client.retrieveAllocineMovieFeedByTitle(TITRE);
+    	assertSearchMovieFeedResultsIsNotNull(searchResults);
 		logger.info("allocine feed = "+searchResults.getFeed());
+    }
+    
+    @Test
+    public void retrieveAllocineReviewFeedByCodeTest() {
+    	SearchResults searchResults = client.retrieveAllocineMovieFeedByTitle(TITRE);
+    	assertSearchMovieFeedResultsIsNotNull(searchResults);
+    	int code = searchResults.getFeed().getMovie().get(0).getCode();
+    	SearchResults searchReviewFeedResults = client.retrieveAllocineReviewFeedByCode(code,1);
+    	assertSearchReviewFeedResultsIsNotNull(searchReviewFeedResults);
+    	logger.info("allocine feed = "+searchResults.getFeed());
     }
 }

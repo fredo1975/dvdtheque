@@ -5,9 +5,9 @@ import java.util.List;
 public class Feed {
 	private Integer page;
 	private Integer count;
-	//private Results results;
 	private Integer totalResults;
 	private List<Movie> movie;
+	private List<Review> review;
 	
 	public Integer getPage() {
 		return page;
@@ -15,10 +15,9 @@ public class Feed {
 	public Integer getCount() {
 		return count;
 	}
-	/*
-	public Results getResults() {
-		return results;
-	}*/
+	public List<Review> getReview() {
+		return review;
+	}
 	public Integer getTotalResults() {
 		return totalResults;
 	}
@@ -27,9 +26,8 @@ public class Feed {
 	}
 	@Override
 	public String toString() {
-		return "Feed [page=" + page + ", count=" + count + ", totalResults=" + totalResults
-				+ "]";
+		return "Feed [page=" + page + ", count=" + count + ", totalResults=" + totalResults + ", movie=" + movie
+				+ ", review=" + review + "]";
 	}
-	
 	
 }

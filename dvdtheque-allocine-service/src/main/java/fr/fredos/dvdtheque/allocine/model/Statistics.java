@@ -13,5 +13,4 @@ public class Statistics {
 	public String toString() {
 		return "Statistics [pressRating=" + pressRating + ", userRating=" + userRating + "]";
 	}
-	
 }
