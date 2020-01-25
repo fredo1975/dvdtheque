@@ -57,6 +57,8 @@ public class Film implements Serializable, Comparable<Film> {
 	private Set<Personne> realisateurs = new HashSet<>();
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	private Set<Personne> acteurs = new HashSet<>();
+	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
+	private Set<CritiquesPresse> critiquesPresse = new HashSet<>();
 	@Column(name = "VU")
 	private boolean vu;
 	@Column(name = "POSTER_PATH")
@@ -123,14 +125,18 @@ public class Film implements Serializable, Comparable<Film> {
 	public void setActeurs(Set<Personne> acteurs) {
 		this.acteurs = acteurs;
 	}
-	
+	public Set<CritiquesPresse> getCritiquesPresse() {
+		return critiquesPresse;
+	}
+	public void setCritiquesPresse(Set<CritiquesPresse> critiquesPresse) {
+		this.critiquesPresse = critiquesPresse;
+	}
 	public String getOverview() {
 		return overview;
 	}
 	public void setOverview(String overview) {
 		this.overview = overview;
 	}
-	
 	public boolean isVu() {
 		return vu;
 	}
@@ -216,11 +222,11 @@ public class Film implements Serializable, Comparable<Film> {
 	}
 	@Override
 	public String toString() {
-		return "Film [logger=" + logger + ", id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie
-				+ ", dateInsertion=" + dateInsertion + ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd
-				+ ", origine=" + origine + ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", vu=" + vu
-				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
-				+ runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
+		return "Film [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", dateInsertion=" + dateInsertion
+				+ ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd + ", origine=" + origine
+				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", critiquesPresse=" + critiquesPresse
+				+ ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview
+				+ ", runtime=" + runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
 				+ alreadyInDvdtheque + "]";
 	}
 	@Override

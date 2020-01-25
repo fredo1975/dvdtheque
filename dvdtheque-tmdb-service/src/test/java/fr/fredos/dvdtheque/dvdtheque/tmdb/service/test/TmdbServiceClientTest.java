@@ -79,24 +79,6 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		Calendar cal = Calendar.getInstance();
 		return DateUtils.addDays(cal.getTime(), RIP_DATE);
 	}
-    private void assertFilmIsNotNull(Film film,boolean dateRipNull) {
-		assertNotNull(film);
-		assertNotNull(film.getId());
-		assertNotNull(film.getTitre());
-		assertNotNull(film.getAnnee());
-		assertNotNull(film.getDvd());
-		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
-		assertTrue(film.getGenres().size() == 2);
-		if(!dateRipNull) {
-			assertEquals(filmService.clearDate(createRipDate()),film.getDvd().getDateRip());
-		}
-		assertNotNull(film.getOverview());
-		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
-		assertTrue(film.getActeurs().size()>=3);
-		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
-		assertTrue(film.getRealisateurs().size()==1);
-	}
-    
 	@Test
     public void retrieveTmdbResultsTest() {
 		Results res = client.retrieveTmdbSearchResultsById(FilmBuilder.tmdbId1);

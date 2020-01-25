@@ -1,8 +1,6 @@
 package fr.fredos.dvdtheque.allocine.service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -18,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import fr.fredos.dvdtheque.allocine.model.Review;
 import fr.fredos.dvdtheque.allocine.model.SearchResults;
 import fr.fredos.dvdtheque.dao.model.object.CritiquesPresse;
+import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.service.IFilmService;
 
 @Service
@@ -83,15 +82,18 @@ public class AllocineServiceClient {
 		critiquesPresse.setNote(review.getRating());
 		return critiquesPresse;
 	}
+	public void addCritiquesPresseToFilm(Film film, final Set<CritiquesPresse> set) {
+		film.getCritiquesPresse().addAll(set);
+	}
 	/**
 	 * 
 	 * @param title
 	 * @return
 	 */
-	public List<CritiquesPresse> retrieveReviewListToCritiquesPresseList(final String title){
+	public Set<CritiquesPresse> retrieveReviewListToCritiquesPresseList(final String title){
 		Set<Review> reviewsSet = null;
 		Integer firstPage = Integer.valueOf(1);
-		List<CritiquesPresse> critiquePresseList = new ArrayList<>();
+		Set<CritiquesPresse> critiquePresseSet = null;
 		SearchResults searchMovieResults = retrieveAllocineMovieFeedByTitle(title);
 		if(searchMovieResults != null && searchMovieResults.getFeed() != null && searchMovieResults.getFeed().getMovie() != null && searchMovieResults.getFeed().getMovie().get(0) != null) {
 			int code = searchMovieResults.getFeed().getMovie().get(0).getCode();
@@ -108,16 +110,17 @@ public class AllocineServiceClient {
 					addSearchResultsToSet(reviewsSet, searchReviewFeedResults);
 				}
 				if(CollectionUtils.isNotEmpty(reviewsSet)) {
+					critiquePresseSet = new HashSet<>(reviewsSet.size());
 					for(Review review : reviewsSet) {
 						CritiquesPresse transformedCritiquesPresse = transformReviewToCritiquesPresse(review);
 						if(transformedCritiquesPresse != null) {
-							critiquePresseList.add(transformedCritiquesPresse);
+							critiquePresseSet.add(transformedCritiquesPresse);
 						}
 					}
 					
 				}
 			}
 		}
-		return critiquePresseList;
+		return critiquePresseSet;
 	}
 }
