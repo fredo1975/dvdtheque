@@ -314,6 +314,7 @@ public class FilmServiceImpl implements IFilmService {
 		filmDao.cleanAllFilms();
 		mapFilms.clear();
 		filmDao.cleanAllGenres();
+		filmDao.cleanAllCritiquesPresse();
 		mapGenres.clear();
 		mapActeursByOrigine.clear();
 		mapRealisateursByOrigine.clear();

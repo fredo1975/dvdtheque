@@ -196,6 +196,12 @@ public class FilmDaoImpl implements FilmDao {
 		this.entityManager.flush();
 		
 	}
+	public void cleanAllCritiquesPresse() {
+		Query query = this.entityManager.createQuery("delete from CritiquesPresse");
+		int nbCritiquesPresse = query.executeUpdate();
+		logger.debug(nbCritiquesPresse+" CritiquesPresse deleted");
+		
+	}
 	public void cleanAllGenres() {
 		Query query = this.entityManager.createQuery("delete from Genre");
 		int nbGenres = query.executeUpdate();

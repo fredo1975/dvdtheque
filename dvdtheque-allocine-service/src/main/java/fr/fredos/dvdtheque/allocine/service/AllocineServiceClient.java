@@ -110,11 +110,11 @@ public class AllocineServiceClient {
 							critiquePresseSet.add(transformedCritiquesPresse);
 						}
 					}
+					if(CollectionUtils.isNotEmpty(critiquePresseSet)) {
+						film.getCritiquesPresse().addAll(critiquePresseSet);
+					}
 				}
 			}
-		}
-		if(CollectionUtils.isNotEmpty(critiquePresseSet)) {
-			film.getCritiquesPresse().addAll(critiquePresseSet);
 		}
 	}
 }

@@ -31,6 +31,7 @@ public interface FilmDao {
 	void removeFilm(Film film);
 	Boolean checkIfTmdbFilmExists(Long tmdbId);
 	void cleanAllGenres();
+	void cleanAllCritiquesPresse();
 	List<Genre> findAllGenres();
 	List<Film> findAllFilmsByOrigine(FilmOrigine filmOrigine);
 	List<Film> findAllLastAddedFilmsByOrigine(FilmOrigine filmOrigine,final int rowNumber);
