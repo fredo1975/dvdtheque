@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -60,7 +61,7 @@ public class Film implements Serializable, Comparable<Film> {
 	private Set<Personne> acteurs = new HashSet<>();
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	@OrderBy("note desc")
-	private Set<CritiquesPresse> critiquesPresse = new HashSet<>();
+	private Set<CritiquesPresse> critiquesPresse = new TreeSet<>();
 	@Column(name = "VU")
 	private boolean vu;
 	@Column(name = "POSTER_PATH")

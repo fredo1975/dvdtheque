@@ -15,7 +15,7 @@ import org.apache.commons.logging.LogFactory;
 
 @Entity
 @Table(name = "CRITIQUES_PRESSE")
-public class CritiquesPresse implements Serializable{
+public class CritiquesPresse implements Serializable,Comparable<CritiquesPresse>{
 	private static final long serialVersionUID = 1L;
 	@Transient
 	private Log logger = LogFactory.getLog(this.getClass());
@@ -99,5 +99,13 @@ public class CritiquesPresse implements Serializable{
 	public String toString() {
 		return "CritiquesPresse [id=" + id + ", code=" + code + ", nomSource=" + nomSource + ", auteur="
 				+ auteur + ", critique=" + critique + ", note=" + note + "]";
+	}
+	@Override
+	public int compareTo(CritiquesPresse o) {
+		if(o.getNote().compareTo(this.getNote())!=0) {
+			return o.getNote().compareTo(this.getNote());
+		} else {
+			return this.getNomSource().compareTo(o.nomSource);
+		}
 	}
 }

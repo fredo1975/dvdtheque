@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.allocine.service;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -112,6 +113,12 @@ public class AllocineServiceClient {
 					}
 					if(CollectionUtils.isNotEmpty(critiquePresseSet)) {
 						film.getCritiquesPresse().addAll(critiquePresseSet);
+						/*
+						film.getCritiquesPresse().stream().sorted(new Comparator<CritiquesPresse>() {
+							public int compare(CritiquesPresse o1, CritiquesPresse o2) {
+								return o1.getNote().compareTo(o2.getNote());
+							};
+						});*/
 					}
 				}
 			}
