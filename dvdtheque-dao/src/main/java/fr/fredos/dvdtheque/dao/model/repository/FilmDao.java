@@ -5,6 +5,7 @@ import java.util.Set;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.dao.model.object.CritiquesPresse;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -14,6 +15,7 @@ public interface FilmDao {
 	Genre findGenre(int id);
 	Genre attachToSession(Genre genre);
 	Genre saveGenre(Genre genre);
+	CritiquesPresse saveCritiquesPresse(final CritiquesPresse critiquesPresse);
 	Film findFilmByTitre(String titre);
 	public Film findFilmByTitreWithoutSpecialsCharacters(final String titre);
 	Film findFilmWithAllObjectGraph(Long id);

@@ -41,7 +41,8 @@ import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 		RetrieveDateInsertionTasklet.class,
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
+		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
+		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class})
 public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	@Autowired
 	public Job importFilmsJob;
@@ -52,6 +53,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	protected MessageConsumer messageConsumer;*/
 	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
 	public static final String TITRE_FILM_2001 = "2001 : L'ODYSSÉE DE L'ESPACE";
+	public static final String TITRE_AD_ASTRA = "AD ASTRA";
 	public static final String TITRE_FILM_2046 = "2046";
 	public static final String TITRE_FILM_40_ans = "40 ANS : MODE D'EMPLOI";
 	public static final String REAL_NOM = "STANLEY KUBRICK";
@@ -61,6 +63,11 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public static final String ACT2_NOM = "LEONARD ROSSITER";
 	public static final String ACT3_NOM = "ROBERT BEATTY";
 	public static final String ACT4_NOM = "FRANK MILLER";
+	public static final String REAL_NOM_AD_ASTRA = "JAMES GRAY";
+	public static final String ACT1_AD_ASTRA = "GREG BRYK";
+	public static final String ACT2_AD_ASTRA = "LOREN DEAN";
+	public static final String ACT3_AD_ASTRA = "KIMBERLY ELISE";
+	public static final String ACT4_AD_ASTRA = "LISAGAY HAMILTON";
 	
 	@Before
 	public void init() {
@@ -88,21 +95,21 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchJob(jobParametersBuilder.toJobParameters());
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 		List<Film> films = filmService.findAllFilms(null);
-		assertTrue(films.size()==7);
-		boolean is2001odysseyExists = false;
+		assertTrue(films.size()==8);
+		boolean isAdAstraExists = false;
 		boolean is2046Exists = false;
 		boolean is40ansExists = false;
 		
 		for(Film film : films) {
-			if(TITRE_FILM_2001.equals(film.getTitre())) {
-				is2001odysseyExists = true;
+			if(TITRE_AD_ASTRA.equals(film.getTitre())) {
+				isAdAstraExists = true;
 				Personne real = film.getRealisateurs().iterator().next();
-				assertTrue(REAL_NOM.equals(real.getNom()));
+				assertTrue(REAL_NOM_AD_ASTRA.equals(real.getNom()));
 				Set<Personne> acteurs = film.getActeurs();
 				assertTrue(CollectionUtils.isNotEmpty(acteurs));
 				assertTrue(acteurs.size()>7);
 				assertTrue(FilmOrigine.EN_SALLE.equals(film.getOrigine()));
-				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.EN_SALLE, "1968/09/26", "2019/08/01");
+				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.EN_SALLE, "2019/09/18", "2020/01/13");
 			}
 			if(TITRE_FILM_2046.equals(film.getTitre())) {
 				is2046Exists = true;
@@ -130,7 +137,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 				FilmBuilder.assertFilmIsNotNull(film,false,Long.valueOf(temp).intValue(),FilmOrigine.DVD, "2013/03/13", "2019/08/01");
 			}
 		}
-		assertTrue(is2001odysseyExists);
+		assertTrue(isAdAstraExists);
 		assertTrue(is2046Exists);
 		assertTrue(is40ansExists);
 	}

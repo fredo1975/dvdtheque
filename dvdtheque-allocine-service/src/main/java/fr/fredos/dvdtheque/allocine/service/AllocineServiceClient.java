@@ -82,19 +82,11 @@ public class AllocineServiceClient {
 		critiquesPresse.setNote(review.getRating());
 		return critiquesPresse;
 	}
-	public void addCritiquesPresseToFilm(Film film, final Set<CritiquesPresse> set) {
-		film.getCritiquesPresse().addAll(set);
-	}
-	/**
-	 * 
-	 * @param title
-	 * @return
-	 */
-	public Set<CritiquesPresse> retrieveReviewListToCritiquesPresseList(final String title){
+	public void addCritiquesPresseToFilm(Film film) {
 		Set<Review> reviewsSet = null;
 		Integer firstPage = Integer.valueOf(1);
 		Set<CritiquesPresse> critiquePresseSet = null;
-		SearchResults searchMovieResults = retrieveAllocineMovieFeedByTitle(title);
+		SearchResults searchMovieResults = retrieveAllocineMovieFeedByTitle(film.getTitre());
 		if(searchMovieResults != null && searchMovieResults.getFeed() != null && searchMovieResults.getFeed().getMovie() != null && searchMovieResults.getFeed().getMovie().get(0) != null) {
 			int code = searchMovieResults.getFeed().getMovie().get(0).getCode();
 			if(code != 0) {
@@ -114,13 +106,15 @@ public class AllocineServiceClient {
 					for(Review review : reviewsSet) {
 						CritiquesPresse transformedCritiquesPresse = transformReviewToCritiquesPresse(review);
 						if(transformedCritiquesPresse != null) {
+							filmService.saveCritiquesPresse(transformedCritiquesPresse);
 							critiquePresseSet.add(transformedCritiquesPresse);
 						}
 					}
-					
 				}
 			}
 		}
-		return critiquePresseSet;
+		if(CollectionUtils.isNotEmpty(critiquePresseSet)) {
+			film.getCritiquesPresse().addAll(critiquePresseSet);
+		}
 	}
 }

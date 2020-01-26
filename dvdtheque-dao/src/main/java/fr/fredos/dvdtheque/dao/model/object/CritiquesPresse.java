@@ -28,7 +28,7 @@ public class CritiquesPresse implements Serializable{
 	private String nomSource;
 	@Column(name = "AUTEUR")
 	private String auteur;
-	@Column(name = "CRITIQUE")
+	@Column(name = "CRITIQUE",length=65535)
 	private String critique;
 	@Column(name = "NOTE")
 	private Double note;

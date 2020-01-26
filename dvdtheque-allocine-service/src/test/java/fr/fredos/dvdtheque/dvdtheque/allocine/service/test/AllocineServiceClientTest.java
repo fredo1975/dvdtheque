@@ -4,9 +4,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
@@ -24,7 +21,6 @@ import fr.fredos.dvdtheque.allocine.model.SearchResults;
 import fr.fredos.dvdtheque.allocine.service.AllocineServiceClient;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
-import fr.fredos.dvdtheque.dao.model.object.CritiquesPresse;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
@@ -85,8 +81,6 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
     
     @Test
     public void retrieveReviewListToCritiquesPresseListTest() throws ParseException {
-    	Set<CritiquesPresse> critiquesPresseList = client.retrieveReviewListToCritiquesPresseList(FilmBuilder.TITRE_FILM_TMBD_ID_844);
-    	assertTrue(CollectionUtils.isNotEmpty(critiquesPresseList));
     	Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -105,12 +99,13 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
 				.setZone(new Integer(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
-		client.addCritiquesPresseToFilm(film, critiquesPresseList);
+		client.addCritiquesPresseToFilm(film);
+		assertTrue(CollectionUtils.isNotEmpty(film.getCritiquesPresse()));
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		Film dbFilm = filmService.findFilm(filmId);
 		assertNotNull(dbFilm);
 		assertNotNull(dbFilm.getCritiquesPresse());
-		assertTrue("",dbFilm.getCritiquesPresse().size() == critiquesPresseList.size());
+		assertTrue("",dbFilm.getCritiquesPresse().size() == film.getCritiquesPresse().size());
     }
 }

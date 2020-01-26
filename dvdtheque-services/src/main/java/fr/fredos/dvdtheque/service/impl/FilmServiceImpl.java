@@ -48,6 +48,7 @@ import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.enums.PersonneType;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
+import fr.fredos.dvdtheque.dao.model.object.CritiquesPresse;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -259,6 +260,13 @@ public class FilmServiceImpl implements IFilmService {
 		Genre persistedGenre = filmDao.saveGenre(genre);
 		mapGenres.put(persistedGenre.getId(), persistedGenre);
 		return persistedGenre;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public CritiquesPresse saveCritiquesPresse(final CritiquesPresse critiquesPresse) {
+		CritiquesPresse persistedCritiquesPresse = filmDao.saveCritiquesPresse(critiquesPresse);
+		return persistedCritiquesPresse;
 	}
 
 	@Override
