@@ -39,7 +39,8 @@ import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
+		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
+		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class})
 @ActiveProfiles("local")
 public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(TmdbServiceClientTest.class);
