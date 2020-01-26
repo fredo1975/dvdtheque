@@ -74,7 +74,7 @@ public class AllocineServiceClient {
 	 */
 	private CritiquesPresse transformReviewToCritiquesPresse(final Review review) {
 		CritiquesPresse critiquesPresse = new CritiquesPresse();
-		critiquesPresse.setAuteur(review.getAuthor());
+		critiquesPresse.setAuteur(StringUtils.left(review.getAuthor(), 49));
 		critiquesPresse.setCode(review.getCode());
 		critiquesPresse.setCritique(review.getBody());
 		if(review.getNewsSource() != null && StringUtils.isNotEmpty(review.getNewsSource().getName())) {
