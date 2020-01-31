@@ -96,7 +96,8 @@ public class AllocineServiceClient {
 					reviewsSet = new HashSet<>(searchMovieResults.getFeed().getTotalResults().intValue());
 					addSearchResultsToSet(reviewsSet, searchReviewFeedResults);
 				}
-				int nbPages = searchReviewFeedResults.getFeed().getTotalResults()/searchReviewFeedResults.getFeed().getCount();
+				double nbPagesd = Math.ceil(searchReviewFeedResults.getFeed().getTotalResults().doubleValue()/searchReviewFeedResults.getFeed().getCount().doubleValue());
+				int nbPages = Double.valueOf(nbPagesd).intValue();
 				while(firstPage.intValue() < nbPages) {
 					firstPage = firstPage + Integer.valueOf(1);
 					searchReviewFeedResults = retrieveAllocineReviewFeedByCode(code, firstPage);

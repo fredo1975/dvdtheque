@@ -83,8 +83,8 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
     public void retrieveReviewListToCritiquesPresseListTest() throws ParseException {
     	Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
-		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_10315)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_10315)
 				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
@@ -107,5 +107,6 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
 		assertNotNull(dbFilm);
 		assertNotNull(dbFilm.getCritiquesPresse());
 		assertTrue("",dbFilm.getCritiquesPresse().size() == film.getCritiquesPresse().size());
+		assertTrue("should be 28 critiques presse",dbFilm.getCritiquesPresse().size() == 28);
     }
 }
