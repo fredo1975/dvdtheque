@@ -2,6 +2,7 @@ package fr.fredos.dvdtheque.batch.film.writer;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -37,7 +38,7 @@ public class ExcelStreamFilmWriter implements ItemStreamWriter<Film> {
 	
 	@Override
 	public void open(ExecutionContext executionContext) throws ItemStreamException {
-		String fileName = environment.getRequiredProperty(EXCEL_DVD_FILE_PATH_EXPORT)+environment.getRequiredProperty(EXCEL_DVD_FILE_NAME_EXPORT);
+		String fileName = environment.getRequiredProperty(EXCEL_DVD_FILE_PATH_EXPORT)+"ListeDvdExport-"+new Date().getTime()+"-TOUS.xlsx";
     	this.resource = new FileSystemResource(fileName);
     	this.workBook = this.excelFilmHandler.getWorkBook();
 		this.excelFilmHandler.initSheet(this.workBook);

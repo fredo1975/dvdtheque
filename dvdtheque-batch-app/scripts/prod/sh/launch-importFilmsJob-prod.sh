@@ -1,0 +1,1 @@
+java -jar dvdtheque-batch-app.jar --spring.batch.job.names=importFilms --spring.profiles.active=prod INPUT_FILE_PATH=
