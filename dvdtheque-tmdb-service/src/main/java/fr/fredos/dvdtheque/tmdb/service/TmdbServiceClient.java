@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,9 +37,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.fredos.dvdtheque.allocine.service.AllocineServiceClient;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.utils.DateUtils;
+import fr.fredos.dvdtheque.dao.model.object.CritiquesPresse;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -67,6 +70,8 @@ public class TmdbServiceClient {
 	protected IFilmService filmService;
 	@Autowired
 	protected IPersonneService personneService;
+	@Autowired
+    private AllocineServiceClient allocineServiceClient;
 	private final RestTemplate restTemplate;
 	private static String TMDB_SEARCH_MOVIE_QUERY="themoviedb.search.movie.query";
 	private static String TMDB_API_KEY="themoviedb.api.key";
@@ -134,6 +139,7 @@ public class TmdbServiceClient {
 					filmToSave.setDvd(dvd);
 				}
 				filmToSave.setDateInsertion(DateUtils.clearDate(new Date()));
+				allocineServiceClient.addCritiquesPresseToFilm(filmToSave);
 				Long id = filmService.saveNewFilm(filmToSave);
 				filmToSave.setId(id);
 				return filmToSave;
@@ -285,7 +291,6 @@ public class TmdbServiceClient {
 		Integer firstPage = Integer.valueOf(1);
 		SearchResults searchResults = retrieveTmdbSearchResults(titre, firstPage);
 		if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
-			films = new HashSet<>(searchResults.getTotal_results().intValue());
 			results = new HashSet<>(searchResults.getTotal_results().intValue());
 			addResultsToSet(results, searchResults);
 		}

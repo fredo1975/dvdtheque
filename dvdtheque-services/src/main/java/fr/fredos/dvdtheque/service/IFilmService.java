@@ -8,6 +8,7 @@ import java.util.Set;
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
+import fr.fredos.dvdtheque.dao.model.object.CritiquesPresse;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -35,6 +36,7 @@ public interface IFilmService {
 	Genre findGenre(final int id);
 	Genre attachToSession(final Genre genre);
 	Genre saveGenre(final Genre genre);
+	CritiquesPresse saveCritiquesPresse(final CritiquesPresse critiquesPresse);
 	List<Genre> findAllGenres();
 	List<Film> findAllFilmsByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
 	void cleanAllCaches();

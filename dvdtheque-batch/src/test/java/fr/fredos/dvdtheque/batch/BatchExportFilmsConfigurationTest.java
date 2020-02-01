@@ -24,7 +24,8 @@ import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 		RetrieveDateInsertionTasklet.class,
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
+		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
+		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class})
 public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	@Autowired
 	public Job exportFilmsJob;
@@ -43,5 +44,4 @@ public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		JobExecution jobExecution = jobLauncherTestUtils(exportFilmsJob).launchJob(jobParameters);
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
-	
 }

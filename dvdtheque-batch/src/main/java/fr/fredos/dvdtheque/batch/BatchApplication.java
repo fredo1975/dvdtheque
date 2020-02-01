@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		"fr.fredos.dvdtheque.service",
 		"fr.fredos.dvdtheque.dao",
 		"fr.fredos.dvdtheque.tmdb.service",
+		"fr.fredos.dvdtheque.allocine.service",
 		"fr.fredos.dvdtheque.jms.publisher"})
 public class BatchApplication {
 	public static void main(String[] args) throws Exception {

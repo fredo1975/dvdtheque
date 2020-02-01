@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jms.core.JmsTemplate;
 
+import fr.fredos.dvdtheque.allocine.service.AllocineServiceClient;
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -32,6 +33,8 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 	protected Logger logger = LoggerFactory.getLogger(FilmProcessor.class);
 	@Autowired
     private TmdbServiceClient tmdbServiceClient;
+	@Autowired
+    private AllocineServiceClient allocineServiceClient;
 	@Autowired
 	protected IFilmService filmService;
 	@Autowired
@@ -101,8 +104,10 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 				cal.set(Calendar.MILLISECOND, 0);
 				filmToSave.setDateInsertion(cal.getTime());
 			}
-			
 			filmToSave.setId(null);
+			
+			allocineServiceClient.addCritiquesPresseToFilm(filmToSave);
+			
 			logger.debug(filmToSave.toString());
 			watch.stop();
 			jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_COMPLETED, filmToSave,watch.getTime(),JmsStatus.FILM_PROCESSOR_COMPLETED.statusValue()));

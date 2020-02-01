@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.FilmFilterCriteriaType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.dao.model.object.CritiquesPresse;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
@@ -51,6 +52,11 @@ public class FilmDaoImpl implements FilmDao {
 		this.entityManager.persist(genre);
 		this.entityManager.flush();
 		return genre;
+	}
+	public CritiquesPresse saveCritiquesPresse(final CritiquesPresse critiquesPresse) {
+		this.entityManager.persist(critiquesPresse);
+		this.entityManager.flush();
+		return critiquesPresse;
 	}
 	public void removeGenres() {
 		
@@ -188,6 +194,12 @@ public class FilmDaoImpl implements FilmDao {
 			removeFilm(film);
 		}
 		this.entityManager.flush();
+		
+	}
+	public void cleanAllCritiquesPresse() {
+		Query query = this.entityManager.createQuery("delete from CritiquesPresse");
+		int nbCritiquesPresse = query.executeUpdate();
+		logger.debug(nbCritiquesPresse+" CritiquesPresse deleted");
 		
 	}
 	public void cleanAllGenres() {

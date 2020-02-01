@@ -33,15 +33,14 @@ import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.tmdb.model.Credits;
-import fr.fredos.dvdtheque.tmdb.model.ReleaseDates;
 import fr.fredos.dvdtheque.tmdb.model.Results;
-import fr.fredos.dvdtheque.tmdb.model.SearchResults;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class})
+		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
+		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class})
 @ActiveProfiles("local")
 public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(TmdbServiceClientTest.class);
@@ -81,24 +80,6 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		Calendar cal = Calendar.getInstance();
 		return DateUtils.addDays(cal.getTime(), RIP_DATE);
 	}
-    private void assertFilmIsNotNull(Film film,boolean dateRipNull) {
-		assertNotNull(film);
-		assertNotNull(film.getId());
-		assertNotNull(film.getTitre());
-		assertNotNull(film.getAnnee());
-		assertNotNull(film.getDvd());
-		assertTrue(CollectionUtils.isNotEmpty(film.getGenres()));
-		assertTrue(film.getGenres().size() == 2);
-		if(!dateRipNull) {
-			assertEquals(filmService.clearDate(createRipDate()),film.getDvd().getDateRip());
-		}
-		assertNotNull(film.getOverview());
-		assertTrue(CollectionUtils.isNotEmpty(film.getActeurs()));
-		assertTrue(film.getActeurs().size()>=3);
-		assertTrue(CollectionUtils.isNotEmpty(film.getRealisateurs()));
-		assertTrue(film.getRealisateurs().size()==1);
-	}
-    
 	@Test
     public void retrieveTmdbResultsTest() {
 		Results res = client.retrieveTmdbSearchResultsById(FilmBuilder.tmdbId1);
