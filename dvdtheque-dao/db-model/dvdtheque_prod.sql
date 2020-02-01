@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Hôte :                        192.168.1.104
--- Version du serveur:           5.7.28-0ubuntu0.18.04.4 - (Ubuntu)
+-- Version du serveur:           5.7.29-0ubuntu0.18.04.1 - (Ubuntu)
 -- SE du serveur:                Linux
 -- HeidiSQL Version:             10.1.0.5464
 -- --------------------------------------------------------
@@ -13,7 +13,6 @@
 
 
 -- Listage de la structure de la base pour dvdtheque_prod
-DROP DATABASE IF EXISTS `dvdtheque_prod`;
 CREATE DATABASE IF NOT EXISTS `dvdtheque_prod` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `dvdtheque_prod`;
 
@@ -141,6 +140,19 @@ CREATE TABLE IF NOT EXISTS `BATCH_STEP_EXECUTION_SEQ` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
+-- Listage de la structure de la table dvdtheque_prod. CRITIQUES_PRESSE
+DROP TABLE IF EXISTS `CRITIQUES_PRESSE`;
+CREATE TABLE IF NOT EXISTS `CRITIQUES_PRESSE` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `CODE` bigint(20) NOT NULL,
+  `NOM_SOURCE` varchar(50) NOT NULL,
+  `AUTEUR` varchar(50) DEFAULT NULL,
+  `CRITIQUE` longtext,
+  `NOTE` double NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=31347 DEFAULT CHARSET=latin1;
+
+-- Les données exportées n'étaient pas sélectionnées.
 -- Listage de la structure de la table dvdtheque_prod. DVD
 DROP TABLE IF EXISTS `DVD`;
 CREATE TABLE IF NOT EXISTS `DVD` (
@@ -153,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `DVD` (
   `RIPPED` tinyint(1) NOT NULL,
   `DATE_SORTIE` date DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=879 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1448 DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
 -- Listage de la structure de la table dvdtheque_prod. FILM
@@ -172,8 +184,9 @@ CREATE TABLE IF NOT EXISTS `FILM` (
   `OVERVIEW` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `RUNTIME` int(11) DEFAULT NULL,
   `DATE_SORTIE` date NOT NULL,
+  `DATE_INSERTION` date NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=1142 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1810 DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
 -- Listage de la structure de la table dvdtheque_prod. FILM_acteurs
@@ -183,6 +196,16 @@ CREATE TABLE IF NOT EXISTS `FILM_acteurs` (
   `ACTEURS_ID` bigint(20) NOT NULL,
   PRIMARY KEY (`FILM_ID`,`ACTEURS_ID`),
   KEY `FK_ACTEURS_ID` (`ACTEURS_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Les données exportées n'étaient pas sélectionnées.
+-- Listage de la structure de la table dvdtheque_prod. FILM_critiquesPresse
+DROP TABLE IF EXISTS `FILM_critiquesPresse`;
+CREATE TABLE IF NOT EXISTS `FILM_critiquesPresse` (
+  `FILM_ID` bigint(20) NOT NULL,
+  `CRITIQUESPRESSE_ID` bigint(20) NOT NULL,
+  PRIMARY KEY (`FILM_ID`,`CRITIQUESPRESSE_ID`),
+  KEY `FK_CRITIQUESPRESSE_ID` (`CRITIQUESPRESSE_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
@@ -214,7 +237,7 @@ CREATE TABLE IF NOT EXISTS `GENRE` (
   `NAME` varchar(2500) DEFAULT NULL,
   `TMDB_ID` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=167 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=185 DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
 -- Listage de la structure de la table dvdtheque_prod. PERSONNE
@@ -227,7 +250,7 @@ CREATE TABLE IF NOT EXISTS `PERSONNE` (
   `ID_PAYS` int(11) DEFAULT NULL,
   `PROFILE_PATH` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15666 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21710 DEFAULT CHARSET=latin1;
 
 -- Les données exportées n'étaient pas sélectionnées.
 -- Listage de la structure de la table dvdtheque_prod. ROLES
