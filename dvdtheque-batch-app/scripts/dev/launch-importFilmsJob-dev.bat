@@ -1,1 +1,1 @@
-java -jar dvdtheque-batch-app.jar --spring.batch.job.names=importFilms --spring.profiles.active=dev
+java -jar dvdtheque-batch-app.jar --spring.batch.job.names=importFilms --spring.profiles.active=dev INPUT_FILE_PATH=
