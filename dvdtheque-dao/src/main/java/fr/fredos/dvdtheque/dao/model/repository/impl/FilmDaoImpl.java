@@ -62,7 +62,7 @@ public class FilmDaoImpl implements FilmDao {
 		
 	}
 	public Film findFilm(final Long id){
-		Query q = this.entityManager.createQuery("from Film film join fetch film.realisateurs real where film.id = :id");
+		Query q = this.entityManager.createQuery("from Film film where film.id = :id");
 		q.setParameter("id", id);
 		return (Film)q.getSingleResult();
 	}

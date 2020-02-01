@@ -173,13 +173,16 @@ public class FilmServiceImpl implements IFilmService {
 		}
 		FilmOrigine oldOrigine = filmDao.findFilmOrigine(film.getId());
 		Film mergedFilm = filmDao.updateFilm(film);
-		mapFilms.put(film.getId(), film);
+		Set<CritiquesPresse> newSortedCritiquesPresseSet = new TreeSet<>(mergedFilm.getCritiquesPresse());
+		mergedFilm.getCritiquesPresse().clear();
+		mergedFilm.getCritiquesPresse().addAll(newSortedCritiquesPresseSet);
+		mapFilms.put(film.getId(), mergedFilm);
 		if(!oldOrigine.equals(film.getOrigine())) {
-			handleCachePersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, film,oldOrigine);
-			handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film,oldOrigine);
+			handleCachePersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, mergedFilm,oldOrigine);
+			handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, mergedFilm,oldOrigine);
 		}
-		handleCachePersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, film,null);
-		handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film,null);
+		handleCachePersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, mergedFilm,null);
+		handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, mergedFilm,null);
 		return mergedFilm;
 	}
 
