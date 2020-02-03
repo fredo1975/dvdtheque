@@ -640,14 +640,15 @@ public class FilmServiceImpl implements IFilmService {
 	public FilmListParam findFilmListParamByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam) {
 		StopWatch watch = new StopWatch();
 		watch.start();
-		List<Personne> realisateurs = this.findAllRealisateursByFilmDisplayType(filmDisplayTypeParam);
-		List<Personne> acteurs = this.findAllActeursByFilmDisplayType(filmDisplayTypeParam);
+		List<Film> films = this.findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
+		Set<Personne> acteurs = films.stream().map(Film::getActeurs).flatMap(x->x.stream()).collect(Collectors.toSet());
+		Set<Personne> realisateurs = films.stream().map(Film::getRealisateurs).flatMap(x->x.stream()).collect(Collectors.toSet());
 		int realisateursLength = realisateurs.size();
 		int acteursLength = acteurs.size();
 		FilmListParam filmListParam = new FilmListParamBuilder.Builder()
 				.setFilms(this.findAllFilmsByFilmDisplayType(filmDisplayTypeParam))
-				.setActeurs(acteurs)
-				.setRealisateurs(realisateurs)
+				.setActeurs(new ArrayList<Personne>(acteurs))
+				.setRealisateurs(new ArrayList<Personne>(realisateurs))
 				.setActeursLength(acteursLength)
 				.setRealisateursLength(realisateursLength)
 				.setGenres(this.findAllGenres())
