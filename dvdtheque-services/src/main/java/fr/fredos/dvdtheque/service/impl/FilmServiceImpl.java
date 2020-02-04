@@ -165,12 +165,13 @@ public class FilmServiceImpl implements IFilmService {
 		mergedFilm.getCritiquesPresse().clear();
 		mergedFilm.getCritiquesPresse().addAll(newSortedCritiquesPresseSet);
 		mapFilms.put(film.getId(), mergedFilm);
+		/*
 		if(!oldOrigine.equals(film.getOrigine())) {
 			handleCachePersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, mergedFilm,oldOrigine);
 			handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, mergedFilm,oldOrigine);
 		}
 		handleCachePersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, mergedFilm,null);
-		handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, mergedFilm,null);
+		handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, mergedFilm,null);*/
 		return mergedFilm;
 	}
 
@@ -188,10 +189,10 @@ public class FilmServiceImpl implements IFilmService {
 		upperCaseTitre(film);
 		Long id = filmDao.saveNewFilm(film);
 		mapFilms.put(id, film);
-		
+		/*
 		handleCachePersonneByOrigine(PersonneType.ACTEUR,mapActeursByOrigine, film,null);
 		handleCachePersonneByOrigine(PersonneType.REALISATEUR,mapRealisateursByOrigine, film,null);
-		
+		*/
 		return id;
 	}
 	/**
@@ -331,8 +332,9 @@ public class FilmServiceImpl implements IFilmService {
 		film = filmDao.findFilm(film.getId());
 		filmDao.removeFilm(film);
 		mapFilms.remove(film.getId());
+		/*
 		removePersonnesFromCachePersonnesByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, film, film.getOrigine());
-		removePersonnesFromCachePersonnesByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film, film.getOrigine());
+		removePersonnesFromCachePersonnesByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film, film.getOrigine());*/
 	}
 
 	public static void saveImage(final String imageUrl, final String destinationFile) throws IOException {
