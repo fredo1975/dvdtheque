@@ -479,27 +479,34 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE, null);
-		Film filmToUpdate = filmService.findFilm(film.getId());
+		Film filmToUpdate = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		filmToUpdate.setActeurs(film.getActeurs());
+		filmToUpdate.setRealisateurs(film.getRealisateurs());
+		filmToUpdate.setId(filmId);
 		assertNotNull(filmToUpdate);
 		logger.debug("filmToUpdate=" + filmToUpdate.toString());
-		filmToUpdate.setTitre(FilmBuilder.TITRE_FILM_TMBD_ID_4780);
-		filmToUpdate.setOrigine(FilmOrigine.DVD);
-		filmToUpdate.setDvd(new Dvd());
-		filmToUpdate.getDvd().setAnnee(2019);
-		filmToUpdate.getDvd().setEdition("");
-		filmToUpdate.getDvd().setFormat(DvdFormat.DVD);
-		filmToUpdate.getDvd().setZone(new Integer(1));
-		filmToUpdate.getDvd().setRipped(false);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-		filmToUpdate.getDvd().setDateSortie(sdf.parse(FilmBuilder.DVD_DATE_SORTIE));
 		Film filmUpdated = filmService.updateFilm(filmToUpdate);
 		FilmBuilder.assertFilmIsNotNull(filmUpdated, true,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
 		//Film filmUpdated = filmService.findFilm(film.getId());
-		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), filmUpdated.getTitre());
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmUpdated.getTitre());
 		assertEquals(FilmOrigine.DVD, filmUpdated.getOrigine());
 		assertEquals(DvdFormat.DVD, filmUpdated.getDvd().getFormat());
-		assertEquals(new Integer(1), filmUpdated.getDvd().getZone());
-		assertFalse(filmUpdated.getDvd().isRipped());
+		assertEquals(new Integer(2), filmUpdated.getDvd().getZone());
+		assertTrue(filmUpdated.getDvd().isRipped());
 		FilmDisplayTypeParam enSalleDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.EN_SALLE);
 		FilmDisplayTypeParam dvdDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.DVD);
 		FilmBuilder.assertCacheSize(0, 0, enSalleDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(enSalleDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(enSalleDisplayTypeParam));

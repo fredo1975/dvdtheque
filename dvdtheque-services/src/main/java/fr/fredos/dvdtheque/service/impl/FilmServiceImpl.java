@@ -96,20 +96,8 @@ public class FilmServiceImpl implements IFilmService {
 		// logger.info("films cache: " + mapFilms.size());
 		mapGenres = instance.getMap(CACHE_GENRE);
 		mapGenres.addIndex("id", true);
-		mapRealisateurs = instance.getMap(CACHE_REALISATEUR);
-		mapRealisateurs.addIndex("id", true);
-		mapRealisateurs.addIndex("nom", false);
-		mapActeurs = instance.getMap(CACHE_ACTEUR);
-		mapActeurs.addIndex("id", true);
-		mapActeurs.addIndex("nom", false);
-		mapActeursByOrigine = instance.getMap(CACHE_ACTEUR_BY_ORIGINE);
-		//mapActeursByOrigine.addIndex("id", true);
-		mapRealisateursByOrigine = instance.getMap(CACHE_REALISATEUR_BY_ORIGINE);
-		//mapRealisateursByOrigine.addIndex("id", true);
 		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,40,FilmOrigine.TOUS);
 		findAllFilms(filmDisplayTypeParam);
-		findAllActeursByFilmDisplayType(filmDisplayTypeParam);
-		findAllRealisateursByFilmDisplayType(filmDisplayTypeParam);
 	}
 
 	@Transactional(readOnly = true)
@@ -177,12 +165,13 @@ public class FilmServiceImpl implements IFilmService {
 		mergedFilm.getCritiquesPresse().clear();
 		mergedFilm.getCritiquesPresse().addAll(newSortedCritiquesPresseSet);
 		mapFilms.put(film.getId(), mergedFilm);
+		/*
 		if(!oldOrigine.equals(film.getOrigine())) {
 			handleCachePersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, mergedFilm,oldOrigine);
 			handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, mergedFilm,oldOrigine);
 		}
 		handleCachePersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, mergedFilm,null);
-		handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, mergedFilm,null);
+		handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, mergedFilm,null);*/
 		return mergedFilm;
 	}
 
@@ -200,10 +189,10 @@ public class FilmServiceImpl implements IFilmService {
 		upperCaseTitre(film);
 		Long id = filmDao.saveNewFilm(film);
 		mapFilms.put(id, film);
-		
+		/*
 		handleCachePersonneByOrigine(PersonneType.ACTEUR,mapActeursByOrigine, film,null);
 		handleCachePersonneByOrigine(PersonneType.REALISATEUR,mapRealisateursByOrigine, film,null);
-		
+		*/
 		return id;
 	}
 	/**
@@ -319,8 +308,6 @@ public class FilmServiceImpl implements IFilmService {
 		filmDao.cleanAllGenres();
 		filmDao.cleanAllCritiquesPresse();
 		mapGenres.clear();
-		mapActeursByOrigine.clear();
-		mapRealisateursByOrigine.clear();
 		personneService.cleanAllPersonnes();
 	}
 
@@ -345,8 +332,9 @@ public class FilmServiceImpl implements IFilmService {
 		film = filmDao.findFilm(film.getId());
 		filmDao.removeFilm(film);
 		mapFilms.remove(film.getId());
+		/*
 		removePersonnesFromCachePersonnesByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, film, film.getOrigine());
-		removePersonnesFromCachePersonnesByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film, film.getOrigine());
+		removePersonnesFromCachePersonnesByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film, film.getOrigine());*/
 	}
 
 	public static void saveImage(final String imageUrl, final String destinationFile) throws IOException {
@@ -473,10 +461,6 @@ public class FilmServiceImpl implements IFilmService {
 	public void cleanAllCaches() {
 		mapFilms.clear();
 		mapGenres.clear();
-		mapActeurs.clear();
-		mapRealisateurs.clear();
-		mapActeursByOrigine.clear();
-		mapRealisateursByOrigine.clear();
 	}
 	
 	@Override
@@ -505,37 +489,14 @@ public class FilmServiceImpl implements IFilmService {
 	public List<Personne> findAllRealisateursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam) {
 		StopWatch watch = new StopWatch();
 		watch.start();
-		//Set<Personne> realisateursByOrigineToReturnSet = new ConcurrentSkipListSet<Personne>();
 		Set<Personne> realisateursByOrigineToReturnSet = new TreeSet<Personne>();
-		if(mapRealisateursByOrigine.size() == 0) {
-			logger.debug("findAllRealisateursByFilmDisplayType no realisateurs by origine find");
-			List<Film> films = findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
-			createPersonneMap(PersonneType.REALISATEUR,films, realisateursByOrigineToReturnSet,mapRealisateursByOrigine);
+		List<Film> films = findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
+		if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+			realisateursByOrigineToReturnSet = findAllFilmsByFilmDisplayType(filmDisplayTypeParam).stream().map(Film::getRealisateurs).flatMap(x->x.stream()).collect(Collectors.toSet());
 		}else {
-			Map<Film,Set<Personne>> realisateursByFilm = null;
-			if(FilmOrigine.TOUS == filmDisplayTypeParam.getFilmOrigine()) {
-				realisateursByFilm = new HashMap<Film, Set<Personne>>();
-				for(Map.Entry<FilmOrigine,Map<Film,Set<Personne>>> entry : mapRealisateursByOrigine.entrySet()) {
-					for(Map.Entry<Film,Set<Personne>> entry2 : entry.getValue().entrySet()) {
-						realisateursByFilm.put(entry2.getKey(),entry2.getValue());
-					}
-				}
-			}else {
-				realisateursByFilm = mapRealisateursByOrigine.get(filmDisplayTypeParam.getFilmOrigine());
-			}
-			if (MapUtils.isNotEmpty(realisateursByFilm) && realisateursByFilm.size() > 0) {
-				logger.debug("findAllRealisateursByFilmDisplayType realisateursByFilm cache size: " + realisateursByFilm.values().size());
-				Collection<Film> films = realisateursByFilm.keySet();
-				if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-					for(Set<Personne> set : realisateursByFilm.values()) {
-						realisateursByOrigineToReturnSet.addAll(set);
-					}
-				}else {
-					List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
-					for(Film film : sortedFilms) {
-						realisateursByOrigineToReturnSet.addAll(film.getRealisateurs());
-					}
-				}
+			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
+			for(Film film : sortedFilms) {
+				realisateursByOrigineToReturnSet.addAll(film.getRealisateurs());
 			}
 		}
 		watch.stop();
@@ -571,65 +532,19 @@ public class FilmServiceImpl implements IFilmService {
 		});
 		return personnes.stream().collect(Collectors.toList());
 	}
-	private void createPersonneMap(final PersonneType personneType,
-			final Collection<Film> films, 
-			Set<Personne> acteursByOrigineToReturnSet, 
-			IMap<FilmOrigine, Map<Film,Set<Personne>>> mapPersonnesByOrigine) {
-		Map<FilmOrigine,Map<Film,Set<Personne>>> personnesByOrigineMap = new ConcurrentHashMap<>();
-		films.stream().forEach(film -> {
-			Map<Film,Set<Personne>> personnesByFilmMap = new ConcurrentHashMap<>();
-			personnesByFilmMap.put(film, PersonneType.ACTEUR.equals(personneType)?film.getActeurs():film.getRealisateurs());
-			acteursByOrigineToReturnSet.addAll(PersonneType.ACTEUR.equals(personneType)?film.getActeurs():film.getRealisateurs());
-			Map<Film,Set<Personne>> map = personnesByOrigineMap.get(film.getOrigine());
-			if(MapUtils.isEmpty(map)) {
-				personnesByOrigineMap.put(film.getOrigine(), personnesByFilmMap);
-			}else {
-				map.put(film,PersonneType.ACTEUR.equals(personneType)?film.getActeurs():film.getRealisateurs());
-			}
-		});
-		for(Map.Entry<FilmOrigine,Map<Film,Set<Personne>>> entry : personnesByOrigineMap.entrySet()) {
-			mapPersonnesByOrigine.put(entry.getKey(),entry.getValue());
-		}
-	}
+	
 	@Override
 	public List<Personne> findAllActeursByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam) {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		Set<Personne> acteursByOrigineToReturnSet = new TreeSet<Personne>();
-		//ConcurrentSkipListSet<Personne> acteursByOrigineToReturnSet = new ConcurrentSkipListSet<Personne>();
-		if(mapActeursByOrigine.size() == 0) {
-			logger.debug("findAllActeursByFilmDisplayType no acteurs by origine found");
-			List<Film> films = findAllFilms(filmDisplayTypeParam);
-			if(CollectionUtils.isEmpty(films)) {
-				logger.error("findAllActeursByFilmDisplayType mapFilms should have been initialized");
-				return new ArrayList<Personne>();
-			}
-			createPersonneMap(PersonneType.ACTEUR, films, acteursByOrigineToReturnSet,mapActeursByOrigine);
-		}else{
-			Map<Film,Set<Personne>> acteursByFilm = null;
-			if(FilmOrigine.TOUS == filmDisplayTypeParam.getFilmOrigine()) {
-				acteursByFilm = new HashMap<Film, Set<Personne>>();
-				for(Map.Entry<FilmOrigine,Map<Film,Set<Personne>>> entry : mapActeursByOrigine.entrySet()) {
-					for(Map.Entry<Film,Set<Personne>> entry2 : entry.getValue().entrySet()) {
-						acteursByFilm.put(entry2.getKey(),entry2.getValue());
-					}
-				}
-			}else {
-				acteursByFilm = mapActeursByOrigine.get(filmDisplayTypeParam.getFilmOrigine());
-			}
-			if (MapUtils.isNotEmpty(acteursByFilm) && acteursByFilm.size() > 0) {
-				logger.debug("findAllActeursByFilmDisplayType acteursByFilm cache size: " + acteursByFilm.values().size());
-				Collection<Film> films = acteursByFilm.keySet();
-				if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-					for(Set<Personne> set : acteursByFilm.values()) {
-						acteursByOrigineToReturnSet.addAll(set);
-					}
-				}else {
-					List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
-					for(Film film : sortedFilms) {
-						acteursByOrigineToReturnSet.addAll(film.getActeurs());
-					}
-				}
+		List<Film> films = findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
+		if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+			acteursByOrigineToReturnSet = findAllFilmsByFilmDisplayType(filmDisplayTypeParam).stream().map(Film::getActeurs).flatMap(x->x.stream()).collect(Collectors.toSet());
+		}else {
+			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
+			for(Film film : sortedFilms) {
+				acteursByOrigineToReturnSet.addAll(film.getActeurs());
 			}
 		}
 		watch.stop();
@@ -640,14 +555,15 @@ public class FilmServiceImpl implements IFilmService {
 	public FilmListParam findFilmListParamByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam) {
 		StopWatch watch = new StopWatch();
 		watch.start();
-		List<Personne> realisateurs = this.findAllRealisateursByFilmDisplayType(filmDisplayTypeParam);
-		List<Personne> acteurs = this.findAllActeursByFilmDisplayType(filmDisplayTypeParam);
+		List<Film> films = this.findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
+		Set<Personne> acteurs = films.stream().map(Film::getActeurs).flatMap(x->x.stream()).collect(Collectors.toSet());
+		Set<Personne> realisateurs = films.stream().map(Film::getRealisateurs).flatMap(x->x.stream()).collect(Collectors.toSet());
 		int realisateursLength = realisateurs.size();
 		int acteursLength = acteurs.size();
 		FilmListParam filmListParam = new FilmListParamBuilder.Builder()
-				.setFilms(this.findAllFilmsByFilmDisplayType(filmDisplayTypeParam))
-				.setActeurs(acteurs)
-				.setRealisateurs(realisateurs)
+				.setFilms(films)
+				.setActeurs(new ArrayList<Personne>(acteurs))
+				.setRealisateurs(new ArrayList<Personne>(realisateurs))
 				.setActeursLength(acteursLength)
 				.setRealisateursLength(realisateursLength)
 				.setGenres(this.findAllGenres())

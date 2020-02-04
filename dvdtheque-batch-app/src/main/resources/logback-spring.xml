@@ -34,7 +34,7 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="org.springframework" level="debug"/>
+    <logger name="org.springframework" level="info"/>
     <logger name="fr.fredos.dvdtheque" level="info"/>
 
     <root level="info">
