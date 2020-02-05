@@ -1469,12 +1469,14 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertTrue(CollectionUtils.isNotEmpty(filmListParam.getRealisateurs()));
 		assertTrue("realisateurs list should be 2",filmListParam.getRealisateurs().size()==2);
 		assertTrue("realisateurLength should be 2",filmListParam.getRealisateursLength()==2);
-		
+		assertEquals("first realisateur shouyld be "+FilmBuilder.REAL_NOM_TMBD_ID_844,filmListParam.getRealisateurs().get(0).getNom(),FilmBuilder.REAL_NOM_TMBD_ID_844);
+		assertEquals("second realisateur shouyld be "+FilmBuilder.REAL_NOM_TMBD_ID_1271,filmListParam.getRealisateurs().get(1).getNom(),FilmBuilder.REAL_NOM_TMBD_ID_1271);
 		assertNotNull(filmListParam.getActeurs());
 		assertTrue(CollectionUtils.isNotEmpty(filmListParam.getActeurs()));
 		assertTrue("acteurs list should be 9",filmListParam.getActeurs().size()==9);
 		assertTrue("acteurLength list should be 9",filmListParam.getActeursLength()==9);
-		
+		assertEquals("first acteur shouyld be "+FilmBuilder.ACT3_TMBD_ID_4780,filmListParam.getActeurs().get(0).getNom(),FilmBuilder.ACT3_TMBD_ID_4780);
+		assertEquals("second acteur shouyld be "+FilmBuilder.ACT2_TMBD_ID_1271,filmListParam.getActeurs().get(1).getNom(),FilmBuilder.ACT2_TMBD_ID_1271);
 		assertNotNull(filmListParam.getGenres());
 		assertTrue("genres list should be 2",filmListParam.getGenres().size()==2);
 	}

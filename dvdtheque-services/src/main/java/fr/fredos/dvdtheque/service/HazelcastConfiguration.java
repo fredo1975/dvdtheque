@@ -29,18 +29,10 @@ public class HazelcastConfiguration {
 	public HazelcastInstance hazelcastInstance() {
 		Config config = new Config();
 		config.getGroupConfig().setName(groupConfigName);
-
 		config.getNetworkConfig().getInterfaces().setEnabled(true);
 		List<String> interfacesList = new ArrayList<>();
 		interfacesList.add(interfaces);
 		config.getNetworkConfig().getInterfaces().setInterfaces(interfacesList);
-		/*
-		List<String> tcpIpConfigmembers = new ArrayList<String>();
-		tcpIpConfigmembers.add(members);
-		config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
-		config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true);
-		config.getNetworkConfig().getJoin().getTcpIpConfig().setMembers(tcpIpConfigmembers);
-		config.getNetworkConfig().setPort(5701);*/
 		config.setInstanceName(RandomStringUtils.random(8, true, false))
 				.addMapConfig(new MapConfig().setName("films")
 						.setMaxSizeConfig(new MaxSizeConfig(10000, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
