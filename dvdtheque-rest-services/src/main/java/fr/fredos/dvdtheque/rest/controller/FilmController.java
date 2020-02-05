@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -277,10 +276,7 @@ public class FilmController {
 			JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
 	    	jobParametersBuilder.addString("INPUT_FILE_PATH", resFile.getAbsolutePath());
 	    	jobParametersBuilder.addLong("TIMESTAMP",new Date().getTime());
-	    	JobExecution jobExecution  = jobLauncher.run(importFilmsJob, jobParametersBuilder.toJobParameters());
-	    	long timeRunning = jobExecution.getCreateTime().getTime()-jobExecution.getEndTime().getTime();
-	    	logger.debug("timeRunning="+timeRunning/100 + " s");
-	    	logger.debug("getStatus="+jobExecution.getStatus()+ " getExitStatus="+jobExecution.getExitStatus());
+	    	jobLauncher.run(importFilmsJob, jobParametersBuilder.toJobParameters());
 		} catch (JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | JobParametersInvalidException | JobRestartException e) {
 			logger.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
