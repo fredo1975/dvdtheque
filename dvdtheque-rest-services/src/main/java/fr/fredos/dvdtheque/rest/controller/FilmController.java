@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -36,7 +37,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import fr.fredos.dvdtheque.allocine.service.AllocineServiceClient;
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -277,12 +277,14 @@ public class FilmController {
 			JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
 	    	jobParametersBuilder.addString("INPUT_FILE_PATH", resFile.getAbsolutePath());
 	    	jobParametersBuilder.addLong("TIMESTAMP",new Date().getTime());
-	    	jobLauncher.run(importFilmsJob, jobParametersBuilder.toJobParameters());
+	    	JobExecution jobExecution  = jobLauncher.run(importFilmsJob, jobParametersBuilder.toJobParameters());
+	    	long timeRunning = jobExecution.getCreateTime().getTime()-jobExecution.getEndTime().getTime();
+	    	logger.debug("timeRunning="+timeRunning/100 + " s");
+	    	logger.debug("getStatus="+jobExecution.getStatus()+ " getExitStatus="+jobExecution.getExitStatus());
 		} catch (JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | JobParametersInvalidException | JobRestartException e) {
 			logger.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		
 		return ResponseEntity.noContent().build();
 	}
 	@PostMapping("/films/export")
