@@ -1,5 +1,7 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
+import java.util.Date;
+
 import javax.jms.Topic;
 
 import org.apache.activemq.command.ActiveMQTopic;
@@ -103,8 +105,13 @@ public class BatchImportFilmsConfiguration{
     
 	@Bean
 	public Job importFilmsJob() {
-		return jobBuilderFactory.get("importFilms").incrementer(new RunIdIncrementer()).start(cleanDBStep())
+		long start = new Date().getTime();
+		jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.IMPORT_INIT, null,0l,JmsStatus.IMPORT_INIT.statusValue()));
+		Job job = jobBuilderFactory.get("importFilms").incrementer(new RunIdIncrementer()).start(cleanDBStep())
 				.next(importFilmsStep()).next(setRippedFlagStep()).next(setRetrieveDateInsertionStep()).build();
+		long end = new Date().getTime() - start;
+		jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.IMPORT_COMPLETED, null,end,JmsStatus.IMPORT_COMPLETED.statusValue()));
+		return job;
 	}
 	
     @Bean
