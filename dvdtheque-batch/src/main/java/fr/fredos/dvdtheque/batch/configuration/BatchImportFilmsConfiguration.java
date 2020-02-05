@@ -110,6 +110,8 @@ public class BatchImportFilmsConfiguration{
 		Job job = jobBuilderFactory.get("importFilms").incrementer(new RunIdIncrementer()).start(cleanDBStep())
 				.next(importFilmsStep()).next(setRippedFlagStep()).next(setRetrieveDateInsertionStep()).build();
 		long end = new Date().getTime() - start;
+		logger.debug("importFilmsJob Time Elapsed: " + end/1000 + " s");
+		
 		jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.IMPORT_COMPLETED, null,end,JmsStatus.IMPORT_COMPLETED.statusValue()));
 		return job;
 	}
