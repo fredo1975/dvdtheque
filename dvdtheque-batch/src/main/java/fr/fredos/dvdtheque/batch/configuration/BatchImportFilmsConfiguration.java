@@ -6,7 +6,10 @@ import org.apache.activemq.command.ActiveMQTopic;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -62,6 +65,25 @@ public class BatchImportFilmsConfiguration{
     private JmsTemplate jmsTemplate;
 	@Autowired
     private Topic topic;
+	
+	class DvdthequeJobResultListener implements JobExecutionListener{
+		@Override
+		public void beforeJob(JobExecution jobExecution) {
+			logger.debug("beforeJob");
+			jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.IMPORT_INIT, null,0l,JmsStatus.IMPORT_INIT.statusValue()));
+		}
+
+		@Override
+		public void afterJob(JobExecution jobExecution) {
+			long executionTime = jobExecution.getEndTime().getTime()-jobExecution.getStartTime().getTime();
+			logger.debug("afterJob executionTime="+executionTime/100 + " s");
+			if( jobExecution.getStatus() == BatchStatus.COMPLETED ){
+				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.IMPORT_COMPLETED_SUCCESS, null,executionTime,JmsStatus.IMPORT_COMPLETED_SUCCESS.statusValue()));
+			}else if(jobExecution.getStatus() == BatchStatus.FAILED){
+				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.IMPORT_COMPLETED_ERROR, null,executionTime,JmsStatus.IMPORT_COMPLETED_ERROR.statusValue()));
+			}
+		}
+	}
     @Bean // Serialize message content to json using TextMessage
     public MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
@@ -102,8 +124,8 @@ public class BatchImportFilmsConfiguration{
     }
     
 	@Bean
-	public Job importFilmsJob() {
-		return jobBuilderFactory.get("importFilms").incrementer(new RunIdIncrementer()).start(cleanDBStep())
+	public Job importFilmsJob() throws Exception {
+		return jobBuilderFactory.get("importFilms").listener(new DvdthequeJobResultListener()).incrementer(new RunIdIncrementer()).start(cleanDBStep())
 				.next(importFilmsStep()).next(setRippedFlagStep()).next(setRetrieveDateInsertionStep()).build();
 	}
 	
