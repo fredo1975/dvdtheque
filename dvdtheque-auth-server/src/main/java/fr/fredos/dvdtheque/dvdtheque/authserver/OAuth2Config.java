@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.dvdtheque_authserver;
+package fr.fredos.dvdtheque.dvdtheque.authserver;
 
 import javax.sql.DataSource;
 
