@@ -1,5 +1,7 @@
 package fr.fredos.dvdtheque.rest.controller;
 
+import static java.lang.String.format;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -86,7 +88,7 @@ public class FilmController {
 			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,0,FilmOrigine.TOUS);
 			return ResponseEntity.ok(filmService.findAllFilms(filmDisplayTypeParam));
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(format("an error occured while findAllFilms displayType='%s' ",displayType),e);
 		}
 		return ResponseEntity.badRequest().build();
 	}
@@ -111,7 +113,7 @@ public class FilmController {
 			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize,filmOrigine);
 			return ResponseEntity.ok(filmService.findAllFilmsByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(format("an error occured while findAllFilmsByOrigine origine='%s' and displayType='%s' ", origine,displayType),e);
 		}
 		return ResponseEntity.badRequest().build();
 	}
@@ -124,7 +126,7 @@ public class FilmController {
 			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType,this.limitFilmSize,filmOrigine);
 			return ResponseEntity.ok(filmService.findFilmListParamByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(format("an error occured while findFilmListParamByFilmDisplayTypeParam origine='%s' and displayType='%s' ", origine,displayType),e);
 		}
 		return ResponseEntity.badRequest().build();
 	}
@@ -156,7 +158,7 @@ public class FilmController {
 			}
 			return ResponseEntity.ok(filmService.findAllRealisateursByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(format("an error occured while findAllRealisateursByOrigine origine='%s' and displayType='%s' ", origine,displayType),e);
 		}
 		return ResponseEntity.badRequest().build();
 	}
@@ -176,7 +178,7 @@ public class FilmController {
 			}
 			return ResponseEntity.ok(filmService.findAllActeursByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
-			logger.error("an error occured while findAllActeursByOrigine origine="+origine,e);
+			logger.error(format("an error occured while findAllActeursByOrigine origine='%s' and displayType='%s' ", origine,displayType),e);
 		}
 		return ResponseEntity.badRequest().build();
 	}
