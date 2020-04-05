@@ -216,7 +216,7 @@ public class FilmController {
 			Film mergedFilm = filmService.updateFilm(film);
 			return ResponseEntity.ok(mergedFilm);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("an error occured while updating film id="+id,e);
 		}
 		return ResponseEntity.badRequest().build();
 	}
