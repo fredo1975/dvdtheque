@@ -176,7 +176,7 @@ public class FilmController {
 			}
 			return ResponseEntity.ok(filmService.findAllActeursByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("an error occured while findAllActeursByOrigine origine="+origine,e);
 		}
 		return ResponseEntity.badRequest().build();
 	}
@@ -198,7 +198,7 @@ public class FilmController {
 			}
 			return ResponseEntity.ok(replacedFilm);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("an error occured while replacing film tmdbId="+tmdbId,e);
 		}
 		return ResponseEntity.badRequest().build();
 	}
@@ -230,7 +230,7 @@ public class FilmController {
 			filmService.removeFilm(filmOptional);
 			return ResponseEntity.noContent().build();
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("an error occured while removing film id="+id,e);
 		}
 		return ResponseEntity.badRequest().build();
 	}
@@ -246,7 +246,7 @@ public class FilmController {
 			}
 			return ResponseEntity.ok(savedFilm);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("an error occured while saving film tmdbId="+tmdbId,e);
 		}
 		return ResponseEntity.badRequest().build();
 	}
@@ -278,7 +278,7 @@ public class FilmController {
 	    	jobParametersBuilder.addLong("TIMESTAMP",new Date().getTime());
 	    	jobLauncher.run(importFilmsJob, jobParametersBuilder.toJobParameters());
 		} catch (JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | JobParametersInvalidException | JobRestartException e) {
-			logger.error(e.getMessage());
+			logger.error("an error occured while importFilmList",e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 		return ResponseEntity.noContent().build();
@@ -308,7 +308,7 @@ public class FilmController {
 	        headers.setContentLength(excelContent.length);
 	        return new ResponseEntity<byte[]>(excelContent, headers, HttpStatus.OK);
 	    }catch (Exception e) {
-			logger.error(e.getMessage());
+	    	logger.error("an error occured while exporting film list",e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
