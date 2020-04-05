@@ -47,7 +47,6 @@ import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
-import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
@@ -72,6 +71,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	protected IPersonneService personneService;
 	@Autowired
 	private TmdbServiceClient client;
+	@Autowired
+	private ObjectMapper mapper;
 	@Autowired
 	ExcelFilmHandler excelFilmHandler;
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
@@ -730,7 +731,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(filmId);
 		// FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET,
 		// FilmOrigine.DVD);
-		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(film);
 		mvc.perform(MockMvcRequestBuilders
 				.put(UPDATE_TMDB_FILM_BY_TMDBID + FilmBuilder.tmdbId1, film).contentType(MediaType.APPLICATION_JSON)
@@ -774,7 +774,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		filmToUpdate.setTitre(FilmBuilder.TITRE_FILM_TMBD_ID_4780);
 		filmToUpdate.getDvd().setRipped(false);
 		FilmBuilder.assertFilmIsNotNull(filmToUpdate, true, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
-		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		mvc.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString)).andDo(MockMvcResultHandlers.print())
@@ -876,7 +875,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		filmToUpdate.setActeurs(film.getActeurs());
 		filmToUpdate.setRealisateurs(film.getRealisateurs());
 		filmToUpdate.setId(filmId);
-		ObjectMapper mapper = new ObjectMapper();
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		mvc.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString)).andDo(MockMvcResultHandlers.print())
@@ -904,7 +902,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		String response = mvc.perform(builder).andReturn().getResponse().getContentAsString();
 		logger.debug("response=" + response);
-		ObjectMapper mapper = new ObjectMapper();
 		Film filmToUpdate = mapper.readValue(response, Film.class);
 		logger.debug("filmToUpdate=" + filmToUpdate);
 		filmToUpdate.setTitre(FilmBuilder.TITRE_FILM_TMBD_ID_4780);
@@ -1005,7 +1002,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Personne personne = personneService.findPersonneByName(FilmBuilder.ACT1_TMBD_ID_844);
 		assertNotNull(personne);
 		personne.setNom(FilmBuilder.ACT2_TMBD_ID_844);
-		ObjectMapper mapper = new ObjectMapper();
 		String personneJsonString = mapper.writeValueAsString(personne);
 		mvc.perform(MockMvcRequestBuilders
 				.put(UPDATE_PERSONNE_URI + personne.getId(), personne).contentType(MediaType.APPLICATION_JSON)
@@ -1288,7 +1284,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 						.get(SEARCH_FILMS_BY_FILM_LIST_PARAM + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.TOUS.name())
 						.contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse().getContentAsString();
-		ObjectMapper mapper = new ObjectMapper();
 		List<Personne> relisateursReaded = mapper.readValue(realisateurs, new TypeReference<List<Personne>>(){});
 		List<Film> filmsReaded = mapper.readValue(films,new TypeReference<List<Film>>(){});
 		FilmListParam filmListParamReaded = mapper.readValue(filmListParam,new TypeReference<FilmListParam>(){});

@@ -19,14 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,7 +157,6 @@ public class FilmServiceImpl implements IFilmService {
 		if (film.getDvd() != null && !film.getDvd().isRipped()) {
 			film.getDvd().setDateRip(null);
 		}
-		FilmOrigine oldOrigine = filmDao.findFilmOrigine(film.getId());
 		Film mergedFilm = filmDao.updateFilm(film);
 		Set<CritiquesPresse> newSortedCritiquesPresseSet = new TreeSet<>(mergedFilm.getCritiquesPresse());
 		mergedFilm.getCritiquesPresse().clear();
@@ -194,56 +191,6 @@ public class FilmServiceImpl implements IFilmService {
 		handleCachePersonneByOrigine(PersonneType.REALISATEUR,mapRealisateursByOrigine, film,null);
 		*/
 		return id;
-	}
-	/**
-	 * 
-	 * @param personneType
-	 * @param mapPersonnesByOrigine
-	 * @param film
-	 * @param origine
-	 */
-	private void removePersonnesFromCachePersonnesByOrigine(final PersonneType personneType,
-			IMap<FilmOrigine, Map<Film,Set<Personne>>> mapPersonnesByOrigine, 
-			final Film film,
-			final FilmOrigine origine) {
-		Map<Film,Set<Personne>> personnesByFilm = mapPersonnesByOrigine.get(origine);
-		Set<Personne> personnes = personnesByFilm.get(film);
-		personnes.removeAll(personnes);
-		mapPersonnesByOrigine.put(origine, personnesByFilm);
-		//logger.info(personnes.toString());
-	}
-	/**
-	 * 
-	 * @param personneType
-	 * @param mapPersonnesByOrigine
-	 * @param film
-	 */
-	private void addPersonnesToCachePersonnesByOrigine(final PersonneType personneType,
-			IMap<FilmOrigine, Map<Film,Set<Personne>>> mapPersonnesByOrigine, 
-			final Film film) {
-		Map<Film,Set<Personne>> personnesByFilm;
-		if(mapPersonnesByOrigine.size()>0 && mapPersonnesByOrigine.containsKey(film.getOrigine())) {
-			personnesByFilm = mapPersonnesByOrigine.get(film.getOrigine());
-		}else {
-			personnesByFilm = new HashMap<>();
-		}
-		personnesByFilm.put(film, PersonneType.ACTEUR.equals(personneType)?film.getActeurs():film.getRealisateurs());
-		mapPersonnesByOrigine.put(film.getOrigine(), personnesByFilm);
-	}
-	/**
-	 * 
-	 * @param personneType
-	 * @param mapPersonnesByOrigine
-	 * @param film
-	 * @param oldOrigine
-	 */
-	private void handleCachePersonneByOrigine(final PersonneType personneType,IMap<FilmOrigine, Map<Film,Set<Personne>>> mapPersonnesByOrigine, 
-			final Film film,
-			final FilmOrigine oldOrigine) {
-		if(oldOrigine != null && mapPersonnesByOrigine.size()>0 && mapPersonnesByOrigine.containsKey(oldOrigine)) {
-			removePersonnesFromCachePersonnesByOrigine(personneType, mapPersonnesByOrigine, film, oldOrigine);
-		}
-		addPersonnesToCachePersonnesByOrigine(personneType, mapPersonnesByOrigine, film);
 	}
 	
 	@Override

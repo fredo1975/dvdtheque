@@ -1,0 +1,125 @@
+2020-02-09 18:23:52,867 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [main] Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$887d6c91] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-02-09 18:23:53,143 INFO org.springframework.boot.SpringApplication [main] The following profiles are active: local
+2020-02-09 18:23:54,326 WARN org.springframework.boot.actuate.endpoint.EndpointId [main] Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2020-02-09 18:23:54,796 INFO org.springframework.cloud.context.scope.GenericScope [main] BeanFactory id=0dfab8e0-def6-3c45-aa36-c58ae5685bbb
+2020-02-09 18:23:54,905 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [main] Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$887d6c91] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-02-09 18:23:55,465 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat initialized with port(s): 8080 (http)
+2020-02-09 18:23:55,495 INFO org.apache.juli.logging.DirectJDKLog [main] Starting service [Tomcat]
+2020-02-09 18:23:55,495 INFO org.apache.juli.logging.DirectJDKLog [main] Starting Servlet engine: [Apache Tomcat/9.0.26]
+2020-02-09 18:23:55,662 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing Spring embedded WebApplicationContext
+2020-02-09 18:23:55,663 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [main] Root WebApplicationContext: initialization completed in 2502 ms
+2020-02-09 18:23:55,780 WARN com.netflix.config.sources.URLConfigurationSource [main] No URLs will be polled as dynamic configuration sources.
+2020-02-09 18:23:55,781 INFO com.netflix.config.sources.URLConfigurationSource [main] To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2020-02-09 18:23:55,802 INFO com.netflix.config.DynamicPropertyFactory [main] DynamicPropertyFactory is initialized with configuration sources: com.netflix.config.ConcurrentCompositeConfiguration@4dc52559
+2020-02-09 18:23:56,454 WARN com.netflix.config.sources.URLConfigurationSource [main] No URLs will be polled as dynamic configuration sources.
+2020-02-09 18:23:56,455 INFO com.netflix.config.sources.URLConfigurationSource [main] To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2020-02-09 18:23:56,719 INFO org.springframework.scheduling.concurrent.ExecutorConfigurationSupport [main] Initializing ExecutorService 'applicationTaskExecutor'
+2020-02-09 18:23:56,869 WARN org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration [main] Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2020-02-09 18:23:57,825 INFO org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration [main] 
+
+Using generated security password: fe118d89-0b4f-4fca-abc0-133ab39a54b6
+
+2020-02-09 18:23:57,961 INFO org.springframework.security.web.DefaultSecurityFilterChain [main] Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4182a651, org.springframework.security.web.context.SecurityContextPersistenceFilter@7b4619a3, org.springframework.security.web.header.HeaderWriterFilter@2a661215, org.springframework.security.web.authentication.logout.LogoutFilter@362be0cd, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1c411474, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7c47e077, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7791ff50, org.springframework.security.web.session.SessionManagementFilter@5e2975ca, org.springframework.security.web.access.ExceptionTranslationFilter@1cb44a2f, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1c788d08]
+2020-02-09 18:23:58,087 INFO org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver [main] Exposing 2 endpoint(s) beneath base path '/actuator'
+2020-02-09 18:23:58,202 INFO org.springframework.cloud.netflix.eureka.InstanceInfoFactory [main] Setting initial instance status as: STARTING
+2020-02-09 18:23:58,295 INFO com.netflix.discovery.DiscoveryClient [main] Initializing Eureka in region us-east-1
+2020-02-09 18:23:58,556 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [main] Using JSON encoding codec LegacyJacksonJson
+2020-02-09 18:23:58,557 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [main] Using JSON decoding codec LegacyJacksonJson
+2020-02-09 18:23:58,704 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [main] Using XML encoding codec XStreamXml
+2020-02-09 18:23:58,705 INFO com.netflix.discovery.provider.DiscoveryJerseyProvider [main] Using XML decoding codec XStreamXml
+2020-02-09 18:23:58,938 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [main] Resolving eureka endpoints via configuration
+2020-02-09 18:23:59,017 INFO com.netflix.discovery.DiscoveryClient [main] Disable delta property : false
+2020-02-09 18:23:59,017 INFO com.netflix.discovery.DiscoveryClient [main] Single vip registry refresh property : null
+2020-02-09 18:23:59,017 INFO com.netflix.discovery.DiscoveryClient [main] Force full registry fetch : false
+2020-02-09 18:23:59,018 INFO com.netflix.discovery.DiscoveryClient [main] Application is null : false
+2020-02-09 18:23:59,018 INFO com.netflix.discovery.DiscoveryClient [main] Registered Applications size is zero : true
+2020-02-09 18:23:59,018 INFO com.netflix.discovery.DiscoveryClient [main] Application version is -1: true
+2020-02-09 18:23:59,019 INFO com.netflix.discovery.DiscoveryClient [main] Getting all instance registry info from the eureka server
+2020-02-09 18:23:59,419 INFO com.netflix.discovery.DiscoveryClient [main] The response status is 200
+2020-02-09 18:23:59,422 INFO com.netflix.discovery.DiscoveryClient [main] Starting heartbeat executor: renew interval is: 30
+2020-02-09 18:23:59,427 INFO com.netflix.discovery.InstanceInfoReplicator [main] InstanceInfoReplicator onDemand update allowed rate per min is 4
+2020-02-09 18:23:59,431 INFO com.netflix.discovery.DiscoveryClient [main] Discovery Client initialized at timestamp 1581269039430 with initial instances count: 3
+2020-02-09 18:23:59,433 INFO org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry [main] Registering application ADMIN-SERVER with eureka with status UP
+2020-02-09 18:23:59,434 INFO com.netflix.discovery.DiscoveryClient$3 [main] Saw local status change event StatusChangeEvent [timestamp=1581269039434, current=UP, previous=STARTING]
+2020-02-09 18:23:59,437 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-InstanceInfoReplicator-0] DiscoveryClient_ADMIN-SERVER/BLUECHIPIT-1:admin-server: registering service...
+2020-02-09 18:23:59,507 INFO com.netflix.discovery.DiscoveryClient [DiscoveryClient-InstanceInfoReplicator-0] DiscoveryClient_ADMIN-SERVER/BLUECHIPIT-1:admin-server - registration status: 204
+2020-02-09 18:23:59,814 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat started on port(s): 8080 (http) with context path ''
+2020-02-09 18:23:59,815 INFO org.springframework.cloud.netflix.eureka.serviceregistry.EurekaAutoServiceRegistration [main] Updating port to 8080
+2020-02-09 18:24:00,041 INFO org.springframework.boot.StartupInfoLogger [main] Started AdminServerApplication in 8.565 seconds (JVM running for 9.689)
+2020-02-09 18:24:29,529 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2020-02-09 18:24:29,530 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2020-02-09 18:24:29,539 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 9 ms
+2020-02-09 18:25:25,726 ERROR org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-10] Exception while processing an asynchronous request
+java.lang.IllegalStateException: Calling [asyncError()] is not valid for a request with Async state [MUST_DISPATCH]
+	at org.apache.coyote.AsyncStateMachine.asyncError(AsyncStateMachine.java:440)
+	at org.apache.coyote.AbstractProcessor.action(AbstractProcessor.java:513)
+	at org.apache.coyote.Request.action(Request.java:430)
+	at org.apache.catalina.core.AsyncContextImpl.setErrorState(AsyncContextImpl.java:401)
+	at org.apache.catalina.connector.CoyoteAdapter.asyncDispatch(CoyoteAdapter.java:239)
+	at org.apache.coyote.AbstractProcessor.dispatch(AbstractProcessor.java:242)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:53)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:860)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1589)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+2020-02-09 18:25:29,585 ERROR org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-3] Exception while processing an asynchronous request
+java.lang.IllegalStateException: Calling [asyncError()] is not valid for a request with Async state [MUST_DISPATCH]
+	at org.apache.coyote.AsyncStateMachine.asyncError(AsyncStateMachine.java:440)
+	at org.apache.coyote.AbstractProcessor.action(AbstractProcessor.java:513)
+	at org.apache.coyote.Request.action(Request.java:430)
+	at org.apache.catalina.core.AsyncContextImpl.setErrorState(AsyncContextImpl.java:401)
+	at org.apache.catalina.connector.CoyoteAdapter.asyncDispatch(CoyoteAdapter.java:239)
+	at org.apache.coyote.AbstractProcessor.dispatch(AbstractProcessor.java:242)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:53)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:860)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1589)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+2020-02-09 18:25:41,852 ERROR org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-5] Exception while processing an asynchronous request
+java.lang.IllegalStateException: Calling [asyncError()] is not valid for a request with Async state [MUST_DISPATCH]
+	at org.apache.coyote.AsyncStateMachine.asyncError(AsyncStateMachine.java:440)
+	at org.apache.coyote.AbstractProcessor.action(AbstractProcessor.java:513)
+	at org.apache.coyote.Request.action(Request.java:430)
+	at org.apache.catalina.core.AsyncContextImpl.setErrorState(AsyncContextImpl.java:401)
+	at org.apache.catalina.connector.CoyoteAdapter.asyncDispatch(CoyoteAdapter.java:239)
+	at org.apache.coyote.AbstractProcessor.dispatch(AbstractProcessor.java:242)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:53)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:860)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1589)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+2020-02-09 18:28:59,029 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 18:33:59,038 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 18:38:59,048 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 18:43:59,057 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 18:48:59,066 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 18:53:59,075 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 18:58:59,085 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:03:59,094 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:08:59,104 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:13:59,114 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:18:59,124 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:23:59,134 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:28:59,143 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:33:59,152 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:38:59,162 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:43:59,171 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:48:59,180 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:53:59,189 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 19:58:59,198 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 20:03:59,207 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 20:08:59,216 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 20:13:59,226 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 20:18:59,236 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 20:23:59,245 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 20:28:59,254 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
+2020-02-09 20:33:59,263 INFO com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver [AsyncResolver-bootstrap-executor-0] Resolving eureka endpoints via configuration
