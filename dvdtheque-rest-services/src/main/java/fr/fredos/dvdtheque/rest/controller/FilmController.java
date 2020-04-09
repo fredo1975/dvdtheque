@@ -212,7 +212,7 @@ public class FilmController {
 				return ResponseEntity.notFound().build();
 			}
 			// handle date rip
-			if(filmOptional.getDvd() != null && !filmOptional.getDvd().isRipped() && film.getDvd().isRipped()) {
+			if(filmOptional.getDvd() != null && !filmOptional.getDvd().isRipped() && film.getDvd() != null && film.getDvd().isRipped()) {
 				film.getDvd().setDateRip(new Date());
 			}
 			Film mergedFilm = filmService.updateFilm(film);
