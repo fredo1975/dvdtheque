@@ -12,6 +12,6 @@ public class BackupLauncher {
 		ClassPathXmlApplicationContext cpt = new ClassPathXmlApplicationContext("classpath*:spring-int-copy-files.xml",
 				"classpath*:applicationContext-batch.xml");
         cpt.registerShutdownHook();
-        
+        cpt.close();
 	}
 }
