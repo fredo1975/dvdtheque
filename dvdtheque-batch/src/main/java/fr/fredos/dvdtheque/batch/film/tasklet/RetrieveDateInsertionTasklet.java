@@ -47,7 +47,7 @@ public class RetrieveDateInsertionTasklet implements Tasklet{
 	        	long millis = files[i].lastModified();
 	        	Calendar cal = Calendar.getInstance(Locale.FRANCE);
 	        	cal.setTimeInMillis(millis);
-	        	String extension = StringUtils.substringAfter(name, ".");
+	        	//String extension = StringUtils.substringAfter(name, ".");
 	        	//if(extension.equalsIgnoreCase("mkv")) {
 	        		String titre = StringUtils.substringBefore(name, ".");
 	        		try {
