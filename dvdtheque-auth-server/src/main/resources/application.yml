@@ -5,6 +5,10 @@ spring:
     name: dvdtheque-auth-server
   profiles:
     active: local
+  datasource:
+    jdbc-url: jdbc:mysql://localhost/dvdtheque?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris
+    username: fredo
+    password: fredo
   cloud:
     config:
       uri: http://192.168.1.103:8888
