@@ -6,36 +6,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import fr.fredos.dvdtheque.dao.model.object.CredentialsRepository;
-import fr.fredos.dvdtheque.dvdtheque.authorization.server.domain.JdbcUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
+	
+
 	@Bean
-    public UserDetailsService userDetailsService(CredentialsRepository credentialsRepository) {
-        return new JdbcUserDetailsService(credentialsRepository);
-    }
-
-    // new default password encoder needed for new Spring Security
-    @Bean
     public PasswordEncoder passwordEncoder() {
-        return new PasswordEncoder() {
-            @Override
-            public String encode(CharSequence rawPassword) {
-                return rawPassword.toString();
-            }
-
-            @Override
-            public boolean matches(CharSequence rawPassword, String encodedPassword) {
-                return rawPassword.toString().equals(encodedPassword);
-            }
-        };
+        return new BCryptPasswordEncoder();
     }
+
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -51,7 +35,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
             .and()
             .formLogin()
                 .loginProcessingUrl("/login.do")
-                .usernameParameter("name")
+                .usernameParameter("username")
+                .passwordParameter("password")
                 .loginPage("/login")
             .and()
             .logout()

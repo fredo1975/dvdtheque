@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.dvdtheque.authorization.server.domain;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,11 +10,8 @@ import fr.fredos.dvdtheque.dao.model.object.Credentials;
 import fr.fredos.dvdtheque.dao.model.object.CredentialsRepository;
 
 public class JdbcUserDetailsService implements UserDetailsService{
-	private final CredentialsRepository credentialsRepository;
-
-    public JdbcUserDetailsService(CredentialsRepository credentialsRepository) {
-        this.credentialsRepository = credentialsRepository;
-    }
+	@Autowired
+	private CredentialsRepository credentialsRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
