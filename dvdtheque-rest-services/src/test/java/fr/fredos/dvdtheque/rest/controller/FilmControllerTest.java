@@ -95,10 +95,11 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String SAVE_FILM_URI = GET_ALL_FILMS_URI + "save/";
 	private static final String UPDATE_FILM_URI = GET_ALL_FILMS_URI + "update/";
 	private static final String REMOVE_FILM_URI = GET_ALL_FILMS_URI + "remove/";
+	private static final String RETRIEVE_FILM_IMAGE_URI = GET_ALL_FILMS_URI + "retrieveImage/";
 	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque/personnes";
 	private static final String EXPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "export";
 
-	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/6ldXqZhCxcnzlgMU70CLPvZI8if.jpg";
+	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/xhC0GZwcgCPS4XS7CkekFIFUAmt.jpg";
 	public static final String SHEET_NAME = "Films";
 
 
@@ -862,6 +863,40 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNull(filmRemoved);
 		FilmDisplayTypeParam dvdDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.DVD);
 		FilmBuilder.assertCacheSize(0, 0, dvdDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(dvdDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(dvdDisplayTypeParam));
+	}
+	
+	@Test
+	@Transactional
+	public void testRetrieveFilmImage() throws Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844).setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2).setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		Film filmToRetrieveImage = filmService.findFilm(film.getId());
+		assertNotNull(filmToRetrieveImage);
+		logger.debug("filmToRetrieveImage=" + filmToRetrieveImage.toString());
+
+		mvc.perform(MockMvcRequestBuilders.put(RETRIEVE_FILM_IMAGE_URI + film.getId())
+				.contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+		Film filmRetrievedImage = filmService.findFilm(filmToRetrieveImage.getId());
+		assertNotNull(filmRetrievedImage);
+		assertNotNull(filmRetrievedImage.getPosterPath());
 	}
 
 	@Test
