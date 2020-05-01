@@ -96,6 +96,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String UPDATE_FILM_URI = GET_ALL_FILMS_URI + "update/";
 	private static final String REMOVE_FILM_URI = GET_ALL_FILMS_URI + "remove/";
 	private static final String RETRIEVE_FILM_IMAGE_URI = GET_ALL_FILMS_URI + "retrieveImage/";
+	private static final String CLEAN_ALL_CACHES_URI = GET_ALL_FILMS_URI + "cleanCaches/";
 	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque/personnes";
 	private static final String EXPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "export";
 
@@ -865,6 +866,13 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		FilmBuilder.assertCacheSize(0, 0, dvdDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(dvdDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(dvdDisplayTypeParam));
 	}
 	
+	@Test
+	@Transactional
+	public void testcleanAllCaches() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.put(CLEAN_ALL_CACHES_URI)
+				.contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+	}
 	@Test
 	@Transactional
 	public void testRetrieveFilmImage() throws Exception {

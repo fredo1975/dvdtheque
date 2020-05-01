@@ -237,6 +237,16 @@ public class FilmController {
 		}
 		return ResponseEntity.badRequest().build();
 	}
+	@PutMapping("/films/cleanCaches")
+	ResponseEntity<Void> cleanCaches() {
+		try {
+			filmService.cleanAllCaches();
+			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			logger.error("an error occured while cleaning all caches",e);
+		}
+		return ResponseEntity.badRequest().build();
+	}
 	@PutMapping("/films/retrieveImage/{id}")
 	ResponseEntity<Film> retrieveFilmImage(@PathVariable Long id) {
 		try {
