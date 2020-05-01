@@ -173,6 +173,11 @@ public class TmdbServiceClient {
 		}
 	}
 	
+	public void retrieveFilmImage(Film film) {
+		Results results = retrieveTmdbSearchResultsById(film.getTmdbId());
+		film.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
+	}
+	
 	/**
 	 * create a dvdtheque Film based on a TMBD film
 	 * @param film

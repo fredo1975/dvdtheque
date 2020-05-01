@@ -51,6 +51,7 @@ import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 import fr.fredos.dvdtheque.service.model.FilmListParam;
+import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 @RestController
@@ -231,6 +232,21 @@ public class FilmController {
 			}
 			filmService.removeFilm(filmOptional);
 			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			logger.error("an error occured while removing film id="+id,e);
+		}
+		return ResponseEntity.badRequest().build();
+	}
+	@PutMapping("/films/retrieveImage/{id}")
+	ResponseEntity<Film> retrieveFilmImage(@PathVariable Long id) {
+		try {
+			Film filmOptional = filmService.findFilm(id);
+			if(filmOptional==null) {
+				return ResponseEntity.notFound().build();
+			}
+			tmdbServiceClient.retrieveFilmImage(filmOptional);
+			Film mergedFilm = filmService.updateFilm(filmOptional);
+			return ResponseEntity.ok(mergedFilm);
 		} catch (Exception e) {
 			logger.error("an error occured while removing film id="+id,e);
 		}
