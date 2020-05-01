@@ -99,7 +99,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque/personnes";
 	private static final String EXPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "export";
 
-	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/6ldXqZhCxcnzlgMU70CLPvZI8if.jpg";
+	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/xhC0GZwcgCPS4XS7CkekFIFUAmt.jpg";
 	public static final String SHEET_NAME = "Films";
 
 
