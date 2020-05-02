@@ -5,10 +5,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import fr.fredos.dvdtheque.dao.model.object.Credentials;
 import fr.fredos.dvdtheque.dao.model.object.CredentialsRepository;
-
+@Service
 public class JdbcUserDetailsService implements UserDetailsService{
 	@Autowired
 	private CredentialsRepository credentialsRepository;
