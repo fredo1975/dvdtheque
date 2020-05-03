@@ -40,6 +40,8 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
+import com.hazelcast.core.Hazelcast;
+
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -69,8 +71,10 @@ public class DvdthequeWebSocketControllerTest {
 		Assert.state(status == HttpStatus.OK);
         stompSession = stompClient.connect(WEBSOCKET_URI, new MyStompSessionHandlerAdapter() {}).get(1, TimeUnit.SECONDS);
     }
+    
     @After
     public void tearDown() throws Exception {
+    	Hazelcast.shutdownAll();
     	try {
     		stompSession.disconnect();
     	}catch (Throwable t) {

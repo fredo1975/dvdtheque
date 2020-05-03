@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -172,10 +173,66 @@ public class TmdbServiceClient {
 			throw e;
 		}
 	}
-	
 	public void retrieveFilmImage(Film film) {
 		Results results = retrieveTmdbSearchResultsById(film.getTmdbId());
 		film.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
+	}
+	public void retrieveFilmImage(final Film film, final Results results) {
+		film.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
+	}
+	
+	public boolean checkIfPosterExists(Film film) {
+		try {
+			byte[] imageBytes = restTemplate.getForObject(film.getPosterPath(), byte[].class);
+			if(imageBytes == null) {
+				return false;
+			}
+			return true;
+		}catch(HttpClientErrorException | org.springframework.web.client.ResourceAccessException e) {
+			logger.error("no poster found for film id="+film.getId());
+		}
+		return false;
+	}
+	
+	public boolean checkIfProfileImageExists(Personne personne) {
+		try {
+			byte[] imageBytes = restTemplate.getForObject(personne.getProfilePath(), byte[].class);
+			if(imageBytes == null) {
+				return false;
+			}
+			return true;
+		}catch(HttpClientErrorException | org.springframework.web.client.ResourceAccessException e) {
+			logger.error("no image profile found for personne id="+personne.getId());
+		}
+		return false;
+	}
+	
+	public void retrieveFilmImagesWhenNotExist(Film film) {
+		boolean posterExists = checkIfPosterExists(film);
+		Results results = null;
+		if(!posterExists) {
+			results = retrieveTmdbSearchResultsById(film.getTmdbId());
+			retrieveFilmImage(film,results);
+		}
+		Credits credits = null;
+		for(Personne acteur : film.getActeurs()) {
+			boolean exists = checkIfProfileImageExists(acteur);
+			if(!exists) {
+				if(results == null) {
+					results = retrieveTmdbSearchResultsById(film.getTmdbId());
+				}
+				if(credits == null) {
+					credits = retrieveTmdbCredits(results.getId());
+				}
+				for(Cast cast : credits.getCast()) {
+					if(cast.getName().equalsIgnoreCase(acteur.getNom())) {
+						acteur = personneService.createOrRetrievePersonne(StringUtils.upperCase(cast.getName()), environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+cast.getProfile_path());
+						acteur.setProfilePath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+cast.getProfile_path());
+						personneService.updatePersonne(acteur);
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -224,14 +281,42 @@ public class TmdbServiceClient {
 		transformedfilm.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
 		transformedfilm.setTmdbId(results.getId());
 		transformedfilm.setOverview(results.getOverview());
-		Credits credits = null;
+		
 		try {
-			credits = retrieveTmdbCredits(results.getId());
+			retrieveAndSetCredits(persistPersonne, results, transformedfilm);
 		}catch(Exception e) {
 			logger.error(e.getMessage()+" for id="+results.getId()+" won't be displayed");
 			return null;
 		}
 		
+		transformedfilm.setRuntime(results.getRuntime());
+		List<Genres> genres = results.getGenres();
+		if(CollectionUtils.isNotEmpty(genres)){
+			for (Genres g : genres) {
+				Genres _g = this.genresById.get(g.getId());
+				if(_g != null) {
+					Genre genre = filmService.findGenre(_g.getId());
+					if(genre == null) {
+						genre = filmService.saveGenre(new Genre(_g.getId(),_g.getName()));
+					}else {
+						genre = filmService.attachToSession(genre);
+					}
+					transformedfilm.getGenres().add(genre);
+				}else {
+					logger.error("genre "+g.getName()+" not found in loaded genres");
+				}
+			}
+		}
+		transformedfilm.setVu(false);
+		if(StringUtils.isNotEmpty(results.getHomepage())) {
+			transformedfilm.setHomepage(results.getHomepage());
+		}
+		return transformedfilm;
+	}
+	
+	private void retrieveAndSetCredits(final boolean persistPersonne, final Results results, final Film transformedfilm) {
+		Credits credits = null;
+		credits = retrieveTmdbCredits(results.getId());
 		if(CollectionUtils.isNotEmpty(credits.getCast())) {
 			int i=1;
 			for(Cast cast : credits.getCast()) {
@@ -261,29 +346,6 @@ public class TmdbServiceClient {
 				transformedfilm.getRealisateurs().add(realisateur);
 			}
 		}
-		transformedfilm.setRuntime(results.getRuntime());
-		List<Genres> genres = results.getGenres();
-		if(CollectionUtils.isNotEmpty(genres)){
-			for (Genres g : genres) {
-				Genres _g = this.genresById.get(g.getId());
-				if(_g != null) {
-					Genre genre = filmService.findGenre(_g.getId());
-					if(genre == null) {
-						genre = filmService.saveGenre(new Genre(_g.getId(),_g.getName()));
-					}else {
-						genre = filmService.attachToSession(genre);
-					}
-					transformedfilm.getGenres().add(genre);
-				}else {
-					logger.error("genre "+g.getName()+" not found in loaded genres");
-				}
-			}
-		}
-		transformedfilm.setVu(false);
-		if(StringUtils.isNotEmpty(results.getHomepage())) {
-			transformedfilm.setHomepage(results.getHomepage());
-		}
-		return transformedfilm;
 	}
 	private void addResultsToSet(Set<Results> results, final SearchResults searchResults) {
 		results.addAll(searchResults.getResults());

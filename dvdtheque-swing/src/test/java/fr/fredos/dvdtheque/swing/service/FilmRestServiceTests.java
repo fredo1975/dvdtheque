@@ -57,6 +57,7 @@ public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringConte
 	public void setUp() throws JsonParseException, JsonMappingException, RestClientException, IllegalStateException, IOException {
 		filmRestService.cleanAllFilms();
 	}
+	
 	private void assertFilmIsNotNull(Film film) {
 		assertNotNull(film);
 		assertNotNull(film.getId());
