@@ -35,6 +35,7 @@ public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		jobLauncherTestUtils = new JobLauncherTestUtils();
 		jobLauncherTestUtils.setJob(exportFilmsJob);
 	}
+	
 	@Test
 	public void launchExportFilmsJob() throws Exception {
 		Calendar c = Calendar.getInstance();

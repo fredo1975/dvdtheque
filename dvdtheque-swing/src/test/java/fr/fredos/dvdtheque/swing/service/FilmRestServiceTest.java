@@ -6,6 +6,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import fr.fredos.dvdtheque.dao.model.object.Film;
 
 @RunWith(SpringRunner.class)
@@ -40,7 +43,7 @@ public class FilmRestServiceTest {
 	public void setup() {
 		this.mockServer = MockRestServiceServer.bindTo(this.restTemplate).ignoreExpectOrder(true).build();
 	}
-
+	
 	@Test
 	public void getAllFilmsWhenResultIsSuccessShouldReturnAllFilms() throws Exception {
 		List<Film> allFilms = new ArrayList<Film>();

@@ -56,7 +56,7 @@ public class FilmBuilder {
 	public static final String ACT4_TMBD_ID_1271 = "TOM WISDOM";
 	public static final String SHEET_NAME = "Films";
 	public static final String ZONE_DVD = "2";
-	public static final Long TMDBID_844 = new Long(100);
+	public static final Long TMDBID_844 = new Long(844);
 	public static final int RIP_DATE_OFFSET = -10;
 	public static final int RIP_DATE_OFFSET2 = -1;
 	public static Long tmdbId1 = new Long(1271);
@@ -93,7 +93,7 @@ public class FilmBuilder {
 		private boolean ripped;
 		private boolean vu;
 		private FilmOrigine origine;
-		
+		private String posterPath;
 		public Builder(String titre) {
             this.titre = titre;
         }
@@ -168,6 +168,11 @@ public class FilmBuilder {
 			this.origine = origine;
 			return this;
 		}
+		
+		public Builder setPosterPath(String posterPath) {
+			this.posterPath = posterPath;
+			return this;
+		}
 		public Film build() {
 			Film film = new Film();
 			Set<Personne> realisateurs = new HashSet<>();
@@ -216,6 +221,7 @@ public class FilmBuilder {
 			// hard coded
 			film.setTmdbId(TMDBID_844);
 			film.setOverview("Overview");
+			film.setPosterPath(this.posterPath);
 			return film;
 		}
 	}

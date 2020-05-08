@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>fr.fredos.dvdtheque</groupId>
 		<artifactId>dvdtheque</artifactId>
-		<version>2.93.0</version>
+		<version>2.94.0</version>
 	</parent>
 	<artifactId>dvdtheque-auth-server</artifactId>
 	<packaging>jar</packaging>
@@ -17,18 +17,20 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
+			<artifactId>dvdtheque-dao</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-config</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -36,6 +38,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security.oauth.boot</groupId>
+			<artifactId>spring-security-oauth2-autoconfigure</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

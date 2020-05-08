@@ -96,14 +96,14 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String UPDATE_FILM_URI = GET_ALL_FILMS_URI + "update/";
 	private static final String REMOVE_FILM_URI = GET_ALL_FILMS_URI + "remove/";
 	private static final String RETRIEVE_FILM_IMAGE_URI = GET_ALL_FILMS_URI + "retrieveImage/";
+	private static final String RETRIEVE_ALL_FILM_IMAGE_URI = GET_ALL_FILMS_URI + "retrieveAllImages";
 	private static final String CLEAN_ALL_CACHES_URI = GET_ALL_FILMS_URI + "cleanCaches/";
 	private static final String SEARCH_ALL_PERSONNE_URI = "/dvdtheque/personnes";
 	private static final String EXPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "export";
 
-	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/xhC0GZwcgCPS4XS7CkekFIFUAmt.jpg";
+	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/dlO9puGGLs6vVCqzmzDmDH1OXoj.jpg";
 	public static final String SHEET_NAME = "Films";
-
-
+	
 	@Before()
 	public void setUp() throws Exception {
 		filmService.cleanAllFilms();
@@ -873,6 +873,98 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 	}
+	@Test
+	@Transactional
+    public void checkIfPosterPathExistsTest() throws ParseException {
+		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844).setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setPosterPath("http://image.tmdb.org/t/p/w500/9K81OagrRukWybhIIX6iRC5IRWo.jpg")
+				.setGenre1(genre1)
+				.setGenre2(genre2).setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		boolean exists = client.checkIfPosterExists(film);
+		assertFalse(exists);
+		film.setPosterPath("http://image.tmdb.org/t/p/w500/prjiEQgxoBC3stylWmxy9Lwnc9m.jpg");
+		exists = client.checkIfPosterExists(film);
+		assertTrue(exists);
+    }
+	
+	@Test
+	@Transactional
+    public void checkIfProfileImageExistsTest() throws ParseException {
+		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT4_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setPosterPath("http://image.tmdb.org/t/p/w500/9K81OagrRukWybhIIX6iRC5IRWo.jpg")
+				.setGenre1(genre1)
+				.setGenre2(genre2).setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		for(Personne acteur : film.getActeurs()) {
+			if(acteur.getNom().equalsIgnoreCase("ZHANG ZIYI")) {
+				acteur.setProfilePath("http://image.tmdb.org/t/p/w500/6DUCAJzpw06VoAA9VWrvB2g4dpq.jpg");
+				boolean imageProfileExists = client.checkIfProfileImageExists(acteur);
+				assertTrue(imageProfileExists);
+			}else {
+				acteur.setProfilePath("http://image.tmdb.org/t/p/w500/dszN3Ea9ON8yEQu61UAIVmQ5kF4.jpg");
+				boolean imageProfileExists = client.checkIfProfileImageExists(acteur);
+				assertFalse(imageProfileExists);
+			}
+		}
+    }
+	@Test
+	@Transactional
+    public void retrieveAllFilmImageTest() throws Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setPosterPath("http://image.tmdb.org/t/p/w500/9K81OagrRukWybhIIX6iRC5IRWo.jpg")
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		mvc.perform(MockMvcRequestBuilders.put(RETRIEVE_ALL_FILM_IMAGE_URI )
+				.contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
 	@Test
 	@Transactional
 	public void testRetrieveFilmImage() throws Exception {

@@ -7,12 +7,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -76,10 +74,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		assertNotNull(res.getOverview());
 		assertNotNull(res.getRuntime());
 	}
-    private Date createRipDate() {
-		Calendar cal = Calendar.getInstance();
-		return DateUtils.addDays(cal.getTime(), RIP_DATE);
-	}
+	
 	@Test
     public void retrieveTmdbResultsTest() {
 		Results res = client.retrieveTmdbSearchResultsById(FilmBuilder.tmdbId1);

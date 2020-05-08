@@ -13,7 +13,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -74,10 +73,8 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		jobLauncherTestUtils = new JobLauncherTestUtils();
 		jobLauncherTestUtils.setJob(importFilmsJob);
 	}
-	@After 
-	public void consumeMessages() {
-		
-	}
+	
+	
 	@Test
 	public void contextLoads() {
 	}
