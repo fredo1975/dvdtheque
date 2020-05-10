@@ -1,6 +1,5 @@
 package fr.fredos.dvdtheque.allocine.service;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.allocine.model.Review;
@@ -59,7 +59,7 @@ public class AllocineServiceClient {
 	public SearchResults retrieveAllocineReviewFeedByCode(final Integer code,final int page) {
 		try {
 			return restTemplate.getForObject(environment.getRequiredProperty(ALLOCINE_URL_)+environment.getRequiredProperty(ALLOCINE_QUERY_SEARCH_REVIEW_LIST)+"?"+"partner="+environment.getRequiredProperty(ALLOCINE_QUERY_PARTNER)+"&format=json"+"&filter="+environment.getRequiredProperty(ALLOCINE_QUERY_FILTER_DESK_PRESS)+"&subject=movie:"+code+"&page="+page, SearchResults.class);
-		}catch(org.springframework.web.client.HttpClientErrorException e) {
+		}catch(org.springframework.web.client.HttpClientErrorException | HttpServerErrorException e) {
 			logger.error("desk-press "+code+" not found");
 		}
 		return null;
