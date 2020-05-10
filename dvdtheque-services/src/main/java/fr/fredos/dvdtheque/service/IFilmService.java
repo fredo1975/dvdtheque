@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.service;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -45,4 +46,5 @@ public interface IFilmService {
 	List<Personne> findAllActeursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Personne> findAllRealisateursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
 	FilmListParam findFilmListParamByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam);
+	void saveImageToFilmPosterAsByteArray(String imageUrl, Film film) throws IOException;
 }

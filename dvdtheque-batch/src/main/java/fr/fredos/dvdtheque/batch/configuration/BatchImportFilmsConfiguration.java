@@ -65,7 +65,8 @@ public class BatchImportFilmsConfiguration{
     private JmsTemplate jmsTemplate;
 	@Autowired
     private Topic topic;
-	
+	@Value( "${import.chunk.size}" )
+	private int chunkSize;
 	class DvdthequeJobResultListener implements JobExecutionListener{
 		@Override
 		public void beforeJob(JobExecution jobExecution) {
@@ -203,7 +204,7 @@ public class BatchImportFilmsConfiguration{
     @Bean
     protected Step importFilmsStep() {
         return stepBuilderFactory.get("importFilmsStep")
-                .<FilmCsvImportFormat, Film>chunk(1000)
+                .<FilmCsvImportFormat, Film>chunk(chunkSize)
                 .reader(reader(null))
                 .processor(filmProcessor())
                 .writer(filmWriter())

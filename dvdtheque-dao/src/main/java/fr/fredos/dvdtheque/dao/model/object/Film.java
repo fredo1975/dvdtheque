@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -76,6 +77,9 @@ public class Film implements Serializable, Comparable<Film> {
 	private Set<Genre> genres = new HashSet<>();
 	@Column(name = "HOMEPAGE")
 	private String homepage;
+	@Lob
+	@Column(name = "POSTER",columnDefinition = "BLOB")
+	private byte[] poster;
 	@Transient
 	private boolean alreadyInDvdtheque;
 	public Film() {
@@ -223,17 +227,25 @@ public class Film implements Serializable, Comparable<Film> {
 	public void setGenres(Set<Genre> genres) {
 		this.genres = genres;
 	}
+	
+	public byte[] getPoster() {
+		return poster;
+	}
+	public void setPoster(byte[] poster) {
+		this.poster = poster;
+	}
+	@Override
+	public int compareTo(Film film) {
+		return this.getTitre().compareTo(film.getTitre());
+	}
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", dateInsertion=" + dateInsertion
 				+ ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd + ", origine=" + origine
 				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", critiquesPresse=" + critiquesPresse
 				+ ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview
-				+ ", runtime=" + runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
-				+ alreadyInDvdtheque + "]";
+				+ ", runtime=" + runtime + ", genres=" + genres + ", homepage=" + homepage + ", poster=" + poster
+				+ ", alreadyInDvdtheque=" + alreadyInDvdtheque + "]";
 	}
-	@Override
-	public int compareTo(Film film) {
-		return this.getTitre().compareTo(film.getTitre());
-	}
+	
 }

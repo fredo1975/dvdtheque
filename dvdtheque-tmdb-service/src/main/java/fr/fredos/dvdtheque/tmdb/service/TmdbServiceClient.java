@@ -243,11 +243,12 @@ public class TmdbServiceClient {
 	 * @param persistPersonne
 	 * @return
 	 * @throws ParseException
+	 * @throws IOException 
 	 */
 	public Film transformTmdbFilmToDvdThequeFilm(Film film,
 			final Results results,
 			final Set<Long> tmdbFilmAlreadyInDvdthequeSet,
-			final boolean persistPersonne) throws ParseException {
+			final boolean persistPersonne) throws ParseException, IOException {
 		Film transformedfilm = new Film();
 		if(film != null && film.getId() != null) {
 			transformedfilm.setId(film.getId());
@@ -279,6 +280,7 @@ public class TmdbServiceClient {
 		transformedfilm.setAnnee(retrieveYearFromReleaseDate(releaseDate));
 		transformedfilm.setDateSortie(DateUtils.clearDate(releaseDate));
 		transformedfilm.setPosterPath(environment.getRequiredProperty(TMDB_POSTER_PATH_URL)+results.getPoster_path());
+		filmService.saveImageToFilmPosterAsByteArray(transformedfilm.getPosterPath(), transformedfilm);
 		transformedfilm.setTmdbId(results.getId());
 		transformedfilm.setOverview(results.getOverview());
 		
@@ -350,7 +352,7 @@ public class TmdbServiceClient {
 	private void addResultsToSet(Set<Results> results, final SearchResults searchResults) {
 		results.addAll(searchResults.getResults());
 	}
-	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{
+	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException, IOException{
 		Set<Film> films = null;
 		Set<Results> results = null;
 		Integer firstPage = Integer.valueOf(1);
