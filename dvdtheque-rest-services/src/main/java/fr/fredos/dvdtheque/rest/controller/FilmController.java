@@ -131,13 +131,8 @@ public class FilmController {
 		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/films/tmdb/byTitre/{titre}")
-	ResponseEntity<Set<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
-		try {
-			return ResponseEntity.ok(tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre));
-		}catch (Exception e) {
-			logger.error(format("an error occured while retrieving TmdbFilm by Titre '%s'", titre),e);
-		}
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	Set<Film> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
+		return tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre);
 	}
 	@GetMapping("/films/byId/{id}")
 	Film findFilmById(@PathVariable Long id) {

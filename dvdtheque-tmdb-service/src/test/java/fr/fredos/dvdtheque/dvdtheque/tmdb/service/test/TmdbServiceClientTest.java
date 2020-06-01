@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -144,7 +143,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		FilmBuilder.assertFilmIsNotNull(film, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID1_DATE_SORTIE, dateInsertion);
     }
 	@Test
-    public void retrieveTmdbFilmListToDvdthequeFilmListTest() throws ParseException, IOException {
+    public void retrieveTmdbFilmListToDvdthequeFilmListTest() throws ParseException {
 		Set<Film> filmSet = client.retrieveTmdbFilmListToDvdthequeFilmList(FilmBuilder.TITRE_FILM_FOR_SEARCH_BY_TITRE);
 		assertNotNull(filmSet);
 		assertTrue(CollectionUtils.isNotEmpty(filmSet));

@@ -1,8 +1,5 @@
 package fr.fredos.dvdtheque.service.impl;
 
-import static java.lang.String.format;
-
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +24,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -284,18 +280,6 @@ public class FilmServiceImpl implements IFilmService {
 		}
 		is.close();
 		os.close();
-	}
-	@Override
-	public void saveImageToFilmPosterAsByteArray(final String imageUrl, final Film film) throws IOException {
-		try {
-			URL url = new URL(imageUrl);
-			InputStream is = url.openStream();
-			byte[] bytesArr = IOUtils.toByteArray(is);
-			film.setPoster(bytesArr);
-			is.close();
-		}catch(FileNotFoundException e) {
-			logger.error(format("file '%s' doesn't exists", imageUrl));
-		}
 	}
 
 	@Override
