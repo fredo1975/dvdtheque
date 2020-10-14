@@ -273,7 +273,7 @@ public class TmdbServiceClient {
 			if(StringUtils.isNotEmpty(results.getRelease_date())) {
 				releaseDate = sdf.parse(results.getRelease_date());
 			}else {
-				releaseDate = sdf.parse("2000/01/01");
+				releaseDate = sdf.parse("2000-01-01");
 			}
 		}
 		transformedfilm.setAnnee(retrieveYearFromReleaseDate(releaseDate));
