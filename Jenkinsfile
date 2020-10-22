@@ -30,5 +30,17 @@ pipeline {
                 '''
             }
         }
+        stage('Deliver for development') {
+            when {
+                branch 'develop'
+            }
+            steps {
+		 			withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		 				script {
+			 				sh '''mvn clean install -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" '''
+			 			}
+		    		}
+		    	}
+        }
     }
 }
