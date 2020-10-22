@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -131,7 +132,7 @@ public class FilmController {
 		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/films/tmdb/byTitre/{titre}")
-	Set<Film> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
+	TreeSet<Film> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		return tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre);
 	}
 	@GetMapping("/films/byId/{id}")

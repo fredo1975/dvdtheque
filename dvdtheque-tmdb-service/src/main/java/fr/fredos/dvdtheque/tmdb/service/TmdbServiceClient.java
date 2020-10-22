@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -350,7 +352,7 @@ public class TmdbServiceClient {
 	private void addResultsToSet(Set<Results> results, final SearchResults searchResults) {
 		results.addAll(searchResults.getResults());
 	}
-	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{
+	public TreeSet<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{
 		Set<Film> films = null;
 		Set<Results> results = null;
 		Integer firstPage = Integer.valueOf(1);
@@ -376,7 +378,20 @@ public class TmdbServiceClient {
 				}
 			}
 		}
-		return films;
+		TreeSet<Film> set = new TreeSet<Film>(new Comparator<Film>() {
+			@Override
+			public int compare(Film o1, Film o2) {
+				int c = o1.getTitre().compareTo(o2.getTitre());
+				if(c == 0) {
+					if(o1.getRealisateurs().size() == o2.getRealisateurs().size() && o1.getRealisateurs().size() == 1) {
+						c = o1.getRealisateurs().iterator().next().getNom().compareTo(o2.getRealisateurs().iterator().next().getNom());
+					}
+				}
+				return c;
+			}
+		});
+		set.addAll(films);
+		return set;
 	}
 	private static int retrieveYearFromReleaseDate(final Date relDate) {
 		Calendar cal = Calendar.getInstance();
