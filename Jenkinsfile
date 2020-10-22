@@ -49,16 +49,25 @@ pipeline {
             }
         }
         stage('Stopping Dev1 Rest service') {
+        	when {
+                branch 'develop'
+            }
         	steps {
 	       		sh 'ssh jenkins@$DEV_SERVER1_IP sudo systemctl stop dvdtheque-rest.service'
 	       	}
 	    }
 	    stage('Stopping Dev2 Rest service') {
+	    	when {
+                branch 'develop'
+            }
         	steps {
 	       		sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl stop dvdtheque-rest.service'
 	       	}
 	    }
 	    stage('Copying dvdtheque-rest-services') {
+	    	when {
+                branch 'develop'
+            }
             steps {
                 script {
 			 		sh 'scp dvdtheque-rest-services/target/dvdtheque-rest-services-$VERSION.jar jenkins@$DEV_SERVER1_IP:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar'
@@ -67,11 +76,17 @@ pipeline {
             }
         }
         stage('Sarting Dev1 Rest service') {
+        	when {
+                branch 'develop'
+            }
         	steps {
 	        	sh 'ssh jenkins@$DEV_SERVER1_IP sudo systemctl start dvdtheque-rest.service'
 	        }
    		}
    		stage('Sarting Dev2 Rest service') {
+   			when {
+                branch 'develop'
+            }
         	steps {
 	        	sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl start dvdtheque-rest.service'
 	        }
