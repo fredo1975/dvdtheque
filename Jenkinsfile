@@ -12,13 +12,15 @@ pipeline {
     	def PROD_SERVER2_IP = '192.168.1.106'
     	def DEV_SERVER1_IP = '192.168.1.103'
     	def DEV_SERVER2_IP = '192.168.1.101'
+    	GIT_COMMIT_SHORT = sh(
+                script: "printf \$(git rev-parse --short HEAD)",
+                returnStdout: true
+        )
     }
     stages {
         stage ('Initialize') {
             steps {
                 sh '''
-                    echo "PATH = ${PATH}"
-                    echo "M2_HOME = ${M2_HOME}"
                     echo "VERSION = ${VERSION}"
                     echo "pom = ${pom}"
                     echo "NVERSION = ${NVERSION}"
@@ -26,7 +28,9 @@ pipeline {
                     echo "PROD_SERVER1_IP = ${PROD_SERVER1_IP}"
                     echo "DEV_SERVER1_IP = ${DEV_SERVER1_IP}"
                     echo "DEV_SERVER2_IP = ${DEV_SERVER2_IP}"
+                    echo "GIT_COMMIT_SHORT = ${GIT_COMMIT_SHORT}"
                 '''
+                sh 'env'
             }
         }
         stage('Deliver for development') {
@@ -36,6 +40,9 @@ pipeline {
             steps {
 		 			withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		 				script {
+			 				sh """
+					          mvn -B org.codehaus.mojo:versions-maven-plugin:2.5:set -DprocessAllModules -DnewVersion=${VERSION}
+					        """
 			 				sh '''mvn clean install -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" '''
 			 			}
 		    		}
