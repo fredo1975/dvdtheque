@@ -157,39 +157,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>external.atlassian.jgitflow</groupId>
-				<artifactId>jgitflow-maven-plugin</artifactId>
-				<configuration>
-					<username>fredo1975</username>
-					<password>github1975</password>
-					<pushReleases>true</pushReleases>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<noTag>false</noTag>
-					<allowUntracked>true</allowUntracked>
-					<pullDevelop>true</pullDevelop>
-					<pullMaster>true</pullMaster>
-					<allowSnapshots>true</allowSnapshots>
-					<noDeploy>false</noDeploy>
-					<squash>false</squash>
-					<scmCommentPrefix>[RELEASE] </scmCommentPrefix>
-					<flowInitContext>
-						<masterBranchName>master</masterBranchName>
-						<developBranchName>develop</developBranchName>
-						<featureBranchPrefix>feature-</featureBranchPrefix>
-						<releaseBranchPrefix>release-</releaseBranchPrefix>
-						<hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-						<versionTagPrefix>${project.artifactId}-</versionTagPrefix>
-					</flowInitContext>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<tagNameFormat>v@{project.version}</tagNameFormat>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 			</plugin>
@@ -240,11 +207,6 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
 					<version>3.1.0</version>
-				</plugin>
-				<plugin>
-					<groupId>external.atlassian.jgitflow</groupId>
-					<artifactId>jgitflow-maven-plugin</artifactId>
-					<version>1.0-m5.1</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
