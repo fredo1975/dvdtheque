@@ -390,7 +390,9 @@ public class TmdbServiceClient {
 				return c;
 			}
 		});
-		set.addAll(films);
+		if(CollectionUtils.isNotEmpty(films)) {
+			set.addAll(films);
+		}
 		return set;
 	}
 	private static int retrieveYearFromReleaseDate(final Date relDate) {
