@@ -75,7 +75,7 @@ pipeline {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		 			script {
 			 			sh """
-					    	 mvn -B deploy
+					    	 mvn -B deploy -DskipTests
 					    """
 			 		}
 		    	}
