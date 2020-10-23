@@ -53,9 +53,9 @@ pipeline {
 			steps {
 				withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 			 		script {
-			 			sh """ 
-			 				mvn -B test
-			 			"""
+			 			sh ''' 
+			 				mvn -B test -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir"
+			 			'''
 			 		}
 	            }
 			}
