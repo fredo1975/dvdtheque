@@ -132,7 +132,7 @@ public class FilmController {
 		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/films/tmdb/byTitre/{titre}")
-	ResponseEntity<TreeSet<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
+	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		try {
 			return ResponseEntity.ok(tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre));
 		}catch(Exception e) {
