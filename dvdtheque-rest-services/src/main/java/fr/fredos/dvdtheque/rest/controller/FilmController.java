@@ -132,20 +132,41 @@ public class FilmController {
 		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/films/tmdb/byTitre/{titre}")
-	TreeSet<Film> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
-		return tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre);
+	ResponseEntity<TreeSet<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
+		try {
+			return ResponseEntity.ok(tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre));
+		}catch(Exception e) {
+			logger.error(format("an error occured while findTmdbFilmByTitre titre='%s' ", titre),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@GetMapping("/films/byId/{id}")
-	Film findFilmById(@PathVariable Long id) {
-		return filmService.findFilm(id);
+	ResponseEntity<Film> findFilmById(@PathVariable Long id) {
+		try {
+			return ResponseEntity.ok(filmService.findFilm(id));
+		}catch(Exception e) {
+			logger.error(format("an error occured while findFilmById id='%s' ", id),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@GetMapping("/films/byTmdbId/{tmdbid}")
-	Boolean checkIfTmdbFilmExists(@PathVariable Long tmdbid) {
-		return filmService.checkIfTmdbFilmExists(tmdbid);
+	ResponseEntity<Boolean> checkIfTmdbFilmExists(@PathVariable Long tmdbid) {
+		try {
+			return ResponseEntity.ok(filmService.checkIfTmdbFilmExists(tmdbid));
+		}catch(Exception e) {
+			logger.error(format("an error occured while checkIfTmdbFilmExists tmdbid='%s' ", tmdbid),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@GetMapping("/realisateurs")
-	List<Personne> findAllRealisateurs() {
-		return filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS));
+	ResponseEntity<List<Personne>> findAllRealisateurs() {
+		try {
+			return ResponseEntity.ok(filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS)));
+		}catch(Exception e) {
+			logger.error(format("an error occured while findAllRealisateurs"),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+		
 	}
 	@GetMapping("/realisateurs/byOrigine/{origine}")
 	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
