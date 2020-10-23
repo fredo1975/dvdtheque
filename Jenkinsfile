@@ -33,27 +33,53 @@ pipeline {
                 sh 'env'
             }
         }
-        stage('Deliver for development') {
+        stage('Build for development') {
+        	when {
+                branch 'develop'
+            }
+            steps {
+		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		 			script {
+			 			def pom = readMavenPom file: 'pom.xml'
+				    	VERSION = pom.version.replaceAll('SNAPSHOT', BUILD_TIMESTAMP + "." + GIT_COMMIT_SHORT)
+			 		}
+			 		echo VERSION
+		    	}
+		    }
+        }
+        stage('Unit Tests') {
+        	// We have seperate stage for tests so 
+			// they stand out in grouping and visualizations
+			steps {
+				withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+			 		script {
+			 			sh """ 
+			 				mvn -B test
+			 			"""
+			 		}
+	            }
+			}
+			// Note that, this requires having test results. 
+			// But you should anyway never skip tests in branch builds
+			post {
+				always {
+			    	junit '**/target/surefire-reports/*.xml'
+			    }
+			}   
+        }
+        stage('Deploy for development') {
             when {
                 branch 'develop'
             }
             steps {
-		 			withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		 				script {
-			 				sh """
-					          mvn -B org.codehaus.mojo:versions-maven-plugin:2.5:set -DprocessAllModules -DnewVersion=${VERSION}
-					        """
-			 				sh '''mvn clean install -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir" '''
-			 			}
-		    		}
+		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		 			script {
+			 			sh """
+					    	 mvn -B deploy
+					    """
+			 		}
 		    	}
-		    post {
-                success {
-                	script {
-			 			junit '*/target/surefire-reports/*.xml'
-                    }
-                }
-            }
+		    }
         }
         stage('Stopping Dev1 Rest service') {
         	when {
