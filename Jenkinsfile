@@ -12,6 +12,7 @@ pipeline {
     	def PROD_SERVER2_IP = '192.168.1.106'
     	def DEV_SERVER1_IP = '192.168.1.103'
     	def DEV_SERVER2_IP = '192.168.1.101'
+    	def JAVA_OPTS='-Djava.io.tmpdir=/var/tmp/exportDir'
     	GIT_COMMIT_SHORT = sh(
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
@@ -54,7 +55,7 @@ pipeline {
 				withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 			 		script {
 			 			sh ''' 
-			 				mvn -B test -Darguments="-Djava.io.tmpdir=/var/tmp/exportDir"
+			 				mvn -B test -Darguments="${JAVA_OPTS}"
 			 			'''
 			 		}
 	            }
