@@ -6,10 +6,10 @@ pipeline {
     }
     environment {
     	/*VERSION = readMavenPom().getVersion()
-    	def pom = readMavenPom file: 'pom.xml'*/
+    	def pom = readMavenPom file: 'pom.xml'
     	def NVERSION = pom.version.replace("-SNAPSHOT", "")
     	def PROD_SERVER1_IP = '192.168.1.105'
-    	def PROD_SERVER2_IP = '192.168.1.106'
+    	def PROD_SERVER2_IP = '192.168.1.106'*/
     	def DEV_SERVER1_IP = '192.168.1.103'
     	def DEV_SERVER2_IP = '192.168.1.101'
     	def JAVA_OPTS='-Djava.io.tmpdir=/var/tmp/exportDir'
