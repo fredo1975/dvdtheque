@@ -43,7 +43,7 @@ pipeline {
 		 			script {
 			 			def pom = readMavenPom file: 'pom.xml'
 						VERSION = sh(
-							script: "pom.version.replaceAll('SNAPSHOT', BUILD_TIMESTAMP + '.' + GIT_COMMIT_SHORT)",
+							script: "printf \$(pom.version.replaceAll('SNAPSHOT', BUILD_TIMESTAMP + '.' + GIT_COMMIT_SHORT))",
 							returnStdout: true
 						)
 			 		}
