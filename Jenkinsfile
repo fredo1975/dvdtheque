@@ -5,8 +5,8 @@ pipeline {
         jdk 'jdk8'
     }
     environment {
-    	VERSION = readMavenPom().getVersion()
-    	def pom = readMavenPom file: 'pom.xml'
+    	/*VERSION = readMavenPom().getVersion()
+    	def pom = readMavenPom file: 'pom.xml'*/
     	def NVERSION = pom.version.replace("-SNAPSHOT", "")
     	def PROD_SERVER1_IP = '192.168.1.105'
     	def PROD_SERVER2_IP = '192.168.1.106'
