@@ -55,9 +55,7 @@ pipeline {
 		    }
         }
         stage('Unit Tests') {
-        	// We have seperate stage for tests so 
-			// they stand out in grouping and visualizations
-			steps {
+        	steps {
 				withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 			 		script {
 			 			sh ''' 
@@ -66,8 +64,6 @@ pipeline {
 			 		}
 	            }
 			}
-			// Note that, this requires having test results. 
-			// But you should anyway never skip tests in branch builds
 			post {
 				always {
 			    	junit '**/target/surefire-reports/*.xml'
