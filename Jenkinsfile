@@ -42,10 +42,7 @@ pipeline {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		 			script {
 			 			def pom = readMavenPom file: 'pom.xml'
-						VERSION = sh(
-							script: "printf \$(pom.version.replaceAll('SNAPSHOT', BUILD_TIMESTAMP + '.' + GIT_COMMIT_SHORT))",
-							returnStdout: true
-						)
+				    	def VERSION = pom.version.replaceAll('SNAPSHOT', BUILD_TIMESTAMP + "." + GIT_COMMIT_SHORT)
 			 		}
 			 		echo VERSION
 			 		sh """
