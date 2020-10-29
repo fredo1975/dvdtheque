@@ -208,6 +208,9 @@ pipeline {
 	        }
    		}
    		stage('Check status Dev1 Rest service') {
+   			when {
+                branch 'develop'
+            }
 			steps {
 				script {
 				    sh 'ssh jenkins@$DEV_SERVER1_IP sudo systemctl status dvdtheque-rest.service'
@@ -215,6 +218,9 @@ pipeline {
 			}
 		}
 		stage('Check status Dev2 Rest service') {
+			when {
+                branch 'develop'
+            }
 			steps {
 				script {
 				    sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl status dvdtheque-rest.service'
@@ -222,6 +228,9 @@ pipeline {
 			}
 		}
 		stage('Check status Prod1 Rest service') {
+			when {
+                branch 'master'
+            }
 			steps {
 				script {
 				    sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl status dvdtheque-rest.service'
@@ -229,6 +238,9 @@ pipeline {
 			}
 		}
 		stage('Check status Prod2 Rest service') {
+			when {
+                branch 'master'
+            }
 			steps {
 				script {
 				    sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl status dvdtheque-rest.service'
