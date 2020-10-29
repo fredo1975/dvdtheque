@@ -7,7 +7,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -350,8 +352,8 @@ public class TmdbServiceClient {
 	private void addResultsToSet(Set<Results> results, final SearchResults searchResults) {
 		results.addAll(searchResults.getResults());
 	}
-	public Set<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{
-		Set<Film> films = null;
+	public List<Film> retrieveTmdbFilmListToDvdthequeFilmList(final String titre) throws ParseException{
+		List<Film> films = null;
 		Set<Results> results = null;
 		Integer firstPage = Integer.valueOf(1);
 		SearchResults searchResults = retrieveTmdbSearchResults(titre, firstPage);
@@ -366,7 +368,7 @@ public class TmdbServiceClient {
 		}
 		
 		if(CollectionUtils.isNotEmpty(results)) {
-			films = new HashSet<>(results.size());
+			films = new ArrayList<>(results.size());
 			Set<Long> tmdbIds = results.stream().map(r -> r.getId()).collect(Collectors.toSet());
 			Set<Long> tmdbFilmAlreadyInDvdthequeSet = filmService.findAllTmdbFilms(tmdbIds);
 			for(Results res : results) {
@@ -376,6 +378,7 @@ public class TmdbServiceClient {
 				}
 			}
 		}
+		Collections.sort(films);
 		return films;
 	}
 	private static int retrieveYearFromReleaseDate(final Date relDate) {

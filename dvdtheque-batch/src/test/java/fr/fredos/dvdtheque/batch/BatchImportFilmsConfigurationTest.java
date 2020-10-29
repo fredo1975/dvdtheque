@@ -55,6 +55,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public static final String TITRE_AD_ASTRA = "AD ASTRA";
 	public static final String TITRE_FILM_2046 = "2046";
 	public static final String TITRE_FILM_40_ans = "40 ANS : MODE D'EMPLOI";
+	//public static final String TITRE_FILM_40_ans = "THIS IS 40";
 	public static final String REAL_NOM = "STANLEY KUBRICK";
 	public static final String REAL_NOM2 = "WONG KAR-WAI";
 	public static final String REAL_NOM3 = "JUDD APATOW";

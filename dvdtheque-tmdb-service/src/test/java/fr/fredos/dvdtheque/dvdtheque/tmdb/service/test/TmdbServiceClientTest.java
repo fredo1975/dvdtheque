@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
@@ -144,7 +144,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
     }
 	@Test
     public void retrieveTmdbFilmListToDvdthequeFilmListTest() throws ParseException {
-		Set<Film> filmSet = client.retrieveTmdbFilmListToDvdthequeFilmList(FilmBuilder.TITRE_FILM_FOR_SEARCH_BY_TITRE);
+		List<Film> filmSet = client.retrieveTmdbFilmListToDvdthequeFilmList(FilmBuilder.TITRE_FILM_FOR_SEARCH_BY_TITRE);
 		assertNotNull(filmSet);
 		assertTrue(CollectionUtils.isNotEmpty(filmSet));
 		assertTrue(filmSet.size()>=129);
