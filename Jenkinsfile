@@ -46,7 +46,30 @@ pipeline {
 		    	}
 		    }
         }
+        stage('Build for production') {
+        	when {
+                branch 'master'
+            }
+            steps {
+		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		 			script {
+			 			def pom = readMavenPom file: 'pom.xml'
+				    	VERSION = pom.version.replaceAll('SNAPSHOT', BUILD_TIMESTAMP + "." + GIT_COMMIT_SHORT)
+			 		}
+			 		echo VERSION
+			 		sh """
+				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.5:set -DprocessAllModules -DnewVersion=${VERSION}
+				    """
+			      	sh """
+			        	mvn -B clean compile
+			      	"""
+		    	}
+		    }
+        }
         stage('Unit Tests') {
+        	when {
+                branch 'develop'
+            }
         	steps {
 				withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 			 		script {
@@ -76,6 +99,20 @@ pipeline {
 		    	}
 		    }
         }
+        stage('Deploy for production') {
+            when {
+                branch 'master'
+            }
+            steps {
+		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		 			script {
+			 			sh """
+					    	 mvn -B deploy -DskipTests
+					    """
+			 		}
+		    	}
+		    }
+        }
         stage('Stopping Dev1 Rest service') {
         	when {
                 branch 'develop'
@@ -92,7 +129,23 @@ pipeline {
 	       		sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl stop dvdtheque-rest.service'
 	       	}
 	    }
-	    stage('Copying dvdtheque-rest-services') {
+	    stage('Stopping Prod1 Rest service') {
+        	when {
+                branch 'master'
+            }
+        	steps {
+        		sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl stop dvdtheque-rest.service'
+	       	}
+	    }
+	    stage('Stopping Prod2 Rest service') {
+        	when {
+                branch 'master'
+            }
+        	steps {
+        		sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl stop dvdtheque-rest.service'
+	       	}
+	    }
+	    stage('Copying develop dvdtheque-rest-services') {
 	    	when {
                 branch 'develop'
             }
@@ -103,6 +156,21 @@ pipeline {
 			 		"""
 			 		sh """
 			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${DEV_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 		"""
+			 	}
+            }
+        }
+        stage('Copying prouction dvdtheque-rest-services') {
+	    	when {
+                branch 'master'
+            }
+            steps {
+                script {
+                	sh """
+			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 		"""
+			 		sh """
+			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
 			 		"""
 			 	}
             }
@@ -123,5 +191,49 @@ pipeline {
 	        	sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl start dvdtheque-rest.service'
 	        }
    		}
+   		stage('Sarting Prod1 Rest service') {
+        	when {
+                branch 'master'
+            }
+        	steps {
+	        	sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl start dvdtheque-rest.service'
+	        }
+   		}
+   		stage('Sarting Prod2 Rest service') {
+   			when {
+                branch 'master'
+            }
+        	steps {
+	        	sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl start dvdtheque-rest.service'
+	        }
+   		}
+   		stage('Check status Dev1 Rest service') {
+			steps {
+				script {
+				    sh 'ssh jenkins@$DEV_SERVER1_IP sudo systemctl status dvdtheque-rest.service'
+			    }
+			}
+		}
+		stage('Check status Dev2 Rest service') {
+			steps {
+				script {
+				    sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl status dvdtheque-rest.service'
+			    }
+			}
+		}
+		stage('Check status Prod1 Rest service') {
+			steps {
+				script {
+				    sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl status dvdtheque-rest.service'
+			    }
+			}
+		}
+		stage('Check status Prod2 Rest service') {
+			steps {
+				script {
+				    sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl status dvdtheque-rest.service'
+			    }
+			}
+		}
     }
 }
