@@ -7,6 +7,8 @@ pipeline {
     environment {
     	def DEV_SERVER1_IP = '192.168.1.103'
     	def DEV_SERVER2_IP = '192.168.1.101'
+    	def PROD_SERVER1_IP = '192.168.1.105'
+    	def PROD_SERVER2_IP = '192.168.1.106'
     	def JAVA_OPTS='-Djava.io.tmpdir=/var/tmp/exportDir'
     	GIT_COMMIT_SHORT = sh(
                 script: "printf \$(git rev-parse --short HEAD)",
