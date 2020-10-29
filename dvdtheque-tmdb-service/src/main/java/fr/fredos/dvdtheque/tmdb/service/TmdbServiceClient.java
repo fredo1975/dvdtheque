@@ -378,7 +378,9 @@ public class TmdbServiceClient {
 				}
 			}
 		}
-		Collections.sort(films);
+		if(CollectionUtils.isNotEmpty(films)) {
+			Collections.sort(films);
+		}
 		return films;
 	}
 	private static int retrieveYearFromReleaseDate(final Date relDate) {
