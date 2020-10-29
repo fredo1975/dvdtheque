@@ -3,42 +3,46 @@
 	<parent>
 		<groupId>fr.fredos.dvdtheque</groupId>
 		<artifactId>dvdtheque</artifactId>
-		<version>2.98.0-SNAPSHOT</version>
+		<version>2.97.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>dvdtheque-tmdb-service</artifactId>
+	<artifactId>dvdtheque-jms-receiver-test</artifactId>
 	<packaging>jar</packaging>
-	<name>dvdtheque-tmdb-service</name>
-	<url>http://maven.apache.org</url>
+	<name>dvdtheque-receiver-test</name>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
-			<artifactId>dvdtheque-services</artifactId>
-			<groupId>${project.groupId}</groupId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<artifactId>dvdtheque-allocine-service</artifactId>
-			<groupId>${project.groupId}</groupId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>fr.fredos.dvdtheque</groupId>
 			<artifactId>dvdtheque-dao</artifactId>
+			<groupId>${project.groupId}</groupId>
 			<version>${project.version}</version>
-			<type>test-jar</type>
-			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>dvdtheque-commons</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-activemq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-broker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>
