@@ -26,6 +26,13 @@ pipeline {
                 sh 'env'
             }
         }
+        stage('Clone repository') {
+			steps {
+				script {
+					checkout scm
+				}
+			}
+		}
         stage('Build for development') {
         	when {
                 branch 'develop'
