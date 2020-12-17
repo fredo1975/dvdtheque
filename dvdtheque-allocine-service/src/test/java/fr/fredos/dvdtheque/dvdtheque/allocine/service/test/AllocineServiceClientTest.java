@@ -64,7 +64,7 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
 	}
     
     @Test
-    @Ignore
+    //@Ignore
     public void retrieveAllocineMovieFeedByTitleTest() {
     	SearchResults searchResults = client.retrieveAllocineMovieFeedByTitle(FilmBuilder.TITRE_FILM_TMBD_ID_844);
     	assertSearchMovieFeedResultsIsNotNull(searchResults);
