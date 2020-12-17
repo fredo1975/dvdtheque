@@ -191,10 +191,12 @@
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
+					<version>2.4.1</version>
 					<executions>
 						<execution>
 							<goals>
 								<goal>repackage</goal>
+								<goal>build-image</goal>
 							</goals>
 						</execution>
 					</executions>
@@ -229,4 +231,14 @@
 			<url>http://192.168.1.107:8081/repository/maven-snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-snapshots</id>
+			<url>https://repo.spring.io/snapshot</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/milestone</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
