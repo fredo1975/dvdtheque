@@ -2,4 +2,13 @@
 <configuration>
 	<include
 		resource="org/springframework/boot/logging/logback/base.xml" />
+		<property name="LOG_TEMP" value="./logs"/>
+		
+		<logger name="com.example" level="INFO"/>
+
+
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+		
 </configuration>
