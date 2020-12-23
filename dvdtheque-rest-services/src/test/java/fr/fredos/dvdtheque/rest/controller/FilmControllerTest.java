@@ -1104,6 +1104,13 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmSaved.getTitre());
 		String dateInsertion = FilmBuilder.createDateInsertion(null, null);
 		FilmBuilder.assertFilmIsNotNull(filmSaved, true, 0, FilmOrigine.DVD, FilmBuilder.TMDBID2_DATE_SORTIE, dateInsertion);
+		
+		mvc.perform(MockMvcRequestBuilders.put(SAVE_FILM_URI + FilmBuilder.tmdbId3)
+				.contentType(MediaType.APPLICATION_JSON).content(FilmOrigine.DVD.name())).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_4780)));
+		Film filmSaved2 = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_4780);
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), filmSaved2.getTitre());
 	}
 
 	@Test
