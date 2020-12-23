@@ -20,7 +20,6 @@ import fr.fredos.dvdtheque.batch.configuration.BatchExportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.film.tasklet.RetrieveDateInsertionTasklet;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 
-@ActiveProfiles("dev")
 @SpringBootTest(classes = { BatchExportFilmsConfiguration.class,
 		RippedFlagTasklet.class,
 		RetrieveDateInsertionTasklet.class,
