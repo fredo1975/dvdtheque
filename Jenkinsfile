@@ -193,6 +193,18 @@ pipeline {
 			 	}
             }
         }
+        stage('Copying prouction dvdtheque-batch-app') {
+	    	when {
+                branch 'master'
+            }
+            steps {
+                script {
+			 		sh """
+			 			scp dvdtheque-batch-app/target/dvdtheque-batch-app-${VERSION}.jar jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
+			 		"""
+			 	}
+            }
+        }
         stage('Sarting Dev1 Rest service') {
         	when {
                 branch 'develop'
