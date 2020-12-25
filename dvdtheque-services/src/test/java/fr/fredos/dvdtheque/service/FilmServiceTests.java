@@ -914,6 +914,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
 		List<Film> list = filmService.findAllFilms(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS));
 		assertNotNull(list);
+		assertTrue(CollectionUtils.isNotEmpty(list));
 	    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
 	    assertNotNull(excelContent);
 	    Workbook workBook = this.excelFilmHandler.createSheetFromByteArray(excelContent);
@@ -989,7 +990,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null, null);
 		List<Film> list = filmService.findAllFilms(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS));
 		assertNotNull(list);
-		
+		assertTrue(CollectionUtils.isNotEmpty(list));
 		byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
 		assertNotNull(excelContent);
 		Workbook workBook = excelFilmHandler.createSheetFromByteArray(excelContent);

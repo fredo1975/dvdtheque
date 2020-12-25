@@ -374,7 +374,7 @@ public class FilmServiceImpl implements IFilmService {
 			logger.debug("findAllFilmsByFilmDisplayType films cache size: " + films.size());
 			if (films.size() > 0) {
 				watch.stop();
-				logger.info("findAllFilmsByFilmDisplayType="+watch.getTotalTimeSeconds());
+				//logger.info("findAllFilmsByFilmDisplayType="+watch.getTotalTimeSeconds());
 				return sortListAccordingToFilmDisplayType(films,filmDisplayTypeParam);
 			}
 			logger.debug("no films find");
@@ -384,7 +384,7 @@ public class FilmServiceImpl implements IFilmService {
 				mapFilms.putIfAbsent(it.getId(), it);
 			});
 			watch.stop();
-			logger.info("findAllFilmsByFilmDisplayType="+watch.getTotalTimeMillis());
+			//logger.info("findAllFilmsByFilmDisplayType="+watch.getTotalTimeMillis());
 			return sortListAccordingToFilmDisplayType(filmsRes,filmDisplayTypeParam);
 		}
 	}
@@ -432,7 +432,7 @@ public class FilmServiceImpl implements IFilmService {
 			}
 		}
 		watch.stop();
-		logger.info("findAllRealisateursByFilmDisplayType="+watch.getTotalTimeMillis());
+		//logger.info("findAllRealisateursByFilmDisplayType="+watch.getTotalTimeMillis());
 		return new ArrayList<>(realisateursByOrigineToReturnSet);
 	}
 	
@@ -480,7 +480,7 @@ public class FilmServiceImpl implements IFilmService {
 			}
 		}
 		watch.stop();
-		logger.info("findAllActeursByFilmDisplayType="+watch.getTotalTimeMillis());
+		//logger.info("findAllActeursByFilmDisplayType="+watch.getTotalTimeMillis());
 		return new ArrayList<>(acteursByOrigineToReturnSet);
 	}
 	@Override
@@ -505,7 +505,7 @@ public class FilmServiceImpl implements IFilmService {
 				.setGenres(this.findAllGenres())
 				.build();
 		watch.stop();
-		logger.info("findFilmListParamByFilmDisplayType="+watch.getTotalTimeMillis());
+		//logger.info("findFilmListParamByFilmDisplayType="+watch.getTotalTimeMillis());
 		return filmListParam;
 	}
 }

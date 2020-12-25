@@ -166,6 +166,18 @@ pipeline {
 			 	}
             }
         }
+        stage('Copying develop dvdtheque-batch-app') {
+	    	when {
+                branch 'develop'
+            }
+            steps {
+                script {
+			 		sh """
+			 			scp dvdtheque-batch-app/target/dvdtheque-batch-app-${VERSION}.jar jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
+			 		"""
+			 	}
+            }
+        }
         stage('Copying prouction dvdtheque-rest-services') {
 	    	when {
                 branch 'master'
@@ -177,6 +189,18 @@ pipeline {
 			 		"""
 			 		sh """
 			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 		"""
+			 	}
+            }
+        }
+        stage('Copying prouction dvdtheque-batch-app') {
+	    	when {
+                branch 'master'
+            }
+            steps {
+                script {
+			 		sh """
+			 			scp dvdtheque-batch-app/target/dvdtheque-batch-app-${VERSION}.jar jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
 			 		"""
 			 	}
             }
