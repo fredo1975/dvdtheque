@@ -18,6 +18,7 @@ CREATE TABLE credentials_authorities (
   authorities_id bigint not null
 );
 
+<<<<<<< HEAD
 CREATE TABLE todo (
   id integer,
   version integer,
@@ -27,6 +28,8 @@ CREATE TABLE todo (
 );
 
 
+=======
+>>>>>>> refs/remotes/origin/develop
 INSERT INTO authority VALUES(0,'ROLE_OAUTH_ADMIN');
 INSERT INTO authority VALUES(1,'ROLE_ADMIN');
 INSERT INTO authority VALUES(2,'ROLE_USER');

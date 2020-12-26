@@ -1,6 +1,6 @@
 package fr.fredos.dvdtheque.allocine.service;
 
-import java.util.Comparator;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,7 +45,8 @@ public class AllocineServiceClient {
 	 */
 	public SearchResults retrieveAllocineMovieFeedByTitle(final String title) {
 		try {
-			return restTemplate.getForObject(environment.getRequiredProperty(ALLOCINE_URL_)+environment.getRequiredProperty(ALLOCINE_QUERY_SEARCH_FILM)+"?"+"partner="+environment.getRequiredProperty(ALLOCINE_QUERY_PARTNER)+"&format=json"+"&filter="+environment.getRequiredProperty(ALLOCINE_QUERY_FILTER_MOVIE)+"&q="+title, SearchResults.class);
+			String encodedSig = Base64.getEncoder().encodeToString("1a1ed8c1bed24d60ae3472eed1da33eb".getBytes());
+			return restTemplate.getForObject(environment.getRequiredProperty(ALLOCINE_URL_)+environment.getRequiredProperty(ALLOCINE_QUERY_SEARCH_FILM)+"?"+"partner="+environment.getRequiredProperty(ALLOCINE_QUERY_PARTNER)+"&sig="+encodedSig+"&format=json"+"&filter="+environment.getRequiredProperty(ALLOCINE_QUERY_FILTER_MOVIE)+"&q="+title, SearchResults.class);
 		}catch(org.springframework.web.client.HttpClientErrorException e) {
 			logger.error("film "+title+" not found");
 		}

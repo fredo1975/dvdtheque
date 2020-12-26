@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestClientException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.hazelcast.core.Hazelcast;
 
 import fr.dvdtheque.console.swing.ModelTest.TestConfig;
 import fr.fredos.dvdtheque.swing.model.FilmTableModel;
@@ -34,7 +36,10 @@ public class ModelTest extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(ModelTest.class);
 	@Autowired
 	protected FilmTableModel filmTableModel;
-
+	@After
+	public void cleanup() throws Exception {
+	  Hazelcast.shutdownAll();
+	}
 	@Configuration
 	protected static class TestConfig{
 		@Bean

@@ -203,7 +203,7 @@ public class BatchImportFilmsConfiguration{
     @Bean
     protected Step importFilmsStep() {
         return stepBuilderFactory.get("importFilmsStep")
-                .<FilmCsvImportFormat, Film>chunk(1000)
+                .<FilmCsvImportFormat, Film>chunk(100)
                 .reader(reader(null))
                 .processor(filmProcessor())
                 .writer(filmWriter())

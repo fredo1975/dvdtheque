@@ -1,7 +1,6 @@
 package fr.fredos.dvdtheque.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -40,7 +39,6 @@ import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
-import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
@@ -916,6 +914,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
 		List<Film> list = filmService.findAllFilms(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS));
 		assertNotNull(list);
+		assertTrue(CollectionUtils.isNotEmpty(list));
 	    byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
 	    assertNotNull(excelContent);
 	    Workbook workBook = this.excelFilmHandler.createSheetFromByteArray(excelContent);
@@ -991,7 +990,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, null, null);
 		List<Film> list = filmService.findAllFilms(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS));
 		assertNotNull(list);
-		
+		assertTrue(CollectionUtils.isNotEmpty(list));
 		byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
 		assertNotNull(excelContent);
 		Workbook workBook = excelFilmHandler.createSheetFromByteArray(excelContent);

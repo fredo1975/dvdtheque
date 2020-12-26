@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -162,13 +161,6 @@ public class FilmServiceImpl implements IFilmService {
 		mergedFilm.getCritiquesPresse().clear();
 		mergedFilm.getCritiquesPresse().addAll(newSortedCritiquesPresseSet);
 		mapFilms.put(film.getId(), mergedFilm);
-		/*
-		if(!oldOrigine.equals(film.getOrigine())) {
-			handleCachePersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, mergedFilm,oldOrigine);
-			handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, mergedFilm,oldOrigine);
-		}
-		handleCachePersonneByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, mergedFilm,null);
-		handleCachePersonneByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, mergedFilm,null);*/
 		return mergedFilm;
 	}
 
@@ -186,10 +178,6 @@ public class FilmServiceImpl implements IFilmService {
 		upperCaseTitre(film);
 		Long id = filmDao.saveNewFilm(film);
 		mapFilms.put(id, film);
-		/*
-		handleCachePersonneByOrigine(PersonneType.ACTEUR,mapActeursByOrigine, film,null);
-		handleCachePersonneByOrigine(PersonneType.REALISATEUR,mapRealisateursByOrigine, film,null);
-		*/
 		return id;
 	}
 	
@@ -279,9 +267,6 @@ public class FilmServiceImpl implements IFilmService {
 		film = filmDao.findFilm(film.getId());
 		filmDao.removeFilm(film);
 		mapFilms.remove(film.getId());
-		/*
-		removePersonnesFromCachePersonnesByOrigine(PersonneType.ACTEUR, mapActeursByOrigine, film, film.getOrigine());
-		removePersonnesFromCachePersonnesByOrigine(PersonneType.REALISATEUR, mapRealisateursByOrigine, film, film.getOrigine());*/
 	}
 
 	public static void saveImage(final String imageUrl, final String destinationFile) throws IOException {
@@ -389,7 +374,7 @@ public class FilmServiceImpl implements IFilmService {
 			logger.debug("findAllFilmsByFilmDisplayType films cache size: " + films.size());
 			if (films.size() > 0) {
 				watch.stop();
-				logger.info("findAllFilmsByFilmDisplayType="+watch.prettyPrint());
+				//logger.info("findAllFilmsByFilmDisplayType="+watch.getTotalTimeSeconds());
 				return sortListAccordingToFilmDisplayType(films,filmDisplayTypeParam);
 			}
 			logger.debug("no films find");
@@ -399,7 +384,7 @@ public class FilmServiceImpl implements IFilmService {
 				mapFilms.putIfAbsent(it.getId(), it);
 			});
 			watch.stop();
-			logger.info("findAllFilmsByFilmDisplayType="+watch.prettyPrint());
+			//logger.info("findAllFilmsByFilmDisplayType="+watch.getTotalTimeMillis());
 			return sortListAccordingToFilmDisplayType(filmsRes,filmDisplayTypeParam);
 		}
 	}
@@ -447,7 +432,7 @@ public class FilmServiceImpl implements IFilmService {
 			}
 		}
 		watch.stop();
-		logger.info("findAllRealisateursByFilmDisplayType="+watch.prettyPrint());
+		//logger.info("findAllRealisateursByFilmDisplayType="+watch.getTotalTimeMillis());
 		return new ArrayList<>(realisateursByOrigineToReturnSet);
 	}
 	
@@ -495,7 +480,7 @@ public class FilmServiceImpl implements IFilmService {
 			}
 		}
 		watch.stop();
-		logger.info("findAllActeursByFilmDisplayType="+watch.prettyPrint());
+		//logger.info("findAllActeursByFilmDisplayType="+watch.getTotalTimeMillis());
 		return new ArrayList<>(acteursByOrigineToReturnSet);
 	}
 	@Override
@@ -520,7 +505,7 @@ public class FilmServiceImpl implements IFilmService {
 				.setGenres(this.findAllGenres())
 				.build();
 		watch.stop();
-		logger.info("findFilmListParamByFilmDisplayType="+watch.prettyPrint());
+		//logger.info("findFilmListParamByFilmDisplayType="+watch.getTotalTimeMillis());
 		return filmListParam;
 	}
 }

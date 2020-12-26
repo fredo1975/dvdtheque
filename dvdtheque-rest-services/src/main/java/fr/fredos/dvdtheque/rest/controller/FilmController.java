@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -78,8 +77,13 @@ public class FilmController {
     private int limitFilmSize;
 
 	@GetMapping("/films/byPersonne")
-	Personne findPersonne(@RequestParam(name="nom",required = false) String nom) {
-		return personneService.findPersonneByName(nom);
+	ResponseEntity<Personne> findPersonne(@RequestParam(name="nom",required = false) String nom) {
+		try {
+			return ResponseEntity.ok(personneService.findPersonneByName(nom));
+		}catch (Exception e) {
+			logger.error(format("an error occured while findPersonne nom='%s' ", nom),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@GetMapping("/films")
 	ResponseEntity<List<Film>> findAllFilms(@RequestParam(name="displayType",required = false) String displayType) {
@@ -93,16 +97,26 @@ public class FilmController {
 		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/films/genres")
-	List<Genre> findAllGenres() {
-		return filmService.findAllGenres();
+	ResponseEntity<List<Genre>> findAllGenres() {
+		try {
+			return ResponseEntity.ok(filmService.findAllGenres());
+		}catch (Exception e) {
+			logger.error(format("an error occured while findAllGenres"),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@PutMapping("/films/cleanAllfilms")
 	void cleanAllFilms() {
 		filmService.cleanAllFilms();
 	}
 	@GetMapping("/films/byTitre/{titre}")
-	Film findFilmByTitre(@PathVariable String titre) {
-		return filmService.findFilmByTitre(titre);
+	ResponseEntity<Film> findFilmByTitre(@PathVariable String titre) {
+		try {
+			return ResponseEntity.ok(filmService.findFilmByTitre(titre));
+		}catch (Exception e) {
+			logger.error(format("an error occured while findFilmByTitre titre='%s' ", titre),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@GetMapping("/films/byOrigine/{origine}")
 	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
@@ -114,8 +128,8 @@ public class FilmController {
 			return ResponseEntity.ok(filmService.findAllFilmsByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(format("an error occured while findAllFilmsByOrigine origine='%s' and displayType='%s' ", origine,displayType),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/filmListParam/byOrigine/{origine}")
 	ResponseEntity<FilmListParam> findFilmListParamByFilmDisplayTypeParam(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
@@ -127,24 +141,44 @@ public class FilmController {
 			return ResponseEntity.ok(filmService.findFilmListParamByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(format("an error occured while findFilmListParamByFilmDisplayTypeParam origine='%s' and displayType='%s' ", origine,displayType),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/films/tmdb/byTitre/{titre}")
-	Set<Film> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
-		return tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre);
+	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
+		try {
+			return ResponseEntity.ok(tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre));
+		}catch(Exception e) {
+			logger.error(format("an error occured while findTmdbFilmByTitre titre='%s' ", titre),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@GetMapping("/films/byId/{id}")
-	Film findFilmById(@PathVariable Long id) {
-		return filmService.findFilm(id);
+	ResponseEntity<Film> findFilmById(@PathVariable Long id) {
+		try {
+			return ResponseEntity.ok(filmService.findFilm(id));
+		}catch(Exception e) {
+			logger.error(format("an error occured while findFilmById id='%s' ", id),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@GetMapping("/films/byTmdbId/{tmdbid}")
-	Boolean checkIfTmdbFilmExists(@PathVariable Long tmdbid) {
-		return filmService.checkIfTmdbFilmExists(tmdbid);
+	ResponseEntity<Boolean> checkIfTmdbFilmExists(@PathVariable Long tmdbid) {
+		try {
+			return ResponseEntity.ok(filmService.checkIfTmdbFilmExists(tmdbid));
+		}catch(Exception e) {
+			logger.error(format("an error occured while checkIfTmdbFilmExists tmdbid='%s' ", tmdbid),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@GetMapping("/realisateurs")
-	List<Personne> findAllRealisateurs() {
-		return filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS));
+	ResponseEntity<List<Personne>> findAllRealisateurs() {
+		try {
+			return ResponseEntity.ok(filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS)));
+		}catch(Exception e) {
+			logger.error(format("an error occured while findAllRealisateurs"),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@GetMapping("/realisateurs/byOrigine/{origine}")
 	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
@@ -159,12 +193,17 @@ public class FilmController {
 			return ResponseEntity.ok(filmService.findAllRealisateursByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(format("an error occured while findAllRealisateursByOrigine origine='%s' and displayType='%s' ", origine,displayType),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/acteurs")
-	List<Personne> findAllActeurs() {
-		return filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS));
+	ResponseEntity<List<Personne>> findAllActeurs() {
+		try {
+			return ResponseEntity.ok(filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS)));
+		}catch(Exception e) {
+			logger.error(format("an error occured while findAllActeurs"),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@GetMapping("/acteurs/byOrigine/{origine}")
 	ResponseEntity<List<Personne>> findAllActeursByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
@@ -179,12 +218,17 @@ public class FilmController {
 			return ResponseEntity.ok(filmService.findAllActeursByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(format("an error occured while findAllActeursByOrigine origine='%s' and displayType='%s' ", origine,displayType),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		return ResponseEntity.badRequest().build();
 	}
 	@GetMapping("/personnes")
-	List<Personne> findAllPersonne() {
-		return personneService.findAllPersonne();
+	ResponseEntity<List<Personne>> findAllPersonne() {
+		try {
+			return ResponseEntity.ok(personneService.findAllPersonne());
+		}catch (Exception e) {
+			logger.error(format("an error occured while findAllPersonne"),e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@PutMapping("/films/tmdb/{tmdbId}")
 	ResponseEntity<Film> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws Exception {
@@ -201,8 +245,8 @@ public class FilmController {
 			return ResponseEntity.ok(replacedFilm);
 		} catch (Exception e) {
 			logger.error("an error occured while replacing film tmdbId="+tmdbId,e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		return ResponseEntity.badRequest().build();
 	}
 	@PutMapping("/films/update/{id}")
 	ResponseEntity<Film> updateFilm(@RequestBody Film film,@PathVariable Long id) {
@@ -219,8 +263,8 @@ public class FilmController {
 			return ResponseEntity.ok(mergedFilm);
 		} catch (Exception e) {
 			logger.error("an error occured while updating film id="+id,e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		return ResponseEntity.badRequest().build();
 	}
 	@PutMapping("/films/remove/{id}")
 	ResponseEntity<Film> removeFilm(@PathVariable Long id) {
@@ -233,8 +277,48 @@ public class FilmController {
 			return ResponseEntity.noContent().build();
 		} catch (Exception e) {
 			logger.error("an error occured while removing film id="+id,e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		return ResponseEntity.badRequest().build();
+	}
+	@PutMapping("/films/cleanCaches")
+	ResponseEntity<Void> cleanCaches() {
+		try {
+			filmService.cleanAllCaches();
+			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			logger.error("an error occured while cleaning all caches",e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@PutMapping("/films/retrieveImage/{id}")
+	ResponseEntity<Film> retrieveFilmImage(@PathVariable Long id) {
+		try {
+			Film filmOptional = filmService.findFilm(id);
+			if(filmOptional==null) {
+				return ResponseEntity.notFound().build();
+			}
+			tmdbServiceClient.retrieveFilmImage(filmOptional);
+			Film mergedFilm = filmService.updateFilm(filmOptional);
+			return ResponseEntity.ok(mergedFilm);
+		} catch (Exception e) {
+			logger.error("an error occured while retrieving image for film id="+id,e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@PutMapping("/films/retrieveAllImages")
+	ResponseEntity<Void> retrieveAllFilmImages() {
+		try {
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS);
+			List<Film> films = filmService.findAllFilms(filmDisplayTypeParam);
+			for(Film film : films) {
+				tmdbServiceClient.retrieveFilmImagesWhenNotExist(film);
+				filmService.updateFilm(film);
+			}
+			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			logger.error("an error occured while retrieving all images",e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 	@PutMapping("/films/save/{tmdbId}")
 	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
@@ -249,8 +333,8 @@ public class FilmController {
 			return ResponseEntity.ok(savedFilm);
 		} catch (Exception e) {
 			logger.error("an error occured while saving film tmdbId="+tmdbId,e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		return ResponseEntity.badRequest().build();
 	}
 	@PutMapping("/personnes/byId/{id}")
 	ResponseEntity<Object> updatePersonne(@RequestBody Personne p,@PathVariable Long id) {
