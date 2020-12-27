@@ -35,13 +35,13 @@ public class User implements Serializable {
 	@NotNull
 	private String password;
 	@Column(name = "EMAIL")
-	@NotNull
+	//@NotNull
 	private String email;
 	@Column(name = "FIRSTNAME")
-	@NotNull
+	//@NotNull
 	private String firstName;
 	@Column(name = "LASTNAME")
-	@NotNull
+	//@NotNull
 	private String lastName;
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "USERROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
@@ -54,6 +54,7 @@ public class User implements Serializable {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.email = email;
 	}
 
 	public Long getId() {

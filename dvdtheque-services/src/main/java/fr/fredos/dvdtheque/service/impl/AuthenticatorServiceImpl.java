@@ -28,7 +28,7 @@ public class AuthenticatorServiceImpl implements IAuthenticatorService {
 		return user;
 	}
 	@Transactional(readOnly = false)
-	public User saveUser(String userName, String password){
+	public User saveUser(final String userName, final String password){
 		Role role = new Role();
 		role.setName("admin");
 		Set<User> users = new HashSet<>();

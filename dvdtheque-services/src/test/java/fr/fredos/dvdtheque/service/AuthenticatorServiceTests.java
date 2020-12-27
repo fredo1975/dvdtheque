@@ -3,7 +3,6 @@ package fr.fredos.dvdtheque.service;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,10 +28,11 @@ public class AuthenticatorServiceTests extends
 	protected IAuthenticatorService authenticatorService;
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void tryAuthenticatorSuccessLogin() throws Exception{
 		logger.info("tryAuthenticatorSuccessLogin start");
 		User user = authenticatorService.saveUser("fredo", "fredo");
+		assertNull(user);
 		User existingUser = authenticatorDao.authenticate("fredo", "fredo");
 		assertNotNull(existingUser);
 		logger.info(existingUser.toString());

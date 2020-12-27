@@ -5,3 +5,12 @@ spring:
     #password: fredo
     username: sa
     password: sa
+    testWhileIdle: true
+    validationQuery: SELECT 1
+    # Show or not log for each sql query
+    jpa: 
+      show-sql: false
+      hibernate:
+        naming:
+          # Naming strategy
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
