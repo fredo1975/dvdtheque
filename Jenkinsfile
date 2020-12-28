@@ -74,7 +74,7 @@ pipeline {
         }
         stage('Unit Tests') {
         	when {
-                branch 'develop'
+                branch 'auth'
             }
         	steps {
 				withMaven(mavenSettingsConfig: 'MyMavenSettings') {
