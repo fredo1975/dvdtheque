@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -38,7 +39,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,11 +62,10 @@ import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(FilmControllerTest.class);
-	@Autowired
 	private MockMvc mvc;
 	@Autowired
 	protected IFilmService filmService;
@@ -75,6 +77,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private ObjectMapper mapper;
 	@Autowired
 	ExcelFilmHandler excelFilmHandler;
+	@Autowired
+    private WebApplicationContext context;
+	
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
@@ -107,6 +112,11 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Before()
 	public void setUp() throws Exception {
 		filmService.cleanAllFilms();
+		
+		mvc = MockMvcBuilders
+		          .webAppContextSetup(context)
+		          //.apply(springSecurity())
+		          .build();
 	}
 
 	@Test

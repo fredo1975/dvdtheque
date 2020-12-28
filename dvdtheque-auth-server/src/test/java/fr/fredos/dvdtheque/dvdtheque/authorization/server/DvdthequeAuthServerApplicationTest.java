@@ -8,10 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-@RunWith(SpringRunner.class)
 
-@SpringBootTest(classes = DvdthequeAuthServerApplication.class)
+import fr.fredos.dvdtheque.dao.Application;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {DvdthequeAuthServerApplication.class,Application.class})
+@ActiveProfiles("local")
 public class DvdthequeAuthServerApplicationTest {
 	@Autowired
 	private UserDetailsService jdbcUserDetailsService;

@@ -43,18 +43,17 @@ public class User implements Serializable {
 	@Column(name = "LASTNAME")
 	//@NotNull
 	private String lastName;
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "USERROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
 	private Set<Role> userRoles;
 
 	public User() {
 		super();
 	}
-	public User(@NotNull String firstName, @NotNull String lastName) {
+	public User(@NotNull String userName, @NotNull String password) {
 		super();
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.email = email;
+		this.userName = userName;
+		this.password = password;
 	}
 
 	public Long getId() {

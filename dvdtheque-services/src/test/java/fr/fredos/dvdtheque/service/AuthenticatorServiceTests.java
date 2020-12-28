@@ -28,11 +28,10 @@ public class AuthenticatorServiceTests extends
 	protected IAuthenticatorService authenticatorService;
 	
 	@Test
-	//@Ignore
 	public void tryAuthenticatorSuccessLogin() throws Exception{
 		logger.info("tryAuthenticatorSuccessLogin start");
-		User user = authenticatorService.saveUser("fredo", "fredo");
-		assertNull(user);
+		/*User user = authenticatorService.saveUser("fredo", "fredo");
+		assertNotNull(user);*/
 		User existingUser = authenticatorDao.authenticate("fredo", "fredo");
 		assertNotNull(existingUser);
 		logger.info(existingUser.toString());

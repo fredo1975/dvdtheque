@@ -1,6 +1,6 @@
 spring:
   datasource:
-    jdbcUrl: jdbc:h2:mem:mydb:DB_CLOSE_ON_EXIT = FALSE
+    jdbcUrl: jdbc:h2:mem:mydb
     username: sa
     password: sa
     testWhileIdle: true

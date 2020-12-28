@@ -1,6 +1,0 @@
-debug: true
-spring:
-  cloud:
-    enabled: false
-  profiles: 
-    active: local

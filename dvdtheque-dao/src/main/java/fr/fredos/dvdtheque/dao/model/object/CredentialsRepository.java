@@ -1,7 +1,11 @@
 package fr.fredos.dvdtheque.dao.model.object;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
-public interface CredentialsRepository extends JpaRepository<Credentials, Long> {
-	Credentials findByName(String name);
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+public interface CredentialsRepository extends JpaRepository<User, Long> {
+	@Query("select u from User u where u.userName = ?1")
+    Optional<User> findUserWithName(String username);
 }

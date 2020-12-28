@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -20,6 +21,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
@@ -29,15 +32,27 @@ import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 @AutoConfigureMockMvc
 public class FilmControllerForImportFilmListTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmControllerTest.class);
-	@Autowired
 	private MockMvc mvc;
 	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
 	@Autowired
 	protected IFilmService filmService;
 	@Autowired
 	ExcelFilmHandler excelFilmHandler;
+	@Autowired
+    private WebApplicationContext context;
+	
 	private static final String IMPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "import";
 	private static final String contentType = "text/plain";
+	
+	@Before()
+	public void setUp() throws Exception {
+		filmService.cleanAllFilms();
+		
+		mvc = MockMvcBuilders
+		          .webAppContextSetup(context)
+		          //.apply(springSecurity())
+		          .build();
+	}
 	
 	@Test
 	public void testImportFilmListFromCsv() throws Exception {
