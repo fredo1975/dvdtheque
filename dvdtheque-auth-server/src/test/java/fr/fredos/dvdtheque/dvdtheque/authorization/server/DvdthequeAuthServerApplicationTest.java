@@ -11,10 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import fr.fredos.dvdtheque.dao.Application;
-
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {DvdthequeAuthServerApplication.class,Application.class})
+@SpringBootTest(classes = {DvdthequeAuthServerApplication.class})
 @ActiveProfiles("local")
 public class DvdthequeAuthServerApplicationTest {
 	@Autowired

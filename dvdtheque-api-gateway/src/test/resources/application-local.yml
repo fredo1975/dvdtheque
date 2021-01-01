@@ -1,0 +1,12 @@
+debug: true
+spring:
+  cloud:
+    enabled: false
+    gateway:
+      routes:
+        - id: dvdtheque-service
+          uri: lb://dvdtheque-service
+          predicates:
+            - Path=/api/films/**
+          filters:
+            - StripPrefix=2
