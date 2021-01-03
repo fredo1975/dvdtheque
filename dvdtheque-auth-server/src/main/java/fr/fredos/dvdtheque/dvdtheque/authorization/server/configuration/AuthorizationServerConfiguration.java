@@ -64,6 +64,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public void configure(final AuthorizationServerEndpointsConfigurer endpoints) {
     	endpoints
         .approvalStore(approvalStore())
+        .authenticationManager(authenticationManager)
         .authorizationCodeServices(authorizationCodeServices())
         .tokenStore(tokenStore());
     	

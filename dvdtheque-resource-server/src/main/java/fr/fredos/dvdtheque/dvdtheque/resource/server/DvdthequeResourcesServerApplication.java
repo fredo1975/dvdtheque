@@ -3,9 +3,9 @@ package fr.fredos.dvdtheque.dvdtheque.resource.server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
-public class DvdthequeResourceServerApplication{
+public class DvdthequeResourcesServerApplication{
 	public static void main(String[] args) {
-		SpringApplication.run(DvdthequeResourceServerApplication.class, args);
+		SpringApplication.run(DvdthequeResourcesServerApplication.class, args);
 	}
 /*
 	@GetMapping("/account")

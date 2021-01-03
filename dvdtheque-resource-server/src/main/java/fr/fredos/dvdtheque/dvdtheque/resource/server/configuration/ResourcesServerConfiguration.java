@@ -2,9 +2,7 @@ package fr.fredos.dvdtheque.dvdtheque.resource.server.configuration;
 
 import javax.sql.DataSource;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,19 +15,16 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 @Configuration
 @EnableResourceServer
 public class ResourcesServerConfiguration extends ResourceServerConfigurerAdapter{
-	@Bean
-    @ConfigurationProperties(prefix="spring.datasource")
-    public DataSource ouathDataSource(){return DataSourceBuilder.create().build();}
-
+	@Autowired
+    private DataSource dataSource;
+	
     @Override
     public void configure(ResourceServerSecurityConfigurer resources)throws Exception{
-
-        TokenStore tokenStore=new JdbcTokenStore(ouathDataSource());
-        resources.resourceId("product_api").tokenStore(tokenStore);
-
+        TokenStore tokenStore=new JdbcTokenStore(dataSource);
+        resources.resourceId("dvdtheque_api").tokenStore(tokenStore);
     }
+    
     @Override
-
     public void configure(HttpSecurity http) throws Exception{
         http
                 .authorizeRequests()

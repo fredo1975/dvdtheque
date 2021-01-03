@@ -43,8 +43,9 @@ public class User implements Serializable {
 	@Column(name = "LASTNAME")
 	//@NotNull
 	private String lastName;
+	/*
 	@Column(name = "ENABLED")
-	private Boolean enabled;
+	private Boolean enabled;*/
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "USERROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
 	private Set<Role> userRoles;
@@ -94,12 +95,12 @@ public class User implements Serializable {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	public Boolean isEnabled() {
+	/*public Boolean isEnabled() {
 		return enabled;
 	}
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
-	}
+	}*/
 	public Set<Role> getUserRoles() {
 		return userRoles;
 	}
