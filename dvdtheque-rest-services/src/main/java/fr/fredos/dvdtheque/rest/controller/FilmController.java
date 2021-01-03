@@ -75,10 +75,40 @@ public class FilmController {
     private String instanceId;
     @Value("${limit.film.size}")
     private int limitFilmSize;
-    public static final String PUBLIC_PATH = "/public/films/";
-    public static final String BY_PERSONNE_PATH = "byPersonne";
-
-	@GetMapping(PUBLIC_PATH+BY_PERSONNE_PATH)
+    public static final String PUBLIC_PATH = "/public/";
+    public static final String FILMS_PATH = "films/";
+    public static final String SECURED_PATH = "/secured/";
+    public static final String PUBLIC_BY_PERSONNE_PATH = PUBLIC_PATH+FILMS_PATH + "byPersonne";
+    public static final String BY_TITRE_PATH = "byTitre/";
+    public static final String BY_ORIGINE_PATH = "byOrigine/";
+    public static final String PUBLIC_ACTEURS_PATH = PUBLIC_PATH + "acteurs/";
+    public static final String PUBLIC_REALISATEURS_PATH = PUBLIC_PATH + "realisateurs/";
+    public static final String PERSONNE_PATH = "personnes/";
+    public static final String BY_ID_PATH = "byId/";
+    public static final String PUBLIC_FIND_BY_TMDBID_PATH = PUBLIC_PATH + FILMS_PATH + "byTmdbId/";
+    public static final String PUBLIC_FIND_ALL_FILMS_BY_ORIGINE_PATH = PUBLIC_PATH + BY_ORIGINE_PATH;
+    public static final String PUBLIC_FIND_ALL_FILMS_PATH = PUBLIC_PATH+FILMS_PATH;
+    public static final String PUBLIC_FIND_ALL_REALISATEURS_BY_ORIGINE_PATH = PUBLIC_REALISATEURS_PATH + BY_ORIGINE_PATH;
+    public static final String PUBLIC_FIND_ALL_ACTEURS_BY_ORIGINE_PATH = PUBLIC_ACTEURS_PATH + BY_ORIGINE_PATH;
+    public static final String PUBLIC_FIND_FILM_BY_ID = PUBLIC_PATH+FILMS_PATH+BY_ID_PATH;
+    public static final String PUBLIC_FILM_LIST_PARAM_BY_ORIGINE_PATH = PUBLIC_PATH + FILMS_PATH + "filmListParam/byOrigine/";
+    public static final String PUBLIC_FIND_ALL_GENRES_PATH = PUBLIC_PATH + FILMS_PATH + "genres";
+    public static final String PUBLIC_FIND_FILM_TMDB_BY_TITRE_PATH = PUBLIC_PATH + FILMS_PATH + "tmdb/byTitre/";
+    public static final String PUBLIC_PERSONNES_PATH = PUBLIC_PATH + "personnes";
+    public static final String SECURED_UPDATE_FILM_BY_ID_PATH = SECURED_PATH+FILMS_PATH + "update/";
+    public static final String SECURED_UPDATE_PERSONNE_BY_ID_PATH = SECURED_PATH+PERSONNE_PATH + "update/" + BY_ID_PATH;
+    public static final String SECURED_REPLACE_FILM_BY_TMDBID_PATH = SECURED_PATH + FILMS_PATH + "replace/";
+    public static final String SECURED_REMOVE_FILM_BY_ID_PATH = SECURED_PATH + FILMS_PATH + "remove/";
+    public static final String SECURED_SAVE_FILM_BY_ID_PATH = SECURED_PATH+FILMS_PATH + "save/";
+    public static final String SECURED_CLEAN_CACHES_PATH = SECURED_PATH + FILMS_PATH + "cleanCaches";
+    public static final String SECURED_RETRIEVE_IMAGE_BY_ID_PATH = SECURED_PATH+FILMS_PATH + "retrieveImage/";
+    public static final String RETRIEVE_ALL_IMAGES_PATH = SECURED_PATH + FILMS_PATH + "retrieveAllImages/";
+    public static final String IMPORT_PATH = SECURED_PATH + FILMS_PATH + "import";
+    public static final String EXPORT_PATH = SECURED_PATH + FILMS_PATH + "export";
+    public static final String SECURED_CLEAN_ALL_FILMS_PATH = SECURED_PATH + "cleanAllfilms";
+    
+    // PUBLIC PATHS
+	@GetMapping(PUBLIC_BY_PERSONNE_PATH)
 	ResponseEntity<Personne> findPersonne(@RequestParam(name="nom",required = false) String nom) {
 		try {
 			return ResponseEntity.ok(personneService.findPersonneByName(nom));
@@ -87,7 +117,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping(PUBLIC_PATH)
+	@GetMapping(PUBLIC_FIND_ALL_FILMS_PATH)
 	ResponseEntity<List<Film>> findAllFilms(@RequestParam(name="displayType",required = false) String displayType) {
 		try {
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
@@ -98,7 +128,7 @@ public class FilmController {
 		}
 		return ResponseEntity.badRequest().build();
 	}
-	@GetMapping("/films/genres")
+	@GetMapping(PUBLIC_FIND_ALL_GENRES_PATH)
 	ResponseEntity<List<Genre>> findAllGenres() {
 		try {
 			return ResponseEntity.ok(filmService.findAllGenres());
@@ -107,11 +137,8 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@PutMapping("/films/cleanAllfilms")
-	void cleanAllFilms() {
-		filmService.cleanAllFilms();
-	}
-	@GetMapping("/films/byTitre/{titre}")
+	
+	@GetMapping(PUBLIC_PATH+FILMS_PATH+BY_TITRE_PATH+"{titre}")
 	ResponseEntity<Film> findFilmByTitre(@PathVariable String titre) {
 		try {
 			return ResponseEntity.ok(filmService.findFilmByTitre(titre));
@@ -120,7 +147,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping("/films/byOrigine/{origine}")
+	@GetMapping(PUBLIC_FIND_ALL_FILMS_BY_ORIGINE_PATH+"{origine}")
 	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.debug("findAllFilmsByOrigine - instanceId="+instanceId);
 		try {
@@ -133,7 +160,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping("/filmListParam/byOrigine/{origine}")
+	@GetMapping(PUBLIC_FILM_LIST_PARAM_BY_ORIGINE_PATH+"{origine}")
 	ResponseEntity<FilmListParam> findFilmListParamByFilmDisplayTypeParam(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.debug("findFilmListParamByFilmDisplayType - instanceId="+instanceId);
 		try {
@@ -146,7 +173,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping("/films/tmdb/byTitre/{titre}")
+	@GetMapping(PUBLIC_FIND_FILM_TMDB_BY_TITRE_PATH + "{titre}")
 	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		try {
 			return ResponseEntity.ok(tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre));
@@ -155,7 +182,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping("/films/byId/{id}")
+	@GetMapping(PUBLIC_FIND_FILM_BY_ID + "{id}")
 	ResponseEntity<Film> findFilmById(@PathVariable Long id) {
 		try {
 			return ResponseEntity.ok(filmService.findFilm(id));
@@ -164,7 +191,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping("/films/byTmdbId/{tmdbid}")
+	@GetMapping(PUBLIC_FIND_BY_TMDBID_PATH+"{tmdbid}")
 	ResponseEntity<Boolean> checkIfTmdbFilmExists(@PathVariable Long tmdbid) {
 		try {
 			return ResponseEntity.ok(filmService.checkIfTmdbFilmExists(tmdbid));
@@ -173,7 +200,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping("/realisateurs")
+	@GetMapping(PUBLIC_REALISATEURS_PATH)
 	ResponseEntity<List<Personne>> findAllRealisateurs() {
 		try {
 			return ResponseEntity.ok(filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS)));
@@ -182,7 +209,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping("/realisateurs/byOrigine/{origine}")
+	@GetMapping(PUBLIC_FIND_ALL_REALISATEURS_BY_ORIGINE_PATH + "{origine}")
 	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.info("findAllRealisateursByOrigine - instanceId="+instanceId);
 		try {
@@ -198,7 +225,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping("/acteurs")
+	@GetMapping(PUBLIC_ACTEURS_PATH)
 	ResponseEntity<List<Personne>> findAllActeurs() {
 		try {
 			return ResponseEntity.ok(filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS)));
@@ -207,7 +234,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping("/acteurs/byOrigine/{origine}")
+	@GetMapping(PUBLIC_FIND_ALL_ACTEURS_BY_ORIGINE_PATH+"{origine}")
 	ResponseEntity<List<Personne>> findAllActeursByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.info("findAllActeursByOrigine - instanceId="+instanceId);
 		try {
@@ -223,7 +250,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping("/personnes")
+	@GetMapping(PUBLIC_PERSONNES_PATH)
 	ResponseEntity<List<Personne>> findAllPersonne() {
 		try {
 			return ResponseEntity.ok(personneService.findAllPersonne());
@@ -232,7 +259,9 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@PutMapping("/films/tmdb/{tmdbId}")
+	
+	// SECURED PATHS
+	@PutMapping(SECURED_REPLACE_FILM_BY_TMDBID_PATH+"{tmdbId}")
 	ResponseEntity<Film> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws Exception {
 		try {
 			Film filmOptional = filmService.findFilm(film.getId());
@@ -250,7 +279,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@PutMapping("/films/update/{id}")
+	@PutMapping(SECURED_UPDATE_FILM_BY_ID_PATH+"{id}")
 	ResponseEntity<Film> updateFilm(@RequestBody Film film,@PathVariable Long id) {
 		try {
 			Film filmOptional = filmService.findFilm(id);
@@ -268,7 +297,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@PutMapping("/films/remove/{id}")
+	@PutMapping(SECURED_REMOVE_FILM_BY_ID_PATH+"{id}")
 	ResponseEntity<Film> removeFilm(@PathVariable Long id) {
 		try {
 			Film filmOptional = filmService.findFilm(id);
@@ -282,7 +311,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@PutMapping("/films/cleanCaches")
+	@PutMapping(SECURED_CLEAN_CACHES_PATH)
 	ResponseEntity<Void> cleanCaches() {
 		try {
 			filmService.cleanAllCaches();
@@ -292,7 +321,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@PutMapping("/films/retrieveImage/{id}")
+	@PutMapping(SECURED_RETRIEVE_IMAGE_BY_ID_PATH+"{id}")
 	ResponseEntity<Film> retrieveFilmImage(@PathVariable Long id) {
 		try {
 			Film filmOptional = filmService.findFilm(id);
@@ -307,7 +336,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@PutMapping("/films/retrieveAllImages")
+	@PutMapping(RETRIEVE_ALL_IMAGES_PATH)
 	ResponseEntity<Void> retrieveAllFilmImages() {
 		try {
 			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS);
@@ -322,7 +351,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@PutMapping("/films/save/{tmdbId}")
+	@PutMapping(SECURED_SAVE_FILM_BY_ID_PATH+"{tmdbId}")
 	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
 		Film savedFilm;
 		logger.info("saveFilm - instanceId="+instanceId);
@@ -338,7 +367,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@PutMapping("/personnes/byId/{id}")
+	@PutMapping(SECURED_UPDATE_PERSONNE_BY_ID_PATH+"{id}")
 	ResponseEntity<Object> updatePersonne(@RequestBody Personne p,@PathVariable Long id) {
 		Personne personne = personneService.findByPersonneId(id);
 		if(personne==null) {
@@ -351,7 +380,7 @@ public class FilmController {
 		logger.info(personne.toString());
 		return ResponseEntity.noContent().build();
 	}
-	@PostMapping("/films/import")
+	@PostMapping(IMPORT_PATH)
 	ResponseEntity<Void> importFilmList(@RequestParam("file") MultipartFile file) {
 		File resFile = null;
 		try {
@@ -371,7 +400,7 @@ public class FilmController {
 		}
 		return ResponseEntity.noContent().build();
 	}
-	@PostMapping("/films/export")
+	@PostMapping(EXPORT_PATH)
 	ResponseEntity<byte[]> exportFilmList(@RequestBody String origine) throws DvdthequeServerRestException, IOException{
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentLanguage(Locale.FRANCE);
@@ -399,5 +428,9 @@ public class FilmController {
 	    	logger.error("an error occured while exporting film list",e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
+	}
+	@PutMapping(SECURED_CLEAN_ALL_FILMS_PATH)
+	void cleanAllFilms() {
+		filmService.cleanAllFilms();
 	}
 }

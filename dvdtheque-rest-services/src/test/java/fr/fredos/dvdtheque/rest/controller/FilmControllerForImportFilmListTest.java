@@ -33,21 +33,17 @@ import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 public class FilmControllerForImportFilmListTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmControllerTest.class);
 	private MockMvc mvc;
-	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
 	@Autowired
 	protected IFilmService filmService;
 	@Autowired
 	ExcelFilmHandler excelFilmHandler;
 	@Autowired
     private WebApplicationContext context;
-	
-	private static final String IMPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "import";
 	private static final String contentType = "text/plain";
-	
+	private static final String BASE_PATH_URI = "/dvdtheque";
 	@Before()
 	public void setUp() throws Exception {
 		filmService.cleanAllFilms();
-		
 		mvc = MockMvcBuilders
 		          .webAppContextSetup(context)
 		          //.apply(springSecurity())
@@ -60,7 +56,7 @@ public class FilmControllerForImportFilmListTest {
 		File file = resource.getFile();
 		byte[] content = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
 		MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "ListDvd.csv", contentType, content);
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(IMPORT_FILM_LIST_URI)
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(BASE_PATH_URI+FilmController.IMPORT_PATH)
 				.file(mockMultipartFile);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
@@ -72,7 +68,7 @@ public class FilmControllerForImportFilmListTest {
 		File file = resource.getFile();
 		byte[] bFile = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
 		MockMultipartFile mockMultipartFile = new MockMultipartFile("file", file.getName(), contentType, bFile);
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(IMPORT_FILM_LIST_URI)
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(BASE_PATH_URI+FilmController.IMPORT_PATH)
 				.file(mockMultipartFile);
 		mvc.perform(builder).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();

@@ -18,7 +18,7 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 public class DvdthequeWebSocketController {
 	protected Logger logger = LoggerFactory.getLogger(DvdthequeWebSocketController.class);
 	@Autowired
-	SimpMessagingTemplate simpMessagingTemplate;
+	private SimpMessagingTemplate simpMessagingTemplate;
 
 	@MessageMapping("/dvdtheque")
 	public void onReceiveMessage(JmsStatusMessage<Film> jmsStatusMessage) {
