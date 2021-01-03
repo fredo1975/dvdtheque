@@ -1,11 +1,14 @@
 package fr.fredos.dvdtheque.dvdtheque.authorization.server.configuration;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
@@ -28,7 +31,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     private JwtAccessTokenConverter jwtAccessTokenConverter;
     private TokenStore tokenStore;
-
+    @Autowired
+    private DataSource dataSource;
     @Bean
     public TokenStore tokenStore() {
         if (tokenStore == null) {
@@ -64,11 +68,11 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         jwtAccessTokenConverter.setKeyPair(keyPair);
         return jwtAccessTokenConverter;*/
     }
-/*
+
     @Override
     public void configure(final ClientDetailsServiceConfigurer clients) throws Exception {
         clients.jdbc(this.dataSource);
-    }*/
+    }
 
     @Override
     public void configure(final AuthorizationServerEndpointsConfigurer endpoints) {

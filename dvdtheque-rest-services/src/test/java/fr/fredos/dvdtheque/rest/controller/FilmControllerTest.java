@@ -82,7 +82,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
+	private static final String BASE_PATH_URI = "/dvdtheque/";
+	private static final String GET_ALL_FILMS_URI = BASE_PATH_URI+FilmController.PUBLIC_PATH;
 	private static final String GET_CLEAN_ALL_FILMS_URI = "/dvdtheque/films/cleanAllfilms/";
 	private static final String GET_ALL_GENRES_URI = "/dvdtheque/films/genres/";
 	private static final String UPDATE_PERSONNE_URI = "/dvdtheque/personnes/byId/";
@@ -427,7 +428,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film filmToTest = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		assertNotNull(filmToTest);
 		ResultActions resultActions = mvc
-				.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI).param("displayType", FilmDisplayType.TOUS.name())
+				.perform(MockMvcRequestBuilders.get(BASE_PATH_URI+FilmController.PUBLIC_PATH).param("displayType", FilmDisplayType.TOUS.name())
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film.getTitre())));

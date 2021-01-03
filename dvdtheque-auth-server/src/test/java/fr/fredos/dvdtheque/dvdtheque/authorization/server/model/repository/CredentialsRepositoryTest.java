@@ -15,7 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.dvdtheque.authorization.server.DvdthequeAuthServerApplication;
-import fr.fredos.dvdtheque.dvdtheque.authorization.server.model.object.CredentialsRepository;
 import fr.fredos.dvdtheque.dvdtheque.authorization.server.model.object.User;
 
 @RunWith(SpringRunner.class)

@@ -75,8 +75,10 @@ public class FilmController {
     private String instanceId;
     @Value("${limit.film.size}")
     private int limitFilmSize;
+    public static final String PUBLIC_PATH = "/public/films/";
+    public static final String BY_PERSONNE_PATH = "byPersonne";
 
-	@GetMapping("/films/byPersonne")
+	@GetMapping(PUBLIC_PATH+BY_PERSONNE_PATH)
 	ResponseEntity<Personne> findPersonne(@RequestParam(name="nom",required = false) String nom) {
 		try {
 			return ResponseEntity.ok(personneService.findPersonneByName(nom));
@@ -85,7 +87,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@GetMapping("/films")
+	@GetMapping(PUBLIC_PATH)
 	ResponseEntity<List<Film>> findAllFilms(@RequestParam(name="displayType",required = false) String displayType) {
 		try {
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);

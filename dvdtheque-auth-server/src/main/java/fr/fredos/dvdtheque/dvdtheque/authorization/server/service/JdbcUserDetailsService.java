@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.dvdtheque.authorization.server.domain;
+package fr.fredos.dvdtheque.dvdtheque.authorization.server.service;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,8 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import fr.fredos.dvdtheque.dvdtheque.authorization.server.model.object.CredentialsRepository;
 import fr.fredos.dvdtheque.dvdtheque.authorization.server.model.object.User;
+import fr.fredos.dvdtheque.dvdtheque.authorization.server.model.repository.CredentialsRepository;
 @Service
 public class JdbcUserDetailsService implements UserDetailsService{
 	@Autowired
