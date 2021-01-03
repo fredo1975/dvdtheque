@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.dvdtheque.api.application;
+package fr.fredos.dvdtheque.dvdtheque.gateway.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;

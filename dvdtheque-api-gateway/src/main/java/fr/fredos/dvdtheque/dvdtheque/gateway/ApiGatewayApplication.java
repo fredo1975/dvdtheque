@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.dvdtheque.api;
+package fr.fredos.dvdtheque.dvdtheque.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

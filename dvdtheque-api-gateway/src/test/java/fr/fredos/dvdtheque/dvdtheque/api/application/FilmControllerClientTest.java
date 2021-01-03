@@ -6,6 +6,8 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
+import fr.fredos.dvdtheque.dvdtheque.gateway.application.FilmControllerClient;
+
 //@RunWith(SpringRunner.class)
 @SpringJUnitConfig(classes = {FilmControllerClient.class, RestTemplate.class})
 @EnableAspectJAutoProxy
