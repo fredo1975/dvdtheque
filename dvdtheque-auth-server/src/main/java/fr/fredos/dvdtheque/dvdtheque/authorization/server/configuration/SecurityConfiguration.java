@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -23,17 +23,10 @@ import fr.fredos.dvdtheque.dvdtheque.authorization.server.service.JdbcUserDetail
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	@Autowired
 	private JdbcUserDetailsService jdbcUserDetailsService;
-	/*@Autowired
-	private final JwtTokenFilter jwtTokenFilter;*/
-	private PasswordEncoder passwordEncoder;
-	/*@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-    String issuerUri;*/
+	
 	@Bean
     public PasswordEncoder passwordEncoder() {
-		if (passwordEncoder == null) {
-            passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        }
-        return passwordEncoder;
+		return new BCryptPasswordEncoder();
     }
 
 	@Override

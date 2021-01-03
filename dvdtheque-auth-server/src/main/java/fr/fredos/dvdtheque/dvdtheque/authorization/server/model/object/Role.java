@@ -29,8 +29,8 @@ public class Role implements Serializable {
 	@Column(name = "NAME")
 	@NotNull
 	private String name;
-	/*@OneToMany(cascade = CascadeType.ALL, targetEntity=User.class, fetch = FetchType.EAGER)
-	private Set<User> users;*/
+	@OneToMany(cascade = CascadeType.ALL, targetEntity=User.class, fetch = FetchType.LAZY)
+	private Set<User> users;
 	
 	public Role() {
 		super();
@@ -47,12 +47,12 @@ public class Role implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	/*public Set<User> getUsers() {
+	public Set<User> getUsers() {
 		return users;
 	}
 	public void setUsers(Set<User> users) {
 		this.users = users;
-	}*/
+	}
 	@Override
 	public boolean equals(Object other) {
         if ( (this == other ) ) return true;
