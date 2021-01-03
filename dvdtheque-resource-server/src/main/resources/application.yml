@@ -1,8 +1,0 @@
-server:
-  port: 9998
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: http://localhost:9999/oauth/token_keys
