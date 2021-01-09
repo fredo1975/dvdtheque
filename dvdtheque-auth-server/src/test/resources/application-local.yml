@@ -1,7 +1,22 @@
+debug: true
 spring:
+  cloud:
+    enabled: false
+  security:
+    #oauth2:  
+      #resourceserver:  
+        #jwt: issuer-uri: https://idsvr.example.com/oauth/v2/oauth-anonymous
+    filter:
+      order: 10
   datasource:
-    #url: jdbc:mysql://localhost/dvdtheque?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris
-    #username: fredo
-    #password: fredo
+    jdbcUrl: jdbc:h2:mem:mydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password: sa
+    testWhileIdle: true
+    validationQuery: SELECT 1
+    jpa: 
+      show-sql: false
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

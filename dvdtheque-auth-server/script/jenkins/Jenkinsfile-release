@@ -1,0 +1,56 @@
+node {
+   def mvnHome
+   def DEV_SERVER_IP = "192.168.1.101"
+   def PROD_SERVER_IP = "192.168.1.106"
+   stage('Preparation') { // for display purposes
+      // Get some code from a GitHub repository
+      if("${ENV}" == "dev"){
+            git branch: 'develop', url: 'https://github.com/fredo1975/dvdtheque.git'
+       }else if ("${ENV}" == "prod") {
+            git branch: 'master', url: 'https://github.com/fredo1975/dvdtheque.git'
+       }
+      // Get the Maven tool.
+      // ** NOTE: This 'M3' Maven tool must be configured
+      // **       in the global configuration.           
+      mvnHome = tool 'Maven 3.6.0'
+	  VERSION = readMavenPom().getVersion()
+	  pom = readMavenPom file: 'pom.xml'
+      NVERSION = pom.version.replace("-SNAPSHOT", "")
+   }
+   stage('Build') {
+      // Run the maven build
+      withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+         sh 'mvn -U clean install -pl dvdtheque-auth-server -am'
+      }
+   }
+   stage('Stopping dvdtheque-auth server') {
+       if("${ENV}" == "dev"){
+            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl stop dvdtheque-auth-server.service"
+       }else if ("${ENV}" == "prod") {
+            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-auth-server.service"
+       }
+   }
+   stage('Copying dvdtheque-auth server jar') {
+        if("${ENV}" == "dev"){
+			def ARTIFACT = "dvdtheque-api-gateway-${VERSION}.jar"
+            sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$DEV_SERVER_IP:/opt/dvdtheque_auth_server_service/dvdtheque-auth-server.jar"
+        }else if ("${ENV}" == "prod") {
+            def ARTIFACT = "dvdtheque-api-gateway-${NVERSION}.jar"
+            sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$PROD_SERVER_IP:/opt/dvdtheque_auth_server_service/dvdtheque-auth-server.jar"
+        }
+   }
+   stage('Sarting dvdtheque-auth server') {
+        if("${ENV}" == "dev"){
+            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl start dvdtheque-auth-server.service"
+       }else if ("${ENV}" == "prod") {
+            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-auth-server.service"
+       }
+   }
+   stage('Check status dvdtheque-auth server') {
+        if("${ENV}" == "dev"){
+            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl status dvdtheque-auth-server.service"
+       }else if ("${ENV}" == "prod") {
+            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-auth-server.service"
+       }
+   }
+}
