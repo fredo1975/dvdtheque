@@ -26,18 +26,18 @@ create table oauth_access_token (
   authentication_id VARCHAR(256),
   user_name VARCHAR(256),
   client_id VARCHAR(256),
-  authentication VARBINARY(1024),
+  authentication BLOB,
   refresh_token VARCHAR(256)
 );
 
 create table oauth_refresh_token (
   token_id VARCHAR(256),
   token VARBINARY(1024),
-  authentication VARBINARY
+  authentication BLOB
 );
 
 create table oauth_code (
-  code VARCHAR(256), authentication VARBINARY(1024)
+  code VARCHAR(256), authentication BLOB
 );
 
 create table oauth_approvals (
@@ -51,7 +51,9 @@ create table oauth_approvals (
 
 INSERT INTO USER(username, password) VALUES ('fredo', '{bcrypt}$2y$10$kzJcS22.xtPJGCLwO3PWIObWS9Rh.dOe7SmUGxSyvTqwiQ2YPZJEW');
 
-INSERT INTO oauth_client_details (client_id, client_secret, scope, authorized_grant_types, authorities, access_token_validity) VALUES ('dvdtheque-clientId', '{bcrypt}$2y$10$8AMGjnTCfq2uuFcns5TgxuodWUN8hgHZWk7Qp8pNS.m8TjES1KZVu', 'read,write', 'password,refresh_token,client_credentials', 'ROLE_CLIENT', 300);
+INSERT INTO oauth_client_details (client_id, client_secret, scope, authorized_grant_types, authorities, access_token_validity) VALUES ('dvdtheque-clientId', '$2y$10$8AMGjnTCfq2uuFcns5TgxuodWUN8hgHZWk7Qp8pNS.m8TjES1KZVu', 'read,write', 'password,refresh_token,client_credentials', 'ROLE_CLIENT', 300);
+
+INSERT INTO oauth_client_details (client_id, client_secret, scope, authorized_grant_types, authorities, access_token_validity) VALUES ('gateway', '$2y$10$kcfZdxhX5hFMKReerEMZ1u1cG1udXLnQrheQ7vz2SWIaGfc.CnsFq', 'read', 'authorization_code', 'ROLE_CLIENT', 300);
 
 INSERT INTO roles (ID, NAME) VALUES (1, 'ROLE_USER');
 
