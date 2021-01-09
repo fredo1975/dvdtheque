@@ -1,7 +1,18 @@
 debug: true
+
+jwtSecret: dvd
+jwtExpirationMs: 86400000
+
+eureka:
+  client:
+    enabled: false
 spring:
   cloud:
     enabled: false
+  config:
+    enabled: false
+    discovery:
+        enabled: false
   security:
     #oauth2:  
       #resourceserver:  
