@@ -26,18 +26,18 @@ create table oauth_access_token (
   authentication_id VARCHAR(256),
   user_name VARCHAR(256),
   client_id VARCHAR(256),
-  authentication VARBINARY(1024),
+  authentication BLOB,
   refresh_token VARCHAR(256)
 );
 
 create table oauth_refresh_token (
   token_id VARCHAR(256),
   token VARBINARY(1024),
-  authentication VARBINARY
+  authentication BLOB
 );
 
 create table oauth_code (
-  code VARCHAR(256), authentication VARBINARY(1024)
+  code VARCHAR(256), authentication BLOB
 );
 
 create table oauth_approvals (
