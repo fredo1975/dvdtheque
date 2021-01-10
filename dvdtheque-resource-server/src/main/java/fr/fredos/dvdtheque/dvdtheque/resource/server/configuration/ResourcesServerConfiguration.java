@@ -21,7 +21,7 @@ public class ResourcesServerConfiguration extends ResourceServerConfigurerAdapte
     @Override
     public void configure(ResourceServerSecurityConfigurer resources)throws Exception{
         TokenStore tokenStore=new JdbcTokenStore(dataSource);
-        resources.resourceId("dvdtheque_api").tokenStore(tokenStore);
+        resources.resourceId("api").tokenStore(tokenStore);
     }
     
     @Override

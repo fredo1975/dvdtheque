@@ -20,7 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 @Entity
-@Table(name = "USER")
+@Table(name = "user")
 public class User implements Serializable {
 	@Transient
 	protected final Log logger = LogFactory.getLog(getClass());
