@@ -48,3 +48,17 @@ create table oauth_approvals (
   expiresAt TIMESTAMP,
   lastModifiedAt TIMESTAMP
 );
+
+CREATE TABLE `user` (
+	`ID` INT NOT NULL AUTO_INCREMENT,
+	`USERNAME` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`PASSWORD` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`EMAIL` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`FIRSTNAME` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`LASTNAME` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	UNIQUE INDEX `ID` (`ID`)
+)
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=2
+;
