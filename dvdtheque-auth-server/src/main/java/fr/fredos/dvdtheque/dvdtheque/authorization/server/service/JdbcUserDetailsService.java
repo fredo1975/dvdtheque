@@ -13,11 +13,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import fr.fredos.dvdtheque.dvdtheque.authorization.server.model.object.User;
-import fr.fredos.dvdtheque.dvdtheque.authorization.server.model.repository.CredentialsRepository;
+import fr.fredos.dvdtheque.dvdtheque.authorization.server.model.repository.UserRepository;
 @Service
 public class JdbcUserDetailsService implements UserDetailsService{
 	@Autowired
-	private CredentialsRepository credentialsRepository;
+	private UserRepository credentialsRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

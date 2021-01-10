@@ -62,3 +62,20 @@ COLLATE='utf8mb4_general_ci'
 ENGINE=InnoDB
 AUTO_INCREMENT=2
 ;
+
+CREATE TABLE `roles` (
+	`ID` INT NOT NULL,
+	`NAME` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_general_ci',
+	UNIQUE INDEX `ID` (`ID`)
+)
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+;
+CREATE TABLE `userroles` (
+	`ID` INT NOT NULL,
+	`USER_ID` INT NOT NULL,
+	`ROLE_ID` INT NOT NULL
+)
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+;

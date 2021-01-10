@@ -49,12 +49,13 @@ create table oauth_approvals (
   lastModifiedAt TIMESTAMP
 );
 
-INSERT INTO USER(username, password) VALUES ('fredo', '{bcrypt}$2y$10$kzJcS22.xtPJGCLwO3PWIObWS9Rh.dOe7SmUGxSyvTqwiQ2YPZJEW');
+INSERT INTO user(username, password) VALUES ('fredo', '{bcrypt}$2y$10$kzJcS22.xtPJGCLwO3PWIObWS9Rh.dOe7SmUGxSyvTqwiQ2YPZJEW');
+
+INSERT INTO roles (ID, NAME) VALUES (1, 'ROLE_USER');
+
+INSERT INTO userroles (ID, USER_ID,ROLE_ID) VALUES (1,1,1);
 
 INSERT INTO oauth_client_details (client_id, client_secret, scope, authorized_grant_types, authorities, access_token_validity) VALUES ('dvdtheque-clientId', '$2y$10$8AMGjnTCfq2uuFcns5TgxuodWUN8hgHZWk7Qp8pNS.m8TjES1KZVu', 'read,write', 'password,refresh_token,client_credentials', 'ROLE_CLIENT', 300);
 
 INSERT INTO oauth_client_details (client_id, client_secret, scope, authorized_grant_types, authorities, access_token_validity) VALUES ('gateway', '$2y$10$kcfZdxhX5hFMKReerEMZ1u1cG1udXLnQrheQ7vz2SWIaGfc.CnsFq', 'read', 'authorization_code', 'ROLE_CLIENT', 300);
 
-INSERT INTO roles (ID, NAME) VALUES (1, 'ROLE_USER');
-
-INSERT INTO userroles (ID, USER_ID,ROLE_ID) VALUES (1,1,1);

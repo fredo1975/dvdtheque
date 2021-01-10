@@ -20,17 +20,17 @@ import fr.fredos.dvdtheque.dvdtheque.authorization.server.model.object.User;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DvdthequeAuthServerApplication.class)
 @ActiveProfiles("local")
-public class CredentialsRepositoryTest {
-	protected Logger logger = LoggerFactory.getLogger(CredentialsRepositoryTest.class);
+public class UserRepositoryTest {
+	protected Logger logger = LoggerFactory.getLogger(UserRepositoryTest.class);
 	@Autowired
-	private CredentialsRepository credentialsRepository;
+	private UserRepository userRepository;
 	
 	@Test
 	public void contextLoads() {
 	}
 	@Test
 	public void findByName() {
-		Optional<User> possibleCredentials = credentialsRepository.findUserWithName("fredo");
+		Optional<User> possibleCredentials = userRepository.findUserWithName("fredo");
 		User user = possibleCredentials.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 		assertNotNull(user);
 	}

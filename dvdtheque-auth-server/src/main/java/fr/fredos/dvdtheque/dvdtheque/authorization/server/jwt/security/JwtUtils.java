@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
@@ -30,19 +31,19 @@ public class JwtUtils {
 		UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
 
 		return Jwts.builder()
+				.signWith(SignatureAlgorithm.HS512, jwtSecret.getBytes())
 				.setSubject((userPrincipal.getUsername()))
-				.setIssuedAt(new Date())
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
 				.compact();
 	}
 
 	public String getUserNameFromJwtToken(String token) {
-		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+		return Jwts.parser().setSigningKey(jwtSecret.getBytes()).parseClaimsJws(token).getBody().getSubject();
 	}
 
 	public boolean validateJwtToken(String authToken) {
 		try {
-			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+			Jwts.parser().setSigningKey(jwtSecret.getBytes()).parseClaimsJws(authToken);
 			return true;
 		} catch (SignatureException e) {
 			logger.error("Invalid JWT signature: {}", e.getMessage());

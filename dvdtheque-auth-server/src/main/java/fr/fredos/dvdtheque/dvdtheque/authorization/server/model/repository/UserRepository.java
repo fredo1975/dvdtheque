@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 
 import fr.fredos.dvdtheque.dvdtheque.authorization.server.model.object.User;
 
-public interface CredentialsRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("select u from User u where u.userName = ?1")
     Optional<User> findUserWithName(String username);
+	@Query("select u from User u where u.userName = ?1")
+	Boolean existsByUsername(String username);
 }
