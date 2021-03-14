@@ -27,6 +27,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,6 +57,7 @@ import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 @RestController
 @ComponentScan({"fr.fredos.dvdtheque.rest"})
+//@PostAuthorize("hasRole('ROLE_USER')")
 @RequestMapping("/dvdtheque")
 public class FilmController {
 	protected Logger logger = LoggerFactory.getLogger(FilmController.class);
@@ -131,6 +135,7 @@ public class FilmController {
 	@GetMapping(PUBLIC_FIND_ALL_GENRES_PATH)
 	ResponseEntity<List<Genre>> findAllGenres() {
 		try {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			return ResponseEntity.ok(filmService.findAllGenres());
 		}catch (Exception e) {
 			logger.error(format("an error occured while findAllGenres"),e);
@@ -262,6 +267,7 @@ public class FilmController {
 	
 	// SECURED PATHS
 	@PutMapping(SECURED_REPLACE_FILM_BY_TMDBID_PATH+"{tmdbId}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	ResponseEntity<Film> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws Exception {
 		try {
 			Film filmOptional = filmService.findFilm(film.getId());
@@ -280,6 +286,7 @@ public class FilmController {
 		}
 	}
 	@PutMapping(SECURED_UPDATE_FILM_BY_ID_PATH+"{id}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	ResponseEntity<Film> updateFilm(@RequestBody Film film,@PathVariable Long id) {
 		try {
 			Film filmOptional = filmService.findFilm(id);
@@ -298,6 +305,7 @@ public class FilmController {
 		}
 	}
 	@PutMapping(SECURED_REMOVE_FILM_BY_ID_PATH+"{id}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	ResponseEntity<Film> removeFilm(@PathVariable Long id) {
 		try {
 			Film filmOptional = filmService.findFilm(id);
@@ -352,6 +360,7 @@ public class FilmController {
 		}
 	}
 	@PutMapping(SECURED_SAVE_FILM_BY_ID_PATH+"{tmdbId}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
 		Film savedFilm;
 		logger.info("saveFilm - instanceId="+instanceId);
@@ -368,6 +377,7 @@ public class FilmController {
 		}
 	}
 	@PutMapping(SECURED_UPDATE_PERSONNE_BY_ID_PATH+"{id}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	ResponseEntity<Object> updatePersonne(@RequestBody Personne p,@PathVariable Long id) {
 		Personne personne = personneService.findByPersonneId(id);
 		if(personne==null) {
@@ -381,6 +391,7 @@ public class FilmController {
 		return ResponseEntity.noContent().build();
 	}
 	@PostMapping(IMPORT_PATH)
+	@PreAuthorize("hasRole('ROLE_USER')")
 	ResponseEntity<Void> importFilmList(@RequestParam("file") MultipartFile file) {
 		File resFile = null;
 		try {
@@ -430,6 +441,7 @@ public class FilmController {
 		}
 	}
 	@PutMapping(SECURED_CLEAN_ALL_FILMS_PATH)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void cleanAllFilms() {
 		filmService.cleanAllFilms();
 	}

@@ -21,17 +21,18 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -59,9 +60,10 @@ import fr.fredos.dvdtheque.service.model.FilmListParam;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {WebApplication.class})
 @AutoConfigureMockMvc
+@WebAppConfiguration
+@WithMockUser(username="fredo", password = "password", authorities= {"ROLE_USER"})
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(FilmControllerTest.class);
 	private MockMvc mvc;
@@ -74,7 +76,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Autowired
 	private ObjectMapper mapper;
 	@Autowired
-	ExcelFilmHandler excelFilmHandler;
+	private ExcelFilmHandler excelFilmHandler;
 	@Autowired
     private WebApplicationContext context;
 	
@@ -88,9 +90,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Before()
 	public void setUp() throws Exception {
 		filmService.cleanAllFilms();
+		
 		mvc = MockMvcBuilders
 		          .webAppContextSetup(context)
-		          //.apply(springSecurity())
+		          .apply(SecurityMockMvcConfigurers.springSecurity())
 		          .build();
 	}
 
@@ -734,7 +737,51 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertEquals(POSTER_PATH, filmUpdated.getPosterPath());
 	}
 
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	@Transactional
+	public void testUpdateFilmUnauthenticated() throws Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1).setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		Film filmToUpdate = filmService.findFilm(film.getId());
+		assertNotNull(filmToUpdate);
+		logger.debug("filmToUpdate=" + filmToUpdate.toString());
+		filmToUpdate.setTitre(FilmBuilder.TITRE_FILM_TMBD_ID_4780);
+		filmToUpdate.getDvd().setRipped(false);
+		FilmBuilder.assertFilmIsNotNull(filmToUpdate, true, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
+		mvc.perform(MockMvcRequestBuilders.put(BASE_PATH_URI + FilmController.SECURED_UPDATE_FILM_BY_ID_PATH + film.getId(), filmToUpdate)
+				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString)).andDo(MockMvcResultHandlers.print())
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_4780)));
+		Film filmUpdated = filmService.findFilm(filmToUpdate.getId());
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), filmUpdated.getTitre());
+		assertFalse(filmUpdated.getDvd().isRipped());
+		FilmDisplayTypeParam enSalleDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.EN_SALLE);
+		FilmDisplayTypeParam dvdDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.DVD);
+		FilmBuilder.assertCacheSize(0, 0, enSalleDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(enSalleDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(enSalleDisplayTypeParam));
+		FilmBuilder.assertCacheSize(3, 1, dvdDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(dvdDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(dvdDisplayTypeParam));
+	}
 	@Test
+	@WithMockUser(username="fredo",authorities={"ROLE_USER","ROLE_ADMIN"})
 	@Transactional
 	public void testUpdateFilm() throws Exception {
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
@@ -766,7 +813,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		mvc.perform(MockMvcRequestBuilders.put(BASE_PATH_URI + FilmController.SECURED_UPDATE_FILM_BY_ID_PATH + film.getId(), filmToUpdate)
 				.contentType(MediaType.APPLICATION_JSON).content(filmJsonString)).andDo(MockMvcResultHandlers.print())
-				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_4780)));
 		Film filmUpdated = filmService.findFilm(filmToUpdate.getId());
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), filmUpdated.getTitre());
@@ -1078,6 +1125,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 
 	@Test
+	@WithMockUser(username = "fredo", password = "fredo", roles = "ROLE_ADMIN")
 	@Transactional
 	public void testSaveNewFilmEnSalle() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.put(BASE_PATH_URI + FilmController.SECURED_SAVE_FILM_BY_ID_PATH + FilmBuilder.tmdbId2)

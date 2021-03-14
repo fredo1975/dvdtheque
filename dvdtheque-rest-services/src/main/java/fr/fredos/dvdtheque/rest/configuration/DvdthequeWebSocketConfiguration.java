@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.websocket.conf;
+package fr.fredos.dvdtheque.rest.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;

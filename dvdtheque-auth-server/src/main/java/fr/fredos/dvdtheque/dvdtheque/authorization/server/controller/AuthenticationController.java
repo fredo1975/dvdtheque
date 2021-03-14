@@ -34,6 +34,8 @@ public class AuthenticationController {
 	private AuthenticationManager authenticationManager;
 	@Autowired
 	private JwtUtils jwtUtils;
+	
+	public static final String SIGNIN_PATH = "/signin";
     //private User user;
 	/*
 	@GetMapping
@@ -55,7 +57,7 @@ public class AuthenticationController {
 		return Collections.singletonMap("message", "Hello " + jwt.getClaimAsString("name"));
 	}*/
 	
-	@PostMapping("/signin")
+	@PostMapping(SIGNIN_PATH)
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
 		Authentication authentication = authenticationManager.authenticate(
