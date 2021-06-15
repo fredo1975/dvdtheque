@@ -34,6 +34,9 @@ pipeline {
 				script {
 					checkout scm
 				}
+				sh """
+			        	git branch
+			      	"""
 			}
 		}
         stage('Build for development') {
