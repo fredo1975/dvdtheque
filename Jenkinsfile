@@ -35,7 +35,7 @@ pipeline {
 					checkout scm
 				}
 				sh """
-			        	git branch
+			        	git checkout develop
 			      	"""
 			}
 		}
