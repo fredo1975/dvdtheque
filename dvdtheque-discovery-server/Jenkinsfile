@@ -32,7 +32,7 @@ pipeline {
 			      		if ("${ENV}" == "prod") {
 				            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${NVERSION}'
 				         }
-				         sh 'mvn -U clean install'
+				         sh 'mvn -U clean install -pl dvdtheque-discovery-server -am'
 					}
 		      	}
 	      	}
