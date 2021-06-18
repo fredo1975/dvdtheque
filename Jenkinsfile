@@ -14,12 +14,15 @@ pipeline {
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
         )
+        VERSION = readMavenPom().getVersion()
+		NVERSION = VERSION.replace("-SNAPSHOT", "")
     }
     stages {
         stage ('Initialize') {
             steps {
                 sh '''
-                    echo "DEV_VERSION = ${DEV_VERSION}"
+                    echo "VERSION = ${VERSION}"
+                    echo "NVERSION = ${NVERSION}"
                     echo "PROD_SERVER1_IP = ${PROD_SERVER1_IP}"
                     echo "PROD_SERVER2_IP = ${PROD_SERVER2_IP}"
                     echo "DEV_SERVER1_IP = ${DEV_SERVER1_IP}"
@@ -59,13 +62,8 @@ pipeline {
             }
             steps {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		 			script {
-			 			def pom = readMavenPom file: 'pom.xml'
-				    	VERSION = pom.version.replaceAll('SNAPSHOT', BUILD_TIMESTAMP + "." + GIT_COMMIT_SHORT)
-			 		}
-			 		echo VERSION
 			 		sh """
-				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.5:set -DprocessAllModules -DnewVersion=${VERSION}
+				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${NVERSION}
 				    """
 			      	sh """
 			        	mvn -B clean compile
@@ -186,10 +184,10 @@ pipeline {
             steps {
                 script {
                 	sh """
-			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${NVERSION}.jar jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
 			 		"""
 			 		sh """
-			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${NVERSION}.jar jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
 			 		"""
 			 	}
             }
@@ -201,7 +199,7 @@ pipeline {
             steps {
                 script {
 			 		sh """
-			 			scp dvdtheque-batch-app/target/dvdtheque-batch-app-${VERSION}.jar jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
+			 			scp dvdtheque-batch-app/target/dvdtheque-batch-app-${NVERSION}.jar jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
 			 		"""
 			 	}
             }
