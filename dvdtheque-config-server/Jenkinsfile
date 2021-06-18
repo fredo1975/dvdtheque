@@ -8,15 +8,15 @@ pipeline {
     stages{
 		stage('Preparation') { // for display purposes
 	      // Get some code from a GitHub repository
-	      if("${ENV}" == "dev"){
-	            git branch: 'develop', url: 'https://github.com/fredo1975/dvdtheque.git'
-	       }else if ("${ENV}" == "prod") {
-	            git branch: 'master', url: 'https://github.com/fredo1975/dvdtheque.git'
-	       }
-	      // Get the Maven tool.
-	      // ** NOTE: This 'M3' Maven tool must be configured
-	      // **       in the global configuration.           
-	      mvnHome = tool 'Maven 3.6.0'
+	      steps {
+	      	script {
+	      		if("${ENV}" == "dev"){
+		            git branch: 'develop', url: 'https://github.com/fredo1975/dvdtheque.git'
+		        }else if ("${ENV}" == "prod") {
+		            git branch: 'master', url: 'https://github.com/fredo1975/dvdtheque.git'
+		        }
+	      	}
+	      }
 	   }
 	   stage('Build') {
 	      // Run the maven build
