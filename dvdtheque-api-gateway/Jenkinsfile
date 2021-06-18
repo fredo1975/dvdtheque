@@ -1,7 +1,7 @@
 pipeline {
 	environment {
-		PROD_SERVER_IP = "192.168.1.108"
-		DEV_SERVER_IP = "192.168.1.103"
+		PROD_SERVER_IP = "192.168.1.106"
+		DEV_SERVER_IP = "192.168.1.105"
 		VERSION = readMavenPom().getVersion()
 		NVERSION = VERSION.replace("-SNAPSHOT", "")
 	}
