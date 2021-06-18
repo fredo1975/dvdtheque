@@ -1,0 +1,41 @@
+pipeline {
+	environment {
+		PROD_SERVER_IP = "192.168.1.108"
+		DEV_SERVER_IP = "192.168.1.103"
+		VERSION = readMavenPom().getVersion()
+		NVERSION = VERSION.replace("-SNAPSHOT", "")
+	}
+    //agent { label 'slave01' }
+	agent any
+    stages{
+		stage('Preparation') { // for display purposes
+	      // Get some code from a GitHub repository
+	      steps {
+	      	script {
+	      		if("${ENV}" == "dev"){
+		            git branch: 'develop', url: 'https://github.com/fredo1975/dvdtheque.git'
+		        }else if ("${ENV}" == "prod") {
+		            git branch: 'master', url: 'https://github.com/fredo1975/dvdtheque.git'
+		        }
+	      	}
+	      }
+	   }
+	   stage('Build') {
+	      // Run the maven build
+	          steps {
+		      	script {
+		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			  sh '''
+				            echo "VERSION = ${VERSION}"
+				            echo "NVERSION = ${NVERSION}"
+				          '''
+			      		if ("${ENV}" == "prod") {
+				            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${NVERSION}'
+				         }
+				         sh 'mvn -U clean install'
+					}
+		      	}
+	      	}
+	   }
+    }
+}
