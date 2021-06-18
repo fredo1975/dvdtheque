@@ -26,8 +26,7 @@ pipeline {
 		      			  def version = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
 				          def NVERSION = version.replace("-SNAPSHOT", "")
 				          sh '''
-				          	echo "pom = ${pom}"
-				            echo "VERSION = ${VERSION}"
+				            echo "version = ${version}"
 				            echo "NVERSION = ${NVERSION}"
 				          '''
 			      		if ("${ENV}" == "prod") {
