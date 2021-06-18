@@ -58,7 +58,7 @@ pipeline {
 							def ARTIFACT = "dvdtheque-api-gateway-${VERSION}.jar"
 				            sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$DEV_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
 				        }else if ("${ENV}" == "prod") {
-				            def ARTIFACT = "dvdtheque-discovery-server-${NVERSION}.jar"
+				            def ARTIFACT = "dvdtheque-api-gateway-${NVERSION}.jar"
 				            sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$PROD_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
 				        }
 		      		}
