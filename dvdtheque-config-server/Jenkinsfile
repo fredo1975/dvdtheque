@@ -22,8 +22,7 @@ pipeline {
 	      // Run the maven build
 	          steps {
 		      	script {
-		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			  def pom = readMavenPom file: 'pom.xml'
+		      		def pom = readMavenPom file: 'pom.xml'
 				          def VERSION = pom.version
 				          def NVERSION = VERSION.replace("-SNAPSHOT", "")
 				          sh '''
@@ -31,6 +30,8 @@ pipeline {
 				            echo "VERSION = ${VERSION}"
 				            echo "NVERSION = ${NVERSION}"
 				          '''
+		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			  
 			      		if ("${ENV}" == "prod") {
 				            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${NVERSION}'
 				         }
