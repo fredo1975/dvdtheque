@@ -50,7 +50,7 @@ pipeline {
 		      	}
 		   }
 	   }
-	   stage('Copying config server jar') {
+	   stage('Copying api gateway jar') {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
