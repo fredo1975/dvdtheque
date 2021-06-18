@@ -462,7 +462,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(SEARCH_TMDB_FILM_BY_TITRE + titre)
 				.contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is("ALIEN PREDATORS")));
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is("ALIEN PARASITE")));
 		assertNotNull(resultActions.andReturn().getResponse().getContentAsString());
 	}
 

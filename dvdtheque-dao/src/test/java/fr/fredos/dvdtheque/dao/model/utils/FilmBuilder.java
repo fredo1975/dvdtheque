@@ -60,9 +60,9 @@ public class FilmBuilder {
 	public static final int RIP_DATE_OFFSET = -10;
 	public static final int RIP_DATE_OFFSET2 = -1;
 	public static Long tmdbId1 = new Long(1271);
-	public static final String TMDBID1_DATE_SORTIE = "2006/12/09";
+	public static final String TMDBID1_DATE_SORTIE = "2007/03/21";
 	public static Long tmdbId2 = new Long(844);
-	public static final String TMDBID2_DATE_SORTIE = "2004/10/20";
+	public static final String TMDBID2_DATE_SORTIE = "2004/05/20";
 	public static Long tmdbId3 = new Long(4780);
 	public static final String TMDBID3_DATE_SORTIE = "2007/01/07";
 	

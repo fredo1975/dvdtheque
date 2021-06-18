@@ -6,8 +6,8 @@ pipeline {
     }
     environment {
     	def DEV_SERVER1_IP = '192.168.1.103'
-    	def DEV_SERVER2_IP = '192.168.1.101'
-    	def PROD_SERVER1_IP = '192.168.1.105'
+    	def DEV_SERVER2_IP = '192.168.1.105'
+    	def PROD_SERVER1_IP = '192.168.1.108'
     	def PROD_SERVER2_IP = '192.168.1.106'
     	def JAVA_OPTS='-Djava.io.tmpdir=/var/tmp/exportDir'
     	GIT_COMMIT_SHORT = sh(
@@ -21,6 +21,7 @@ pipeline {
                 sh '''
                     echo "DEV_VERSION = ${DEV_VERSION}"
                     echo "PROD_SERVER1_IP = ${PROD_SERVER1_IP}"
+                    echo "PROD_SERVER2_IP = ${PROD_SERVER2_IP}"
                     echo "DEV_SERVER1_IP = ${DEV_SERVER1_IP}"
                     echo "DEV_SERVER2_IP = ${DEV_SERVER2_IP}"
                     echo "GIT_COMMIT_SHORT = ${GIT_COMMIT_SHORT}"
