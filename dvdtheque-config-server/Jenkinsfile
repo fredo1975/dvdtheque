@@ -23,7 +23,7 @@ pipeline {
 	          steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			  def pom = readMavenPom()
+		      			  def pom = readMavenPom file: 'pom.xml'
 				          def VERSION = pom.version
 				          def NVERSION = VERSION.replace("-SNAPSHOT", "")
 				          sh '''
