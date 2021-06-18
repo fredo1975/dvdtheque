@@ -21,17 +21,14 @@ pipeline {
 	   stage('Build') {
 	      // Run the maven build
 	      withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-	          def pom = readMavenPom()
-	          def VERSION = pom.version
-	          def NVERSION = VERSION.replace("-SNAPSHOT", "")
-	          sh '''
-	            echo "VERSION = ${VERSION}"
-	            echo "NVERSION = ${NVERSION}"
-	          '''
-	         if ("${ENV}" == "prod") {
-	            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${NVERSION}'
-	         }
-	         sh 'mvn -U clean install -pl dvdtheque-config-server -am'
+	          steps {
+		      	script {
+		      		if ("${ENV}" == "prod") {
+			            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${NVERSION}'
+			         }
+			         sh 'mvn -U clean install -pl dvdtheque-config-server -am'
+				}
+		      }
 	      }
 	   }
     }
