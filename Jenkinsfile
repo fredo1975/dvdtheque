@@ -63,7 +63,7 @@ pipeline {
             steps {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 			 		sh """
-				    	mvn -B mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${NVERSION}
+				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${NVERSION}
 				    """
 			      	sh """
 			        	mvn -B clean compile
