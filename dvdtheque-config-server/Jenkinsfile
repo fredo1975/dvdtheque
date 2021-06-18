@@ -1,0 +1,38 @@
+pipeline {
+	environment {
+		PROD_SERVER_IP = "192.168.1.108"
+		DEV_SERVER_IP = "192.168.1.103"
+	}
+    //agent { label 'slave01' }
+	agent any
+    stages{
+		stage('Preparation') { // for display purposes
+	      // Get some code from a GitHub repository
+	      if("${ENV}" == "dev"){
+	            git branch: 'develop', url: 'https://github.com/fredo1975/dvdtheque.git'
+	       }else if ("${ENV}" == "prod") {
+	            git branch: 'master', url: 'https://github.com/fredo1975/dvdtheque.git'
+	       }
+	      // Get the Maven tool.
+	      // ** NOTE: This 'M3' Maven tool must be configured
+	      // **       in the global configuration.           
+	      mvnHome = tool 'Maven 3.6.0'
+	   }
+	   stage('Build') {
+	      // Run the maven build
+	      withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+	          def pom = readMavenPom()
+	          def VERSION = pom.version
+	          def NVERSION = VERSION.replace("-SNAPSHOT", "")
+	          sh '''
+	            echo "VERSION = ${VERSION}"
+	            echo "NVERSION = ${NVERSION}"
+	          '''
+	         if ("${ENV}" == "prod") {
+	            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${NVERSION}'
+	         }
+	         sh 'mvn -U clean install -pl dvdtheque-config-server -am'
+	      }
+	   }
+    }
+}
