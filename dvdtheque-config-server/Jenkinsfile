@@ -2,6 +2,8 @@ pipeline {
 	environment {
 		PROD_SERVER_IP = "192.168.1.108"
 		DEV_SERVER_IP = "192.168.1.103"
+		VERSION = readMavenPom().getVersion()
+		NVERSION = VERSION.replace("-SNAPSHOT", "")
 	}
     //agent { label 'slave01' }
 	agent any
@@ -23,11 +25,8 @@ pipeline {
 	          steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			  def version = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
-		      			  sh script: 'echo "version = ${version}"'
-				          def NVERSION = version.replace("-SNAPSHOT", "")
-				          sh '''
-				            echo "version = ${version}"
+		      			  sh '''
+				            echo "VERSION = ${VERSION}"
 				            echo "NVERSION = ${NVERSION}"
 				          '''
 			      		if ("${ENV}" == "prod") {
