@@ -32,10 +32,64 @@ pipeline {
 			      		if ("${ENV}" == "prod") {
 				            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${NVERSION}'
 				         }
-				         sh 'mvn -U clean install'
+				         sh 'mvn -U clean install -pl dvdtheque-config-server -am'
 					}
 		      	}
 	      	}
+	   }
+	   stage('Stopping config server') {
+	   		steps {
+		      	script {
+		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			if("${ENV}" == "dev"){
+				            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl stop dvdtheque-server-config.service"
+				       }else if ("${ENV}" == "prod") {
+				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-server-config.service"
+				       }
+		      		}
+		      	}
+		   }
+	   }
+	   stage('Copying config server jar') {
+	   		steps {
+		      	script {
+		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			if("${ENV}" == "dev"){
+							def ARTIFACT = "dvdtheque-config-server-${VERSION}.jar"
+				            sh "scp dvdtheque-config-server/target/$ARTIFACT jenkins@$DEV_SERVER_IP:/opt/dvdtheque_server_config_service/dvdtheque-config-server.jar"
+				        }else if ("${ENV}" == "prod") {
+				            def ARTIFACT = "dvdtheque-config-server-${NVERSION}.jar"
+				            sh "scp dvdtheque-config-server/target/$ARTIFACT jenkins@$PROD_SERVER_IP:/opt/dvdtheque_server_config_service/dvdtheque-config-server.jar"
+				        }
+		      		}
+		      	}
+		    }
+	   }
+	   stage('Sarting config server') {
+	   		steps {
+		      	script {
+		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			if("${ENV}" == "dev"){
+				            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl start dvdtheque-server-config.service"
+				       }else if ("${ENV}" == "prod") {
+				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-server-config.service"
+				       }
+		      		}
+		      	}
+		    }
+	   }
+	   stage('Check status config server') {
+	   		steps {
+		      	script {
+		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			if("${ENV}" == "dev"){
+				            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl status dvdtheque-server-config.service"
+				       }else if ("${ENV}" == "prod") {
+				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-server-config.service"
+				       }
+		      		}
+		      	}
+		    }
 	   }
     }
 }
