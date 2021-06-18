@@ -1,0 +1,95 @@
+pipeline {
+	environment {
+		PROD_SERVER_IP = "192.168.1.108"
+		DEV_SERVER_IP = "192.168.1.103"
+		VERSION = readMavenPom().getVersion()
+		NVERSION = VERSION.replace("-SNAPSHOT", "")
+	}
+    //agent { label 'slave01' }
+	agent any
+    stages{
+		stage('Preparation') { // for display purposes
+	      // Get some code from a GitHub repository
+	      steps {
+	      	script {
+	      		if("${ENV}" == "dev"){
+		            git branch: 'develop', url: 'https://github.com/fredo1975/dvdtheque.git'
+		        }else if ("${ENV}" == "prod") {
+		            git branch: 'master', url: 'https://github.com/fredo1975/dvdtheque.git'
+		        }
+	      	}
+	      }
+	   }
+	   stage('Build') {
+	      // Run the maven build
+	          steps {
+		      	script {
+		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			  sh '''
+				            echo "VERSION = ${VERSION}"
+				            echo "NVERSION = ${NVERSION}"
+				          '''
+			      		if ("${ENV}" == "prod") {
+				            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${NVERSION}'
+				         }
+				         sh 'mvn -U clean install -pl dvdtheque-api-gateway -am'
+					}
+		      	}
+	      	}
+	   }
+	   stage('Stopping config server') {
+	   		steps {
+		      	script {
+		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			if("${ENV}" == "dev"){
+				            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl stop dvdtheque-api-gateway-server.service"
+				       }else if ("${ENV}" == "prod") {
+				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-api-gateway-server.service"
+				       }
+		      		}
+		      	}
+		   }
+	   }
+	   stage('Copying config server jar') {
+	   		steps {
+		      	script {
+		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			if("${ENV}" == "dev"){
+							def ARTIFACT = "dvdtheque-api-gateway-${VERSION}.jar"
+				            sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$DEV_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
+				        }else if ("${ENV}" == "prod") {
+				            def ARTIFACT = "dvdtheque-discovery-server-${NVERSION}.jar"
+				            sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$PROD_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
+				        }
+		      		}
+		      	}
+		    }
+	   }
+	   stage('Sarting config server') {
+	   		steps {
+		      	script {
+		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			if("${ENV}" == "dev"){
+				            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl start dvdtheque-api-gateway-server.service"
+				       }else if ("${ENV}" == "prod") {
+				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-api-gateway-server.service"
+				       }
+		      		}
+		      	}
+		    }
+	   }
+	   stage('Check status config server') {
+	   		steps {
+		      	script {
+		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			if("${ENV}" == "dev"){
+				            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl status dvdtheque-api-gateway-server.service"
+				       }else if ("${ENV}" == "prod") {
+				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-api-gateway-server.service"
+				       }
+		      		}
+		      	}
+		    }
+	   }
+    }
+}
