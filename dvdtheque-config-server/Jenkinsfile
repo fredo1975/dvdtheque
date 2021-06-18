@@ -25,10 +25,7 @@ pipeline {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			  def version = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
 				          def NVERSION = version.replace("-SNAPSHOT", "")
-				          sh '''
-				            echo "version = ${version}"
-				            echo "NVERSION = ${NVERSION}"
-				          '''
+				          sh 'version = ${version}'
 			      		if ("${ENV}" == "prod") {
 				            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${NVERSION}'
 				         }
