@@ -22,7 +22,7 @@ pipeline {
 	      // Run the maven build
 	      withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 	          def pom = readMavenPom()
-	          def VERSION = pom.version()
+	          def VERSION = pom.version
 	          def NVERSION = VERSION.replace("-SNAPSHOT", "")
 	          sh '''
 	            echo "VERSION = ${VERSION}"
