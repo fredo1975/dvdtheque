@@ -37,7 +37,7 @@ pipeline {
 		      	}
 	      	}
 	   }
-	   stage('Stopping config server') {
+	   stage('Stopping discovery server') {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
@@ -50,7 +50,7 @@ pipeline {
 		      	}
 		   }
 	   }
-	   stage('Copying config server jar') {
+	   stage('Copying discovery server jar') {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
@@ -65,7 +65,7 @@ pipeline {
 		      	}
 		    }
 	   }
-	   stage('Sarting config server') {
+	   stage('Sarting discovery server') {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
@@ -78,7 +78,7 @@ pipeline {
 		      	}
 		    }
 	   }
-	   stage('Check status config server') {
+	   stage('Check status discovery server') {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
