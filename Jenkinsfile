@@ -14,15 +14,11 @@ pipeline {
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
         )
-        VERSION = readMavenPom().getVersion()
-		NVERSION = VERSION.replace("-SNAPSHOT", "")
     }
     stages {
         stage ('Initialize') {
             steps {
                 sh '''
-                    echo "VERSION = ${VERSION}"
-                    echo "NVERSION = ${NVERSION}"
                     echo "PROD_SERVER1_IP = ${PROD_SERVER1_IP}"
                     echo "PROD_SERVER2_IP = ${PROD_SERVER2_IP}"
                     echo "DEV_SERVER1_IP = ${DEV_SERVER1_IP}"
@@ -45,11 +41,6 @@ pipeline {
             }
             steps {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		 			script {
-			 			def pom = readMavenPom file: 'pom.xml'
-				    	VERSION = pom.version
-			 		}
-			 		echo VERSION
 			 		sh """
 			        	mvn -B clean compile
 			      	"""
@@ -98,7 +89,7 @@ pipeline {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		 			script {
 			 			sh """
-					    	 mvn -B deploy -DskipTests
+					    	 mvn -B deploy -DskipTests -Dversion=${GIT_COMMIT_SHORT}
 					    """
 			 		}
 		    	}
@@ -112,7 +103,7 @@ pipeline {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		 			script {
 			 			sh """
-					    	 mvn -B deploy -DskipTests
+					    	 mvn -B deploy -DskipTests -Dversion=${GIT_COMMIT_SHORT}
 					    """
 			 		}
 		    	}
