@@ -14,7 +14,7 @@ pipeline {
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
         )
-        def VERSION = "${GIT_COMMIT_SHORT} + '-SNAPSHOT'"
+        def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
 		def NVERSION = GIT_COMMIT_SHORT
     }
     stages {
@@ -28,9 +28,6 @@ pipeline {
                     echo "DEV_SERVER1_IP = ${DEV_SERVER1_IP}"
                     echo "DEV_SERVER2_IP = ${DEV_SERVER2_IP}"
                 '''
-                sh """
-				    mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${VERSION}
-				"""
             }
         }
         stage('Clone repository') {
@@ -50,7 +47,9 @@ pipeline {
 			 			def pom = readMavenPom file: 'pom.xml'
 				    	VERSION = pom.version
 			 		}
-			 		echo VERSION
+			 		sh """
+				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${VERSION}
+					"""
 			 		sh """
 			        	mvn -B clean compile
 			      	"""
@@ -63,6 +62,9 @@ pipeline {
             }
             steps {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		 			sh """
+				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${NVERSION}
+					"""
 			 		sh """
 			        	mvn -B clean compile
 			      	"""
@@ -275,4 +277,8 @@ pipeline {
 			}
 		}
     }
+}
+
+private String getArtifactVersion(String gitBranchName,String gitCommit){
+	return "${gitCommit}-SNAPSHOT"
 }
