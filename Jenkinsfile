@@ -14,7 +14,7 @@ pipeline {
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
         )
-        def VERSION = GIT_COMMIT_SHORT + '-SNAPSHOT'
+        def VERSION = "${GIT_COMMIT_SHORT} + '-SNAPSHOT'"
 		def NVERSION = GIT_COMMIT_SHORT
     }
     stages {
