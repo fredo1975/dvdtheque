@@ -21,7 +21,6 @@ pipeline {
             steps {
                 sh '''
                     echo "VERSION = ${VERSION}"
-                    echo "NVERSION = ${NVERSION}"
                     echo "PROD_SERVER1_IP = ${PROD_SERVER1_IP}"
                     echo "PROD_SERVER2_IP = ${PROD_SERVER2_IP}"
                     echo "DEV_SERVER1_IP = ${DEV_SERVER1_IP}"
@@ -47,9 +46,7 @@ pipeline {
 				    	VERSION = pom.version
 			 		}
 			 		sh """
-				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${VERSION}
-					"""
-			 		sh """
+			 			mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${VERSION}
 			        	mvn -B clean compile
 			      	"""
 		    	}
@@ -63,10 +60,8 @@ pipeline {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		 			sh """
 				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
+				    	mvn -B clean compile
 					"""
-			 		sh """
-			        	mvn -B clean compile
-			      	"""
 		    	}
 		    }
         }
