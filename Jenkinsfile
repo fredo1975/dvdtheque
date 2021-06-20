@@ -15,7 +15,6 @@ pipeline {
                 returnStdout: true
         )
         def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
-		def NVERSION = GIT_COMMIT_SHORT
     }
     stages {
         stage ('Initialize') {
@@ -63,7 +62,7 @@ pipeline {
             steps {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		 			sh """
-				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${NVERSION}
+				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
 					"""
 			 		sh """
 			        	mvn -B clean compile
