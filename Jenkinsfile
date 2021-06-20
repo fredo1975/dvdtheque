@@ -278,6 +278,6 @@ pipeline {
     }
 }
 
-private String getArtifactVersion(String gitBranchName,String gitCommit){
+private String getArtifactVersion(String gitCommit){
 	return "${gitCommit}-SNAPSHOT"
 }
