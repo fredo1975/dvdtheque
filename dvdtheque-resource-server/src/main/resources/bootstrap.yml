@@ -1,0 +1,13 @@
+debug: true
+server:
+  port: 9998
+spring:
+  application:
+    name: resources-server
+  cloud:
+    config:
+      uri: http://192.168.1.103:8888
+      fail-fast: true
+    devtools:
+      livereload:
+        port: 0
