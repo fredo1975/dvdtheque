@@ -14,7 +14,7 @@ create table oauth_client_details (
 
 create table oauth_client_token (
   token_id VARCHAR(256),
-  token LONGVARBINARY,
+  token VARBINARY(1024),
   authentication_id VARCHAR(256),
   user_name VARCHAR(256),
   client_id VARCHAR(256)
@@ -22,22 +22,22 @@ create table oauth_client_token (
 
 create table oauth_access_token (
   token_id VARCHAR(256),
-  token LONGVARBINARY,
+  token VARBINARY(1024),
   authentication_id VARCHAR(256),
   user_name VARCHAR(256),
   client_id VARCHAR(256),
-  authentication LONGVARBINARY,
+  authentication BLOB,
   refresh_token VARCHAR(256)
 );
 
 create table oauth_refresh_token (
   token_id VARCHAR(256),
-  token LONGVARBINARY,
-  authentication LONGVARBINARY
+  token VARBINARY(1024),
+  authentication BLOB
 );
 
 create table oauth_code (
-  code VARCHAR(256), authentication LONGVARBINARY
+  code VARCHAR(256), authentication BLOB
 );
 
 create table oauth_approvals (
@@ -48,3 +48,34 @@ create table oauth_approvals (
   expiresAt TIMESTAMP,
   lastModifiedAt TIMESTAMP
 );
+
+CREATE TABLE `user` (
+	`ID` INT NOT NULL AUTO_INCREMENT,
+	`USERNAME` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`PASSWORD` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`EMAIL` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`FIRSTNAME` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`LASTNAME` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	UNIQUE INDEX `ID` (`ID`)
+)
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=2
+;
+
+CREATE TABLE `roles` (
+	`ID` INT NOT NULL,
+	`NAME` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_general_ci',
+	UNIQUE INDEX `ID` (`ID`)
+)
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+;
+CREATE TABLE `userroles` (
+	`ID` INT NOT NULL,
+	`USER_ID` INT NOT NULL,
+	`ROLE_ID` INT NOT NULL
+)
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+;

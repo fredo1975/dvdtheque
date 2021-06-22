@@ -14,22 +14,18 @@ pipeline {
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
         )
-        VERSION = readMavenPom().getVersion()
-		NVERSION = VERSION.replace("-SNAPSHOT", "")
+        def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
     }
     stages {
         stage ('Initialize') {
             steps {
                 sh '''
                     echo "VERSION = ${VERSION}"
-                    echo "NVERSION = ${NVERSION}"
                     echo "PROD_SERVER1_IP = ${PROD_SERVER1_IP}"
                     echo "PROD_SERVER2_IP = ${PROD_SERVER2_IP}"
                     echo "DEV_SERVER1_IP = ${DEV_SERVER1_IP}"
                     echo "DEV_SERVER2_IP = ${DEV_SERVER2_IP}"
-                    echo "GIT_COMMIT_SHORT = ${GIT_COMMIT_SHORT}"
                 '''
-                sh 'env'
             }
         }
         stage('Clone repository') {
@@ -45,12 +41,8 @@ pipeline {
             }
             steps {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		 			script {
-			 			def pom = readMavenPom file: 'pom.xml'
-				    	VERSION = pom.version
-			 		}
-			 		echo VERSION
-			 		sh """
+		 			sh """
+			 			mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${VERSION}
 			        	mvn -B clean compile
 			      	"""
 		    	}
@@ -62,12 +54,11 @@ pipeline {
             }
             steps {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-			 		sh """
-				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${NVERSION}
-				    """
-			      	sh """
-			        	mvn -B clean compile
-			      	"""
+		 			sh """
+		 				git merge develop
+				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
+				    	mvn -B clean compile
+					"""
 		    	}
 		    }
         }
@@ -277,4 +268,8 @@ pipeline {
 			}
 		}
     }
+}
+
+private String getArtifactVersion(String gitCommit){
+	return "${gitCommit}-SNAPSHOT"
 }
