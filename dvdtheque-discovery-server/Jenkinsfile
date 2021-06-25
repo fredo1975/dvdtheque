@@ -5,6 +5,11 @@ pipeline {
 		DEV2_SERVER_IP = "192.168.1.103"
 		VERSION = readMavenPom().getVersion()
 		NVERSION = VERSION.replace("-SNAPSHOT", "")
+		GIT_COMMIT_SHORT = sh(
+                script: "printf \$(git rev-parse --short HEAD)",
+                returnStdout: true
+        )
+        def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
 	}
     //agent { label 'slave01' }
 	agent any
@@ -29,11 +34,9 @@ pipeline {
 		      			  sh '''
 				            echo "VERSION = ${VERSION}"
 				            echo "NVERSION = ${NVERSION}"
+				            mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
+				            mvn -U clean install -pl dvdtheque-discovery-server -am
 				          '''
-			      		if ("${ENV}" == "prod") {
-				            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${NVERSION}'
-				         }
-				         sh 'mvn -U clean install -pl dvdtheque-discovery-server -am'
 					}
 		      	}
 	      	}
@@ -147,4 +150,8 @@ pipeline {
 		    }
 	   }
     }
+}
+
+private String getArtifactVersion(String gitCommit){
+	return "${gitCommit}-SNAPSHOT"
 }
