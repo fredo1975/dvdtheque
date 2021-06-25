@@ -33,9 +33,20 @@ pipeline {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			  sh '''
 				            echo "GIT_COMMIT_SHORT = ${GIT_COMMIT_SHORT}"
-				            mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
-				            mvn -U clean install -pl dvdtheque-discovery-server -am
 				          '''
+				          if ("${ENV}" == "dev") {
+				          	sh '''
+					            git checkout develop
+					          '''
+				         }else if ("${ENV}" == "prod") {
+				         	sh '''
+					            git checkout master
+					          '''
+				         }
+				         sh '''
+					     	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
+					        mvn -U clean install -pl dvdtheque-discovery-server -am
+					     '''
 					}
 		      	}
 	      	}
