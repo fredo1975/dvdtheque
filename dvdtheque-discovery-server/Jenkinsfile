@@ -32,8 +32,7 @@ pipeline {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			  sh '''
-				            echo "VERSION = ${VERSION}"
-				            echo "NVERSION = ${NVERSION}"
+				            echo "GIT_COMMIT_SHORT = ${GIT_COMMIT_SHORT}"
 				            mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
 				            mvn -U clean install -pl dvdtheque-discovery-server -am
 				          '''
