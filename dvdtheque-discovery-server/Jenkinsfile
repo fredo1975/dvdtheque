@@ -72,7 +72,7 @@ pipeline {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			if("${ENV}" == "dev"){
-							def ARTIFACT = "dvdtheque-discovery-server-${VERSION}.jar"
+							def ARTIFACT = "dvdtheque-discovery-server-${GIT_COMMIT_SHORT}.jar"
 				            sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
 				        }else if ("${ENV}" == "prod") {
 				            def ARTIFACT = "dvdtheque-discovery-server-${NVERSION}.jar"
@@ -87,7 +87,7 @@ pipeline {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			if("${ENV}" == "dev"){
-							def ARTIFACT = "dvdtheque-discovery-server-${VERSION}.jar"
+							def ARTIFACT = "dvdtheque-discovery-server-${GIT_COMMIT_SHORT}.jar"
 				            sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV2_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
 				        }else if ("${ENV}" == "prod") {
 				            def ARTIFACT = "dvdtheque-discovery-server-${NVERSION}.jar"
