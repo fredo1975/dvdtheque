@@ -3,13 +3,11 @@ pipeline {
 		PROD_SERVER_IP = "192.168.1.108"
 		DEV1_SERVER_IP = "192.168.1.105"
 		DEV2_SERVER_IP = "192.168.1.103"
-		VERSION = readMavenPom().getVersion()
-		NVERSION = VERSION.replace("-SNAPSHOT", "")
 		GIT_COMMIT_SHORT = sh(
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
         )
-        def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
+        
 	}
     //agent { label 'slave01' }
 	agent any
@@ -35,10 +33,12 @@ pipeline {
 				            echo "GIT_COMMIT_SHORT = ${GIT_COMMIT_SHORT}"
 				          '''
 				          if ("${ENV}" == "dev") {
+				          	def VERSION = getArtifactVersionWithSnapshot(GIT_COMMIT_SHORT)
 				          	sh '''
 					            git checkout develop
 					          '''
 				         }else if ("${ENV}" == "prod") {
+				         	def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
 				         	sh '''
 					            git checkout master
 					          '''
@@ -162,6 +162,9 @@ pipeline {
     }
 }
 
-private String getArtifactVersion(String gitCommit){
+private String getArtifactVersionWithSnapshot(String gitCommit){
 	return "${gitCommit}-SNAPSHOT"
+}
+private String getArtifactVersion(String gitCommit){
+	return "${gitCommit}"
 }
