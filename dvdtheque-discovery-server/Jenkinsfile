@@ -103,7 +103,7 @@ pipeline {
     }
 }
 
-private String getArtifactVersion(String gitBranchName,String gitRevision){
+private String getArtifactVersion(String gitRevision){
 	if(gitBranchName == "develop"){
 		return "develop-${gitRevision}-SNAPSHOT"
 	}
