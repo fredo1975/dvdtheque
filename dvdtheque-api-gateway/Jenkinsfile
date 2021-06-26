@@ -1,66 +1,63 @@
 pipeline {
 	environment {
 		PROD_SERVER_IP = "192.168.1.106"
-		DEV_SERVER_IP = "192.168.1.105"
-		VERSION = readMavenPom().getVersion()
-		NVERSION = VERSION.replace("-SNAPSHOT", "")
+		DEV1_SERVER_IP = "192.168.1.105"
+		GIT_COMMIT_SHORT = sh(
+                script: "printf \$(git rev-parse --short HEAD)",
+                returnStdout: true
+        )
+        def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
 	}
     //agent { label 'slave01' }
 	agent any
     stages{
-		stage('Preparation') { // for display purposes
-	      // Get some code from a GitHub repository
-	      steps {
-	      	script {
-	      		if("${ENV}" == "dev"){
-		            git branch: 'develop', url: 'https://github.com/fredo1975/dvdtheque.git'
-		        }else if ("${ENV}" == "prod") {
-		            git branch: 'master', url: 'https://github.com/fredo1975/dvdtheque.git'
-		        }
-	      	}
-	      }
-	   }
-	   stage('Build') {
-	      // Run the maven build
-	          steps {
-		      	script {
-		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		stage ('Initialize') {
+            steps {
+                sh '''
+                    echo "PROD_SERVER_IP = ${PROD_SERVER_IP}"
+                    echo "DEV1_SERVER_IP = ${DEV1_SERVER_IP}"
+                    echo "DEV2_SERVER_IP = ${DEV2_SERVER_IP}"
+                    echo "GIT_COMMIT_SHORT = ${GIT_COMMIT_SHORT}"
+					echo "VERSION = ${VERSION}"
+                '''
+            }
+        }
+        stage('Clone repository') {
+			steps {
+				script {
+					/* Let's make sure we have the repository cloned to our workspace */
+					checkout scm
+				}
+			}
+		}
+		stage('Build for development') {
+			steps {
+				script {
+					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			  sh '''
-				            echo "VERSION = ${VERSION}"
-				            echo "NVERSION = ${NVERSION}"
-				          '''
-			      		if ("${ENV}" == "prod") {
-				            sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${NVERSION}'
-				         }
-				         sh 'mvn -U clean install -pl dvdtheque-api-gateway -am'
+					     	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${VERSION}
+					        mvn -U clean install -pl dvdtheque-api-gateway -am
+					     '''
 					}
-		      	}
-	      	}
-	   }
-	   stage('Stopping api gateway server') {
+				}
+			}
+		}
+		stage('Stopping api gateway server') {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-				            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl stop dvdtheque-api-gateway-server.service"
-				       }else if ("${ENV}" == "prod") {
-				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-api-gateway-server.service"
-				       }
+		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl stop dvdtheque-api-gateway-server.service"
 		      		}
 		      	}
 		   }
 	   }
+	   
 	   stage('Copying api gateway jar') {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-							def ARTIFACT = "dvdtheque-api-gateway-${VERSION}.jar"
-				            sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$DEV_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
-				        }else if ("${ENV}" == "prod") {
-				            def ARTIFACT = "dvdtheque-api-gateway-${NVERSION}.jar"
-				            sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$PROD_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
-				        }
+		      			def ARTIFACT = "dvdtheque-discovery-server-${VERSION}.jar"
+				        sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
 		      		}
 		      	}
 		    }
@@ -69,11 +66,7 @@ pipeline {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-				            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl start dvdtheque-api-gateway-server.service"
-				       }else if ("${ENV}" == "prod") {
-				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-api-gateway-server.service"
-				       }
+		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl start dvdtheque-api-gateway-server.service"
 		      		}
 		      	}
 		    }
@@ -82,14 +75,14 @@ pipeline {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-				            sh "ssh jenkins@$DEV_SERVER_IP sudo systemctl status dvdtheque-api-gateway-server.service"
-				       }else if ("${ENV}" == "prod") {
-				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-api-gateway-server.service"
-				       }
+		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl status dvdtheque-api-gateway-server.service"
 		      		}
 		      	}
 		    }
 	   }
     }
+}
+
+private String getArtifactVersion(String gitRevision){
+	return "develop-${gitRevision}-SNAPSHOT"
 }

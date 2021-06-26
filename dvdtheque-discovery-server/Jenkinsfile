@@ -18,9 +18,8 @@ pipeline {
                     echo "PROD_SERVER_IP = ${PROD_SERVER_IP}"
                     echo "DEV1_SERVER_IP = ${DEV1_SERVER_IP}"
                     echo "DEV2_SERVER_IP = ${DEV2_SERVER_IP}"
-                    echo "GIT_REVISION = ${GIT_REVISION}"
-					echo "GIT_BRANCH_NAME = ${GIT_BRANCH_NAME}"
-					echo "ARTIFACT_VERSION = ${ARTIFACT_VERSION}"
+                    echo "GIT_COMMIT_SHORT = ${GIT_COMMIT_SHORT}"
+					echo "VERSION = ${VERSION}"
                 '''
             }
         }
@@ -57,7 +56,7 @@ pipeline {
 			}
 		}
 	   
-	   stage('Stopping discovery server dev1') {
+	   stage('Stopping discovery server dev') {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
