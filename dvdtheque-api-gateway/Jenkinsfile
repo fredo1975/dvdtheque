@@ -46,7 +46,12 @@ pipeline {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl stop dvdtheque-api-gateway-server.service"
+		      			if("${ENV}" == "dev"){
+		      				sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl stop dvdtheque-api-gateway-server.service"
+		      			}else if ("${ENV}" == "prod") {
+		      				sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-api-gateway-server.service"
+		      			}
+		      			
 		      		}
 		      	}
 		   }
@@ -56,8 +61,14 @@ pipeline {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			def ARTIFACT = "dvdtheque-api-gateway-${VERSION}.jar"
-				        sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
+		      			if("${ENV}" == "dev"){
+		      				def ARTIFACT = "dvdtheque-api-gateway-${VERSION}.jar"
+				        	sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
+		      			}else if ("${ENV}" == "prod") {
+		      				def ARTIFACT = "dvdtheque-api-gateway-${VERSION}.jar"
+				        	sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$PROD_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
+		      			}
+		      			
 		      		}
 		      	}
 		    }
@@ -66,7 +77,12 @@ pipeline {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl start dvdtheque-api-gateway-server.service"
+		      			if("${ENV}" == "dev"){
+		      				sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl start dvdtheque-api-gateway-server.service"
+		      			}else if ("${ENV}" == "prod") {
+		      				sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-api-gateway-server.service"
+		      			}
+		      			
 		      		}
 		      	}
 		    }
@@ -75,7 +91,12 @@ pipeline {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl status dvdtheque-api-gateway-server.service"
+		      			if("${ENV}" == "dev"){
+		      				sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl status dvdtheque-api-gateway-server.service"
+		      			}else if ("${ENV}" == "prod") {
+		      				sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-api-gateway-server.service"
+		      			}
+		      			
 		      		}
 		      	}
 		    }
