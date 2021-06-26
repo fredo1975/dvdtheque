@@ -3,158 +3,110 @@ pipeline {
 		PROD_SERVER_IP = "192.168.1.108"
 		DEV1_SERVER_IP = "192.168.1.105"
 		DEV2_SERVER_IP = "192.168.1.103"
-		GIT_COMMIT_SHORT = sh(
-                script: "printf \$(git rev-parse --short HEAD)",
-                returnStdout: true
-        )
-        
+		GIT_REVISION = getGitRevision()
 	}
     //agent { label 'slave01' }
 	agent any
     stages{
-		stage('Preparation') { // for display purposes
-	      // Get some code from a GitHub repository
-	      steps {
-	      	script {
-	      		if("${ENV}" == "dev"){
-		            git branch: 'develop', url: 'https://github.com/fredo1975/dvdtheque.git'
-		        }else if ("${ENV}" == "prod") {
-		            git branch: 'master', url: 'https://github.com/fredo1975/dvdtheque.git'
-		        }
-	      	}
-	      }
-	   }
-	   stage('Build') {
-	      // Run the maven build
-	          steps {
-		      	script {
-		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		stage ('Initialize') {
+            steps {
+                sh '''
+                    echo "PROD_SERVER_IP = ${PROD_SERVER_IP}"
+                    echo "DEV1_SERVER_IP = ${DEV1_SERVER_IP}"
+                    echo "DEV2_SERVER_IP = ${DEV2_SERVER_IP}"
+                    echo "GIT_REVISION = ${GIT_REVISION}"
+					echo "GIT_BRANCH_NAME = ${GIT_BRANCH_NAME}"
+					echo "ARTIFACT_VERSION = ${ARTIFACT_VERSION}"
+                '''
+            }
+        }
+        stage('Clone repository') {
+			steps {
+				script {
+					/* Let's make sure we have the repository cloned to our workspace */
+					checkout scm
+				}
+			}
+		}
+		stage('Build for development') {
+			when {
+                branch 'develop'
+            }
+			steps {
+				script {
+					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			  sh '''
-				            echo "GIT_COMMIT_SHORT = ${GIT_COMMIT_SHORT}"
-				          '''
-				          if ("${ENV}" == "dev") {
-				          	def VERSION = getArtifactVersionWithSnapshot(GIT_COMMIT_SHORT)
-				          	sh '''
-					            git checkout develop
-					          '''
-				         }else if ("${ENV}" == "prod") {
-				         	def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
-				         	sh '''
-					            git checkout master
-					          '''
-				         }
-				         sh '''
 					     	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
 					        mvn -U clean install -pl dvdtheque-discovery-server -am
 					     '''
 					}
-		      	}
-	      	}
-	   }
-	   stage('Stopping discovery server 1') {
+				}
+			}
+		}
+		stage('Build for production') {
+			when {
+                branch 'master'
+            }
+			steps {
+				script {
+					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		      			  sh '''
+					     	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
+					        mvn -U clean install -pl dvdtheque-discovery-server -am
+					     '''
+					}
+				}
+			}
+		}
+	   
+	   stage('Stopping discovery server dev1') {
+		   when {
+	            branch 'develop'
+	        }
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-				            sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
-				       }else if ("${ENV}" == "prod") {
-				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
-				       }
+		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
+		      			sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
 		      		}
 		      	}
 		   }
 	   }
-	   stage('Stopping discovery server 2') {
+	   stage('Copying discovery server jar') {
+	   		when {
+	           branch 'develop'
+	        }
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-				            sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
-				       }else if ("${ENV}" == "prod") {
-				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
-				       }
-		      		}
-		      	}
-		   }
-	   }
-	   stage('Copying discovery server 1 jar') {
-	   		steps {
-		      	script {
-		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-							def ARTIFACT = "dvdtheque-discovery-server-${GIT_COMMIT_SHORT}.jar"
-				            sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
-				        }else if ("${ENV}" == "prod") {
-				            def ARTIFACT = "dvdtheque-discovery-server-${NVERSION}.jar"
-				            sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$PROD_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
-				        }
+		      			def ARTIFACT = "dvdtheque-discovery-server-${GIT_COMMIT_SHORT}.jar"
+				        sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
+				        sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV2_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
 		      		}
 		      	}
 		    }
 	   }
-	   stage('Copying discovery server 2 jar') {
+	   
+	   stage('Sarting discovery server') {
+	   		when {
+	           branch 'develop'
+	        }
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-							def ARTIFACT = "dvdtheque-discovery-server-${GIT_COMMIT_SHORT}.jar"
-				            sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV2_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
-				        }else if ("${ENV}" == "prod") {
-				            def ARTIFACT = "dvdtheque-discovery-server-${NVERSION}.jar"
-				            sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$PROD_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
-				        }
+		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
+				        sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
 		      		}
 		      	}
 		    }
 	   }
-	   stage('Sarting discovery server 1') {
+	   
+	   stage('Check status discovery server') {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-				            sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
-				       }else if ("${ENV}" == "prod") {
-				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
-				       }
-		      		}
-		      	}
-		    }
-	   }
-	   stage('Sarting discovery server 2') {
-	   		steps {
-		      	script {
-		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-				            sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
-				       }else if ("${ENV}" == "prod") {
-				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
-				       }
-		      		}
-		      	}
-		    }
-	   }
-	   stage('Check status discovery server 1') {
-	   		steps {
-		      	script {
-		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-				            sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
-				       }else if ("${ENV}" == "prod") {
-				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
-				       }
-		      		}
-		      	}
-		    }
-	   }
-	   stage('Check status discovery server 2') {
-	   		steps {
-		      	script {
-		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			if("${ENV}" == "dev"){
-				            sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
-				       }else if ("${ENV}" == "prod") {
-				            sh "ssh jenkins@$PROD_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
-				       }
+		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
+		      			sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
 		      		}
 		      	}
 		    }
@@ -162,9 +114,18 @@ pipeline {
     }
 }
 
-private String getArtifactVersionWithSnapshot(String gitCommit){
-	return "${gitCommit}-SNAPSHOT"
+private String getArtifactVersion(String gitBranchName,String gitRevision){
+	if(gitBranchName == "develop"){
+		return "develop-${gitRevision}-SNAPSHOT"
+	}
+	if(gitBranchName == "master"){
+		gitTagName = sh script: "git describe --tags --all ${gitRevision}", returnStdout: true
+	}
+	return ""
 }
-private String getArtifactVersion(String gitCommit){
-	return "${gitCommit}"
+
+private String getGitRevision(){
+	def gitRevision
+	gitRevision = sh script: "git rev-parse --short HEAD", returnStdout: true
+	gitRevision.trim()
 }
