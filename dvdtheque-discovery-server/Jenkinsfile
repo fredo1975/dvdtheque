@@ -3,7 +3,11 @@ pipeline {
 		PROD_SERVER_IP = "192.168.1.108"
 		DEV1_SERVER_IP = "192.168.1.105"
 		DEV2_SERVER_IP = "192.168.1.103"
-		GIT_REVISION = getGitRevision()
+		GIT_COMMIT_SHORT = sh(
+                script: "printf \$(git rev-parse --short HEAD)",
+                returnStdout: true
+        )
+        def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
 	}
     //agent { label 'slave01' }
 	agent any
