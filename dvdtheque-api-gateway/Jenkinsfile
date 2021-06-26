@@ -84,5 +84,5 @@ pipeline {
 }
 
 private String getArtifactVersion(String gitRevision){
-	return "develop-${gitRevision}-SNAPSHOT"
+	return "${gitRevision}-SNAPSHOT"
 }
