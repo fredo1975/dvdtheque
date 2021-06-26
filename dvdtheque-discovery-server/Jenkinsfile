@@ -25,18 +25,10 @@ pipeline {
 				script {
 					/* Let's make sure we have the repository cloned to our workspace */
 					checkout scm
-					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			  sh '''
-					     	git checkout develop
-					     '''
-					}
 				}
 			}
 		}
 		stage('Build for development') {
-			when {
-                branch 'develop'
-            }
 			steps {
 				script {
 					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
@@ -49,9 +41,6 @@ pipeline {
 			}
 		}
 		stage('Build for production') {
-			when {
-                branch 'master'
-            }
 			steps {
 				script {
 					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
@@ -65,9 +54,6 @@ pipeline {
 		}
 	   
 	   stage('Stopping discovery server dev1') {
-		   when {
-	            branch 'develop'
-	        }
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
@@ -78,9 +64,6 @@ pipeline {
 		   }
 	   }
 	   stage('Copying discovery server jar') {
-	   		when {
-	           branch 'develop'
-	        }
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
@@ -93,9 +76,6 @@ pipeline {
 	   }
 	   
 	   stage('Sarting discovery server') {
-	   		when {
-	           branch 'develop'
-	        }
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
