@@ -37,7 +37,7 @@ pipeline {
 				script {
 					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			  sh '''
-					     	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
+					     	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${VERSION}
 					        mvn -U clean install -pl dvdtheque-discovery-server -am
 					     '''
 					}
@@ -49,7 +49,7 @@ pipeline {
 				script {
 					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			  sh '''
-					     	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
+					     	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${VERSION}
 					        mvn -U clean install -pl dvdtheque-discovery-server -am
 					     '''
 					}
@@ -71,7 +71,7 @@ pipeline {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			def ARTIFACT = "dvdtheque-discovery-server-${GIT_COMMIT_SHORT}.jar"
+		      			def ARTIFACT = "dvdtheque-discovery-server-${VERSION}.jar"
 				        sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
 				        sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV2_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
 		      		}
@@ -105,10 +105,4 @@ pipeline {
 
 private String getArtifactVersion(String gitRevision){
 	return "develop-${gitRevision}-SNAPSHOT"
-}
-
-private String getGitRevision(){
-	def gitRevision
-	gitRevision = sh script: "git rev-parse --short HEAD", returnStdout: true
-	gitRevision.trim()
 }
