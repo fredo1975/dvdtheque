@@ -104,13 +104,7 @@ pipeline {
 }
 
 private String getArtifactVersion(String gitRevision){
-	if(gitBranchName == "develop"){
-		return "develop-${gitRevision}-SNAPSHOT"
-	}
-	if(gitBranchName == "master"){
-		gitTagName = sh script: "git describe --tags --all ${gitRevision}", returnStdout: true
-	}
-	return ""
+	return "develop-${gitRevision}-SNAPSHOT"
 }
 
 private String getGitRevision(){
