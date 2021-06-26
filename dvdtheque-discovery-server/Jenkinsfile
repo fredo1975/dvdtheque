@@ -43,19 +43,7 @@ pipeline {
 				}
 			}
 		}
-		stage('Build for production') {
-			steps {
-				script {
-					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			  sh '''
-					     	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${VERSION}
-					        mvn -U clean install -pl dvdtheque-discovery-server -am
-					     '''
-					}
-				}
-			}
-		}
-	   
+		
 	   stage('Stopping discovery server dev') {
 	   		steps {
 		      	script {

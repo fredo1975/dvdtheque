@@ -57,7 +57,7 @@ pipeline {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			def ARTIFACT = "dvdtheque-api-gateway-server-${VERSION}.jar"
-				        sh "scp dvdtheque-api-gateway/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
+				        sh "scp dvdtheque-api-gateway-server/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_api_gateway_server_service/dvdtheque-api-gateway.jar"
 		      		}
 		      	}
 		    }
