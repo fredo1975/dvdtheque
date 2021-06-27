@@ -1,6 +1,7 @@
 pipeline {
 	environment {
-		PROD_SERVER_IP = "192.168.1.108"
+		PROD1_SERVER_IP = "192.168.1.106"
+		PROD2_SERVER_IP = "192.168.1.108"
 		DEV1_SERVER_IP = "192.168.1.105"
 		DEV2_SERVER_IP = "192.168.1.103"
 		GIT_COMMIT_SHORT = sh(
@@ -15,11 +16,13 @@ pipeline {
 		stage ('Initialize') {
             steps {
                 sh '''
-                    echo "PROD_SERVER_IP = ${PROD_SERVER_IP}"
+                    echo "PROD1_SERVER_IP = ${PROD1_SERVER_IP}"
+                    echo "PROD2_SERVER_IP = ${PROD2_SERVER_IP}"
                     echo "DEV1_SERVER_IP = ${DEV1_SERVER_IP}"
                     echo "DEV2_SERVER_IP = ${DEV2_SERVER_IP}"
                     echo "GIT_COMMIT_SHORT = ${GIT_COMMIT_SHORT}"
 					echo "VERSION = ${VERSION}"
+					echo "GIT_BRANCH_NAME = ${GIT_BRANCH_NAME}"
                 '''
             }
         }
@@ -35,6 +38,7 @@ pipeline {
 			steps {
 				script {
 					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+						sh 'env' 
 		      			  sh '''
 					     	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${VERSION}
 					        mvn -U clean install -pl dvdtheque-discovery-server -am
@@ -48,8 +52,13 @@ pipeline {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
-		      			sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
+			      		if("${ENV}" == "dev"){
+			      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
+			      			sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
+			      		}else if ("${ENV}" == "prod") {
+			      			sh "ssh jenkins@$PROD1_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
+			      			sh "ssh jenkins@$PROD2_SERVER_IP sudo systemctl stop dvdtheque-discovery-server.service"
+			      		}
 		      		}
 		      	}
 		   }
@@ -58,9 +67,16 @@ pipeline {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			def ARTIFACT = "dvdtheque-discovery-server-${VERSION}.jar"
-				        sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
-				        sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV2_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
+		      			if("${ENV}" == "dev"){
+		      				def ARTIFACT = "dvdtheque-discovery-server-${VERSION}.jar"
+				        	sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
+				        	sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$DEV2_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
+		      			}else if ("${ENV}" == "prod") {
+		      				def ARTIFACT = "dvdtheque-discovery-server-${VERSION}.jar"
+				        	sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$PROD1_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
+				        	sh "scp dvdtheque-discovery-server/target/$ARTIFACT jenkins@$PROD2_SERVER_IP:/opt/dvdtheque_discovery_server_service/dvdtheque-discovery-server.jar"
+		      			}
+		      			
 		      		}
 		      	}
 		    }
@@ -70,8 +86,14 @@ pipeline {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
-				        sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
+		      			if("${ENV}" == "dev"){
+		      				sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
+				        	sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
+		      			}else if ("${ENV}" == "prod") {
+		      				sh "ssh jenkins@$PROD1_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
+				        	sh "ssh jenkins@$PROD2_SERVER_IP sudo systemctl start dvdtheque-discovery-server.service"
+		      			}
+		      			
 		      		}
 		      	}
 		    }
@@ -81,8 +103,14 @@ pipeline {
 	   		steps {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		      			sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
-		      			sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
+		      			if("${ENV}" == "dev"){
+		      				sh "ssh jenkins@$DEV1_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
+		      				sh "ssh jenkins@$DEV2_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
+		      			}else if ("${ENV}" == "prod") {
+		      				sh "ssh jenkins@$PROD1_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
+		      				sh "ssh jenkins@$PROD2_SERVER_IP sudo systemctl status dvdtheque-discovery-server.service"
+		      			}
+		      			
 		      		}
 		      	}
 		    }
@@ -91,5 +119,14 @@ pipeline {
 }
 
 private String getArtifactVersion(String gitRevision){
-	return "${gitRevision}-SNAPSHOT"
+	def gitBranchName
+	gitBranchName = env.GIT_BRANCH
+	if(gitBranchName == "origin/develop"){
+		return "${gitRevision}-SNAPSHOT"
+	}
+	if(gitBranchName == "origin/master"){
+		gitTagName = sh script: "git describe --tags --all ${gitRevision}", returnStdout: true
+		return "${gitRevision}"
+	}
+	return ""
 }
