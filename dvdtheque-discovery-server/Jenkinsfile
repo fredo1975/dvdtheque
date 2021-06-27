@@ -8,8 +8,7 @@ pipeline {
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
         )
-        def GIT_BRANCH_NAME = getGitBranchName()
-        def VERSION = getArtifactVersion(GIT_BRANCH_NAME,GIT_COMMIT_SHORT)
+        def VERSION = getArtifactVersion(getGitBranchName(),GIT_COMMIT_SHORT)
 	}
     //agent { label 'slave01' }
 	agent any
