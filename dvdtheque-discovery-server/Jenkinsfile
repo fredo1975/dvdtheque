@@ -120,11 +120,11 @@ pipeline {
 
 private String getArtifactVersion(String gitRevision){
 	def gitBranchName
-	gitBranchName = env.BRANCH_NAME
-	if(gitBranchName == "develop"){
+	gitBranchName = env.GIT_BRANCH
+	if(gitBranchName == "origin/develop"){
 		return "${gitRevision}-SNAPSHOT"
 	}
-	if(gitBranchName == "master"){
+	if(gitBranchName == "origin/master"){
 		gitTagName = sh script: "git describe --tags --all ${gitRevision}", returnStdout: true
 		return "${gitRevision}"
 	}
