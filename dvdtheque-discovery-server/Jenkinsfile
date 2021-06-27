@@ -8,7 +8,7 @@ pipeline {
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
         )
-        def VERSION = getArtifactVersion(getGitBranchName(),GIT_COMMIT_SHORT)
+        def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
 	}
     //agent { label 'slave01' }
 	agent any
@@ -118,6 +118,8 @@ pipeline {
 }
 
 private String getArtifactVersion(String gitBranchName,String gitRevision){
+	def gitBranchName
+	gitBranchName = env.BRANCH_NAME
 	if(gitBranchName == "develop"){
 		return "${gitRevision}-SNAPSHOT"
 	}
@@ -126,10 +128,4 @@ private String getArtifactVersion(String gitBranchName,String gitRevision){
 		return "${gitRevision}"
 	}
 	return ""
-}
-
-private String getGitBranchName(){
-	def gitBranchName
-	gitBranchName = env.BRANCH_NAME
-	gitBranchName.trim()
 }
