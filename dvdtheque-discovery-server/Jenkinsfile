@@ -34,7 +34,7 @@ pipeline {
 					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 						if ("${ENV}" == "prod") {
 							sh '''
-			                    git branch master
+			                    git checkout origin/master
 			                '''
 						}
 					}
