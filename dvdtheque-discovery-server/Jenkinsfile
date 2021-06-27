@@ -117,7 +117,7 @@ pipeline {
     }
 }
 
-private String getArtifactVersion(String gitBranchName,String gitRevision){
+private String getArtifactVersion(String gitRevision){
 	def gitBranchName
 	gitBranchName = env.BRANCH_NAME
 	if(gitBranchName == "develop"){
