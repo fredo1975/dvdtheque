@@ -8,7 +8,8 @@ pipeline {
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
         )
-        def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
+        GIT_BRANCH_NAME = getGitBranchName()
+        def VERSION = getArtifactVersion(GIT_BRANCH_NAME,GIT_COMMIT_SHORT)
 	}
     //agent { label 'slave01' }
 	agent any
@@ -22,6 +23,7 @@ pipeline {
                     echo "DEV2_SERVER_IP = ${DEV2_SERVER_IP}"
                     echo "GIT_COMMIT_SHORT = ${GIT_COMMIT_SHORT}"
 					echo "VERSION = ${VERSION}"
+					echo "GIT_BRANCH_NAME = ${GIT_BRANCH_NAME}"
                 '''
             }
         }
@@ -116,6 +118,19 @@ pipeline {
     }
 }
 
-private String getArtifactVersion(String gitRevision){
-	return "${gitRevision}-SNAPSHOT"
+private String getArtifactVersion(String gitBranchName,String gitRevision){
+	if(gitBranchName == "develop"){
+		return "${gitRevision}-SNAPSHOT"
+	}
+	if(gitBranchName == "master"){
+		gitTagName = sh script: "git describe --tags --all ${gitRevision}", returnStdout: true
+		return "${gitRevision}"
+	}
+	return ""
+}
+
+private String getGitBranchName(){
+	def gitBranchName
+	gitBranchName = env.BRANCH_NAME
+	gitBranchName.trim()
 }
