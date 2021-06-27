@@ -31,6 +31,13 @@ pipeline {
 				script {
 					/* Let's make sure we have the repository cloned to our workspace */
 					checkout scm
+					withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+						if ("${ENV}" == "prod") {
+							sh '''
+			                    git checkout master
+			                '''
+						}
+					}
 				}
 			}
 		}
