@@ -32,7 +32,6 @@ pipeline {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			  sh '''
 				            echo "VERSION = ${VERSION}"
-				            echo "NVERSION = ${NVERSION}"
 				          '''
 			      		 sh 'mvn org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DnewVersion=${VERSION}'
 				         sh 'mvn -U clean install -pl dvdtheque-config-server -am'
