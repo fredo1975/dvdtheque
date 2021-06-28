@@ -2,7 +2,7 @@ pipeline {
 	environment {
 		PROD_SERVER_IP = "192.168.1.108"
 		DEV1_SERVER_IP = "192.168.1.103"
-		DEV2_SERVER_IP = "192.168.1.103"
+		DEV2_SERVER_IP = "192.168.1.105"
 		GIT_COMMIT_SHORT = sh(
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
