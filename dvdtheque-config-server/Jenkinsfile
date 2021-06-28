@@ -3,8 +3,12 @@ pipeline {
 		PROD_SERVER_IP = "192.168.1.108"
 		DEV1_SERVER_IP = "192.168.1.103"
 		DEV2_SERVER_IP = "192.168.1.103"
-		VERSION = readMavenPom().getVersion()
-		NVERSION = VERSION.replace("-SNAPSHOT", "")
+		GIT_COMMIT_SHORT = sh(
+                script: "printf \$(git rev-parse --short HEAD)",
+                returnStdout: true
+        )
+		def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
+        def ARTIFACT = "dvdtheque-config-server-${VERSION}.jar"
 	}
     //agent { label 'slave01' }
 	agent any
@@ -57,11 +61,9 @@ pipeline {
 		      	script {
 		      		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		      			if("${ENV}" == "dev"){
-							def ARTIFACT = "dvdtheque-config-server-${VERSION}.jar"
 				            sh "scp dvdtheque-config-server/target/$ARTIFACT jenkins@$DEV1_SERVER_IP:/opt/dvdtheque_server_config_service/dvdtheque-config-server.jar"
 				            sh "scp dvdtheque-config-server/target/$ARTIFACT jenkins@$DEV2_SERVER_IP:/opt/dvdtheque_server_config_service/dvdtheque-config-server.jar"
 				        }else if ("${ENV}" == "prod") {
-				            def ARTIFACT = "dvdtheque-config-server-${NVERSION}.jar"
 				            sh "scp dvdtheque-config-server/target/$ARTIFACT jenkins@$PROD_SERVER_IP:/opt/dvdtheque_server_config_service/dvdtheque-config-server.jar"
 				        }
 		      		}
@@ -97,4 +99,17 @@ pipeline {
 		    }
 	   }
     }
+}
+
+private String getArtifactVersion(String gitRevision){
+	def gitBranchName
+	gitBranchName = env.GIT_BRANCH
+	if(gitBranchName == "origin/develop"){
+		return "${gitRevision}-SNAPSHOT"
+	}
+	if(gitBranchName == "origin/master"){
+		gitTagName = sh script: "git describe --tags --all ${gitRevision}", returnStdout: true
+		return "${gitRevision}"
+	}
+	return ""
 }
