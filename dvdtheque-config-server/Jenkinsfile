@@ -25,7 +25,7 @@ pipeline {
 	      	}
 	      }
 	   }
-	   stage('Build') {
+	   stage('Build with') {
 	      // Run the maven build
 	          steps {
 		      	script {
