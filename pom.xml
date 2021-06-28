@@ -31,10 +31,8 @@
 		<module>dvdtheque-rest-services</module>
 		<module>dvdtheque-swing</module>
 		<module>dvdtheque-config-server</module>
-		<module>dvdtheque-discovery-server</module>
 		<module>dvdtheque-hystrix-dashboard</module>
 		<module>dvdtheque-admin-server</module>
-		<module>dvdtheque-api-gateway</module>
 		<module>dvdtheque-auth-server</module>
 		<module>dvdtheque-resource-server</module>
 	</modules>
