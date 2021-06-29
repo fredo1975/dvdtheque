@@ -71,8 +71,8 @@ public class FilmController {
     private Job importFilmsJob;
     @Autowired
     private MultipartFileUtil multipartFileUtil;
-    @Value("${eureka.instance.instance-id}")
-    private String instanceId;
+    //@Value("${eureka.instance.instance-id}")
+    //private String instanceId;
     @Value("${limit.film.size}")
     private int limitFilmSize;
 
