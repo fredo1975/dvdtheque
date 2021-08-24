@@ -55,8 +55,7 @@ pipeline {
             steps {
 		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
 		 			sh """
-		 				git merge develop
-				    	mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
+		 				mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${GIT_COMMIT_SHORT}
 				    	mvn -B clean compile
 					"""
 		    	}
