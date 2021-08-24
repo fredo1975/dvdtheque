@@ -34,6 +34,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		apiError.setTimestamp(LocalDateTime.now());
 		return buildResponseEntity(apiError);
 	}
+	/*
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<Object> handleServerError(Exception ex) {
 		ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
@@ -41,7 +42,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		apiError.setTimestamp(LocalDateTime.now());
 		apiError.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 		return buildResponseEntity(apiError);
-	}
+	}*/
 	private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
 		return new ResponseEntity<>(apiError, apiError.getStatus());
 	}

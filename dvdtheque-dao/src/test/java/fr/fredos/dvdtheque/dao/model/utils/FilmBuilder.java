@@ -56,14 +56,14 @@ public class FilmBuilder {
 	public static final String ACT4_TMBD_ID_1271 = "TOM WISDOM";
 	public static final String SHEET_NAME = "Films";
 	public static final String ZONE_DVD = "2";
-	public static final Long TMDBID_844 = new Long(844);
+	public static final Long TMDBID_844 = Long.valueOf(844);
 	public static final int RIP_DATE_OFFSET = -10;
 	public static final int RIP_DATE_OFFSET2 = -1;
-	public static Long tmdbId1 = new Long(1271);
+	public static Long tmdbId1 = Long.valueOf(1271);
 	public static final String TMDBID1_DATE_SORTIE = "2007/03/21";
-	public static Long tmdbId2 = new Long(844);
+	public static Long tmdbId2 = Long.valueOf(844);
 	public static final String TMDBID2_DATE_SORTIE = "2004/05/20";
-	public static Long tmdbId3 = new Long(4780);
+	public static Long tmdbId3 = Long.valueOf(4780);
 	public static final String TMDBID3_DATE_SORTIE = "2007/01/07";
 	
 	public static Date createRipDate(int ripDateOffset) {
