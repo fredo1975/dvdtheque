@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

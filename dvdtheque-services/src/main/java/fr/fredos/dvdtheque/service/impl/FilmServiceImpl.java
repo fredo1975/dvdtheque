@@ -35,7 +35,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StopWatch;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicate;
 import com.hazelcast.query.Predicates;
 
@@ -87,12 +87,12 @@ public class FilmServiceImpl implements IFilmService {
 	@PostConstruct
 	public void init() {
 		mapFilms = instance.getMap(CACHE_FILM);
-		mapFilms.addIndex("id", false);
+		/*mapFilms.addIndex("id", false);
 		mapFilms.addIndex("origine", false);
-		mapFilms.addIndex("tmdbId", false);
+		mapFilms.addIndex("tmdbId", false);*/
 		// logger.info("films cache: " + mapFilms.size());
 		mapGenres = instance.getMap(CACHE_GENRE);
-		mapGenres.addIndex("id", true);
+		//mapGenres.addIndex("id", true);
 		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,40,FilmOrigine.TOUS);
 		findAllFilms(filmDisplayTypeParam);
 	}

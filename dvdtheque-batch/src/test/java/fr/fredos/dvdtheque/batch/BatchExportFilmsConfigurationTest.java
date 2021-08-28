@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Calendar;
 
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;

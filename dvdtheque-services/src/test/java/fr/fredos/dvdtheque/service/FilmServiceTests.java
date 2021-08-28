@@ -21,9 +21,8 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
@@ -47,9 +45,8 @@ import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 import fr.fredos.dvdtheque.service.model.FilmListParam;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class})
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceTests.class);
 	
@@ -724,7 +721,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertEquals(real.getPrenom(),realisateur.getPrenom());
 	}
 	@Test
-	@Ignore
+	@Disabled
 	public void findAllFilmsByCriteriaRippedSinceDao() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
@@ -808,7 +805,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertNull(removedFilm);
 	}
 	
-	@Test(expected = java.lang.Exception.class)
+	@Test
 	public void removeFilmService() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));

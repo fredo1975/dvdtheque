@@ -12,8 +12,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -34,12 +34,12 @@ import fr.fredos.dvdtheque.tmdb.model.Credits;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
 		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class})
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(TmdbServiceClientTest.class);
 	public static final String TITRE_FILM = "broadway";
@@ -82,7 +82,7 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 		logger.info("tmdb id = "+res.getId().toString());
     }
 	@Test
-	@Ignore
+	@Disabled
     public void retrieveTmdbResultsWithResourceNotFoundTest() {
 		Long tmdbId = Long.valueOf(413);
 		Results results = client.retrieveTmdbSearchResultsById(tmdbId);
