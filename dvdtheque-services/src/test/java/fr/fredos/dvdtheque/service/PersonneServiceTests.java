@@ -6,9 +6,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +32,11 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	@Autowired
 	protected IFilmService filmService;
 	
-	@Before
+	@BeforeEach
 	public void cleanAllCaches() {
 		personneService.cleanAllCaches();
 	}
+	
 	@Test
 	public void getPersonneVersusLoadPersonne() throws Exception {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
@@ -141,7 +142,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		List<Personne> personneList = personneService.findAllPersonne();
 		assertNotNull(personneList);
 		assertTrue(CollectionUtils.isNotEmpty(personneList));
-		assertTrue(personneList.size()==4);
+		assertTrue("personneList.size() should be 4 but is "+personneList.size(),personneList.size()==4);
 		for (Personne personne : personneList) {
 			Personne p = personneService.findByPersonneId(personne.getId());
 			assertNotNull(p);

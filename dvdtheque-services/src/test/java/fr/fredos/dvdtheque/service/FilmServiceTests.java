@@ -20,9 +20,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +62,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 	@Autowired
     private CacheManager cacheManager;
 	
-	@Before
+	@BeforeEach
 	public void cleanAllCaches() {
 		filmService.cleanAllCaches();
 	}
@@ -320,7 +321,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		List<Film> dvdFilms = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.DVD));
 		assertNotNull(dvdFilms);
 		assertTrue(CollectionUtils.isNotEmpty(dvdFilms));
-		assertTrue(dvdFilms.size()==2);
+		assertTrue("dvdFilms.size() should be 2 but ris "+dvdFilms.size(),dvdFilms.size()==2);
 		for(Film dvd : dvdFilms) {
 			FilmBuilder.assertFilmIsNotNull(dvd, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		}
@@ -826,8 +827,10 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		filmService.removeFilm(film);
-		Film deletedFilm = filmService.findFilm(film.getId());
-		assertNull(deletedFilm);
+		Assertions.assertThrows(Exception.class, () -> {
+			Film deletedFilm = filmService.findFilm(film.getId());
+			assertNull(deletedFilm);
+		  });
 	}
 	
 	@Test
@@ -1210,7 +1213,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		List<Personne> realList = filmService.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.DVD));
 		assertNotNull(realList);
 		assertTrue(CollectionUtils.isNotEmpty(realList));
-		assertTrue(realList.size()==1);
+		assertTrue("realList.size() should be 1 but is "+realList.size(),realList.size()==1);
 	}
 	@Test
 	public void findAllRealisateursByOrigine() throws ParseException {
@@ -1237,7 +1240,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		List<Personne> realList = filmService.findAllRealisateursByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.DVD));
 		assertNotNull(realList);
 		assertTrue(CollectionUtils.isNotEmpty(realList));
-		assertTrue(realList.size()==1);
+		assertTrue("realList.size() should be 1 but is "+realList.size(),realList.size()==1);
 	}
 	@Test
 	public void findAllActeurs() throws ParseException {
@@ -1309,7 +1312,7 @@ public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTe
 		List<Personne> actEnSalleIdList = filmService.findAllActeursByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.EN_SALLE));
 		assertNotNull(actEnSalleIdList);
 		assertTrue(CollectionUtils.isNotEmpty(actEnSalleIdList));
-		assertTrue(actEnSalleIdList.size()==3);
+		assertTrue("actEnSalleIdList.size() shoujld be 3 but is "+actEnSalleIdList.size(),actEnSalleIdList.size()==3);
 		List<Personne> actDvdIdList = filmService.findAllActeursByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.DVD));
 		assertNotNull(actDvdIdList);
 		assertTrue(CollectionUtils.isNotEmpty(actDvdIdList));

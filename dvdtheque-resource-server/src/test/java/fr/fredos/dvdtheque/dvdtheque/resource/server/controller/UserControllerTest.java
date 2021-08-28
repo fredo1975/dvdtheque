@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.dvdtheque.resource.server.controller;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +24,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.hazelcast.core.Hazelcast;
+
 //import fr.fredos.dvdtheque.dvdtheque.resource.server.configuration.ResourcesServerConfiguration;
 
 @RunWith(SpringRunner.class)
@@ -44,6 +47,11 @@ public class UserControllerTest {
 		          .webAppContextSetup(context)
 		          .apply(SecurityMockMvcConfigurers.springSecurity())
 		          .build();
+	}
+	
+	@After
+	public void after() {
+	    Hazelcast.shutdownAll();
 	}
 /*
     @Test

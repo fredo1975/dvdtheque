@@ -8,6 +8,7 @@ import java.text.ParseException;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
 	}
     
     @Test
-    @Ignore
+    @Disabled
     public void retrieveAllocineMovieFeedByTitleTest() {
     	SearchResults searchResults = client.retrieveAllocineMovieFeedByTitle(FilmBuilder.TITRE_FILM_TMBD_ID_844);
     	assertSearchMovieFeedResultsIsNotNull(searchResults);
@@ -72,7 +73,7 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
     }
     
     @Test
-    @Ignore
+    @Disabled
     public void retrieveAllocineReviewFeedByCodeTest() {
     	SearchResults searchResults = client.retrieveAllocineMovieFeedByTitle(FilmBuilder.TITRE_FILM_TMBD_ID_844);
     	assertSearchMovieFeedResultsIsNotNull(searchResults);
@@ -83,7 +84,7 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
     }
     
     @Test
-    @Ignore
+    @Disabled
     public void retrieveReviewListToCritiquesPresseListTest() throws ParseException {
     	Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
