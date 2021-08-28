@@ -1,0 +1,11 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+spring:
+  application:
+    name: dvdtheque-rest-services
+  cloud:
+    config:
+      fail-fast: true
