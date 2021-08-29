@@ -25,7 +25,7 @@ import fr.fredos.dvdtheque.service.IFilmService;
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class})
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class AllocineScrapingServiceTest {
 	protected Logger logger = LoggerFactory.getLogger(AllocineScrapingServiceTest.class);
 	@Autowired
