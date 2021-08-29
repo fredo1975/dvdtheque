@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -69,7 +69,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public static final String ACT3_AD_ASTRA = "KIMBERLY ELISE";
 	public static final String ACT4_AD_ASTRA = "LISAGAY HAMILTON";
 	
-	@Before
+	@BeforeEach
 	public void init() {
 		jobLauncherTestUtils = new JobLauncherTestUtils();
 		jobLauncherTestUtils.setJob(importFilmsJob);

@@ -1,0 +1,34 @@
+debug: true
+
+spring:
+  datasource:
+    username: sa
+    password: sa
+    testWhileIdle: true
+    validationQuery: SELECT 1
+  cloud:
+    config:
+      enabled: false
+  jpa:
+    show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        
+allocine:
+  url: http://api.allocine.fr/rest/v3/
+  query:
+    search:
+      film: search
+    reviewlist: reviewlist
+    partner: yW5kcm9pZC12M3M
+    filter:
+      desk-press: desk-press
+      movie: movie
+
+hazelcast:
+  cluster-name: hazelcast-local
+  networkconfig:
+    interface: 192.168.1.*
+    tcpipconfig:
+      members: 192.168.1.24

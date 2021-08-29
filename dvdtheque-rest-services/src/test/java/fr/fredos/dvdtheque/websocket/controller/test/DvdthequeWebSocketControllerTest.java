@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,6 +29,7 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
@@ -50,6 +51,7 @@ import fr.fredos.dvdtheque.rest.controller.WebApplication;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes= {DvdthequeWebSocketControllerTest.DvdthequeWebSocketConfigurationTest.class,WebApplication.class},
 webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ActiveProfiles("test")
 public class DvdthequeWebSocketControllerTest {
 	protected Logger logger = LoggerFactory.getLogger(DvdthequeWebSocketControllerTest.class);
     @Value("${local.server.port}")
@@ -59,7 +61,7 @@ public class DvdthequeWebSocketControllerTest {
     private static final String SEND_CREATE_JMS_STATUS_ENDPOINT = "/app/dvdtheque";
     private static final String SUBSCRIBE_TOPIC_ENDPOINT = "/topic";
     private StompSession stompSession;
-    @Before
+    @BeforeEach
     public void setup() throws InterruptedException, ExecutionException, TimeoutException {
     	stompClient = new WebSocketStompClient(new SockJsClient(Arrays.asList(new WebSocketTransport(new StandardWebSocketClient()))));
     	stompClient.setMessageConverter(new MappingJackson2MessageConverter());

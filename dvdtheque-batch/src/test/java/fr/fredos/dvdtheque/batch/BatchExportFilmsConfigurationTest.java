@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -30,7 +30,7 @@ public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	@Autowired
 	public Job exportFilmsJob;
 	
-	@Before
+	@BeforeEach
 	public void init() {
 		jobLauncherTestUtils = new JobLauncherTestUtils();
 		jobLauncherTestUtils.setJob(exportFilmsJob);

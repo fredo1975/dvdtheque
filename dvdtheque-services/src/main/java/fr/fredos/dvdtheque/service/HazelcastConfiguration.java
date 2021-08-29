@@ -17,8 +17,8 @@ import com.hazelcast.spring.cache.HazelcastCacheManager;
 
 @Configuration
 public class HazelcastConfiguration {
-	@Value("${hazelcast.group.name}")
-	private String groupConfigName;
+	/*@Value("${hazelcast.group.name}")
+	private String groupConfigName;*/
 	@Value("${hazelcast.networkconfig.tcpipconfig.members}")
 	private String members;
 	@Value("${hazelcast.networkconfig.interface}")

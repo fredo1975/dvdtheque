@@ -1,10 +1,10 @@
-debug: trace
+debug: false
 
 server:
   port: 8083
 logging:
   level:
-    root: debug
+    root: info
 spring:
   cloud:
     config:
@@ -21,8 +21,7 @@ spring:
       physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
 hazelcast:
-  group:
-    name: hazelcast-local
+  cluster-name: hazelcast-local
   networkconfig:
     interface: 192.168.1.*
     tcpipconfig:

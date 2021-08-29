@@ -1,7 +1,7 @@
 package fr.fredos.dvdtheque.dvdtheque.resource.server.controller;
 
 import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,15 +21,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
 import com.hazelcast.core.Hazelcast;
 
-//import fr.fredos.dvdtheque.dvdtheque.resource.server.configuration.ResourcesServerConfiguration;
-
 @RunWith(SpringRunner.class)
-//@ContextConfiguration(classes = {UserController.class,ResourcesServerConfiguration.class})
 @SpringBootTest(classes = {UserController.class,SpringSecurityWebAuxTestConfig.class})
-//@ContextConfiguration(classes = {UserController.class,SpringSecurityWebAuxTestConfig.class})
 @AutoConfigureMockMvc
 @WebAppConfiguration
 @ActiveProfiles("local")
@@ -41,7 +34,7 @@ public class UserControllerTest {
 	@Autowired
     private WebApplicationContext context;
 	
-	@Before()
+	@BeforeEach()
 	public void setUp() throws Exception {
 		mockMvc = MockMvcBuilders
 		          .webAppContextSetup(context)
@@ -53,31 +46,12 @@ public class UserControllerTest {
 	public void after() {
 	    Hazelcast.shutdownAll();
 	}
-/*
-    @Test
-    @WithUserDetails("manager@company.com")
-    public void givenManagerUser_whenGetFooSalute_thenOk() throws Exception
-    {
-        mockMvc.perform(MockMvcRequestBuilders.get("/foo/salute")
-                .accept(MediaType.ALL))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("manager@company.com")));
-    }
 
-    @Test
-    @WithUserDetails("user@company.com")
-    public void givenBasicUser_whenGetFooSalute_thenForbidden() throws Exception
-    {
-        mockMvc.perform(MockMvcRequestBuilders.get("/foo/salute")
-                .accept(MediaType.ALL))
-                .andExpect(status().isForbidden());
-    }*/
-	
 	@Test
 	//@WithUserDetails("fredo")
 	@WithMockUser(username="fredo",roles = {"USER2"})
 	public void getTest() throws Exception {
-		SecurityContext context = SecurityContextHolder.getContext();
+		//SecurityContext context = SecurityContextHolder.getContext();
 		mockMvc.perform(MockMvcRequestBuilders.get("/salute")
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(MockMvcResultHandlers.print())

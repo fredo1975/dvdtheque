@@ -4,11 +4,12 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -26,12 +27,13 @@ import fr.fredos.dvdtheque.service.IPersonneService;
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.rest.controller.WebApplication.class})
+@ActiveProfiles("test")
 public class FilmServiceWebTest extends AbstractTransactionalJUnit4SpringContextTests{
 	@Autowired
 	protected IFilmService filmService;
 	@Autowired
 	protected IPersonneService personneService;
-	@Before()
+	@BeforeEach
 	public void setUp() throws Exception {
     	filmService.cleanAllFilms();
 	}
