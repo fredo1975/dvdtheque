@@ -6,17 +6,15 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -25,8 +23,7 @@ import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.service.model.PersonneDto;
-@ActiveProfiles("local")
-@RunWith(SpringRunner.class)
+@ActiveProfiles("test")
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class})
 public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceTests.class);
@@ -35,10 +32,11 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 	@Autowired
 	protected IFilmService filmService;
 	
-	@Before
+	@BeforeEach
 	public void cleanAllCaches() {
 		personneService.cleanAllCaches();
 	}
+	
 	@Test
 	public void getPersonneVersusLoadPersonne() throws Exception {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
@@ -144,7 +142,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		List<Personne> personneList = personneService.findAllPersonne();
 		assertNotNull(personneList);
 		assertTrue(CollectionUtils.isNotEmpty(personneList));
-		assertTrue(personneList.size()==4);
+		assertTrue("personneList.size() should be 4 but is "+personneList.size(),personneList.size()==4);
 		for (Personne personne : personneList) {
 			Personne p = personneService.findByPersonneId(personne.getId());
 			assertNotNull(p);
@@ -234,7 +232,7 @@ public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringConte
 		logger.debug(methodName + "end");
 	}
 	@Test
-	@Ignore
+	@Disabled
 	public void deletePersonne() throws Exception {
 		String methodName = "deletePersonne : ";
 		logger.debug(methodName + "start");

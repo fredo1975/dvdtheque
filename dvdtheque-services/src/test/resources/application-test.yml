@@ -1,0 +1,28 @@
+debug: false
+
+server:
+  port: 8083
+logging:
+  level:
+    root: info
+spring:
+  cloud:
+    config:
+      enabled: false
+  datasource:
+    username: sa
+    password: sa
+    testWhileIdle: true
+    validationQuery: SELECT 1
+  jpa:
+    show-sql: false
+  hibernate:
+    naming:
+      physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+hazelcast:
+  cluster-name: hazelcast-local
+  networkconfig:
+    interface: 192.168.1.*
+    tcpipconfig:
+      members: 192.168.1.24

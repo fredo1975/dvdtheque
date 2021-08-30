@@ -4,11 +4,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +24,10 @@ import fr.fredos.dvdtheque.allocine.model.SearchResults;
 import fr.fredos.dvdtheque.allocine.service.AllocineServiceClient;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.dao.model.object.CritiquesPresse;
 import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
+import fr.fredos.dvdtheque.dao.model.utils.CritiquesPresseBuilder;
 import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.service.IFilmService;
 
@@ -31,7 +35,7 @@ import fr.fredos.dvdtheque.service.IFilmService;
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class})
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class AllocineServiceClientTest extends AbstractTransactionalJUnit4SpringContextTests{
 	protected Logger logger = LoggerFactory.getLogger(AllocineServiceClientTest.class);
 	@Autowired
@@ -64,7 +68,7 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
 	}
     
     @Test
-    @Ignore
+    @Disabled
     public void retrieveAllocineMovieFeedByTitleTest() {
     	SearchResults searchResults = client.retrieveAllocineMovieFeedByTitle(FilmBuilder.TITRE_FILM_TMBD_ID_844);
     	assertSearchMovieFeedResultsIsNotNull(searchResults);
@@ -72,7 +76,7 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
     }
     
     @Test
-    @Ignore
+    @Disabled
     public void retrieveAllocineReviewFeedByCodeTest() {
     	SearchResults searchResults = client.retrieveAllocineMovieFeedByTitle(FilmBuilder.TITRE_FILM_TMBD_ID_844);
     	assertSearchMovieFeedResultsIsNotNull(searchResults);
@@ -83,7 +87,39 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
     }
     
     @Test
-    @Ignore
+    public void saveCritiquesPresseTest() throws ParseException {
+    	Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_10315)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_10315)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).build();
+		//client.addCritiquesPresseToFilm(film);
+		Set<CritiquesPresse> set = new HashSet<>();
+		set.add(new CritiquesPresseBuilder.Builder(1L).setCode(1).setAuteur("auteur").setCritique("la critique").setNomSource("source").setNote(5d).build());
+		film.setCritiquesPresse(set);
+		assertTrue(CollectionUtils.isNotEmpty(film.getCritiquesPresse()));
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		Film dbFilm = filmService.findFilm(filmId);
+		assertNotNull(dbFilm);
+		assertNotNull(dbFilm.getCritiquesPresse());
+		assertTrue("",dbFilm.getCritiquesPresse().size() == film.getCritiquesPresse().size());
+    }
+    @Test
+    @Disabled
     public void retrieveReviewListToCritiquesPresseListTest() throws ParseException {
     	Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));

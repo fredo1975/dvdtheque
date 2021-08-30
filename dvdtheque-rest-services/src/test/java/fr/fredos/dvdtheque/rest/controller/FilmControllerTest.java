@@ -19,9 +19,10 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.hamcrest.core.Is;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -61,6 +63,7 @@ import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(FilmControllerTest.class);
 	@Autowired
@@ -104,7 +107,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String POSTER_PATH = "http://image.tmdb.org/t/p/w500/q31SmDy9UvSPIuTz65XsHuPwhuS.jpg";
 	public static final String SHEET_NAME = "Films";
 	
-	@Before()
+	@BeforeEach()
 	public void setUp() throws Exception {
 		filmService.cleanAllFilms();
 	}
@@ -831,7 +834,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		FilmBuilder.assertCacheSize(0, 0, enSalleDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(enSalleDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(enSalleDisplayTypeParam));
 		FilmBuilder.assertCacheSize(3, 1, googlePlayDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(googlePlayDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(googlePlayDisplayTypeParam));
 	}
-	@Test(expected = java.lang.Exception.class)
+	@Test
 	@Transactional
 	public void testRemoveFilm() throws Exception {
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
@@ -860,8 +863,11 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		mvc.perform(MockMvcRequestBuilders.put(REMOVE_FILM_URI + film.getId())
 				.contentType(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
 				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
-		Film filmRemoved = filmService.findFilm(filmToRemove.getId());
-		assertNull(filmRemoved);
+		Assertions.assertThrows(Exception.class, () -> {
+			Film filmRemoved = filmService.findFilm(filmToRemove.getId());
+			assertNull(filmRemoved);
+		  });
+		
 		FilmDisplayTypeParam dvdDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.DVD);
 		FilmBuilder.assertCacheSize(0, 0, dvdDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(dvdDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(dvdDisplayTypeParam));
 	}
@@ -1070,7 +1076,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 
 	@Test
 	@Transactional
-	@Ignore
+	@Disabled
 	public void testUpdateWithRestSaveFilm() throws Exception {
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(SAVE_FILM_URI + FilmBuilder.tmdbId3)
 				.contentType(MediaType.APPLICATION_JSON);

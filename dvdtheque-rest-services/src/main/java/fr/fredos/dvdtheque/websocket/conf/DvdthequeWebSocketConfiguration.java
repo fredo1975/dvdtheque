@@ -34,6 +34,6 @@ public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerCo
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint(stompEndpoint).setAllowedOrigins("*").withSockJS();
+		registry.addEndpoint(stompEndpoint).setAllowedOriginPatterns("*").withSockJS();
 	}
 }

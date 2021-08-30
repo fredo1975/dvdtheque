@@ -2,7 +2,7 @@
 <configuration scan="true">
 	<property name="LOG_TEMP" value="./logs"/>
 	<include resource="org/springframework/boot/logging/logback/base.xml" />
-	<logger name="com.example" level="INFO"/>
+	<logger name="fr.fredos.dvdtheque.tmdb" level="INFO"/>
     <root level="WARN">
         <appender-ref ref="CONSOLE"/>
     </root>

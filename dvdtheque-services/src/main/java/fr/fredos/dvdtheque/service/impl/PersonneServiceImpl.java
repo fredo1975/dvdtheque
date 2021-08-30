@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicate;
 import com.hazelcast.query.Predicates;
 
@@ -42,8 +42,8 @@ public class PersonneServiceImpl implements IPersonneService {
 	@PostConstruct
 	public void init() {
 		mapPersonnes = instance.getMap(CACHE_PERSONNE);
-		mapPersonnes.addIndex("id", true);
-		mapPersonnes.addIndex("nom", false);
+		/*mapPersonnes.addIndex("id", true);
+		mapPersonnes.addIndex("nom", false);*/
 	}
 
 	@Override
