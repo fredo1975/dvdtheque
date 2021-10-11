@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +120,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@GetMapping("/films/byOrigine/{origine}")
 	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.debug("findAllFilmsByOrigine - instanceId="+instanceId);
@@ -196,6 +199,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@GetMapping("/acteurs")
 	ResponseEntity<List<Personne>> findAllActeurs() {
 		try {
