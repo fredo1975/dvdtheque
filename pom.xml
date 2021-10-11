@@ -34,7 +34,6 @@
 		<module>dvdtheque-rest-services-test-integration</module>
 		<!--module>dvdtheque-swing</module -->
 		<!-- module>dvdtheque-hystrix-dashboard</module -->
-		<module>dvdtheque-resource-server</module>
 	</modules>
 	<properties>
 		<java.version>11</java.version>
