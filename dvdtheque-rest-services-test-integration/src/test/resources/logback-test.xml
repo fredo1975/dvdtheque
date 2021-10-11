@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<configuration scan="true" scanPeriod="30 seconds">
+	<include
+		resource="org/springframework/boot/logging/logback/base.xml" />
+		
+    <appender name="Console"
+        class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d %p %C{1.} [%t] %m%n
+            </Pattern>
+        </layout>
+    </appender>
+</configuration>
