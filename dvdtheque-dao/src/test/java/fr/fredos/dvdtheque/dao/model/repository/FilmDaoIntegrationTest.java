@@ -48,7 +48,7 @@ public class FilmDaoIntegrationTest {
 	}
 	
 	@Test
-	public void findAllFilms() throws ParseException {
+	public void saveNewFilm() throws ParseException {
 		Genre genre1 = saveGenre(GENRE_TMDB_ID_1, GENRE_NAME_1);
 		Genre genre2 = saveGenre(GENRE_TMDB_ID_2, GENRE_NAME_2);
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -58,14 +58,16 @@ public class FilmDaoIntegrationTest {
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(new Integer(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmDao.saveNewFilm(film);
 		assertNotNull(filmId);
 		List<Film> films = filmDao.findAllFilms();
