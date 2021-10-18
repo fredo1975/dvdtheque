@@ -77,12 +77,18 @@ public class FilmServiceImpl implements IFilmService {
 	IMap<FilmOrigine, Map<Film,Set<Personne>>> mapActeursByOrigine;
 	IMap<FilmOrigine, Map<Film,Set<Personne>>> mapRealisateursByOrigine;
 	
-	@Autowired
+	//@Autowired
 	private FilmDao filmDao;
-	@Autowired
+	//@Autowired
 	private IPersonneService personneService;
-	@Autowired
+	//@Autowired
 	private HazelcastInstance instance;
+	
+	public FilmServiceImpl(FilmDao filmDao,IPersonneService personneService,HazelcastInstance instance) {
+		this.filmDao = filmDao;
+		this.personneService = personneService;
+		this.instance = instance;
+	}
 	
 	@PostConstruct
 	public void init() {
