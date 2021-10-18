@@ -19,9 +19,9 @@ import fr.fredos.dvdtheque.dao.model.repository.AuthenticatorDao;
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class})
-public class AuthenticatorServiceTests extends
+public class AuthenticatorServiceIntegrationTests extends
 		AbstractTransactionalJUnit4SpringContextTests {
-	protected Logger logger = LoggerFactory.getLogger(AuthenticatorServiceTests.class);
+	protected Logger logger = LoggerFactory.getLogger(AuthenticatorServiceIntegrationTests.class);
 	@Autowired
 	protected AuthenticatorDao authenticatorDao;
 	

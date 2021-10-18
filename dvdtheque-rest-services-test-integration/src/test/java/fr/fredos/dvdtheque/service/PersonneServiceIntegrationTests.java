@@ -25,8 +25,8 @@ import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.service.model.PersonneDto;
 @ActiveProfiles("test")
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class})
-public class PersonneServiceTests extends AbstractTransactionalJUnit4SpringContextTests {
-	protected Logger logger = LoggerFactory.getLogger(PersonneServiceTests.class);
+public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4SpringContextTests {
+	protected Logger logger = LoggerFactory.getLogger(PersonneServiceIntegrationTests.class);
 	@Autowired
 	protected IPersonneService personneService;
 	@Autowired

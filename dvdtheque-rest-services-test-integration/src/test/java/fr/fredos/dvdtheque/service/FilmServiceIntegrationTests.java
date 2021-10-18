@@ -48,8 +48,8 @@ import fr.fredos.dvdtheque.service.model.FilmListParam;
 
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class})
 @ActiveProfiles("test")
-public class FilmServiceTests extends AbstractTransactionalJUnit4SpringContextTests {
-	protected Logger logger = LoggerFactory.getLogger(FilmServiceTests.class);
+public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4SpringContextTests {
+	protected Logger logger = LoggerFactory.getLogger(FilmServiceIntegrationTests.class);
 	
 	@Autowired
 	private FilmDao filmDao;

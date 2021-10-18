@@ -94,9 +94,9 @@ allocine:
 hazelcast:
   cluster-name: hazelcast-local
   networkconfig:
-    interface: 192.168.1.*
+    interface: 192.168.1.133
     tcpipconfig:
-      members: 192.168.1.24
+      members: 192.168.1.133
 
 keycloak:
   realm: dvdtheque
