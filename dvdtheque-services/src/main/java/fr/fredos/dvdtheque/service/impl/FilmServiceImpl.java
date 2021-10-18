@@ -21,8 +21,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -84,9 +82,10 @@ public class FilmServiceImpl implements IFilmService {
 		this.filmDao = filmDao;
 		this.personneService = personneService;
 		this.instance = instance;
+		this.init();
 	}
 	
-	@PostConstruct
+	//@PostConstruct
 	public void init() {
 		mapFilms = instance.getMap(CACHE_FILM);
 		/*mapFilms.addIndex("id", false);
