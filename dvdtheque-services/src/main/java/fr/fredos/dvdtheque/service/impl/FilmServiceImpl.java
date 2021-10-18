@@ -27,7 +27,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,12 +76,9 @@ public class FilmServiceImpl implements IFilmService {
 	IMap<FilmOrigine, Map<Film,Set<Personne>>> mapActeursByOrigine;
 	IMap<FilmOrigine, Map<Film,Set<Personne>>> mapRealisateursByOrigine;
 	
-	//@Autowired
-	private FilmDao filmDao;
-	//@Autowired
-	private IPersonneService personneService;
-	//@Autowired
-	private HazelcastInstance instance;
+	private final FilmDao filmDao;
+	private final IPersonneService personneService;
+	private final HazelcastInstance instance;
 	
 	public FilmServiceImpl(FilmDao filmDao,IPersonneService personneService,HazelcastInstance instance) {
 		this.filmDao = filmDao;
