@@ -13,7 +13,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,13 +30,14 @@ import fr.fredos.dvdtheque.service.IPersonneService;
 public class PersonneServiceImpl implements IPersonneService {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceImpl.class);
 	private static final String CACHE_PERSONNE = "personneCache";
-	
-	@Autowired
-	private PersonneDao personneDao;
+	private final PersonneDao personneDao;
 	IMap<Long, Personne> mapPersonnes;
-	
-	@Autowired
-	private HazelcastInstance instance;
+	private final HazelcastInstance instance;
+
+	public PersonneServiceImpl(PersonneDao personneDao, HazelcastInstance instance) {
+		this.personneDao = personneDao;
+		this.instance = instance;
+	}
 
 	@PostConstruct
 	public void init() {
