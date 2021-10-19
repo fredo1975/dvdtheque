@@ -13,6 +13,7 @@ import org.easymock.EasyMockRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.springframework.util.StopWatch;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.HazelcastInstance;
@@ -48,9 +49,64 @@ public class FilmServiceTest extends HazelcastTestSupport{
         instances = factory.newInstances(config);
         filmDao = EasyMock.mock(FilmDao.class);
 		personneService = EasyMock.mock(PersonneServiceImpl.class);
-		Genre genre1 = new Genre(28,"Action");
-		Genre genre2 = new Genre(35,"Comedy");
-		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+	}
+	protected Config getConfig() {
+        Config cfg = smallInstanceConfig();
+        cfg.getMapConfig(FilmServiceImpl.CACHE_FILM).setTimeToLiveSeconds(1)
+                .setStatisticsEnabled(false);
+        return cfg;
+    }
+	@Test
+	public void findAllFilmsWithEmptyCache() throws ParseException {
+		List<Film> films = new ArrayList<>();
+		EasyMock.expect(filmDao.findAllFilms()).andReturn(films).times(2);
+		EasyMock.replay(filmDao);
+		filmService = new FilmServiceImpl(filmDao,personneService,instances[0]);
+		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,40,FilmOrigine.TOUS);
+		List<Film> _films = filmService.findAllFilms(filmDisplayTypeParam);
+		EasyMock.verify(filmDao);
+		assertNotNull(_films);
+		assertEquals(0,_films.size());
+	}
+	@Test
+	public void findAllFilmsWithNonEmptyCache() throws ParseException {
+		final List<Film> films = new ArrayList<>();
+		final Genre genre1 = new Genre(28,"Action");
+		final Genre genre2 = new Genre(35,"Comedy");
+		final Film film1 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		film1.setId(25l);
+		films.add(film1);
+		EasyMock.expect(filmDao.findAllFilms()).andReturn(films);
+		EasyMock.replay(filmDao);
+		filmService = new FilmServiceImpl(filmDao,personneService,instances[0]);
+		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,40,FilmOrigine.TOUS);
+		List<Film> _films = filmService.findAllFilms(filmDisplayTypeParam);
+		EasyMock.verify(filmDao);
+		assertNotNull(_films);
+		assertEquals(1,_films.size());
+		assertEquals(film1,_films.get(0));
+	}
+	
+	@Test
+	public void findFilmByTitreAndfindAllFilms() throws Exception {
+		final List<Film> films = new ArrayList<>();
+		final Genre genre1 = new Genre(28,"Action");
+		final Genre genre2 = new Genre(35,"Comedy");
+		final Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
 				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
 				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
@@ -66,25 +122,17 @@ public class FilmServiceTest extends HazelcastTestSupport{
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		film.setId(25l);
-		List<Film> films = new ArrayList<>();
 		films.add(film);
-		EasyMock.expect(filmDao.findAllFilms()).andReturn(films).anyTimes();
+		EasyMock.expect(filmDao.findAllFilms()).andReturn(films).times(2);
+		EasyMock.expect(filmDao.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844)).andReturn(film);
 		EasyMock.replay(filmDao);
 		filmService = new FilmServiceImpl(filmDao,personneService,instances[0]);
-		//EasyMock.verify(filmDao);
-	}
-	protected Config getConfig() {
-        Config cfg = smallInstanceConfig();
-        cfg.getMapConfig(FilmServiceImpl.CACHE_FILM).setTimeToLiveSeconds(1)
-                .setStatisticsEnabled(false);
-        return cfg;
-    }
-	@Test
-	public void findAllFilms() throws ParseException {
-		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,40,FilmOrigine.TOUS);
-		List<Film> _films = filmService.findAllFilms(filmDisplayTypeParam);
-		EasyMock.verify(filmDao);
+		
+		final Film retrievedFilm = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
+		assertNotNull(retrievedFilm);
+		List<Film> _films = filmService.findAllFilms(null);
 		assertNotNull(_films);
 		assertEquals(1,_films.size());
+		assertEquals(film,_films.get(0));
 	}
 }
