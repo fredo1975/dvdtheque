@@ -7,8 +7,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -29,7 +27,7 @@ import fr.fredos.dvdtheque.service.IPersonneService;
 @Service("personneService")
 public class PersonneServiceImpl implements IPersonneService {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceImpl.class);
-	private static final String CACHE_PERSONNE = "personneCache";
+	public static final String CACHE_PERSONNE = "personneCache";
 	private final PersonneDao personneDao;
 	IMap<Long, Personne> mapPersonnes;
 	private final HazelcastInstance instance;
@@ -37,9 +35,9 @@ public class PersonneServiceImpl implements IPersonneService {
 	public PersonneServiceImpl(PersonneDao personneDao, HazelcastInstance instance) {
 		this.personneDao = personneDao;
 		this.instance = instance;
+		this.init();
 	}
 
-	@PostConstruct
 	public void init() {
 		mapPersonnes = instance.getMap(CACHE_PERSONNE);
 		/*mapPersonnes.addIndex("id", true);

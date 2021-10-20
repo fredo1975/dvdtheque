@@ -13,7 +13,6 @@ import org.easymock.EasyMockRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.springframework.util.StopWatch;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.HazelcastInstance;
@@ -123,7 +122,7 @@ public class FilmServiceTest extends HazelcastTestSupport{
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		film.setId(25l);
 		films.add(film);
-		EasyMock.expect(filmDao.findAllFilms()).andReturn(films).times(2);
+		EasyMock.expect(filmDao.findAllFilms()).andReturn(films);
 		EasyMock.expect(filmDao.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844)).andReturn(film);
 		EasyMock.replay(filmDao);
 		filmService = new FilmServiceImpl(filmDao,personneService,instances[0]);
@@ -131,8 +130,61 @@ public class FilmServiceTest extends HazelcastTestSupport{
 		final Film retrievedFilm = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		assertNotNull(retrievedFilm);
 		List<Film> _films = filmService.findAllFilms(null);
+		EasyMock.verify(filmDao);
 		assertNotNull(_films);
 		assertEquals(1,_films.size());
 		assertEquals(film,_films.get(0));
+	}
+	
+	@Test
+	public void saveNewFilm() throws ParseException {
+		final List<Film> films = new ArrayList<>();
+		final long filmId = 25l;
+		final Genre genre1 = new Genre(28,"Action");
+		final Genre genre2 = new Genre(35,"Comedy");
+		final Film filmNoId = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		final Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setZone(new Integer(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		film.setId(filmId);
+		EasyMock.expect(filmDao.findAllFilms()).andReturn(films);
+		EasyMock.expect(filmDao.saveNewFilm(filmNoId)).andReturn(filmId);
+		// we set filmId to filmNoId cause the saveNewFilm is mocked and thus don't set the id as it is when it is in the real world
+		filmNoId.setId(filmId);
+		EasyMock.replay(filmDao);
+		filmService = new FilmServiceImpl(filmDao,personneService,instances[0]);
+		final long filmIdRetrieved = filmService.saveNewFilm(filmNoId);
+		final Film retrievedFilm = filmService.findFilm(filmId);
+		EasyMock.verify(filmDao);
+		assertNotNull(filmIdRetrieved);
+		assertEquals(filmId,filmIdRetrieved);
+		assertNotNull(retrievedFilm);
+		FilmBuilder.assertFilmIsNotNull(retrievedFilm, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 	}
 }
