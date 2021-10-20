@@ -90,7 +90,7 @@ public class PersonneServiceTest extends HazelcastTestSupport{
 			Personne p = personneService.findByPersonneId(personne.getId());
 			assertNotNull(p);
 		}*/
-		personneService = new PersonneServiceImpl(personneDao, getInstance());
+		personneService = new PersonneServiceImpl(personneDao, instances[0]);
 		List<Personne> _personnesList = personneService.findAllPersonne();
 		EasyMock.verify(personneDao);
 		assertNotNull(_personnesList);
