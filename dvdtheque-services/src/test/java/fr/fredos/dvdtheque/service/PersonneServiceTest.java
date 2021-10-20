@@ -52,44 +52,6 @@ public class PersonneServiceTest extends HazelcastTestSupport{
 		List<Personne> personnesList = new ArrayList<>();
 		EasyMock.expect(personneDao.findAllPersonne()).andReturn(personnesList);
 		EasyMock.replay(personneDao);
-		/*
-		Long filmId = filmService.saveNewFilm(film);
-		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
-		List<Personne> personneList = personneService.findAllPersonne();
-		assertNotNull(personneList);
-		assertTrue(CollectionUtils.isNotEmpty(personneList));
-		assertTrue("personneList.size() should be 4 but is "+personneList.size(),personneList.size()==4);
-		for (Personne personne : personneList) {
-			Personne p = personneService.findByPersonneId(personne.getId());
-			assertNotNull(p);
-		}
-		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
-				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
-				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
-				.setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
-				.setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD)
-				.setGenre1(genre1)
-				.setGenre2(genre2)
-				.setZone(new Integer(2))
-				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
-		Long filmId2 = filmService.saveNewFilm(film2);
-		assertNotNull(filmId2);
-		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
-		List<Personne> personne2List = personneService.findAllPersonne();
-		assertNotNull(personne2List);
-		assertTrue(CollectionUtils.isNotEmpty(personne2List));
-		assertTrue(personne2List.size()==4);
-		for (Personne personne : personne2List) {
-			Personne p = personneService.findByPersonneId(personne.getId());
-			assertNotNull(p);
-		}*/
 		personneService = new PersonneServiceImpl(personneDao, instances[0]);
 		List<Personne> _personnesList = personneService.findAllPersonne();
 		EasyMock.verify(personneDao);
