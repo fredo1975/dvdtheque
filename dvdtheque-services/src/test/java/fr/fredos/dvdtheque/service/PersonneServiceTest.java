@@ -6,30 +6,20 @@ import static org.junit.Assert.assertNotNull;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.easymock.EasyMock;
-import org.easymock.EasyMockRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.test.HazelcastTestSupport;
 import com.hazelcast.test.TestHazelcastInstanceFactory;
 
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.repository.PersonneDao;
 import fr.fredos.dvdtheque.service.impl.PersonneServiceImpl;
 
-@RunWith(EasyMockRunner.class)
-public class PersonneServiceTest extends HazelcastTestSupport{
-	static final int 			INSTANCE_COUNT = 3;
-    static final Random 		RANDOM = new Random();
-    private HazelcastInstance[] instances;
-    private PersonneServiceImpl personneService;
-    private PersonneDao 		personneDao;
+public class PersonneServiceTest extends BaseTest{
     HazelcastInstance getInstance() {
         return instances[RANDOM.nextInt(INSTANCE_COUNT)];
     }

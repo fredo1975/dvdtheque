@@ -6,17 +6,12 @@ import static org.junit.Assert.assertNotNull;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.easymock.EasyMock;
-import org.easymock.EasyMockRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 
 import com.hazelcast.config.Config;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.test.HazelcastTestSupport;
 import com.hazelcast.test.TestHazelcastInstanceFactory;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
@@ -29,18 +24,8 @@ import fr.fredos.dvdtheque.dao.model.repository.FilmDao;
 import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.service.impl.FilmServiceImpl;
 import fr.fredos.dvdtheque.service.impl.PersonneServiceImpl;
-	
-@RunWith(EasyMockRunner.class)
-public class FilmServiceTest extends HazelcastTestSupport{
-	private FilmDao 			filmDao;
-	private PersonneServiceImpl personneService;
-	static final int 			INSTANCE_COUNT = 3;
-    static final Random 		RANDOM = new Random();
-    private HazelcastInstance[] instances;
-	private FilmServiceImpl 	filmService;
-    HazelcastInstance getInstance() {
-        return instances[RANDOM.nextInt(INSTANCE_COUNT)];
-    }
+
+public class FilmServiceTest extends BaseTest{
 	@BeforeEach
 	public void init() throws ParseException {
 		TestHazelcastInstanceFactory factory = createHazelcastInstanceFactory(INSTANCE_COUNT);
