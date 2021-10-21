@@ -5,10 +5,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -19,24 +23,22 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.hamcrest.core.Is;
+import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
-import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -48,9 +50,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
-import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloackAuth;
+import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
+import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -68,29 +70,33 @@ import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 import fr.fredos.dvdtheque.service.model.FilmListParam;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration
-@ComponentScan(basePackageClasses = { KeycloakSecurityComponents.class, KeycloakSpringBootConfigResolver.class })
+@Import({ ServletKeycloakAuthUnitTestingSupport.class})
 @ActiveProfiles("test")
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
-	protected Logger logger = LoggerFactory.getLogger(FilmControllerTest.class);
+	protected Logger 								logger = LoggerFactory.getLogger(FilmControllerTest.class);
 	@Autowired
-	private MockMvc mockMvc;
+	private MockMvc 								mockMvc;
 	@Autowired
-	protected IFilmService filmService;
+	protected IFilmService 							filmService;
 	@Autowired
-	protected IPersonneService personneService;
+	protected IPersonneService 						personneService;
 	@Autowired
-	private TmdbServiceClient client;
+	private TmdbServiceClient 						client;
 	@Autowired
-	private ObjectMapper mapper;
+	private ObjectMapper 							mapper;
 	@Autowired
-	ExcelFilmHandler excelFilmHandler;
+	private ExcelFilmHandler 						excelFilmHandler;
+	@Autowired
+	private ServletKeycloakAuthUnitTestingSupport 	keycloak;
+	@Autowired
+	private MockMvcSupport 							api;
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+	
 	private static final String GET_ALL_FILMS_URI = "/dvdtheque/films/";
 	private static final String GET_CLEAN_ALL_FILMS_URI = "/dvdtheque/films/cleanAllfilms/";
 	private static final String GET_ALL_GENRES_URI = "/dvdtheque/films/genres/";
@@ -130,11 +136,21 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				   .apply(springSecurity())
 				   .build(); 
 	}*/
-	
+	/*
+	@Before
+	public void beforeSetUp() {
+		when(filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS))).thenAnswer(invocation -> {
+			final Authentication auth = invocation.getArgument(0, Authentication.class);
+			Personne p = new Personne();
+			p.setNom("nom");
+			p.setPrenom("fredo");
+			return p;
+		});
+	}*/
 	@Test
 	//@WithMockUser(username="fredo",authorities={"user"})
 	//@WithMockKeycloackAuth("fredo")
-	@WithMockKeycloackAuth(roles = "user")
+	//@WithMockKeycloackAuth
 	public void findAllActeurs() throws Exception {
 		/*
 		SecurityContext context = SecurityContextHolder.getContext();
@@ -168,13 +184,39 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Personne acteur1 = allActeur.get(0);
 		Personne acteur2 = allActeur.get(1);
 		Personne acteur3 = allActeur.get(2);*/
+		
+		/*
 		ResultActions resultActions = mockMvc
 				.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_URI).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(FilmBuilder.ACT1_TMBD_ID_844)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[1].nom", Is.is(FilmBuilder.ACT1_TMBD_ID_844)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$[2].nom", Is.is(FilmBuilder.ACT1_TMBD_ID_844)));
-		assertNotNull(resultActions.andReturn().getResponse().getContentAsString());
+				*/
+		
+		/*
+		Collection<GrantedAuthority> authorities = new ArrayList<>();
+		GrantedAuthority aut = new GrantedAuthority() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public String getAuthority() {
+				return "user";
+			}
+		};
+		authorities.add(aut);
+		
+		
+		
+		api
+		.with(keycloak.keycloakAuthenticationToken().authorities(authorities).accessToken(token -> token.setPreferredUsername("fredo")))
+		.get(SEARCH_ALL_ACTTEUR_URI)
+		.andExpect(status().isOk());*/
+		
+		api
+		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
+		.get(SEARCH_ALL_ACTTEUR_URI)
+		.andExpect(status().isOk());
+		//assertNotNull(resultActions.andReturn().getResponse().getContentAsString());
 	}
 
 	@Test
