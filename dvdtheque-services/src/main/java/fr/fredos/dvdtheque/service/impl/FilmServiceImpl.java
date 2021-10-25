@@ -230,9 +230,11 @@ public class FilmServiceImpl implements IFilmService {
 		logger.debug("no genres find");
 		List<Genre> e = this.filmDao.findAllGenres();
 		logger.debug("genres size: " + e.size());
-		e.parallelStream().forEach(it -> {
-			mapGenres.putIfAbsent(it.getId(), it);
-		});
+		if(CollectionUtils.isNotEmpty(e)) {
+			e.parallelStream().forEach(it -> {
+				mapGenres.putIfAbsent(it.getId(), it);
+			});
+		}
 		return e;
 	}
 

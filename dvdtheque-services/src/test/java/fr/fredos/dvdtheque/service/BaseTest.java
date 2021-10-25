@@ -21,7 +21,7 @@ public abstract class BaseTest extends HazelcastTestSupport{
     protected FilmServiceImpl 		filmService;
 	static final int 				INSTANCE_COUNT = 3;
     static final Random 			RANDOM = new Random();
-    
+    protected static final long 	FILM_ID_1 = 25l;
     HazelcastInstance getInstance() {
         return instances[RANDOM.nextInt(INSTANCE_COUNT)];
     }
