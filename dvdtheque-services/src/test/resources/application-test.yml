@@ -19,10 +19,3 @@ spring:
   hibernate:
     naming:
       physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-
-hazelcast:
-  cluster-name: hazelcast-local
-  networkconfig:
-    interface: 192.168.1.133
-    tcpipconfig:
-      members: 192.168.1.133
