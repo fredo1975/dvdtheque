@@ -29,7 +29,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -79,6 +78,7 @@ public class FilmController {
     @Value("${limit.film.size}")
     private int limitFilmSize;
 
+    @RolesAllowed("user")
 	@GetMapping("/films/byPersonne")
 	ResponseEntity<Personne> findPersonne(@RequestParam(name="nom",required = false) String nom) {
 		try {
@@ -88,6 +88,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@GetMapping("/films")
 	ResponseEntity<List<Film>> findAllFilms(@RequestParam(name="displayType",required = false) String displayType) {
 		try {
@@ -99,6 +100,7 @@ public class FilmController {
 		}
 		return ResponseEntity.badRequest().build();
 	}
+	@RolesAllowed("user")
 	@GetMapping("/films/genres")
 	ResponseEntity<List<Genre>> findAllGenres() {
 		try {
@@ -108,10 +110,12 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@PutMapping("/films/cleanAllfilms")
 	void cleanAllFilms() {
 		filmService.cleanAllFilms();
 	}
+	@RolesAllowed("user")
 	@GetMapping("/films/byTitre/{titre}")
 	ResponseEntity<Film> findFilmByTitre(@PathVariable String titre) {
 		try {
@@ -135,6 +139,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@GetMapping("/filmListParam/byOrigine/{origine}")
 	ResponseEntity<FilmListParam> findFilmListParamByFilmDisplayTypeParam(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.debug("findFilmListParamByFilmDisplayType - instanceId="+instanceId);
@@ -148,6 +153,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@GetMapping("/films/tmdb/byTitre/{titre}")
 	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		try {
@@ -157,6 +163,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@GetMapping("/films/byId/{id}")
 	ResponseEntity<Film> findFilmById(@PathVariable Long id) {
 		try {
@@ -166,6 +173,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@GetMapping("/films/byTmdbId/{tmdbid}")
 	ResponseEntity<Boolean> checkIfTmdbFilmExists(@PathVariable Long tmdbid) {
 		try {
@@ -175,6 +183,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@GetMapping("/realisateurs")
 	ResponseEntity<List<Personne>> findAllRealisateurs() {
 		try {
@@ -184,6 +193,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@GetMapping("/realisateurs/byOrigine/{origine}")
 	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.info("findAllRealisateursByOrigine - instanceId="+instanceId);
@@ -211,6 +221,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@GetMapping("/acteurs/byOrigine/{origine}")
 	ResponseEntity<List<Personne>> findAllActeursByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.info("findAllActeursByOrigine - instanceId="+instanceId);
@@ -227,6 +238,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@GetMapping("/personnes")
 	ResponseEntity<List<Personne>> findAllPersonne() {
 		try {
@@ -236,6 +248,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@PutMapping("/films/tmdb/{tmdbId}")
 	ResponseEntity<Film> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws Exception {
 		try {
@@ -254,6 +267,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@PutMapping("/films/update/{id}")
 	ResponseEntity<Film> updateFilm(@RequestBody Film film,@PathVariable Long id) {
 		try {
@@ -272,6 +286,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@PutMapping("/films/remove/{id}")
 	ResponseEntity<Film> removeFilm(@PathVariable Long id) {
 		try {
@@ -286,6 +301,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@PutMapping("/films/cleanCaches")
 	ResponseEntity<Void> cleanCaches() {
 		try {
@@ -296,6 +312,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@PutMapping("/films/retrieveImage/{id}")
 	ResponseEntity<Film> retrieveFilmImage(@PathVariable Long id) {
 		try {
@@ -311,6 +328,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@PutMapping("/films/retrieveAllImages")
 	ResponseEntity<Void> retrieveAllFilmImages() {
 		try {
@@ -326,6 +344,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@PutMapping("/films/save/{tmdbId}")
 	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
 		Film savedFilm;
@@ -342,6 +361,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
 	@PutMapping("/personnes/byId/{id}")
 	ResponseEntity<Object> updatePersonne(@RequestBody Personne p,@PathVariable Long id) {
 		Personne personne = personneService.findByPersonneId(id);
@@ -355,6 +375,7 @@ public class FilmController {
 		logger.info(personne.toString());
 		return ResponseEntity.noContent().build();
 	}
+	@RolesAllowed("user")
 	@PostMapping("/films/import")
 	ResponseEntity<Void> importFilmList(@RequestParam("file") MultipartFile file) {
 		File resFile = null;
@@ -375,6 +396,7 @@ public class FilmController {
 		}
 		return ResponseEntity.noContent().build();
 	}
+	@RolesAllowed("user")
 	@PostMapping("/films/export")
 	ResponseEntity<byte[]> exportFilmList(@RequestBody String origine) throws DvdthequeServerRestException, IOException{
 		HttpHeaders headers = new HttpHeaders();

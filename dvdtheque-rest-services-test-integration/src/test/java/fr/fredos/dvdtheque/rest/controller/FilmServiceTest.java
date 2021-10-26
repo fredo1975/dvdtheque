@@ -53,7 +53,7 @@ public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
