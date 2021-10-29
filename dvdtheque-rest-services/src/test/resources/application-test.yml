@@ -97,7 +97,14 @@ hazelcast:
     interface: 192.168.1.*
     tcpipconfig:
       members: 192.168.1.24
-
+  network:
+    port:
+      auto-increment: true
+      port-count: 100
+      port: 5701
+    join:
+      auto-detection:
+        enabled: false
 keycloak:
   realm: dvdtheque
   auth-server-url: http://192.168.1.105:8080/auth

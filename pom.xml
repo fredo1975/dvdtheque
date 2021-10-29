@@ -24,21 +24,20 @@
 		<module>dvdtheque-commons</module>
 		<module>dvdtheque-dao</module>
 		<module>dvdtheque-services</module>
-		<module>dvdtheque-tmdb-service</module>
 		<module>dvdtheque-allocine-service</module>
+		<module>dvdtheque-tmdb-service</module>
 		<!-- module>dvdtheque-jms-publisher</module -->
 		<module>dvdtheque-jms-receiver-test</module>
 		<module>dvdtheque-batch</module>
 		<module>dvdtheque-batch-app</module>
 		<module>dvdtheque-rest-services</module>
-		<module>dvdtheque-rest-services-test-integration</module>
+		<!--module>dvdtheque-rest-services-test-integration</module-->
 		<!--module>dvdtheque-swing</module -->
 		<!-- module>dvdtheque-hystrix-dashboard</module -->
 	</modules>
 	<properties>
 		<java.version>11</java.version>
 		<keycloak.version>15.0.2</keycloak.version>
-		<java.version>11</java.version>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<spring-cloud.dependency.version>2020.0.3</spring-cloud.dependency.version>
 		<activemq.version>5.15.10</activemq.version>
