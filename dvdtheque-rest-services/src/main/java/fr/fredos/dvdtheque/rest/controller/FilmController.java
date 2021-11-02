@@ -55,7 +55,7 @@ import fr.fredos.dvdtheque.service.model.FilmListParam;
 import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 
 @RestController
-@ComponentScan({"fr.fredos.dvdtheque.rest"})
+@ComponentScan({"fr.fredos.dvdtheque"})
 @RequestMapping("/dvdtheque")
 public class FilmController {
 	protected Logger logger = LoggerFactory.getLogger(FilmController.class);

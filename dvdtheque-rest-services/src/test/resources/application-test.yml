@@ -107,10 +107,10 @@ hazelcast:
         enabled: false
 keycloak:
   realm: dvdtheque
-  auth-server-url: http://192.168.1.105:8080/auth
+  auth-server-url: http://localhost:8080/auth
   ssl-required: external
   resource: dvdtheque-app
   credentials:
-    secret: 788a244d-fb34-4b89-851a-b3ff1f612acc
+    secret: 14d4618c-c599-450f-ac22-3e2cda1a39d5
   use-resource-role-mappings: true
   bearer-only: true
