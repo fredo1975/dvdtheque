@@ -29,6 +29,7 @@ pipeline {
                     echo "DEV_SERVER2_IP = ${DEV_SERVER2_IP}"
                     echo "VERSION = ${VERSION}"
                     echo "ARTIFACT = ${ARTIFACT}"
+                    echo "BATCH_ARTIFACT = ${BATCH_ARTIFACT}"
                 '''
             }
         }
@@ -166,7 +167,7 @@ pipeline {
             steps {
                 script {
 			 		sh """
-			 			scp dvdtheque-batch-app/target/BATCH_ARTIFACT jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
+			 			scp dvdtheque-batch-app/target/$BATCH_ARTIFACT jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
 			 		"""
 			 	}
             }
@@ -193,7 +194,7 @@ pipeline {
             steps {
                 script {
 			 		sh """
-			 			scp dvdtheque-batch-app/target/BATCH_ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
+			 			scp dvdtheque-batch-app/target/$BATCH_ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
 			 		"""
 			 	}
             }
