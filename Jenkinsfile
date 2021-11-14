@@ -16,6 +16,7 @@ pipeline {
         )
         def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
         def ARTIFACT = "dvdtheque-rest-services-${VERSION}.jar"
+        def BATCH_ARTIFACT = "dvdtheque-batch-app-${VERSION}.jar"
     }
     stages {
         stage ('Initialize') {
@@ -165,7 +166,7 @@ pipeline {
             steps {
                 script {
 			 		sh """
-			 			scp dvdtheque-batch-app/target/dvdtheque-batch-app-${VERSION}.jar jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
+			 			scp dvdtheque-batch-app/target/BATCH_ARTIFACT jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
 			 		"""
 			 	}
             }
@@ -192,7 +193,7 @@ pipeline {
             steps {
                 script {
 			 		sh """
-			 			scp dvdtheque-batch-app/target/dvdtheque-batch-app-${VERSION}.jar jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
+			 			scp dvdtheque-batch-app/target/BATCH_ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
 			 		"""
 			 	}
             }
