@@ -150,10 +150,10 @@ pipeline {
             steps {
                 script {
 			 		sh """
-			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 			scp dvdtheque-rest-services/target/$ARTIFACT jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
 			 		"""
 			 		sh """
-			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${DEV_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 			scp dvdtheque-rest-services/target/$ARTIFACT jenkins@${DEV_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
 			 		"""
 			 	}
             }
@@ -177,10 +177,10 @@ pipeline {
             steps {
                 script {
                 	sh """
-			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 			scp dvdtheque-rest-services/target/$ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
 			 		"""
 			 		sh """
-			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 			scp dvdtheque-rest-services/target/$ARTIFACT jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
 			 		"""
 			 	}
             }
