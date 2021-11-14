@@ -15,6 +15,7 @@ pipeline {
                 returnStdout: true
         )
         def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
+        def ARTIFACT = "dvdtheque-rest-services-${VERSION}.jar"
     }
     stages {
         stage ('Initialize') {
@@ -25,6 +26,8 @@ pipeline {
                     echo "PROD_SERVER2_IP = ${PROD_SERVER2_IP}"
                     echo "DEV_SERVER1_IP = ${DEV_SERVER1_IP}"
                     echo "DEV_SERVER2_IP = ${DEV_SERVER2_IP}"
+                    echo "VERSION = ${VERSION}"
+                    echo "ARTIFACT = ${ARTIFACT}"
                 '''
             }
         }
