@@ -14,7 +14,7 @@ import com.hazelcast.core.HazelcastInstance;
 
 @Configuration
 @ComponentScan
-@Profile({ "prod1","prod2","dev1","dev2" })
+@Profile({ "prod1","prod2","dev1","dev2","local1","local2" })
 public class HazelcastConfiguration {
 	/*@Value("${hazelcast.networkconfig.interface}")
 	private String interfaces;*/
