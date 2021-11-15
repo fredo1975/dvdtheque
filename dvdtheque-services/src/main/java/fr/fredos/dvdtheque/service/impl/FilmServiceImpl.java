@@ -161,7 +161,7 @@ public class FilmServiceImpl implements IFilmService {
 		Set<CritiquesPresse> newSortedCritiquesPresseSet = new TreeSet<>(mergedFilm.getCritiquesPresse());
 		mergedFilm.getCritiquesPresse().clear();
 		mergedFilm.getCritiquesPresse().addAll(newSortedCritiquesPresseSet);
-		mapFilms.putIfAbsent(film.getId(), mergedFilm);
+		mapFilms.put(film.getId(), mergedFilm);
 		return mergedFilm;
 	}
 
