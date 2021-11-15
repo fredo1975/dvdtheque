@@ -140,7 +140,7 @@ public class FilmServiceImpl implements IFilmService {
 		if (film != null)
 			return film;
 		film = filmDao.findFilm(id);
-		mapFilms.put(id, film);
+		mapFilms.putIfAbsent(id, film);
 		return film;
 	}
 
@@ -161,7 +161,7 @@ public class FilmServiceImpl implements IFilmService {
 		Set<CritiquesPresse> newSortedCritiquesPresseSet = new TreeSet<>(mergedFilm.getCritiquesPresse());
 		mergedFilm.getCritiquesPresse().clear();
 		mergedFilm.getCritiquesPresse().addAll(newSortedCritiquesPresseSet);
-		mapFilms.put(film.getId(), mergedFilm);
+		mapFilms.putIfAbsent(film.getId(), mergedFilm);
 		return mergedFilm;
 	}
 
@@ -178,7 +178,7 @@ public class FilmServiceImpl implements IFilmService {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
 		upperCaseTitre(film);
 		Long id = filmDao.saveNewFilm(film);
-		mapFilms.put(id, film);
+		mapFilms.putIfAbsent(id, film);
 		return id;
 	}
 	
@@ -186,7 +186,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = false)
 	public Genre saveGenre(final Genre genre) {
 		Genre persistedGenre = filmDao.saveGenre(genre);
-		mapGenres.put(persistedGenre.getId(), persistedGenre);
+		mapGenres.putIfAbsent(persistedGenre.getId(), persistedGenre);
 		return persistedGenre;
 	}
 	
