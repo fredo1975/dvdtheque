@@ -1,6 +1,6 @@
 package fr.fredos.dvdtheque.service.config;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +16,14 @@ import com.hazelcast.core.HazelcastInstance;
 @ComponentScan
 @Profile({ "prod1","prod2","dev1","dev2","local1","local2" })
 public class HazelcastConfiguration {
-	/*@Value("${hazelcast.networkconfig.interface}")
-	private String interfaces;*/
+	@Value("${hazelcast.cluster-name}")
+	private String clusterName;
 	@Bean
 	public HazelcastInstance hazelcastInstance() {
 		Config config = new Config();
 		config.getNetworkConfig().getInterfaces().setEnabled(false);
 		config.getNetworkConfig().getJoin().setMulticastConfig(new MulticastConfig().setEnabled(true));
-		config.setInstanceName(RandomStringUtils.random(8, true, false))
+		config.setInstanceName(clusterName)
 				.addMapConfig(new MapConfig().setName("films"));
 						//.setMaxSizeConfig(new MaxSizeConfig(10000, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
 						//.setEvictionPolicy(EvictionPolicy.LRU).setTimeToLiveSeconds(300)).addMapConfig(new MapConfig().setName("films"));
