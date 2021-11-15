@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -31,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
@@ -48,6 +51,12 @@ import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hazelcast.config.AutoDetectionConfig;
+import com.hazelcast.config.Config;
+import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.MapConfig;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 
 import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.configuration.MessageConsumer;
@@ -73,7 +82,8 @@ import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
 		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class,
-		fr.fredos.dvdtheque.rest.controller.DvdthequeRestApplication.class},
+		fr.fredos.dvdtheque.rest.controller.DvdthequeRestApplication.class,
+		FilmControllerTest.HazelcastConfiguration.class},
 webEnvironment = WebEnvironment.RANDOM_PORT,
 properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
 @AutoConfigureMockMvc
@@ -130,6 +140,18 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@BeforeEach()
 	public void setUp() throws Exception {
 		filmService.cleanAllFilms();
+	}
+	
+	@TestConfiguration
+	public static class HazelcastConfiguration {
+		@Bean
+		public HazelcastInstance hazelcastInstance() {
+			Config config = new Config();
+			config.getNetworkConfig().setJoin(new JoinConfig().setAutoDetectionConfig(new AutoDetectionConfig().setEnabled(false)));
+			config.setInstanceName(RandomStringUtils.random(8, true, false))
+					.addMapConfig(new MapConfig().setName("films"));
+			return Hazelcast.newHazelcastInstance(config);
+		}
 	}
 /*
 	@Before
