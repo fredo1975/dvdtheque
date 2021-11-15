@@ -1,5 +1,9 @@
 package fr.fredos.dvdtheque.service.config;
 
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,14 +20,27 @@ import com.hazelcast.core.HazelcastInstance;
 @ComponentScan
 @Profile({ "prod1","prod2","dev1","dev2","local1","local2" })
 public class HazelcastConfiguration {
-	@Value("${hazelcast.cluster-name}")
-	private String clusterName;
+	@Value("${hazelcast.group.name}")
+	private String groupName;
+	@Value("#{'${hazelcast.networkconfig.tcpipconfig.members}'.split(',')}")
+	private List<String> listOfMembers;
 	@Bean
 	public HazelcastInstance hazelcastInstance() {
 		Config config = new Config();
-		config.getNetworkConfig().getInterfaces().setEnabled(false);
-		config.getNetworkConfig().getJoin().setMulticastConfig(new MulticastConfig().setEnabled(true));
-		config.setInstanceName(clusterName)
+		//config.getNetworkConfig().getInterfaces().setEnabled(false);
+		MulticastConfig multicastConfig = new MulticastConfig().setEnabled(true);
+		//multicastConfig.setMulticastGroup(groupName);
+		if(CollectionUtils.isNotEmpty(listOfMembers)) {
+			listOfMembers.stream().map(trustedInterface -> multicastConfig.addTrustedInterface(trustedInterface));
+		}
+		config.getNetworkConfig().getJoin().setMulticastConfig(multicastConfig);
+		/*
+		TcpIpConfig tcpIpConfig = new TcpIpConfig().setEnabled(true);
+		if(CollectionUtils.isNotEmpty(listOfMembers)) {
+			listOfMembers.stream().map(tcpM -> tcpIpConfig.addMember(tcpM));
+		}
+		config.getNetworkConfig().getJoin().setTcpIpConfig(tcpIpConfig);*/
+		config.setInstanceName(RandomStringUtils.random(8, true, false))
 				.addMapConfig(new MapConfig().setName("films"));
 						//.setMaxSizeConfig(new MaxSizeConfig(10000, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
 						//.setEvictionPolicy(EvictionPolicy.LRU).setTimeToLiveSeconds(300)).addMapConfig(new MapConfig().setName("films"));
