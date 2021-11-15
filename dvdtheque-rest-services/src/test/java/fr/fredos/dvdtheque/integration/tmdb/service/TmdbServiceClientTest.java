@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -19,9 +20,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.hazelcast.config.AutoDetectionConfig;
+import com.hazelcast.config.Config;
+import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.MapConfig;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -38,7 +48,8 @@ import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
-		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class},
+		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class,
+		TmdbServiceClientTest.HazelcastConfiguration.class},
 properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
 @ActiveProfiles("test")
 public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringContextTests{
@@ -64,7 +75,17 @@ public class TmdbServiceClientTest extends AbstractTransactionalJUnit4SpringCont
 	public void setUp() throws Exception {
     	filmService.cleanAllFilms();
 	}
-    
+    @TestConfiguration
+	public static class HazelcastConfiguration {
+		@Bean
+		public HazelcastInstance hazelcastInstance() {
+			Config config = new Config();
+			config.getNetworkConfig().setJoin(new JoinConfig().setAutoDetectionConfig(new AutoDetectionConfig().setEnabled(false)));
+			config.setInstanceName(RandomStringUtils.random(8, true, false))
+					.addMapConfig(new MapConfig().setName("films"));
+			return Hazelcast.newHazelcastInstance(config);
+		}
+	}
 	private void assertResultsIsNotNull(Results res) {
 		assertNotNull(res);
 		assertNotNull(res.getId());

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import com.hazelcast.config.AutoDetectionConfig;
+import com.hazelcast.config.Config;
+import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.MapConfig;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -26,7 +36,8 @@ import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.service.model.PersonneDto;
 @ActiveProfiles("test")
-@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class},
+@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class,
+		PersonneServiceIntegrationTests.HazelcastConfiguration.class},
 properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
 public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceIntegrationTests.class);
@@ -39,7 +50,17 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 	public void cleanAllCaches() {
 		personneService.cleanAllCaches();
 	}
-	
+	@TestConfiguration
+	public static class HazelcastConfiguration {
+		@Bean
+		public HazelcastInstance hazelcastInstance() {
+			Config config = new Config();
+			config.getNetworkConfig().setJoin(new JoinConfig().setAutoDetectionConfig(new AutoDetectionConfig().setEnabled(false)));
+			config.setInstanceName(RandomStringUtils.random(8, true, false))
+					.addMapConfig(new MapConfig().setName("films"));
+			return Hazelcast.newHazelcastInstance(config);
+		}
+	}
 	@Test
 	public void getPersonneVersusLoadPersonne() throws Exception {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));

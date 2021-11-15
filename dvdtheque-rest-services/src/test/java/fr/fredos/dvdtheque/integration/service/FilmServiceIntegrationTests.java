@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -28,10 +29,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cache.CacheManager;
+import org.springframework.context.annotation.Bean;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import com.hazelcast.config.AutoDetectionConfig;
+import com.hazelcast.config.Config;
+import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.MapConfig;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
@@ -48,7 +58,8 @@ import fr.fredos.dvdtheque.service.IPersonneService;
 import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 import fr.fredos.dvdtheque.service.model.FilmListParam;
 
-@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class},
+@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,fr.fredos.dvdtheque.service.ServiceApplication.class,
+		FilmServiceIntegrationTests.HazelcastConfiguration.class},
 properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
 @ActiveProfiles("test")
 public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4SpringContextTests {
@@ -69,7 +80,17 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 	public void cleanAllCaches() {
 		filmService.cleanAllCaches();
 	}
-	
+	@TestConfiguration
+	public static class HazelcastConfiguration {
+		@Bean
+		public HazelcastInstance hazelcastInstance() {
+			Config config = new Config();
+			config.getNetworkConfig().setJoin(new JoinConfig().setAutoDetectionConfig(new AutoDetectionConfig().setEnabled(false)));
+			config.setInstanceName(RandomStringUtils.random(8, true, false))
+					.addMapConfig(new MapConfig().setName("films"));
+			return Hazelcast.newHazelcastInstance(config);
+		}
+	}
 	@Test
 	public void saveNewFilm() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
@@ -472,7 +493,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
@@ -490,7 +511,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		filmToUpdate.setActeurs(film.getActeurs());
@@ -504,7 +525,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmUpdated.getTitre());
 		assertEquals(FilmOrigine.DVD, filmUpdated.getOrigine());
 		assertEquals(DvdFormat.DVD, filmUpdated.getDvd().getFormat());
-		assertEquals(new Integer(2), filmUpdated.getDvd().getZone());
+		assertEquals(Integer.valueOf(2), filmUpdated.getDvd().getZone());
 		assertTrue(filmUpdated.getDvd().isRipped());
 		FilmDisplayTypeParam enSalleDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.EN_SALLE);
 		FilmDisplayTypeParam dvdDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.DVD);
@@ -741,7 +762,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
@@ -758,7 +779,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_4780)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET2)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId2 = filmService.saveNewFilm(film2);
@@ -875,7 +896,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
@@ -892,7 +913,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId2 = filmService.saveNewFilm(film2);
@@ -909,7 +930,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId3 = filmService.saveNewFilm(film3);
@@ -947,7 +968,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
@@ -966,7 +987,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_4780)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId2 = filmService.saveNewFilm(film2);
@@ -985,7 +1006,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_1271)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE2).build();
 		Long filmId3 = filmService.saveNewFilm(film3);
@@ -1016,7 +1037,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
                     	assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), StringUtils.upperCase(cellValue));
                     }
                     if(cell.getColumnIndex()==2) {
-                    	assertEquals(FilmBuilder.ANNEE, new Integer(cellValue));
+                    	assertEquals(FilmBuilder.ANNEE, Integer.valueOf(cellValue));
                     }
                     if(cell.getColumnIndex()==3) {
                     	assertTrue(cellValue.contains(FilmBuilder.ACT1_TMBD_ID_844));
@@ -1077,7 +1098,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
                     }
                     
                     if(cell.getColumnIndex()==2) {
-                    	assertEquals(FilmBuilder.ANNEE, new Integer(cellValue));
+                    	assertEquals(FilmBuilder.ANNEE, Integer.valueOf(cellValue));
                     }
                     if(cell.getColumnIndex()==3) {
                     	assertTrue(cellValue.contains(FilmBuilder.ACT1_TMBD_ID_1271));
@@ -1137,7 +1158,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
                     	assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), StringUtils.upperCase(cellValue));
                     }
                     if(cell.getColumnIndex()==2) {
-                    	assertEquals(FilmBuilder.ANNEE, new Integer(cellValue));
+                    	assertEquals(FilmBuilder.ANNEE, Integer.valueOf(cellValue));
                     }
                     if(cell.getColumnIndex()==3) {
                     	assertTrue(cellValue.contains(FilmBuilder.ACT3_TMBD_ID_4780));
@@ -1207,7 +1228,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
@@ -1234,7 +1255,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
@@ -1261,7 +1282,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
@@ -1288,7 +1309,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmDvdId = filmService.saveNewFilm(filmDvd);
@@ -1306,7 +1327,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_4780)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmEnSalleId = filmService.saveNewFilm(filmEnSalle);
@@ -1333,7 +1354,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
-				.setZone(new Integer(2))
+				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_1271)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmEnSalleId2 = filmService.saveNewFilm(filmEnSalle2);
