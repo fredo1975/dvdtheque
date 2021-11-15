@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -17,18 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.hazelcast.config.AutoDetectionConfig;
-import com.hazelcast.config.Config;
-import com.hazelcast.config.JoinConfig;
-import com.hazelcast.config.MapConfig;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
 
 import fr.fredos.dvdtheque.allocine.model.SearchResults;
 import fr.fredos.dvdtheque.allocine.service.AllocineServiceClient;
@@ -39,13 +29,14 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Genre;
 import fr.fredos.dvdtheque.dao.model.utils.CritiquesPresseBuilder;
 import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
+import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
 import fr.fredos.dvdtheque.service.IFilmService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class,
-		AllocineServiceClientTest.HazelcastConfiguration.class}, webEnvironment = SpringBootTest.WebEnvironment.MOCK,
+		HazelcastConfiguration.class}, webEnvironment = SpringBootTest.WebEnvironment.MOCK,
 		properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
 @ActiveProfiles("test")
 public class AllocineServiceClientTest extends AbstractTransactionalJUnit4SpringContextTests{
@@ -59,17 +50,7 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
 	public void setUp() throws Exception {
     	filmService.cleanAllFilms();
 	}
-    @TestConfiguration
-	public static class HazelcastConfiguration {
-		@Bean
-		public HazelcastInstance hazelcastInstance() {
-			Config config = new Config();
-			config.getNetworkConfig().setJoin(new JoinConfig().setAutoDetectionConfig(new AutoDetectionConfig().setEnabled(false)));
-			config.setInstanceName(RandomStringUtils.random(8, true, false))
-					.addMapConfig(new MapConfig().setName("films"));
-			return Hazelcast.newHazelcastInstance(config);
-		}
-	}
+    
     private void assertSearchMovieFeedResultsIsNotNull(SearchResults res) {
 		assertNotNull(res);
 		assertNotNull(res.getFeed());
