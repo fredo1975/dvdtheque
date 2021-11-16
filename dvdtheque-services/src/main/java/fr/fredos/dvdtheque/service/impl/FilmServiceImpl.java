@@ -383,7 +383,7 @@ public class FilmServiceImpl implements IFilmService {
 			logger.debug("no films find");
 			List<Film> filmsRes = this.filmDao.findAllFilmsByOrigine(filmDisplayTypeParam.getFilmOrigine());
 			logger.debug("findAllFilmsByFilmDisplayType films size: " + filmsRes.size());
-			filmsRes.parallelStream().forEach(it -> {
+			filmsRes.stream().forEach(it -> {
 				mapFilms.put(it.getId(), it);
 			});
 			watch.stop();
