@@ -21,13 +21,10 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,14 +74,18 @@ public class FilmServiceImpl implements IFilmService {
 	IMap<FilmOrigine, Map<Film,Set<Personne>>> mapActeursByOrigine;
 	IMap<FilmOrigine, Map<Film,Set<Personne>>> mapRealisateursByOrigine;
 	
-	@Autowired
-	private FilmDao filmDao;
-	@Autowired
-	private IPersonneService personneService;
-	@Autowired
-	private HazelcastInstance instance;
+	private final FilmDao filmDao;
+	private final IPersonneService personneService;
+	private final HazelcastInstance instance;
 	
-	@PostConstruct
+	public FilmServiceImpl(FilmDao filmDao,IPersonneService personneService,HazelcastInstance instance) {
+		this.filmDao = filmDao;
+		this.personneService = personneService;
+		this.instance = instance;
+		this.init();
+	}
+	
+	//@PostConstruct
 	public void init() {
 		mapFilms = instance.getMap(CACHE_FILM);
 		/*mapFilms.addIndex("id", false);
@@ -139,7 +140,7 @@ public class FilmServiceImpl implements IFilmService {
 		if (film != null)
 			return film;
 		film = filmDao.findFilm(id);
-		mapFilms.put(id, film);
+		mapFilms.putIfAbsent(id, film);
 		return film;
 	}
 
@@ -177,7 +178,7 @@ public class FilmServiceImpl implements IFilmService {
 		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
 		upperCaseTitre(film);
 		Long id = filmDao.saveNewFilm(film);
-		mapFilms.put(id, film);
+		mapFilms.putIfAbsent(id, film);
 		return id;
 	}
 	
@@ -185,7 +186,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = false)
 	public Genre saveGenre(final Genre genre) {
 		Genre persistedGenre = filmDao.saveGenre(genre);
-		mapGenres.put(persistedGenre.getId(), persistedGenre);
+		mapGenres.putIfAbsent(persistedGenre.getId(), persistedGenre);
 		return persistedGenre;
 	}
 	
@@ -229,9 +230,11 @@ public class FilmServiceImpl implements IFilmService {
 		logger.debug("no genres find");
 		List<Genre> e = this.filmDao.findAllGenres();
 		logger.debug("genres size: " + e.size());
-		e.parallelStream().forEach(it -> {
-			mapGenres.putIfAbsent(it.getId(), it);
-		});
+		if(CollectionUtils.isNotEmpty(e)) {
+			e.parallelStream().forEach(it -> {
+				mapGenres.putIfAbsent(it.getId(), it);
+			});
+		}
 		return e;
 	}
 
@@ -380,8 +383,8 @@ public class FilmServiceImpl implements IFilmService {
 			logger.debug("no films find");
 			List<Film> filmsRes = this.filmDao.findAllFilmsByOrigine(filmDisplayTypeParam.getFilmOrigine());
 			logger.debug("findAllFilmsByFilmDisplayType films size: " + filmsRes.size());
-			filmsRes.parallelStream().forEach(it -> {
-				mapFilms.putIfAbsent(it.getId(), it);
+			filmsRes.stream().forEach(it -> {
+				mapFilms.put(it.getId(), it);
 			});
 			watch.stop();
 			//logger.info("findAllFilmsByFilmDisplayType="+watch.getTotalTimeMillis());

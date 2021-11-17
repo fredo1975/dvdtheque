@@ -1,0 +1,28 @@
+sudo nano /etc/systemd/system/dvdtheque-admin-server.service
+
+
+[Unit]
+Description=Manage Dvdtheque Spring Admin Server service
+
+[Service]
+WorkingDirectory=/opt/dvdtheque_admin_server_service
+ExecStart=/usr/lib/jvm/java-11-openjdk-armhf/bin/java -jar dvdtheque-admin-server.jar --spring.profiles.active=dev --spring.cloud.config.label=develop
+User=dvdtheque-user
+Type=simple
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
+sudo mkdir /opt/dvdtheque_admin_server_service
+
+sudo chown -R dvdtheque-user:java-app-gr /opt/dvdtheque_admin_server_service
+
+sudo chmod -R g+w dvdtheque_admin_server_service
+
+sudo systemctl daemon-reload
+
+sudo systemctl start dvdtheque-admin-server.service
+
+sudo systemctl status dvdtheque-admin-server.service

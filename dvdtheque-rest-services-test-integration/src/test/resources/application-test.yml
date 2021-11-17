@@ -1,0 +1,119 @@
+debug: false
+spring:
+  datasource:
+    testWhileIdle: true
+    validationQuery: SELECT 1
+    username: sa
+    password: sa
+  jpa:
+    show-sql: false
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  batch:
+    initialize-schema: always
+    job:
+      enabled: false
+  cloud:
+    config:
+      enabled: false
+    stream:
+      bindings:
+        output:
+          destination: input
+      default:
+        contentType: application/json
+  rabbitmq:
+    host: 192.168.99.100
+    port: 32777
+eureka:
+  client:
+    enabled: false
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+
+local:
+  server:
+    port: 8087
+server:
+  port: 8083
+
+hibernate:
+  hbm2ddl:
+    auto: validate
+batch:
+  save:
+    nb:
+      acteurs: 12
+limit:
+  film:
+    size: 20
+
+csv:
+  dvd:
+    file:
+      name:
+        import: D:/liste_DVD/ListeDVD.csv
+
+rippedFlagTasklet:
+  from:
+    file: true
+
+retrieve:
+  date:
+    insertion: false
+
+excel:
+  dvd:
+    file:
+      path:
+        export:
+      name:
+        export: export.xlsx
+
+dvd:
+  file:
+    path: G:/films
+
+themoviedb:
+  search:
+    movie:
+      query: https://api.themoviedb.org/3/search/movie
+  movie:
+    query: https://api.themoviedb.org/3/movie/
+  api:
+    key: aa87a44fb22d65986512188cd2ec2ca0
+  poster:
+    path:
+      url: http://image.tmdb.org/t/p/w500
+
+allocine:
+  url: http://api.allocine.fr/rest/v3/
+  query:
+    search:
+      film: search
+    partner: yW5kcm9pZC12M3M
+    filter:
+      desk-press: desk-press
+      movie: movie
+    reviewlist: reviewlist
+
+hazelcast:
+  cluster-name: hazelcast-local
+  networkconfig:
+    interface: 127.0.0.1
+
+keycloak:
+  realm: dvdtheque
+  auth-server-url: http://fake/auth
+  resource: dvdtheque-app
+#keycloak:
+#  realm: dvdtheque
+#  auth-server-url: http://192.168.1.105:8080/auth
+#  ssl-required: external
+#  resource: dvdtheque-app
+#  credentials:
+#    secret: 788a244d-fb34-4b89-851a-b3ff1f612acc
+#  use-resource-role-mappings: true
+#  bearer-only: true

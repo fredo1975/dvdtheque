@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.fredos.dvdtheque</groupId>
 	<artifactId>dvdtheque</artifactId>
@@ -8,34 +10,29 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.4</version>
+		<version>2.5.5</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<name>dvdtheque</name>
 	<description>Dvdtheque project and related components</description>
-	<scm>
-		<url>https://github.com/fredo1975/dvdtheque</url>
-		<connection>scm:git:https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git</connection>
-		<developerConnection>scm:git:https://fredo1975:github1975@github.com/fredo1975/dvdtheque.git</developerConnection>
-	</scm>
 	<modules>
 		<module>dvdtheque-commons</module>
 		<module>dvdtheque-dao</module>
 		<module>dvdtheque-services</module>
-		<module>dvdtheque-tmdb-service</module>
 		<module>dvdtheque-allocine-service</module>
+		<module>dvdtheque-tmdb-service</module>
 		<!-- module>dvdtheque-jms-publisher</module -->
 		<module>dvdtheque-jms-receiver-test</module>
 		<module>dvdtheque-batch</module>
 		<module>dvdtheque-batch-app</module>
 		<module>dvdtheque-rest-services</module>
-		<!--module>dvdtheque-swing</module-->
-		<!--  module>dvdtheque-hystrix-dashboard</module-->
-		<module>dvdtheque-resource-server</module>
+		<!--module>dvdtheque-rest-services-test-integration</module-->
+		<!--module>dvdtheque-swing</module -->
+		<!-- module>dvdtheque-hystrix-dashboard</module -->
 	</modules>
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<java.version>11</java.version>
+		<keycloak.version>15.0.2</keycloak.version>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<spring-cloud.dependency.version>2020.0.3</spring-cloud.dependency.version>
 		<activemq.version>5.15.10</activemq.version>
@@ -72,6 +69,32 @@
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>4.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.hazelcast</groupId>
+			<artifactId>hazelcast</artifactId>
+			<version>4.1.5</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -134,6 +157,14 @@
 				<groupId>de.codecentric</groupId>
 				<artifactId>spring-boot-admin-dependencies</artifactId>
 				<version>${spring-boot-admin.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.keycloak.bom</groupId>
+				<artifactId>keycloak-adapter-bom</artifactId>
+				<version>${keycloak.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

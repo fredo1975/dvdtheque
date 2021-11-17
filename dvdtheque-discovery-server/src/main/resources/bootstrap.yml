@@ -1,8 +1,0 @@
-server:
-  port: 8761
-spring:
-  application:
-    name: discovery-server
-  cloud:
-    config:
-      fail-fast: true

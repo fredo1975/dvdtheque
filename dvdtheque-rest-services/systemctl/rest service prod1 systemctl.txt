@@ -1,0 +1,37 @@
+sudo groupadd -r java-app-gr
+
+sudo useradd -r -s /bin/false -g java-app-gr dvdtheque-user
+
+sudo nano /etc/systemd/system/dvdtheque-rest.service
+
+
+[Unit]
+Description=Manage Dvdtheque Development env Java Rest service
+
+[Service]
+WorkingDirectory=/opt/dvdtheque_rest_service
+ExecStart=/usr/lib/jvm/java-11-openjdk-armhf/bin/java -Xms64M -Xmx512M -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n -Djava.io.tmpdir=/opt/dvdtheque_rest_service/tmpFileDir -jar dvdtheque-rest-services.jar --spring.profiles.active=prod1 --spring.cloud.config.label=master --spring.cloud.config.uri=http://192.168.1.108:8888,http://192.168.1.106:8888
+User=dvdtheque-user
+Type=simple
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
+
+sudo mkdir /opt/dvdtheque_rest_service
+
+sudo mkdir /opt/dvdtheque_rest_service/tmpFileDir
+
+sudo chown -R dvdtheque-user:java-app-gr /opt/dvdtheque_rest_service
+
+sudo chown -R dvdtheque-user:java-app-gr /opt/dvdtheque_rest_service/tmpFileDir
+
+sudo chmod -R g+w /opt/dvdtheque_rest_service
+
+sudo systemctl daemon-reload
+
+sudo systemctl start dvdtheque-dev-rest.service
+
+sudo systemctl status dvdtheque-dev-rest.service

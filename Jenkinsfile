@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools {
         maven 'Maven 3.6.0'
-        jdk 'jdk8'
+        jdk 'jdk11'
     }
     environment {
     	def DEV_SERVER1_IP = '192.168.1.103'
@@ -15,6 +15,8 @@ pipeline {
                 returnStdout: true
         )
         def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
+        def ARTIFACT = "dvdtheque-rest-services-${VERSION}.jar"
+        def BATCH_ARTIFACT = "dvdtheque-batch-app-${VERSION}.jar"
     }
     stages {
         stage ('Initialize') {
@@ -25,6 +27,9 @@ pipeline {
                     echo "PROD_SERVER2_IP = ${PROD_SERVER2_IP}"
                     echo "DEV_SERVER1_IP = ${DEV_SERVER1_IP}"
                     echo "DEV_SERVER2_IP = ${DEV_SERVER2_IP}"
+                    echo "VERSION = ${VERSION}"
+                    echo "ARTIFACT = ${ARTIFACT}"
+                    echo "BATCH_ARTIFACT = ${BATCH_ARTIFACT}"
                 '''
             }
         }
@@ -147,10 +152,10 @@ pipeline {
             steps {
                 script {
 			 		sh """
-			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 			scp dvdtheque-rest-services/target/$ARTIFACT jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
 			 		"""
 			 		sh """
-			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${DEV_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 			scp dvdtheque-rest-services/target/$ARTIFACT jenkins@${DEV_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
 			 		"""
 			 	}
             }
@@ -162,7 +167,7 @@ pipeline {
             steps {
                 script {
 			 		sh """
-			 			scp dvdtheque-batch-app/target/dvdtheque-batch-app-${VERSION}.jar jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
+			 			scp dvdtheque-batch-app/target/$BATCH_ARTIFACT jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
 			 		"""
 			 	}
             }
@@ -174,10 +179,10 @@ pipeline {
             steps {
                 script {
                 	sh """
-			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 			scp dvdtheque-rest-services/target/$ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
 			 		"""
 			 		sh """
-			 			scp dvdtheque-rest-services/target/dvdtheque-rest-services-${VERSION}.jar jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
+			 			scp dvdtheque-rest-services/target/$ARTIFACT jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
 			 		"""
 			 	}
             }
@@ -189,7 +194,7 @@ pipeline {
             steps {
                 script {
 			 		sh """
-			 			scp dvdtheque-batch-app/target/dvdtheque-batch-app-${VERSION}.jar jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
+			 			scp dvdtheque-batch-app/target/$BATCH_ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
 			 		"""
 			 	}
             }

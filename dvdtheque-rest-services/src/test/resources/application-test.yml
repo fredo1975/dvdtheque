@@ -97,3 +97,20 @@ hazelcast:
     interface: 192.168.1.*
     tcpipconfig:
       members: 192.168.1.24
+  network:
+    port:
+      auto-increment: true
+      port-count: 100
+      port: 5701
+    join:
+      auto-detection:
+        enabled: false
+keycloak:
+  realm: dvdtheque
+  auth-server-url: http://localhost:8080/auth
+  ssl-required: external
+  resource: dvdtheque-app
+  credentials:
+    secret: 14d4618c-c599-450f-ac22-3e2cda1a39d5
+  use-resource-role-mappings: true
+  bearer-only: true
