@@ -275,5 +275,11 @@ pipeline {
 }
 
 private String getArtifactVersion(String gitCommit){
-	return "${gitCommit}-SNAPSHOT"
+	if(gitBranchName == "develop"){
+		return "${gitCommit}-SNAPSHOT"
+	}
+	if(gitBranchName == "master"){
+		return "${gitCommit}"
+	}
+	return ""
 }
