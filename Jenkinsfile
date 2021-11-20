@@ -14,7 +14,8 @@ pipeline {
                 script: "printf \$(git rev-parse --short HEAD)",
                 returnStdout: true
         )
-        def VERSION = getArtifactVersion(GIT_COMMIT_SHORT)
+        def GIT_BRANCH_NAME = getGitBranchName()
+        def VERSION = getArtifactVersion(GIT_BRANCH_NAME,GIT_COMMIT_SHORT)
         def ARTIFACT = "dvdtheque-rest-services-${VERSION}.jar"
         def BATCH_ARTIFACT = "dvdtheque-batch-app-${VERSION}.jar"
     }
@@ -274,7 +275,13 @@ pipeline {
     }
 }
 
-private String getArtifactVersion(String gitCommit){
+private String getGitBranchName(){
+	def gitBranchName
+	gitBranchName = env.BRANCH_NAME
+	gitBranchName.trim()
+}
+
+private String getArtifactVersion(String gitBranchName,String gitCommit){
 	if(gitBranchName == "develop"){
 		return "${gitCommit}-SNAPSHOT"
 	}
