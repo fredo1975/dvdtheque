@@ -19,6 +19,10 @@
 			<groupId>${project.groupId}</groupId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<artifactId>spring-cloud-starter-bootstrap</artifactId>
+			<groupId>org.springframework.cloud</groupId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
