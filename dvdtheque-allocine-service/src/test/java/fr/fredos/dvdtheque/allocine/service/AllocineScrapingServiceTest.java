@@ -1,14 +1,8 @@
 package fr.fredos.dvdtheque.allocine.service;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.jsoup.nodes.Element;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -59,30 +53,8 @@ public class AllocineScrapingServiceTest {
 		}
 	}
     
-    private void writeDoc(Element e) throws IOException {
-    	String saveLocation = "D:\\tmp\\tmp.txt";
-    	File file = new File(saveLocation);
-        /*if(file.exists()) {
-            file.delete();
-        }*/
-        //System.out.println("\nCreating file...");
-        file.createNewFile();
-        //System.out.println("Writing results to file...");
-        FileOutputStream fos = new FileOutputStream(file, true);
-        String encoding = System.getProperty("file.encoding");
-        try (Writer bw = new BufferedWriter(new OutputStreamWriter(fos, encoding))) {
-        	bw.append(e.toString() + " ");
-        }
-        //System.out.println("Success. Exiting...");
-    }
-    
-    
     @Test
-    public void retrieveAllocineMovieFeedTest() throws IOException {
-    	client.retrieveAllocineMovieFeed("2046");
-    	//String url = "https://www.allocine.fr/film/fichefilm-247271/critiques/presse/";
-    	
-    	//Document document = Jsoup.connect(url).get();
-        //String html = document.html();
+    public void retrieveAllocineScrapingMovieFeedTest() throws IOException {
+    	client.retrieveAllocineScrapingMovieFeed("MARIE STUART, REINE D'ÉCOSSE");
     }
 }
