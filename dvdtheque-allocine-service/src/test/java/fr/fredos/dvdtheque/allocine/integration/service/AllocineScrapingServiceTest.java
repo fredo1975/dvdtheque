@@ -56,7 +56,7 @@ public class AllocineScrapingServiceTest {
     public void retrieveAllocineScrapingMoviesFeedTest() throws IOException {
     	allocineScrapingService.retrieveAllocineScrapingMoviesFeed();
 		List<FicheFilm> allFicheFilmFromPageRetrievedFromDb = allocineScrapingService.retrieveAllFicheFilm();
-		assertEquals(15,allFicheFilmFromPageRetrievedFromDb.size());
+		assertEquals(150,allFicheFilmFromPageRetrievedFromDb.size());
 		assertEquals(ALLOCINE_FIULM_ID_289301,allFicheFilmFromPageRetrievedFromDb.get(0).getAllocineFilmId());
 		assertEquals(ALLOCINE_FIULM_ID_289301_TITLE,allFicheFilmFromPageRetrievedFromDb.get(0).getTitle());
 		logger.info("critique presses from {} are {}",allFicheFilmFromPageRetrievedFromDb.get(0).getTitle(),allFicheFilmFromPageRetrievedFromDb.get(0).getCritiquesPresse().toString());
