@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.allocine.model;
+package fr.fredos.dvdtheque.allocine.scraping.model;
 
 public class Page {
 	private Integer numPage = 1;

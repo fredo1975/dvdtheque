@@ -19,9 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import fr.fredos.dvdtheque.allocine.model.FicheFilm;
-import fr.fredos.dvdtheque.allocine.model.Page;
 import fr.fredos.dvdtheque.allocine.scraping.model.CritiquePresse;
+import fr.fredos.dvdtheque.allocine.scraping.model.FicheFilm;
+import fr.fredos.dvdtheque.allocine.scraping.model.Page;
 
 @Service
 public class AllocineScrapingService {

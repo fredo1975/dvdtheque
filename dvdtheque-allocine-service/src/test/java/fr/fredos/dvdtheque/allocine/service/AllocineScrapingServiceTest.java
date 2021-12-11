@@ -3,7 +3,6 @@ package fr.fredos.dvdtheque.allocine.service;
 import java.io.IOException;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -22,11 +21,8 @@ import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 
-import fr.fredos.dvdtheque.service.IFilmService;
-
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
-		fr.fredos.dvdtheque.service.ServiceApplication.class,
+@SpringBootTest(classes = {
 		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class,
 		AllocineScrapingServiceTest.HazelcastConfiguration.class})
 @ActiveProfiles("test")
@@ -34,13 +30,6 @@ public class AllocineScrapingServiceTest {
 	protected Logger logger = LoggerFactory.getLogger(AllocineScrapingServiceTest.class);
 	@Autowired
     private AllocineScrapingService allocineScrapingService;
-    @Autowired
-	protected IFilmService filmService;
-    
-    @Before()
-	public void setUp() throws Exception {
-    	filmService.cleanAllFilms();
-	}
     @TestConfiguration
 	public static class HazelcastConfiguration {
 		@Bean
