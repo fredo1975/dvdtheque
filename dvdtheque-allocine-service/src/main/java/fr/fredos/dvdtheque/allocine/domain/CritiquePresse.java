@@ -20,7 +20,7 @@ public class CritiquePresse {
 	private String newsSource;
 	@Column(name="rating")
 	private Double rating;
-	@Column(name="body")
+	@Column(name="body",columnDefinition="TEXT")
 	private String body;
 	@Column(name="author")
 	private String author;

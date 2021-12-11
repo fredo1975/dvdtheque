@@ -91,10 +91,7 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService{
 	private void processCritiquePress(final Set<FicheFilm> allFicheFilmFromPage) {
 		if(CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
 			for(FicheFilm ficheFilm : allFicheFilmFromPage) {
-				Map<Integer,CritiquePresse> map = retrieveCritiquePresseMap(ficheFilm);
-				if(MapUtils.isNotEmpty(map)) {
-					logger.debug("######### map="+map);
-				}
+				retrieveCritiquePresseMap(ficheFilm);
 			}
 		}
 	}
@@ -103,7 +100,7 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService{
 	 * @param ficheFilm
 	 * @return
 	 */
-	private Map<Integer,CritiquePresse> retrieveCritiquePresseMap(FicheFilm ficheFilm){
+	private void retrieveCritiquePresseMap(FicheFilm ficheFilm){
 		Map<Integer,CritiquePresse> map = new HashMap<>();
 		Document document;
 		try {
@@ -188,7 +185,6 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-    	return map;
 	}
 	/**
 	 * 

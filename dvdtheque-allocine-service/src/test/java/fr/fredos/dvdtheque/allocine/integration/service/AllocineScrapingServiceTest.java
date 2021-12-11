@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hazelcast.config.AutoDetectionConfig;
 import com.hazelcast.config.Config;
@@ -30,6 +31,7 @@ import fr.fredos.dvdtheque.allocine.service.AllocineScrapingService;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {AllocineScrapingServiceTest.HazelcastConfiguration.class})
 @ActiveProfiles("test")
+@Transactional
 public class AllocineScrapingServiceTest {
 	protected Logger logger = LoggerFactory.getLogger(AllocineScrapingServiceTest.class);
 	private static final String ALLOCINE_FIULM_ID_289301 = "289301";
