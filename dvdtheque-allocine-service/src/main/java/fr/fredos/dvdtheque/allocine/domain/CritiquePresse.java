@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.allocine.model;
+package fr.fredos.dvdtheque.allocine.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,18 +22,16 @@ public class CritiquePresse {
 	private String body;
 	@Column(name="author")
 	private String author;
+	
 	public CritiquePresse() {
 		super();
 	}
-	
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
 	public String getNewsSource() {
 		return newsSource;
 	}
@@ -52,7 +50,6 @@ public class CritiquePresse {
 	public void setBody(String body) {
 		this.body = body;
 	}
-	
 	public String getAuthor() {
 		return author;
 	}
@@ -65,7 +62,6 @@ public class CritiquePresse {
 	public void setFilmId(String filmId) {
 		this.filmId = filmId;
 	}
-
 	@Override
 	public String toString() {
 		return "CritiquePresse [id=" + id + ", filmId=" + filmId + ", newsSource=" + newsSource + ", rating=" + rating

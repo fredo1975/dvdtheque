@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.allocine.model;
+package fr.fredos.dvdtheque.allocine.domain;
 
 public class Page {
 	private Integer numPage = 1;

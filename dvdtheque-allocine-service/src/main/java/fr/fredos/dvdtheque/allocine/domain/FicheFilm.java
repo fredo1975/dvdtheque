@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.allocine.model;
+package fr.fredos.dvdtheque.allocine.domain;
 
 import java.util.Objects;
 
