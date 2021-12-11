@@ -1,12 +1,16 @@
 package fr.fredos.dvdtheque.allocine.domain;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class FicheFilm {
@@ -22,12 +26,17 @@ public class FicheFilm {
 	private String allocineFilmId;
 	@Column(name="pageNumber")
 	private int pageNumber;
-	
+	@Column(name="title")
+	private String title;
+	@OneToMany(mappedBy="ficheFilm", cascade = CascadeType.ALL)
+	private Set<CritiquePresse> critiquesPresse = new HashSet<>();
+ 
 	public FicheFilm() {
 		super();
 	}
-	public FicheFilm(String ficheFilm, String url, String allocineFilmId, int pageNumber) {
+	public FicheFilm(String title,String ficheFilm, String url, String allocineFilmId, int pageNumber) {
 		super();
+		this.title = title;
 		this.ficheFilm = ficheFilm;
 		this.url = url;
 		this.allocineFilmId = allocineFilmId;
@@ -64,6 +73,21 @@ public class FicheFilm {
 	public void setPageNumber(int pageNumber) {
 		this.pageNumber = pageNumber;
 	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public Set<CritiquePresse> getCritiquesPresse() {
+		return critiquesPresse;
+	}
+	public void setCritiquesPresse(Set<CritiquePresse> critiquesPresse) {
+		this.critiquesPresse = critiquesPresse;
+	}
+	public void addCritiquePresse(CritiquePresse critiquePresse) {
+		this.critiquesPresse.add(critiquePresse);
+	}
 	@Override
 	public int hashCode() {
 		return Objects.hash(allocineFilmId);
@@ -82,7 +106,7 @@ public class FicheFilm {
 	@Override
 	public String toString() {
 		return "FicheFilm [id=" + id + ", ficheFilm=" + ficheFilm + ", url=" + url + ", allocineFilmId="
-				+ allocineFilmId + ", pageNumber=" + pageNumber + "]";
+				+ allocineFilmId + ", pageNumber=" + pageNumber + ", title=" + title + ", critiquesPresse="
+				+ critiquesPresse + "]";
 	}
-	
 }

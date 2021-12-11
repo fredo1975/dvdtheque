@@ -1,46 +1,16 @@
 package fr.fredos.dvdtheque.integration.allocine.service;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.junit.Before;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import fr.fredos.dvdtheque.allocine.model.SearchResults;
-import fr.fredos.dvdtheque.allocine.service.AllocineServiceClient;
-import fr.fredos.dvdtheque.common.enums.DvdFormat;
-import fr.fredos.dvdtheque.common.enums.FilmOrigine;
-import fr.fredos.dvdtheque.dao.model.object.CritiquesPresse;
-import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dao.model.object.Genre;
-import fr.fredos.dvdtheque.dao.model.utils.CritiquesPresseBuilder;
-import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
-import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
-import fr.fredos.dvdtheque.service.IFilmService;
-
+/*
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.allocine.AllocineServiceApplication.class,
 		HazelcastConfiguration.class}, webEnvironment = SpringBootTest.WebEnvironment.MOCK,
 		properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
-@ActiveProfiles("test")
+@ActiveProfiles("test")*/
 public class AllocineServiceClientTest extends AbstractTransactionalJUnit4SpringContextTests{
-	protected Logger logger = LoggerFactory.getLogger(AllocineServiceClientTest.class);
+	/*protected Logger logger = LoggerFactory.getLogger(AllocineServiceClientTest.class);
 	@Autowired
     private AllocineServiceClient client;
     @Autowired
@@ -151,5 +121,5 @@ public class AllocineServiceClientTest extends AbstractTransactionalJUnit4Spring
 		assertNotNull(dbFilm.getCritiquesPresse());
 		assertTrue("",dbFilm.getCritiquesPresse().size() == film.getCritiquesPresse().size());
 		assertTrue("should be 28 critiques presse",dbFilm.getCritiquesPresse().size() == 28);
-    }
+    }*/
 }

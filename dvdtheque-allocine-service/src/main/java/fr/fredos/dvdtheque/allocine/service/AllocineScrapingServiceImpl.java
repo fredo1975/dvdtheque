@@ -3,6 +3,7 @@ package fr.fredos.dvdtheque.allocine.service;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.fredos.dvdtheque.allocine.domain.CritiquePresse;
 import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
@@ -64,6 +66,11 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService{
 		Integer _page = Integer.valueOf(1);
 		Page page = new Page(_page);
 		Set<FicheFilm> allFicheFilmFromPage = retrieveFilmIdOnFilmsPage(page);
+		if(CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
+			for(FicheFilm ficheFilm : allFicheFilmFromPage) {
+				processFicheFilm(ficheFilm);
+			}
+		}
 		processCritiquePress(allFicheFilmFromPage);
 		/*
 		allFicheFilmFromPage.clear();
@@ -72,6 +79,10 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService{
 			allFicheFilmFromPage = retrieveFilmIdOnFilmsPage(page);
 		}
 		processCritiquePress(allFicheFilmFromPage);*/
+	}
+	@Transactional
+	private void processFicheFilm(FicheFilm ficheFilm) {
+		ficheFilmRepository.save(ficheFilm);
 	}
 	/**
 	 * 
@@ -121,6 +132,7 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService{
 			    						cp.setFilmId(ficheFilm.getAllocineFilmId());
 			    						//logger.debug("### cp="+cp.toString());
 			    						map.put(Integer.valueOf(index++), cp);
+			    						ficheFilm.addCritiquePresse(cp);
 			    					}
 			    				}
 		    				}
@@ -224,14 +236,18 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService{
         		logger.debug("### text : " + link.text());
         		final String filmTempId = StringUtils.substringAfter(link.attr(HREF), FILM_DELIMITER);
         		final String filmId = StringUtils.substringBefore(filmTempId, ".html");
-            	logger.debug("### filmtempId : " + filmTempId);
             	logger.debug("### filmId : " + filmId);
             	String url = BASE_URL+CRITIQUE_PRESSE_FILM_BASE_URL+filmId+CRITIQUE_PRESSE_FILM_END_URL;
             	logger.debug("### url : " + url);
-            	set.add(new FicheFilm(filmId, url, filmId, numPage));
+            	set.add(new FicheFilm(link.text(),filmId, url, filmId, numPage));
             }
         }
         return set;
+	}
+
+	@Override
+	public List<FicheFilm> retrieveAllFicheFilm() {
+		return ficheFilmRepository.findAll();
 	}
 	
 }

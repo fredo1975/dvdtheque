@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jms.core.JmsTemplate;
 
-import fr.fredos.dvdtheque.allocine.service.AllocineServiceClient;
+import fr.fredos.dvdtheque.allocine.integration.service.AllocineServiceClient;
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;

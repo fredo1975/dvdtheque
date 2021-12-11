@@ -39,7 +39,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fr.fredos.dvdtheque.allocine.service.AllocineServiceClient;
+import fr.fredos.dvdtheque.allocine.integration.service.AllocineServiceClient;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.utils.DateUtils;

@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class CritiquePresse {
@@ -22,6 +24,9 @@ public class CritiquePresse {
 	private String body;
 	@Column(name="author")
 	private String author;
+	@ManyToOne
+    @JoinColumn(name ="ficheFilmId")
+    private FicheFilm ficheFilm;
 	
 	public CritiquePresse() {
 		super();
@@ -62,10 +67,17 @@ public class CritiquePresse {
 	public void setFilmId(String filmId) {
 		this.filmId = filmId;
 	}
+	
+	public FicheFilm getFicheFilm() {
+		return ficheFilm;
+	}
+	public void setFicheFilm(FicheFilm ficheFilm) {
+		this.ficheFilm = ficheFilm;
+	}
 	@Override
 	public String toString() {
 		return "CritiquePresse [id=" + id + ", filmId=" + filmId + ", newsSource=" + newsSource + ", rating=" + rating
-				+ ", body=" + body + ", author=" + author + "]";
+				+ ", body=" + body + ", author=" + author + ", ficheFilm=" + ficheFilm + "]";
 	}
 	
 }
