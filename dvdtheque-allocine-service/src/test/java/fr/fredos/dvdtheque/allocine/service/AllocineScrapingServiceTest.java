@@ -33,7 +33,7 @@ import fr.fredos.dvdtheque.service.IFilmService;
 public class AllocineScrapingServiceTest {
 	protected Logger logger = LoggerFactory.getLogger(AllocineScrapingServiceTest.class);
 	@Autowired
-    private AllocineScrapingService client;
+    private AllocineScrapingService allocineScrapingService;
     @Autowired
 	protected IFilmService filmService;
     
@@ -54,7 +54,7 @@ public class AllocineScrapingServiceTest {
 	}
     
     @Test
-    public void retrieveAllocineScrapingMovieFeedTest() throws IOException {
-    	client.retrieveAllocineScrapingMovieFeed("MARIE STUART, REINE D'ÉCOSSE");
+    public void retrieveAllocineScrapingMoviesFeedTest() throws IOException {
+    	allocineScrapingService.retrieveAllocineScrapingMoviesFeed();
     }
 }

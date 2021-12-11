@@ -3,7 +3,7 @@
 	<property name="LOG_TEMP" value="./logs"/>
 	<include resource="org/springframework/boot/logging/logback/base.xml" />
 	<logger name="com.example" level="INFO"/>
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

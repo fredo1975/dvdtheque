@@ -2,9 +2,12 @@ package fr.fredos.dvdtheque.allocine.service;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import fr.fredos.dvdtheque.allocine.model.FicheFilm;
+import fr.fredos.dvdtheque.allocine.model.Page;
 import fr.fredos.dvdtheque.allocine.scraping.model.CritiquePresse;
 
 @Service
@@ -46,15 +51,41 @@ public class AllocineScrapingService {
 	private final static String CRITIQUE_PRESSE_FILM_BASE_URL ="/film/fichefilm-";
 	private final static String CRITIQUE_PRESSE_FILM_END_URL ="/critiques/presse/";
 	
-	
-	public void retrieveAllocineScrapingMovieFeed(final String title) {
-		FicheFilm ficheFilm = findFilm(title);
-		if(ficheFilm != null) {
-			Map<Integer,CritiquePresse> map = retrieveCritiquePresseMap(ficheFilm);
-			logger.info("######### map="+map);
+	/**
+	 * 
+	 */
+	public void retrieveAllocineScrapingMoviesFeed() {
+		Integer _page = Integer.valueOf(1);
+		Page page = new Page(_page);
+		Set<FicheFilm> allFicheFilmFromPage = retrieveFilmIdOnFilmsPage(page);
+		processCritiquePress(allFicheFilmFromPage);
+		/*
+		allFicheFilmFromPage.clear();
+		while(page.getNumPage()<100) {
+			page.setNumPage(page.getNumPage()+1);
+			allFicheFilmFromPage = retrieveFilmIdOnFilmsPage(page);
+		}
+		processCritiquePress(allFicheFilmFromPage);*/
+	}
+	/**
+	 * 
+	 * @param allFicheFilmFromPage
+	 */
+	private void processCritiquePress(final Set<FicheFilm> allFicheFilmFromPage) {
+		if(CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
+			for(FicheFilm ficheFilm : allFicheFilmFromPage) {
+				Map<Integer,CritiquePresse> map = retrieveCritiquePresseMap(ficheFilm);
+				if(MapUtils.isNotEmpty(map)) {
+					logger.debug("######### map="+map);
+				}
+			}
 		}
 	}
-	
+	/**
+	 * 
+	 * @param ficheFilm
+	 * @return
+	 */
 	private Map<Integer,CritiquePresse> retrieveCritiquePresseMap(FicheFilm ficheFilm){
 		Map<Integer,CritiquePresse> map = new HashMap<>();
 		Document document;
@@ -71,17 +102,17 @@ public class AllocineScrapingService {
 	    	    	for(Element e4 : es3){
 	    	    		Elements masthead = e4.select(DIV_REVIEWS_PRESS_COMMENT);
 	    	    		for(Element ec : masthead){
-	    	    			//logger.info("### ec.getAllElements()="+ec.getAllElements());
+	    	    			//logger.debug("### ec.getAllElements()="+ec.getAllElements());
 	    	    			Elements esH2 = ec.select(H2);
 	    	    			int index=0;
 		    				for(Element e8 : esH2){
-		    					//logger.info("### e8.getAllElements()="+e8.getAllElements());
+		    					//logger.debug("### e8.getAllElements()="+e8.getAllElements());
 		    					Elements esSpan = e8.select(SPAN);
 			    				for(Element e9 : esSpan){
 			    					if(StringUtils.isNotEmpty(e9.text())) {
 			    						CritiquePresse cp = new CritiquePresse();
 			    						cp.setNewsSource(e9.text());
-			    						//logger.info("### cp="+cp.toString());
+			    						//logger.debug("### cp="+cp.toString());
 			    						map.put(Integer.valueOf(index++), cp);
 			    					}
 			    				}
@@ -92,7 +123,7 @@ public class AllocineScrapingService {
 		    					if(StringUtils.isNotEmpty(e8.text())) {
 		    						CritiquePresse cp = map.get(index++);
 		    						cp.setBody(e8.text());
-		    						//logger.info("### cp="+cp.toString());
+		    						//logger.debug("### cp="+cp.toString());
 		    					}
 		    				}
 		    				
@@ -101,33 +132,33 @@ public class AllocineScrapingService {
 		    				for(Element e5 : es4){
 		    					//logger.info("######### e5.getAllElements()="+e5.getAllElements());
 		    					Elements a = e5.select(DIV_EVAL_HOLDER);
-	    						//logger.info("######### a="+a.text());
+	    						//logger.debug("######### a="+a.text());
 	    						CritiquePresse cp = map.get(index++);
 	    						cp.setAuthor(a.text());
 	    						
 	    						Double rating = null;
 	    						if(e5.select(DIV_RATING_MDL_1_HOLDER).size()>0) {
-	    							//logger.info("######### 1**");
+	    							//logger.debug("######### 1**");
 	    							rating = 1.0d;
 	    						}
 	    						if(e5.select(DIV_RATING_MDL_2_HOLDER).size()>0) {
-	    							//logger.info("######### 2**");
+	    							//logger.debug("######### 2**");
 	    							rating = 2.0d;
 	    						}
 	    						if(e5.select(DIV_RATING_MDL_3_HOLDER).size()>0) {
-	    							//logger.info("######### 3**");
+	    							//logger.debug("######### 3**");
 	    							rating = 3.0d;
 	    						}
 	    						if(e5.select(DIV_RATING_MDL_4_HOLDER).size()>0) {
-	    							//logger.info("######### 4**");
+	    							//logger.debug("######### 4**");
 	    							rating = 4.0d;
 	    						}
 	    						if(e5.select(DIV_RATING_MDL_5_HOLDER).size()>0) {
-	    							//logger.info("######### 5**");
+	    							//logger.debug("######### 5**");
 	    							rating = 5.0d;
 	    						}
 	    						cp.setRating(rating);
-	    						logger.info("### cp="+cp.toString());
+	    						logger.debug("### cp="+cp.toString());
 		    				}
 	    	    		}
 	    	    	}
@@ -140,49 +171,16 @@ public class AllocineScrapingService {
 		}
     	return map;
 	}
-	private class FicheFilm {
-		private final String ficheFilm;
-		private final String url;
-		
-		public FicheFilm(String ficheFilm, String url) {
-			super();
-			this.ficheFilm = ficheFilm;
-			this.url = url;
-		}
-		public String getFicheFilm() {
-			return ficheFilm;
-		}
-		public String getUrl() {
-			return url;
-		}
-		@Override
-		public String toString() {
-			return "FicheFilm [ficheFilm=" + ficheFilm + ", url=" + url + "]";
-		}
-		
-	}
-	private class Page {
-		private Integer numPage = 1;
-
-		public Page(Integer numPage) {
-			super();
-			this.numPage = numPage;
-		}
-
-		public Integer getNumPage() {
-			return numPage;
-		}
-
-		public void setNumPage(Integer numPage) {
-			this.numPage = numPage;
-		}
-		
-	}
-	private FicheFilm retrieveFilmIdOnFilmsPage(final String title, Page page) {
+	/**
+	 * 
+	 * @param page
+	 * @return
+	 */
+	private Set<FicheFilm> retrieveFilmIdOnFilmsPage(Page page) {
 		Document listFilmdocument = null;
-		FicheFilm ficheFilm = null;
+		Set<FicheFilm> allFicheFilmFromPage = null;
 		try {
-			logger.info("### page.getNumPage() {}",page.getNumPage());
+			logger.debug("### page.getNumPage() {}",page.getNumPage());
 			if(page.getNumPage() == 1) {
 				listFilmdocument = Jsoup.connect(BASE_URL+LIST_FILM_URL)
 						.userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36")
@@ -192,72 +190,41 @@ public class AllocineScrapingService {
 						.userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36")
 						.get();
 			}
-			ficheFilm = parsePage(title, listFilmdocument);
-			if(ficheFilm != null) {
-				logger.info("### found {}",ficheFilm.toString());
+			allFicheFilmFromPage = retrieveAllFicheFilmFromPage(listFilmdocument,page.getNumPage());
+			
+			if(CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
+				logger.debug("### found {} films {}",allFicheFilmFromPage.size(),allFicheFilmFromPage.toString());
 			}
-			/*
-			if(page.getNumPage() == 1) {
-				listFilmdocument = Jsoup.connect(BASE_URL+LIST_FILM_URL)
-						.userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36")
-						.get();
-				ficheFilm = parsePage(title, listFilmdocument);
-				if(ficheFilm != null) {
-					logger.info("### found {}",ficheFilm.toString());
-				}else {
-					page.setNumPage(page.getNumPage()+1);
-					return retrieveFilmIdOnFilmsPage(title,page);
-					//parsePage(title, listFilmdocument);
-				}
-			}else {
-				listFilmdocument = Jsoup.connect(BASE_URL+LIST_FILM_URL+SEARCH_PAGE_DELIMITER+page.getNumPage())
-						.userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36")
-						.get();
-				ficheFilm = parsePage(title, listFilmdocument);
-				if(ficheFilm != null) {
-					logger.info("### found {}",ficheFilm.toString());
-				}else {
-					page.setNumPage(page.getNumPage()+1);
-					return retrieveFilmIdOnFilmsPage(title,page);
-					//parsePage(title, listFilmdocument);
-				}
-			}*/
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ficheFilm;
+		return allFicheFilmFromPage;
 	}
-	
-	private FicheFilm parsePage(final String title, final Document listFilmdocument) {
+	/**
+	 * 
+	 * @param listFilmdocument
+	 * @param numPage
+	 * @return
+	 */
+	private Set<FicheFilm> retrieveAllFicheFilmFromPage(final Document listFilmdocument, final int numPage) {
+		Set<FicheFilm> set = new HashSet<>();
 		Elements links = listFilmdocument.select(AHREF);
         for (Element link : links) {
             if(StringUtils.contains(link.attr(HREF), FILM_DELIMITER)) {
-            	logger.info("### link : " + link.text());
-            	if(link.text().equalsIgnoreCase(title)) {
-            		logger.info("### link : " + link.attr(HREF));
-            		logger.info("### text : " + link.text());
-            		final String filmTempId = StringUtils.substringAfter(link.attr(HREF), FILM_DELIMITER);
-            		final String filmId = StringUtils.substringBefore(filmTempId, ".html");
-	            	logger.info("### filmtempId : " + filmTempId);
-	            	logger.info("### filmId : " + filmId);
-	            	String url = BASE_URL+CRITIQUE_PRESSE_FILM_BASE_URL+filmId+CRITIQUE_PRESSE_FILM_END_URL;
-	            	logger.info("### url : " + url);
-	            	return new FicheFilm(filmId, url);
-            	}
+            	logger.debug("### link : " + link.text());
+            	logger.debug("### link : " + link.attr(HREF));
+        		logger.debug("### text : " + link.text());
+        		final String filmTempId = StringUtils.substringAfter(link.attr(HREF), FILM_DELIMITER);
+        		final String filmId = StringUtils.substringBefore(filmTempId, ".html");
+            	logger.debug("### filmtempId : " + filmTempId);
+            	logger.debug("### filmId : " + filmId);
+            	String url = BASE_URL+CRITIQUE_PRESSE_FILM_BASE_URL+filmId+CRITIQUE_PRESSE_FILM_END_URL;
+            	logger.debug("### url : " + url);
+            	set.add(new FicheFilm(filmId, url, filmId, numPage));
             }
         }
-        return null;
+        return set;
 	}
 	
-	private FicheFilm findFilm(final String title) {
-		Integer _page = Integer.valueOf(1);
-		Page page = new Page(_page);
-		FicheFilm ficheFilm = retrieveFilmIdOnFilmsPage(title,page);
-		while(ficheFilm == null) {
-			page.setNumPage(page.getNumPage()+1);
-			ficheFilm = retrieveFilmIdOnFilmsPage(title,page);
-		}
-		return ficheFilm;
-	}
 }
