@@ -1,9 +1,11 @@
 package fr.fredos.dvdtheque.allocine.integration.service;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.jupiter.api.Test;
@@ -56,11 +58,17 @@ public class AllocineScrapingServiceTest {
     public void retrieveAllocineScrapingMoviesFeedTest() throws IOException {
     	allocineScrapingService.retrieveAllocineScrapingMoviesFeed();
 		List<FicheFilm> allFicheFilmFromPageRetrievedFromDb = allocineScrapingService.retrieveAllFicheFilm();
-		assertEquals(150,allFicheFilmFromPageRetrievedFromDb.size());
+		assertEquals(30,allFicheFilmFromPageRetrievedFromDb.size());
 		assertEquals(ALLOCINE_FIULM_ID_289301,allFicheFilmFromPageRetrievedFromDb.get(0).getAllocineFilmId());
 		assertEquals(ALLOCINE_FIULM_ID_289301_TITLE,allFicheFilmFromPageRetrievedFromDb.get(0).getTitle());
 		logger.info("critique presses from {} are {}",allFicheFilmFromPageRetrievedFromDb.get(0).getTitle(),allFicheFilmFromPageRetrievedFromDb.get(0).getCritiquesPresse().toString());
 		assertEquals(ALLOCINE_FIULM_ID_136316,allFicheFilmFromPageRetrievedFromDb.get(1).getAllocineFilmId());
 		assertEquals(ALLOCINE_FIULM_ID_136316_TITLE,allFicheFilmFromPageRetrievedFromDb.get(1).getTitle());
+		Optional<FicheFilm> optionalFicheFilmRetrievedFromDb = allocineScrapingService.retrieveFicheFilm(allFicheFilmFromPageRetrievedFromDb.get(0).getId());
+		FicheFilm ficheFilmRetrievedFromDb = allocineScrapingService.retrieveFicheFilmByTitle(allFicheFilmFromPageRetrievedFromDb.get(0).getTitle());
+		assertTrue(optionalFicheFilmRetrievedFromDb.isPresent());
+		assertEquals(allFicheFilmFromPageRetrievedFromDb.get(0),optionalFicheFilmRetrievedFromDb.get());
+		assertEquals(allFicheFilmFromPageRetrievedFromDb.get(0).getTitle(),optionalFicheFilmRetrievedFromDb.get().getTitle());
+		assertEquals(allFicheFilmFromPageRetrievedFromDb.get(0),ficheFilmRetrievedFromDb);
     }
 }

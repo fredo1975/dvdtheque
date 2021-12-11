@@ -73,7 +73,6 @@ import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
-		fr.fredos.dvdtheque.allocine.AllocineServiceApplication.class,
 		fr.fredos.dvdtheque.rest.controller.DvdthequeRestApplication.class,
 		HazelcastConfiguration.class},
 webEnvironment = WebEnvironment.RANDOM_PORT,

@@ -34,7 +34,6 @@ import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes={DvdthequeRestApplication.class,fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
-		fr.fredos.dvdtheque.allocine.AllocineServiceApplication.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		BatchApplication.class},webEnvironment = WebEnvironment.RANDOM_PORT,
 				properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })

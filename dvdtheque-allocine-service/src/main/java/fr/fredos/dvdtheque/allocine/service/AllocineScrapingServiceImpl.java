@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -70,18 +70,18 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService {
 		Set<FicheFilm> allFicheFilmFromPage = retrieveAllFicheFilmFromPage(page);
 		if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
 			for (FicheFilm ficheFilm : allFicheFilmFromPage) {
-				processFicheFilm(ficheFilm);
+				saveFicheFilm(ficheFilm);
 			}
 		}
 		processCritiquePress(allFicheFilmFromPage);
 
-		while (page.getNumPage() < 10) {
+		while (page.getNumPage() < 2) {
 			allFicheFilmFromPage.clear();
 			page.setNumPage(page.getNumPage() + 1);
 			allFicheFilmFromPage = retrieveAllFicheFilmFromPage(page);
 			if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
 				for (FicheFilm ficheFilm : allFicheFilmFromPage) {
-					processFicheFilm(ficheFilm);
+					saveFicheFilm(ficheFilm);
 				}
 			}
 			processCritiquePress(allFicheFilmFromPage);
@@ -89,7 +89,7 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService {
 	}
 
 	@Transactional
-	private void processFicheFilm(FicheFilm ficheFilm) {
+	private void saveFicheFilm(FicheFilm ficheFilm) {
 		ficheFilmRepository.save(ficheFilm);
 	}
 
@@ -189,7 +189,6 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService {
 						}
 					}
 				}
-
 			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -242,7 +241,6 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService {
 			if (StringUtils.contains(link.attr(HREF), FILM_DELIMITER)) {
 				logger.debug("### link : " + link.text());
 				logger.debug("### link : " + link.attr(HREF));
-				logger.debug("### text : " + link.text());
 				final String filmTempId = StringUtils.substringAfter(link.attr(HREF), FILM_DELIMITER);
 				final String filmId = StringUtils.substringBefore(filmTempId, ".html");
 				logger.debug("### filmId : " + filmId);
@@ -259,4 +257,12 @@ public class AllocineScrapingServiceImpl implements AllocineScrapingService {
 		return ficheFilmRepository.findAll();
 	}
 
+	@Override
+	public Optional<FicheFilm> retrieveFicheFilm(int id) {
+		return ficheFilmRepository.findById(id);
+	}
+	@Override
+	public FicheFilm retrieveFicheFilmByTitle(String title) {
+		return ficheFilmRepository.findByTitle(title);
+	}
 }

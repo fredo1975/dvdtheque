@@ -14,7 +14,9 @@ spring:
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        
+eureka:
+  client:
+    enabled: false        
 hazelcast:
   cluster-name: hazelcast-allocine-local
   networkconfig:

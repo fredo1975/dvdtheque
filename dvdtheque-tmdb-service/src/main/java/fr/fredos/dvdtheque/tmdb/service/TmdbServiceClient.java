@@ -39,7 +39,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fr.fredos.dvdtheque.allocine.integration.service.AllocineServiceClient;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.utils.DateUtils;
@@ -71,8 +70,7 @@ public class TmdbServiceClient {
 	protected IFilmService filmService;
 	@Autowired
 	protected IPersonneService personneService;
-	@Autowired
-    private AllocineServiceClient allocineServiceClient;
+	
 	private final RestTemplate restTemplate;
 	private static String TMDB_SEARCH_MOVIE_QUERY="themoviedb.search.movie.query";
 	private static String TMDB_API_KEY="themoviedb.api.key";
@@ -140,7 +138,6 @@ public class TmdbServiceClient {
 					filmToSave.setDvd(dvd);
 				}
 				filmToSave.setDateInsertion(DateUtils.clearDate(new Date()));
-				allocineServiceClient.addCritiquesPresseToFilm(filmToSave);
 				Long id = filmService.saveNewFilm(filmToSave);
 				filmToSave.setId(id);
 				return filmToSave;

@@ -51,7 +51,6 @@ import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
-		fr.fredos.dvdtheque.allocine.AllocineServiceApplication.class,
 		BatchImportFilmsConfigurationTest.HazelcastConfiguration.class})
 public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	@Autowired
