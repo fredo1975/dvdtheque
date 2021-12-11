@@ -35,7 +35,7 @@ import fr.fredos.dvdtheque.service.IFilmService;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class,
+		fr.fredos.dvdtheque.allocine.AllocineServiceApplication.class,
 		HazelcastConfiguration.class}, webEnvironment = SpringBootTest.WebEnvironment.MOCK,
 		properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
 @ActiveProfiles("test")

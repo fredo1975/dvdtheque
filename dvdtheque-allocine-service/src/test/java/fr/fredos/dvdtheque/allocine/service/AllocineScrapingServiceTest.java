@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -22,10 +23,9 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {
-		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class,
-		AllocineScrapingServiceTest.HazelcastConfiguration.class})
+@SpringBootTest(classes = {AllocineScrapingServiceTest.HazelcastConfiguration.class})
 @ActiveProfiles("test")
+//@DataJpaTest
 public class AllocineScrapingServiceTest {
 	protected Logger logger = LoggerFactory.getLogger(AllocineScrapingServiceTest.class);
 	@Autowired

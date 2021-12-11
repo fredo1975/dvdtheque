@@ -35,7 +35,7 @@ import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 		fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
 		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
-		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class,
+		fr.fredos.dvdtheque.allocine.AllocineServiceApplication.class,
 		BatchExportFilmsConfigurationTest.HazelcastConfiguration.class})
 public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	@Autowired
