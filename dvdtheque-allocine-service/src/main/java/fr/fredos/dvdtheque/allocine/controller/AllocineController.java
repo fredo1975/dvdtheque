@@ -7,18 +7,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
-import fr.fredos.dvdtheque.allocine.service.AllocineScrapingService;
+import fr.fredos.dvdtheque.allocine.service.AllocineService;
 
 @Controller
 public class AllocineController {
-	private AllocineScrapingService allocineScrapingService;
+	private AllocineService allocineService;
 	
 	@Autowired
-    public AllocineController(AllocineScrapingService allocineScrapingService) {
-        this.allocineScrapingService = allocineScrapingService;
+    public AllocineController(AllocineService allocineScrapingService) {
+        this.allocineService = allocineScrapingService;
     }
 	@GetMapping("/byTitle")
 	public ResponseEntity<FicheFilm> getAllocineFicheFilm(@PathVariable("title")String title) {
-		return ResponseEntity.ok(allocineScrapingService.retrieveFicheFilmByTitle(title));
+		return ResponseEntity.ok(allocineService.retrieveFicheFilmByTitle(title));
 	}
 }

@@ -27,12 +27,12 @@ import fr.fredos.dvdtheque.allocine.domain.Page;
 import fr.fredos.dvdtheque.allocine.repository.FicheFilmRepository;
 
 @Service
-public class AllocineScrapingServiceImpl implements AllocineScrapingService {
-	protected Logger logger = LoggerFactory.getLogger(AllocineScrapingServiceImpl.class);
+public class AllocineServiceImpl implements AllocineService {
+	protected Logger logger = LoggerFactory.getLogger(AllocineServiceImpl.class);
 	FicheFilmRepository ficheFilmRepository;
 
 	@Autowired
-	public AllocineScrapingServiceImpl(FicheFilmRepository ficheFilmRepository) {
+	public AllocineServiceImpl(FicheFilmRepository ficheFilmRepository) {
 		this.ficheFilmRepository = ficheFilmRepository;
 	}
 

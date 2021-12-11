@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
 
-public interface AllocineScrapingService {
+public interface AllocineService {
 	void retrieveAllocineScrapingMoviesFeed();
 	List<FicheFilm> retrieveAllFicheFilm();
 	Optional<FicheFilm> retrieveFicheFilm(int id);
