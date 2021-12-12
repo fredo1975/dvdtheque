@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -79,6 +80,7 @@ import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 @RestController
 @ComponentScan({"fr.fredos.dvdtheque"})
 @RequestMapping("/dvdtheque")
+@Profile({ "prod1","prod2","dev1","dev2","local1","local2" })
 public class FilmController {
 	protected Logger logger = LoggerFactory.getLogger(FilmController.class);
 	private static String TMDB_SERVICE_URL="tmdb.service.url";

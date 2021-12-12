@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.CacheManager;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -60,8 +59,6 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 	private IPersonneService personneService;
 	@Autowired
 	private ExcelFilmHandler excelFilmHandler;
-	@Autowired
-    private CacheManager cacheManager;
 	
 	@BeforeEach
 	public void cleanAllCaches() {
@@ -186,7 +183,6 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 	
 	@Test
 	public void findFilm() throws Exception {
-		logger.info("Using cache manager: " + cacheManager.getClass().getName());
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
