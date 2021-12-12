@@ -1,5 +1,7 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
+import java.util.Arrays;
+
 import javax.jms.Topic;
 
 import org.apache.activemq.command.ActiveMQTopic;
@@ -32,11 +34,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
+import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
@@ -44,13 +53,15 @@ import fr.fredos.dvdtheque.batch.film.writer.DbFilmWriter;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 
 @Configuration
 @EnableBatchProcessing
 public class BatchImportFilmsConfiguration{
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
+	private static String DVDTHEQUE_SERVICE_URL ="dvdtheque.service.url";
+	@Autowired
+    Environment environment;
 	@Autowired
 	protected JobBuilderFactory jobBuilderFactory;
     @Autowired
@@ -96,10 +107,14 @@ public class BatchImportFilmsConfiguration{
         return new ActiveMQTopic("topic");
     }
     @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+    @Bean
 	protected Tasklet cleanDBTasklet() {
     	return new Tasklet() {
-			@Autowired
-			protected IFilmService filmService;
+    		@Autowired
+    	    private RestTemplate restTemplate;
 			@Autowired
 		    private JmsTemplate jmsTemplate;
 			@Autowired
@@ -109,7 +124,14 @@ public class BatchImportFilmsConfiguration{
 				StopWatch watch = new StopWatch();
 				watch.start();
 				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT, null,0l,JmsStatus.CLEAN_DB_INIT.statusValue()));
-				filmService.cleanAllFilms();
+				//filmService.cleanAllFilms();
+				HttpHeaders headers = new HttpHeaders();
+				headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+				// Request to return JSON format
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+				ResponseEntity<Void> response = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL), HttpMethod.PUT, entity, Void.class);
 				watch.stop();
 				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_COMPLETED, null,watch.getTime(),JmsStatus.CLEAN_DB_COMPLETED.statusValue()));
 				logger.debug("database cleaning Time Elapsed: " + watch.getTime());
@@ -117,11 +139,6 @@ public class BatchImportFilmsConfiguration{
 			}
 		};
 	}
-    
-    @Bean
-    public FilmProcessor processor() {
-        return new FilmProcessor();
-    }
     
 	@Bean
 	public Job importFilmsJob() throws Exception {

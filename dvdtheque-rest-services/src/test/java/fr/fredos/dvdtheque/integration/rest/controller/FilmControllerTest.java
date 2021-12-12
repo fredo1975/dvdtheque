@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.jms.MessageConsumer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -49,37 +51,28 @@ import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKey
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
-import fr.fredos.dvdtheque.batch.configuration.MessageConsumer;
-import fr.fredos.dvdtheque.batch.film.tasklet.RetrieveDateInsertionTasklet;
-import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
-import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dao.model.object.Genre;
-import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
-import fr.fredos.dvdtheque.service.IFilmService;
-import fr.fredos.dvdtheque.service.IPersonneService;
-import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
-import fr.fredos.dvdtheque.service.model.FilmListParam;
-import fr.fredos.dvdtheque.tmdb.model.Results;
-import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
+import fr.fredos.dvdtheque.rest.dao.domain.Film;
+import fr.fredos.dvdtheque.rest.dao.domain.Genre;
+import fr.fredos.dvdtheque.rest.dao.domain.Personne;
+import fr.fredos.dvdtheque.rest.dao.model.utils.FilmBuilder;
+import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
+import fr.fredos.dvdtheque.rest.service.IFilmService;
+import fr.fredos.dvdtheque.rest.service.IPersonneService;
+import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
-		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
-		fr.fredos.dvdtheque.rest.controller.DvdthequeRestApplication.class,
+@SpringBootTest(classes = {
+		fr.fredos.dvdtheque.rest.DvdthequeRestApplication.class,
 		HazelcastConfiguration.class},
-webEnvironment = WebEnvironment.RANDOM_PORT,
-properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
+webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 //@ContextConfiguration
-@Import({ ServletKeycloakAuthUnitTestingSupport.class,RippedFlagTasklet.class,BatchImportFilmsConfiguration.class,MessageConsumer.class,RetrieveDateInsertionTasklet.class})
+@Import({ ServletKeycloakAuthUnitTestingSupport.class,/*RippedFlagTasklet.class,BatchImportFilmsConfiguration.class,*/MessageConsumer.class/*,RetrieveDateInsertionTasklet.class*/})
 @ActiveProfiles("test")
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger 								logger = LoggerFactory.getLogger(FilmControllerTest.class);
@@ -87,8 +80,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	protected IFilmService 							filmService;
 	@Autowired
 	protected IPersonneService 						personneService;
-	@Autowired
-	private TmdbServiceClient 						client;
 	@Autowired
 	private ObjectMapper 							mapper;
 	@Autowired
@@ -854,9 +845,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film filmUpdated = filmService.findFilm(film.getId());
 		FilmBuilder.assertFilmIsNotNull(filmUpdated, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD,
 				FilmBuilder.TMDBID1_DATE_SORTIE, FilmBuilder.createDateInsertion(null, null));
-		Results results = client.retrieveTmdbSearchResultsById(FilmBuilder.tmdbId1);
-		assertEquals(StringUtils.upperCase(results.getTitle()), filmUpdated.getTitre());
-		assertEquals(POSTER_PATH, filmUpdated.getPosterPath());
 	}
 
 	@Test
@@ -997,69 +985,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		
 	}
-	@Test
-	@Transactional
-    public void checkIfPosterPathExistsTest() throws ParseException {
-		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
-		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
-		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
-				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844).setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
-				.setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD)
-				.setPosterPath("http://image.tmdb.org/t/p/w500/9K81OagrRukWybhIIX6iRC5IRWo.jpg")
-				.setGenre1(genre1)
-				.setGenre2(genre2).setZone(Integer.valueOf(2))
-				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
-		Long filmId = filmService.saveNewFilm(film);
-		assertNotNull(filmId);
-		boolean exists = client.checkIfPosterExists(film);
-		assertFalse(exists);
-		film.setPosterPath("http://image.tmdb.org/t/p/w500/prjiEQgxoBC3stylWmxy9Lwnc9m.jpg");
-		exists = client.checkIfPosterExists(film);
-		assertTrue(exists);
-    }
 	
-	@Test
-	@Transactional
-    public void checkIfProfileImageExistsTest() throws ParseException {
-		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
-		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
-		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT4_TMBD_ID_844)
-				.setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
-				.setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD)
-				.setPosterPath("http://image.tmdb.org/t/p/w500/9K81OagrRukWybhIIX6iRC5IRWo.jpg")
-				.setGenre1(genre1)
-				.setGenre2(genre2).setZone(Integer.valueOf(2))
-				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
-		Long filmId = filmService.saveNewFilm(film);
-		assertNotNull(filmId);
-		for(Personne acteur : film.getActeurs()) {
-			if(acteur.getNom().equalsIgnoreCase("ZHANG ZIYI")) {
-				acteur.setProfilePath("http://image.tmdb.org/t/p/w500/6DUCAJzpw06VoAA9VWrvB2g4dpq.jpg");
-				boolean imageProfileExists = client.checkIfProfileImageExists(acteur);
-				assertTrue(imageProfileExists);
-			}else {
-				acteur.setProfilePath("http://image.tmdb.org/t/p/w500/dszN3Ea9ON8yEQu61UAIVmQ5kF4.jpg");
-				boolean imageProfileExists = client.checkIfProfileImageExists(acteur);
-				assertFalse(imageProfileExists);
-			}
-		}
-    }
 	@Test
 	@Transactional
     public void retrieveAllFilmImageTest() throws Exception {

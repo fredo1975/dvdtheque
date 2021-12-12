@@ -55,8 +55,8 @@ public class AllocineServiceTest {
 	}
     
     @Test
-    public void retrieveAllocineScrapingMoviesFeedTest() throws IOException {
-    	allocineService.retrieveAllocineScrapingMoviesFeed();
+    public void retrieveAllocineScrapingFicheFilmTest() throws IOException {
+    	allocineService.retrieveAllocineScrapingFicheFilm();
 		List<FicheFilm> allFicheFilmFromPageRetrievedFromDb = allocineService.retrieveAllFicheFilm();
 		assertEquals(30,allFicheFilmFromPageRetrievedFromDb.size());
 		assertEquals(ALLOCINE_FIULM_ID_289301,allFicheFilmFromPageRetrievedFromDb.get(0).getAllocineFilmId());

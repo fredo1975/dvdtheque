@@ -18,17 +18,15 @@ import org.springframework.util.StopWatch;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
-import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dao.model.object.Genre;
-import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
-import fr.fredos.dvdtheque.service.IFilmService;
-import fr.fredos.dvdtheque.service.IPersonneService;
+import fr.fredos.dvdtheque.rest.dao.domain.Film;
+import fr.fredos.dvdtheque.rest.dao.domain.Genre;
+import fr.fredos.dvdtheque.rest.dao.model.utils.FilmBuilder;
+import fr.fredos.dvdtheque.rest.service.IFilmService;
+import fr.fredos.dvdtheque.rest.service.IPersonneService;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
-		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		HazelcastConfiguration.class},
+@SpringBootTest(classes = {HazelcastConfiguration.class},
 properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
 @ActiveProfiles("test")
 public class FilmServiceTest extends AbstractTransactionalJUnit4SpringContextTests{

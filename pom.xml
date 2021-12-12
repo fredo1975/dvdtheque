@@ -17,16 +17,14 @@
 	<description>Dvdtheque project and related components</description>
 	<modules>
 		<module>dvdtheque-commons</module>
-		<module>dvdtheque-dao</module>
-		<module>dvdtheque-services</module>
 		<module>dvdtheque-allocine-service</module>
 		<module>dvdtheque-tmdb-service</module>
 		<!-- module>dvdtheque-jms-publisher</module -->
 		<module>dvdtheque-jms-receiver-test</module>
-		<module>dvdtheque-batch</module>
-		<module>dvdtheque-batch-app</module>
+		<!--module>dvdtheque-batch</module>
+		<module>dvdtheque-batch-app</module-->
 		<module>dvdtheque-rest-services</module>
-		<!--module>dvdtheque-rest-services-test-integration</module-->
+		<!--module>dvdtheque-rest-services-test-integration</module -->
 		<!--module>dvdtheque-swing</module -->
 		<!-- module>dvdtheque-hystrix-dashboard</module -->
 	</modules>
@@ -140,6 +138,11 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>3.7</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.11.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jsoup</groupId>

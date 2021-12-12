@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.fredos.dvdtheque.common.exceptions.DvdthequeCommonsException;
-import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
+import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 @Component
 public class MultipartFileUtil {
 	protected Logger logger = LoggerFactory.getLogger(MultipartFileUtil.class);

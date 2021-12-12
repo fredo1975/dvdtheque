@@ -19,7 +19,7 @@ import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
 import fr.fredos.dvdtheque.tmdb.model.Results;
 import fr.fredos.dvdtheque.tmdb.model.SearchResults;
-import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
+import fr.fredos.dvdtheque.tmdb.service.TmdbServiceImpl;
 
 @Component(value="theMovieDbTasklet")
 public class TheMovieDbTasklet implements Tasklet{
@@ -29,7 +29,7 @@ public class TheMovieDbTasklet implements Tasklet{
 	@Autowired
     Environment environment;
 	@Autowired
-    private TmdbServiceClient tmdbServiceClient;
+    private TmdbServiceImpl tmdbServiceClient;
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		List<Film> filmList = filmService.findAllFilms(null);

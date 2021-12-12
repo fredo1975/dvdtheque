@@ -12,7 +12,6 @@ import fr.fredos.dvdtheque.allocine.service.AllocineService;
 @Controller
 public class AllocineController {
 	private AllocineService allocineService;
-	
 	@Autowired
     public AllocineController(AllocineService allocineScrapingService) {
         this.allocineService = allocineScrapingService;

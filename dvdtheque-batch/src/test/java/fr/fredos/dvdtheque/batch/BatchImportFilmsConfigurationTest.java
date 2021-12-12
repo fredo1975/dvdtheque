@@ -45,12 +45,11 @@ import fr.fredos.dvdtheque.dao.model.object.Film;
 import fr.fredos.dvdtheque.dao.model.object.Personne;
 import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 
-@SpringBootTest(classes = { BatchImportFilmsConfiguration.class,MessageConsumer.class,
+@SpringBootTest(classes = { BatchImportFilmsConfiguration.class,
+		MessageConsumer.class,
 		RippedFlagTasklet.class,
 		RetrieveDateInsertionTasklet.class,
-		fr.fredos.dvdtheque.dao.Application.class,
-		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
+		fr.fredos.dvdtheque.tmdb.TmdbServiceApplication.class,
 		BatchImportFilmsConfigurationTest.HazelcastConfiguration.class})
 public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	@Autowired

@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtils {
+	public final static String TMDB_DATE_PATTERN = "yyyy-MM-dd";
 	public static Date clearDate(Date dateToClear) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(dateToClear);

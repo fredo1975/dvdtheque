@@ -16,6 +16,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.batch.film.writer.ExcelStreamFilmWriter;
 import fr.fredos.dvdtheque.dao.model.object.Film;
@@ -31,6 +32,8 @@ public class BatchExportFilmsConfiguration {
 	protected JobBuilderFactory jobBuilderFactory;
     @Autowired
     protected StepBuilderFactory stepBuilderFactory;
+    @Autowired
+    private RestTemplate restTemplate;
     @Bean
 	public Job exportFilmsJob() throws IOException {
     	return jobBuilderFactory.get("exportFilms")

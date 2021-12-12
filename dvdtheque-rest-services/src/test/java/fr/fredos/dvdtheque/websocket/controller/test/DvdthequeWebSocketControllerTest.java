@@ -12,14 +12,11 @@ import java.util.function.Consumer;
 
 import org.junit.After;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -29,8 +26,6 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
@@ -43,11 +38,10 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import com.hazelcast.core.Hazelcast;
 
-import fr.fredos.dvdtheque.batch.BatchApplication;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
-import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.rest.controller.DvdthequeRestApplication;
+import fr.fredos.dvdtheque.rest.DvdthequeRestApplication;
+import fr.fredos.dvdtheque.rest.dao.domain.Film;
 /*
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes= {DvdthequeWebSocketControllerTest.DvdthequeWebSocketConfigurationTest.class,

@@ -15,31 +15,39 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
-import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.batch.model.DvdBuilder;
+import fr.fredos.dvdtheque.batch.model.FicheFilm;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 import fr.fredos.dvdtheque.dao.model.object.Dvd;
 import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.service.IFilmService;
 import fr.fredos.dvdtheque.tmdb.model.Results;
-import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
+import fr.fredos.dvdtheque.tmdb.service.TmdbServiceImpl;
 
 public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 	protected Logger logger = LoggerFactory.getLogger(FilmProcessor.class);
+	private static String ALLOCINE_SERVICE_URL ="allocine.service.url";
+	private static String DVDTHEQUE_SERVICE_URL ="dvdtheque.service.url";
 	@Autowired
-    private TmdbServiceClient tmdbServiceClient;
-	@Autowired
-	protected IFilmService filmService;
+    private TmdbServiceImpl tmdbServiceClient;
 	@Autowired
     Environment environment;
 	@Autowired
     private JmsTemplate jmsTemplate;
 	@Autowired
     private Topic topic;
+	@Autowired
+    private RestTemplate restTemplate;
+	public FilmProcessor() {
+    }
 	private static String RIPPEDFLAGTASKLET_FROM_FILE="rippedFlagTasklet.from.file";
 	@Override
 	public Film process(FilmCsvImportFormat item) throws Exception {
@@ -48,25 +56,24 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 		Film filmTemp = new Film ();
 		filmTemp.setTmdbId(item.getTmdbId());
 		jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_INIT, filmTemp,0l,JmsStatus.FILM_PROCESSOR_INIT.statusValue()));
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e1) {
-			throw e1;
-		}
+		
 		Film filmToSave = null;
 		Results results = tmdbServiceClient.retrieveTmdbSearchResultsById(item.getTmdbId());
 		if(results != null) {
 			filmToSave = tmdbServiceClient.transformTmdbFilmToDvdThequeFilm(null, results, new HashSet<>(), true);
 		}
+		
 		if(filmToSave != null) {
 			filmToSave.setOrigine(FilmOrigine.valueOf(item.getOrigine()));
 			if(item.getOrigine().equalsIgnoreCase(FilmOrigine.DVD.name()) || item.getOrigine().equalsIgnoreCase(FilmOrigine.EN_SALLE.name())) {
-				Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), 
-						item.getZonedvd(), 
-						null, 
-						null, 
-						StringUtils.isNotEmpty(item.getFilmFormat())?DvdFormat.valueOf(item.getFilmFormat()):null,item.getDateSortieDvd());
-				filmToSave.setDvd(dvd);
+				DvdBuilder dvdBuilder = new DvdBuilder();
+				dvdBuilder.setFilmFormat(item.getFilmFormat());
+				dvdBuilder.setDateSortieDvd(item.getDateSortieDvd());
+				dvdBuilder.setFilmToSave(filmToSave);
+				dvdBuilder.setZonedvd(item.getZonedvd());
+				HttpEntity<DvdBuilder> request = new HttpEntity<>(dvdBuilder);
+				ResponseEntity<Dvd> dvdResponse = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL), HttpMethod.POST, request, Dvd.class);
+				filmToSave.setDvd(dvdResponse.getBody());
 				boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
 				if(!loadFromFile) {
 					filmToSave.getDvd().setRipped(false);
@@ -103,6 +110,8 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			}
 			filmToSave.setId(null);
 			
+			FicheFilm ficheFilm = restTemplate.getForObject(environment.getRequiredProperty(ALLOCINE_SERVICE_URL)+"?title="+item.getTitre(), FicheFilm.class);
+			//filmToSave.setCritiquesPresse(ficheFilm.getCritiquesPresse());
 			//allocineServiceClient.addCritiquesPresseToFilm(filmToSave);
 			
 			logger.debug(filmToSave.toString());

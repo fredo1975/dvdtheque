@@ -2,32 +2,41 @@ package fr.fredos.dvdtheque.rest.controller;
 
 import static java.lang.String.format;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.security.RolesAllowed;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.HttpHeaders;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,48 +46,84 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
-import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
-import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
-import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dao.model.object.Genre;
-import fr.fredos.dvdtheque.dao.model.object.Personne;
+import fr.fredos.dvdtheque.common.tmdb.model.Cast;
+import fr.fredos.dvdtheque.common.tmdb.model.Credits;
+import fr.fredos.dvdtheque.common.tmdb.model.Crew;
+import fr.fredos.dvdtheque.common.tmdb.model.Genres;
+import fr.fredos.dvdtheque.common.tmdb.model.Results;
+import fr.fredos.dvdtheque.common.tmdb.model.TmdbServiceCommon;
+import fr.fredos.dvdtheque.common.utils.DateUtils;
+import fr.fredos.dvdtheque.rest.allocine.model.DvdBuilder;
+import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
+import fr.fredos.dvdtheque.rest.dao.domain.Film;
+import fr.fredos.dvdtheque.rest.dao.domain.Genre;
+import fr.fredos.dvdtheque.rest.dao.domain.Personne;
 import fr.fredos.dvdtheque.rest.file.util.MultipartFileUtil;
-import fr.fredos.dvdtheque.service.IFilmService;
-import fr.fredos.dvdtheque.service.IPersonneService;
-import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
-import fr.fredos.dvdtheque.service.model.FilmListParam;
-import fr.fredos.dvdtheque.tmdb.service.TmdbServiceClient;
+import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
+import fr.fredos.dvdtheque.rest.service.IFilmService;
+import fr.fredos.dvdtheque.rest.service.IPersonneService;
+import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 
 @RestController
 @ComponentScan({"fr.fredos.dvdtheque"})
 @RequestMapping("/dvdtheque")
 public class FilmController {
 	protected Logger logger = LoggerFactory.getLogger(FilmController.class);
+	private static String TMDB_SERVICE_URL="tmdb.service.url";
+	private static String NB_ACTEURS="batch.save.nb.acteurs";
+	@Autowired
+    Environment environment;
 	@Autowired
 	private IFilmService filmService;
 	@Autowired
 	protected IPersonneService personneService;
 	@Autowired
-    private TmdbServiceClient tmdbServiceClient;
-	@Autowired
     private ExcelFilmHandler excelFilmHandler;
+	/*
 	@Autowired
 	private JobLauncher jobLauncher;
     @Autowired
-    private Job importFilmsJob;
+    private Job importFilmsJob;*/
     @Autowired
     private MultipartFileUtil multipartFileUtil;
     @Value("${eureka.instance.instance-id}")
     private String instanceId;
     @Value("${limit.film.size}")
     private int limitFilmSize;
-
-    @RolesAllowed("user")
+    private final RestTemplate restTemplate;
+    private Map<Integer,Genres> genresById;
+	public Map<Integer,Genres> getGenresById() {
+		return genresById;
+	}
+    public FilmController(RestTemplateBuilder restTemplateBuilder) {
+    	restTemplate = restTemplateBuilder.build();
+	}
+    
+    @PostConstruct
+	public void loadGenres() throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		InputStream in = this.getClass().getClassLoader().getResourceAsStream("genres.json");
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.ISO_8859_1));
+		List<Genres> l = objectMapper.readValue(bufferedReader, new TypeReference<List<Genres>>(){});
+		genresById = new HashMap<Integer, Genres>(l.size());
+		for(Genres genres : l) {
+			genresById.put(genres.getId(), genres);
+		}
+	}
+    
+	@RolesAllowed("user")
 	@GetMapping("/films/byPersonne")
 	ResponseEntity<Personne> findPersonne(@RequestParam(name="nom",required = false) String nom) {
 		try {
@@ -155,11 +200,28 @@ public class FilmController {
 	}
 	@RolesAllowed("user")
 	@GetMapping("/films/tmdb/byTitre/{titre}")
-	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
+	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String title) throws ParseException {
+		List<Film> films = null;
 		try {
-			return ResponseEntity.ok(tmdbServiceClient.retrieveTmdbFilmListToDvdthequeFilmList(titre));
+			ResponseEntity<Set<Results>> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?title="+title, HttpMethod.GET, null, new ParameterizedTypeReference<Set<Results>>() {});
+			if(resultsResponse != null && CollectionUtils.isNotEmpty(resultsResponse.getBody())) {
+				Set<Results> results = resultsResponse.getBody();
+				films = new ArrayList<>(results.size());
+				Set<Long> tmdbIds = results.stream().map(r -> r.getId()).collect(Collectors.toSet());
+				Set<Long> tmdbFilmAlreadyInDvdthequeSet = filmService.findAllTmdbFilms(tmdbIds);
+				for(Results res : results) {
+					Film transformedFilm = transformTmdbFilmToDvdThequeFilm(null,res,tmdbFilmAlreadyInDvdthequeSet, false);
+					if(transformedFilm != null) {
+						films.add(transformedFilm);
+					}
+				}
+			}
+			if(CollectionUtils.isNotEmpty(films)) {
+				Collections.sort(films);
+			}
+			return ResponseEntity.ok(films);
 		}catch(Exception e) {
-			logger.error(format("an error occured while findTmdbFilmByTitre titre='%s' ", titre),e);
+			logger.error(format("an error occured while findTmdbFilmByTitre title='%s' ", title),e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -253,20 +315,141 @@ public class FilmController {
 	ResponseEntity<Film> replaceFilm(@RequestBody Film film,@PathVariable Long tmdbId) throws Exception {
 		try {
 			Film filmOptional = filmService.findFilm(film.getId());
-	
 			if(filmOptional==null) {
 				return ResponseEntity.notFound().build();
 			}
-			Film replacedFilm = tmdbServiceClient.replaceFilm(tmdbId, filmOptional);
-			if(replacedFilm == null) {
-				return ResponseEntity.badRequest().build();
+			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+tmdbId, Results.class);
+			Film toUpdateFilm = transformTmdbFilmToDvdThequeFilm(film,results, new HashSet<Long>(), true);
+			if(toUpdateFilm != null) {
+				toUpdateFilm.setOrigine(film.getOrigine());
+				filmService.updateFilm(toUpdateFilm);
+				return ResponseEntity.ok(toUpdateFilm);
 			}
-			return ResponseEntity.ok(replacedFilm);
+			return ResponseEntity.ok(toUpdateFilm);
 		} catch (Exception e) {
 			logger.error("an error occured while replacing film tmdbId="+tmdbId,e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	/**
+	 * create a dvdtheque Film based on a TMBD film
+	 * @param film
+	 * @param results
+	 * @param tmdbFilmAlreadyInDvdthequeSet
+	 * @param persistPersonne
+	 * @return
+	 * @throws ParseException
+	 */
+	public Film transformTmdbFilmToDvdThequeFilm(Film film,
+			final Results results,
+			final Set<Long> tmdbFilmAlreadyInDvdthequeSet,
+			final boolean persistPersonne) throws ParseException {
+		Film transformedfilm = new Film();
+		if(film != null && film.getId() != null) {
+			transformedfilm.setId(film.getId());
+			transformedfilm.setDateInsertion(film.getDateInsertion());
+		}
+		if(film == null) {
+			transformedfilm.setId(results.getId());
+		}
+		if(CollectionUtils.isNotEmpty(tmdbFilmAlreadyInDvdthequeSet) && tmdbFilmAlreadyInDvdthequeSet.contains(results.getId())) {
+			transformedfilm.setAlreadyInDvdtheque(true);
+		}
+		transformedfilm.setTitre(StringUtils.upperCase(results.getTitle()));
+		transformedfilm.setTitreO(StringUtils.upperCase(results.getOriginal_title()));
+		if(film != null && film.getDvd() != null) {
+			transformedfilm.setDvd(film.getDvd());
+		}
+		Date releaseDate = null;
+		try {
+			//releaseDate = retrieveTmdbFrReleaseDate(results.getId());
+			releaseDate = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+results.getId(), Date.class);
+		}catch(RestClientException e) {
+			logger.error(e.getMessage()+" for id="+results.getId());
+			SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.TMDB_DATE_PATTERN,Locale.FRANCE);
+			if(StringUtils.isNotEmpty(results.getRelease_date())) {
+				releaseDate = sdf.parse(results.getRelease_date());
+			}else {
+				releaseDate = sdf.parse("2000-01-01");
+			}
+		}
+		transformedfilm.setAnnee(retrieveYearFromReleaseDate(releaseDate));
+		transformedfilm.setDateSortie(DateUtils.clearDate(releaseDate));
+		transformedfilm.setPosterPath(environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL)+results.getPoster_path());
+		transformedfilm.setTmdbId(results.getId());
+		transformedfilm.setOverview(results.getOverview());
+		try {
+			retrieveAndSetCredits(persistPersonne, results, transformedfilm);
+		}catch(Exception e) {
+			logger.error(e.getMessage()+" for id="+results.getId()+" won't be displayed");
+			return null;
+		}
+		
+		transformedfilm.setRuntime(results.getRuntime());
+		List<Genres> genres = results.getGenres();
+		if(CollectionUtils.isNotEmpty(genres)){
+			for (Genres g : genres) {
+				Genres _g = this.genresById.get(g.getId());
+				if(_g != null) {
+					Genre genre = filmService.findGenre(_g.getId());
+					if(genre == null) {
+						genre = filmService.saveGenre(new Genre(_g.getId(),_g.getName()));
+					}else {
+						genre = filmService.attachToSession(genre);
+					}
+					transformedfilm.getGenres().add(genre);
+				}else {
+					logger.error("genre "+g.getName()+" not found in loaded genres");
+				}
+			}
+		}
+		transformedfilm.setVu(false);
+		if(StringUtils.isNotEmpty(results.getHomepage())) {
+			transformedfilm.setHomepage(results.getHomepage());
+		}
+		return transformedfilm;
+	}
+	private void retrieveAndSetCredits(final boolean persistPersonne, final Results results, final Film transformedfilm) {
+		Credits credits = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+results.getId(), Credits.class);
+		if(CollectionUtils.isNotEmpty(credits.getCast())) {
+			int i=1;
+			for(Cast cast : credits.getCast()) {
+				Personne personne = null;
+				if(!persistPersonne) {
+					personne = personneService.buildPersonne(StringUtils.upperCase(cast.getName()), environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL)+cast.getProfile_path());
+					personne.setId(Long.valueOf(cast.getCast_id()));
+				}else {
+					personne = personneService.createOrRetrievePersonne(StringUtils.upperCase(cast.getName()), environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL)+cast.getProfile_path());
+				}
+				transformedfilm.getActeurs().add(personne);
+				if(i++==Integer.parseInt(environment.getRequiredProperty(NB_ACTEURS))) {
+					break;
+				}
+			}
+		}
+		if(CollectionUtils.isNotEmpty(credits.getCrew())) {
+			List<Crew> crew = retrieveTmdbDirectors(credits);
+			for(Crew c : crew) {
+				Personne realisateur = null;
+				if(!persistPersonne) {
+					realisateur = personneService.buildPersonne(StringUtils.upperCase(c.getName()), null);
+					realisateur.setId(RandomUtils.nextLong());
+				}else {
+					realisateur = personneService.createOrRetrievePersonne(StringUtils.upperCase(c.getName()), null);
+				}
+				transformedfilm.getRealisateurs().add(realisateur);
+			}
+		}
+	}
+	public List<Crew> retrieveTmdbDirectors(final Credits credits) {
+		return credits.getCrew().stream().filter(cred -> cred.getJob().equalsIgnoreCase("Director")).collect(Collectors.toList());
+	}
+	private static int retrieveYearFromReleaseDate(final Date relDate) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(relDate);
+		return cal.get(Calendar.YEAR);
+	}
+	
 	@RolesAllowed("user")
 	@PutMapping("/films/update/{id}")
 	ResponseEntity<Film> updateFilm(@RequestBody Film film,@PathVariable Long id) {
@@ -316,13 +499,13 @@ public class FilmController {
 	@PutMapping("/films/retrieveImage/{id}")
 	ResponseEntity<Film> retrieveFilmImage(@PathVariable Long id) {
 		try {
-			Film filmOptional = filmService.findFilm(id);
-			if(filmOptional==null) {
+			Film film = filmService.findFilm(id);
+			if(film==null) {
 				return ResponseEntity.notFound().build();
 			}
-			tmdbServiceClient.retrieveFilmImage(filmOptional);
-			Film mergedFilm = filmService.updateFilm(filmOptional);
-			return ResponseEntity.ok(mergedFilm);
+			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+film.getTmdbId(), Results.class);
+			film.setPosterPath(environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL)+results.getPoster_path());
+			return ResponseEntity.ok(filmService.updateFilm(film));
 		} catch (Exception e) {
 			logger.error("an error occured while retrieving image for film id="+id,e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -331,11 +514,16 @@ public class FilmController {
 	@RolesAllowed("user")
 	@PutMapping("/films/retrieveAllImages")
 	ResponseEntity<Void> retrieveAllFilmImages() {
+		Results results = null;
 		try {
 			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS);
 			List<Film> films = filmService.findAllFilms(filmDisplayTypeParam);
 			for(Film film : films) {
-				tmdbServiceClient.retrieveFilmImagesWhenNotExist(film);
+				Boolean posterExists = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?posterPath="+film.getPosterPath(), Boolean.class);
+				if(!posterExists) {
+					results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+film.getTmdbId(), Results.class);
+					film.setPosterPath(environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL)+results.getPoster_path());
+				}
 				filmService.updateFilm(film);
 			}
 			return ResponseEntity.noContent().build();
@@ -347,17 +535,51 @@ public class FilmController {
 	@RolesAllowed("user")
 	@PutMapping("/films/save/{tmdbId}")
 	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
-		Film savedFilm;
+		Film filmToSave=null;
 		logger.info("saveFilm - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
-			savedFilm = tmdbServiceClient.saveTmbdFilm(tmdbId, filmOrigine);
-			if(savedFilm==null) {
+			if(this.filmService.checkIfTmdbFilmExists(tmdbId)) {
+				return ResponseEntity.noContent().build();
+			}
+			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+tmdbId, Results.class);
+			if(results != null) {
+				filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);
+				if(filmToSave != null) {
+					filmToSave.setId(null);
+					filmToSave.setOrigine(filmOrigine);
+					if(FilmOrigine.DVD.equals(filmOrigine)) {
+						Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), Integer.valueOf(2), null, null, DvdFormat.DVD, null);
+						dvd.setRipped(true);
+						dvd.setDateRip(new Date());
+						filmToSave.setDvd(dvd);
+					}
+					filmToSave.setDateInsertion(DateUtils.clearDate(new Date()));
+					Long id = filmService.saveNewFilm(filmToSave);
+					filmToSave.setId(id);
+				}
+			}
+			if(filmToSave==null) {
 				return ResponseEntity.notFound().build();
 			}
-			return ResponseEntity.ok(savedFilm);
+			return ResponseEntity.ok(filmToSave);
 		} catch (Exception e) {
 			logger.error("an error occured while saving film tmdbId="+tmdbId,e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@RolesAllowed("user")
+	@PostMapping("/films/buildDvd")
+	ResponseEntity<Dvd> buildDvd(@RequestBody DvdBuilder dvdBuilder) throws Exception {
+		try {
+			Dvd dvd = filmService.buildDvd(dvdBuilder.getFilmToSave().getAnnee(), 
+					dvdBuilder.getZonedvd(), 
+					null, 
+					null, 
+					StringUtils.isNotEmpty(dvdBuilder.getFilmFormat())?DvdFormat.valueOf(dvdBuilder.getFilmFormat()):null,dvdBuilder.getDateSortieDvd());
+			return ResponseEntity.ok(dvd);
+		} catch (Exception e) {
+			logger.error("an error occured while building dvd ",e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -375,6 +597,7 @@ public class FilmController {
 		logger.info(personne.toString());
 		return ResponseEntity.noContent().build();
 	}
+	/*
 	@RolesAllowed("user")
 	@PostMapping("/films/import")
 	ResponseEntity<Void> importFilmList(@RequestParam("file") MultipartFile file) {
@@ -425,5 +648,5 @@ public class FilmController {
 	    	logger.error("an error occured while exporting film list",e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-	}
+	}*/
 }

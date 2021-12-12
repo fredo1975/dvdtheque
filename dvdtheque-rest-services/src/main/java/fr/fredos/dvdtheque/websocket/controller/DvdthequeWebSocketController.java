@@ -12,7 +12,7 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
-import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.rest.dao.domain.Film;
 
 @Controller
 @ComponentScan({ "fr.fredos.dvdtheque.websocket" })
