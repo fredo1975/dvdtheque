@@ -79,11 +79,10 @@ import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 
 @RestController
 @ComponentScan({"fr.fredos.dvdtheque"})
-@RequestMapping("/dvdtheque")
-@Profile({ "prod1","prod2","dev1","dev2","local1","local2" })
+@RequestMapping("/dvdtheque-service")
 public class FilmController {
 	protected Logger logger = LoggerFactory.getLogger(FilmController.class);
-	private static String TMDB_SERVICE_URL="tmdb.service.url";
+	private static String TMDB_SERVICE_URL="tmdb-service.url";
 	private static String NB_ACTEURS="batch.save.nb.acteurs";
 	@Autowired
     Environment environment;
@@ -112,7 +111,7 @@ public class FilmController {
     public FilmController(RestTemplateBuilder restTemplateBuilder) {
     	restTemplate = restTemplateBuilder.build();
 	}
-    
+    /*
     @PostConstruct
 	public void loadGenres() throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -123,7 +122,7 @@ public class FilmController {
 		for(Genres genres : l) {
 			genresById.put(genres.getId(), genres);
 		}
-	}
+	}*/
     
 	@RolesAllowed("user")
 	@GetMapping("/films/byPersonne")

@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.integration.rest.controller;
+package fr.fredos.dvdtheque.rest.controller;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -27,15 +27,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 
-import fr.fredos.dvdtheque.rest.DvdthequeRestApplication;
 import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes={DvdthequeRestApplication.class},webEnvironment = WebEnvironment.RANDOM_PORT,
-				properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@Import({ ServletKeycloakAuthUnitTestingSupport.class})
+@Import({ServletKeycloakAuthUnitTestingSupport.class})
 @ActiveProfiles("test")
 public class FilmControllerForImportFilmListTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmControllerForImportFilmListTest.class);

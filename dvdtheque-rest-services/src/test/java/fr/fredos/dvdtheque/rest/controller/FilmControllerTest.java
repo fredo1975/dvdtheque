@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.integration.rest.controller;
+package fr.fredos.dvdtheque.rest.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -66,13 +66,10 @@ import fr.fredos.dvdtheque.rest.service.IPersonneService;
 import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {
-		fr.fredos.dvdtheque.rest.DvdthequeRestApplication.class,
-		HazelcastConfiguration.class},
-webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {HazelcastConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 //@ContextConfiguration
-@Import({ ServletKeycloakAuthUnitTestingSupport.class,/*RippedFlagTasklet.class,BatchImportFilmsConfiguration.class,*/MessageConsumer.class/*,RetrieveDateInsertionTasklet.class*/})
+@Import({ ServletKeycloakAuthUnitTestingSupport.class/*RippedFlagTasklet.class,BatchImportFilmsConfiguration.class,RetrieveDateInsertionTasklet.class*/})
 @ActiveProfiles("test")
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger 								logger = LoggerFactory.getLogger(FilmControllerTest.class);
@@ -92,7 +89,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			MediaType.APPLICATION_JSON.getSubtype(),
 			Charset.forName("utf8"));
 	
-	private static final String 					GET_ALL_FILMS_URI = "/dvdtheque/films/";
+	private static final String 					GET_ALL_FILMS_URI = "/dvdtheque-service/films/";
 	private static final String 					GET_CLEAN_ALL_FILMS_URI = "/dvdtheque/films/cleanAllfilms/";
 	private static final String 					GET_ALL_GENRES_URI = "/dvdtheque/films/genres/";
 	private static final String 					UPDATE_PERSONNE_URI = "/dvdtheque/personnes/byId/";

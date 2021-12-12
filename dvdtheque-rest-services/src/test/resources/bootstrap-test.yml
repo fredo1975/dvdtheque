@@ -114,3 +114,5 @@ keycloak:
     secret: 14d4618c-c599-450f-ac22-3e2cda1a39d5
   use-resource-role-mappings: true
   bearer-only: true
+tmdb-service:
+  url: http://localhost
