@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class FilmControllerForImportFilmListTest {
 	private static final String 					contentType = "text/plain";
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testImportFilmListFromCsv() throws Exception {
 		Resource resource = new ClassPathResource("ListeDVD.csv");
 		File file = resource.getFile();
@@ -66,7 +67,7 @@ public class FilmControllerForImportFilmListTest {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testImportFilmListFromExcel() throws Exception {
 		Resource resource = new ClassPathResource("ListeDVD.xlsx");
 		File file = resource.getFile();

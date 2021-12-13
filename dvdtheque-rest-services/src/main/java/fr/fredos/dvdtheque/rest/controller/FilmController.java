@@ -2,12 +2,18 @@ package fr.fredos.dvdtheque.rest.controller;
 
 import static java.lang.String.format;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -24,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
@@ -41,6 +46,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
@@ -69,7 +79,7 @@ import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 @RequestMapping("/dvdtheque-service")
 public class FilmController {
 	protected Logger logger = LoggerFactory.getLogger(FilmController.class);
-	private static String TMDB_SERVICE_URL="tmdb-service.url";
+	public static String TMDB_SERVICE_URL="tmdb-service.url";
 	private static String NB_ACTEURS="batch.save.nb.acteurs";
 	@Autowired
     Environment environment;
@@ -90,16 +100,13 @@ public class FilmController {
     private String instanceId;
     @Value("${limit.film.size}")
     private int limitFilmSize;
-    private final RestTemplate restTemplate;
+    @Autowired
+    private RestTemplate restTemplate;
     private Map<Integer,Genres> genresById;
 	public Map<Integer,Genres> getGenresById() {
 		return genresById;
 	}
-    public FilmController(RestTemplateBuilder restTemplateBuilder) {
-    	restTemplate = restTemplateBuilder.build();
-	}
-    /*
-    @PostConstruct
+    
 	public void loadGenres() throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream("genres.json");
@@ -109,8 +116,12 @@ public class FilmController {
 		for(Genres genres : l) {
 			genresById.put(genres.getId(), genres);
 		}
-	}*/
+	}
     
+	public FilmController() throws JsonParseException, JsonMappingException, IOException {
+		loadGenres();
+	}
+
 	@RolesAllowed("user")
 	@GetMapping("/films/byPersonne")
 	ResponseEntity<Personne> findPersonne(@RequestParam(name="nom",required = false) String nom) {
@@ -188,10 +199,10 @@ public class FilmController {
 	}
 	@RolesAllowed("user")
 	@GetMapping("/films/tmdb/byTitre/{titre}")
-	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String title) throws ParseException {
+	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		List<Film> films = null;
 		try {
-			ResponseEntity<Set<Results>> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?title="+title, HttpMethod.GET, null, new ParameterizedTypeReference<Set<Results>>() {});
+			ResponseEntity<Set<Results>> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?title="+titre, HttpMethod.GET, null, new ParameterizedTypeReference<Set<Results>>() {});
 			if(resultsResponse != null && CollectionUtils.isNotEmpty(resultsResponse.getBody())) {
 				Set<Results> results = resultsResponse.getBody();
 				films = new ArrayList<>(results.size());
@@ -209,7 +220,7 @@ public class FilmController {
 			}
 			return ResponseEntity.ok(films);
 		}catch(Exception e) {
-			logger.error(format("an error occured while findTmdbFilmByTitre title='%s' ", title),e);
+			logger.error(format("an error occured while findTmdbFilmByTitre titre='%s' ", titre),e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
