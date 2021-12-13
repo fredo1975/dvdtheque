@@ -5,8 +5,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,14 +18,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import javax.jms.MessageConsumer;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.hamcrest.core.Is;
+import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -35,16 +38,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Import;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.client.ExpectedCount;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
@@ -85,6 +92,12 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private ServletKeycloakAuthUnitTestingSupport 	keycloak;
 	@Autowired
 	private MockMvcSupport 							mockMvcSupport;
+	
+	@Autowired
+    private RestTemplate 							restTemplate;
+
+    private MockRestServiceServer 					mockServer;
+	
 	public static final MediaType 					APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(),
 			Charset.forName("utf8"));
@@ -116,6 +129,11 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String 					POSTER_PATH = "http://image.tmdb.org/t/p/w500/q31SmDy9UvSPIuTz65XsHuPwhuS.jpg";
 	public static final String 						SHEET_NAME = "Films";
 	
+	@Before
+    public void init() {
+        mockServer = MockRestServiceServer.createServer(restTemplate);
+    }
+	
 	@BeforeEach()
 	public void setUp() throws Exception {
 		filmService.cleanAllFilms();
@@ -146,48 +164,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	//@WithMockKeycloackAuth
 	public void findAllActeurs() throws Exception {
 		/*
-		SecurityContext context = SecurityContextHolder.getContext();
-		Authentication authentication = context.getAuthentication();
-		
-		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
-		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
-		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
-				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
-				.setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
-				.setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD)
-				.setGenre1(genre1).setGenre2(genre2)
-				.setZone(Integer.valueOf(2))
-				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
-		Long filmId = filmService.saveNewFilm(film);
-		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
-		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS, 0,FilmOrigine.DVD);
-		List<Personne> allActeur = filmService.findAllActeurs(filmDisplayTypeParam);
-		assertNotNull(allActeur);
-		assertNotNull("allActeur size should be 3", allActeur);
-		assertTrue("allActeur size should be 3", allActeur.size() == 3);
-		Personne acteur1 = allActeur.get(0);
-		Personne acteur2 = allActeur.get(1);
-		Personne acteur3 = allActeur.get(2);*/
-		
-		/*
-		ResultActions resultActions = mockMvc
-				.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_URI).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(FilmBuilder.ACT1_TMBD_ID_844)))
-				.andExpect(MockMvcResultMatchers.jsonPath("$[1].nom", Is.is(FilmBuilder.ACT1_TMBD_ID_844)))
-				.andExpect(MockMvcResultMatchers.jsonPath("$[2].nom", Is.is(FilmBuilder.ACT1_TMBD_ID_844)));
-				*/
-		
-		/*
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
 		GrantedAuthority aut = new GrantedAuthority() {
 			private static final long serialVersionUID = 1L;
@@ -197,8 +173,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			}
 		};
 		authorities.add(aut);
-		
-		
 		
 		api
 		.with(keycloak.keycloakAuthenticationToken().authorities(authorities).accessToken(token -> token.setPreferredUsername("fredo")))
@@ -1009,6 +983,11 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		
+        mockServer.expect(ExpectedCount.once(), 
+          requestTo(new URI("http://localhost:8080/employee/E001")))
+          .andExpect(method(HttpMethod.GET))
+          .andRespond(withSuccess("{message : 'under construction'}", MediaType.APPLICATION_JSON).body(mapper.writeValueAsString(POSTER_PATH)));        
+        
 		mockMvcSupport
 		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
 		.perform(MockMvcRequestBuilders.put(RETRIEVE_ALL_FILM_IMAGE_URI))
