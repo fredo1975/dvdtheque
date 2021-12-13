@@ -1,6 +1,6 @@
 spring:
   application:
-    name: dvdtheque-allocine-service
+    name: dvdtheque-tmdb-service
   cloud:
     config:
       fail-fast: true

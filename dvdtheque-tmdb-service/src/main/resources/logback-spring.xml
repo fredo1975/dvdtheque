@@ -14,7 +14,7 @@
  
     <appender name="RollingFile"
         class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOGS}/dvdtheque-allocine-service.log</file>
+        <file>${LOGS}/dvdtheque-tmdb-service.log</file>
         <encoder
             class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
@@ -23,7 +23,7 @@
         <rollingPolicy
             class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily and when the file reaches 10 MegaBytes -->
-            <fileNamePattern>${LOGS}/archived/dvdtheque-allocine-service-logger-%d{yyyy-MM-dd}.%i.log
+            <fileNamePattern>${LOGS}/archived/dvdtheque-tmdb-service-logger-%d{yyyy-MM-dd}.%i.log
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -39,7 +39,7 @@
     </root>
  
     <!-- LOG "fr.fredos.dvdtheque.web.controller*" at TRACE level -->
-    <logger name="fr.fredos.dvdtheque.allocine" level="info" additivity="false">
+    <logger name="fr.fredos.dvdtheque.tmdb" level="info" additivity="false">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </logger>
