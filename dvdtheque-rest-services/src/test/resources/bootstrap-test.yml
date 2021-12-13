@@ -116,3 +116,7 @@ keycloak:
   bearer-only: true
 tmdb-service:
   url: http://localhost
+  byTitle: /retrieveTmdbFilmListByTitle/byTitle
+  release-date: /retrieveTmdbFrReleaseDate/byTmdbId
+  get-credits: /retrieveTmdbCredits/byTmdbId
+  get-results: /retrieveTmdbFilm/byTmdbId

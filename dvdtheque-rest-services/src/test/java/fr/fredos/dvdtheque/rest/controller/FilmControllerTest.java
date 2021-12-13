@@ -27,7 +27,6 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.hamcrest.core.Is;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -40,6 +39,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -106,6 +106,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
     private RestTemplate 							restTemplate;
 
     private MockRestServiceServer 					mockServer;
+    
+    @Autowired
+    private Environment 							environment;
 	
 	public static final MediaType 					APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(),
@@ -575,18 +578,19 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		assertNotNull(filmId);
 		
-		
 		final Set<Results> results = new HashSet<>();
 		Results res = new Results();
 		res.setTitle(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		res.setId(film.getTmdbId());
 		results.add(res);
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?title="+FilmBuilder.TITRE_FILM_TMBD_ID_844)))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_BY_TITLE)+"?title="+FilmBuilder.TITRE_FILM_TMBD_ID_844)))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(results), MediaType.APPLICATION_JSON));
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_RELEASE_DATE)+"?tmdbId="+res.getId())))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString("2015-08-01T23:00:00.000+00:00"), MediaType.APPLICATION_JSON));
 		Credits credits = new Credits();
@@ -596,7 +600,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		crew.setJob("Director");
 		credits.setCrew(Lists.newArrayList(crew));
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+							+environment.getRequiredProperty(FilmController.TMDB_SERVICE_CREDITS)+"?tmdbId="+res.getId())))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		
@@ -668,7 +673,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(allRealisateur);
 		if (CollectionUtils.isNotEmpty(allRealisateur)) {
 			Personne realisateur = allRealisateur.get(0);
-			
 			ResultActions resultActions = mockMvcSupport
 			.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
 			.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_URI)).andExpect(MockMvcResultMatchers.status().isOk())
@@ -882,19 +886,22 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		casts.add(cast3);
 		credits.setCast(casts);
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_RESULTS)+"?tmdbId="+res.getId())))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(res), MediaType.APPLICATION_JSON));
-		
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_RELEASE_DATE)+"?tmdbId="+res.getId())))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString("2007-03-21T00:00:00.000+00:00"), MediaType.APPLICATION_JSON));
 		
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_CREDITS)+"?tmdbId="+res.getId())))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
+		
 		
 		mockMvcSupport
 		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
@@ -1276,17 +1283,20 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		casts.add(cast3);
 		credits.setCast(casts);
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_RESULTS)+"?tmdbId="+res.getId())))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(res), MediaType.APPLICATION_JSON));
 		
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_RELEASE_DATE)+"?tmdbId="+res.getId())))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString("2004-05-20T00:00:00.000+00:00"), MediaType.APPLICATION_JSON));
 		
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_CREDITS)+"?tmdbId="+res.getId())))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		
@@ -1338,17 +1348,20 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		credits.setCast(casts);
 		
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_RESULTS)+"?tmdbId="+res.getId())))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(res), MediaType.APPLICATION_JSON));
 		
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_RELEASE_DATE)+"?tmdbId="+res.getId())))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString("2007-03-21T00:00:00.000+00:00"), MediaType.APPLICATION_JSON));
 		
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_CREDITS)+"?tmdbId="+res.getId())))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		

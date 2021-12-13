@@ -80,6 +80,10 @@ import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 public class FilmController {
 	protected Logger logger = LoggerFactory.getLogger(FilmController.class);
 	public static String TMDB_SERVICE_URL="tmdb-service.url";
+	public static String TMDB_SERVICE_BY_TITLE="tmdb-service.byTitle";
+	public static String TMDB_SERVICE_RELEASE_DATE="tmdb-service.release-date";
+	public static String TMDB_SERVICE_CREDITS="tmdb-service.get-credits";
+	public static String TMDB_SERVICE_RESULTS="tmdb-service.get-results";
 	private static String NB_ACTEURS="batch.save.nb.acteurs";
 	@Autowired
     Environment environment;
@@ -202,7 +206,8 @@ public class FilmController {
 	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		List<Film> films = null;
 		try {
-			ResponseEntity<Set<Results>> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?title="+titre, HttpMethod.GET, null, new ParameterizedTypeReference<Set<Results>>() {});
+			ResponseEntity<Set<Results>> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
+					+environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE)+"?title="+titre, HttpMethod.GET, null, new ParameterizedTypeReference<Set<Results>>() {});
 			if(resultsResponse != null && CollectionUtils.isNotEmpty(resultsResponse.getBody())) {
 				Set<Results> results = resultsResponse.getBody();
 				films = new ArrayList<>(results.size());
@@ -317,7 +322,7 @@ public class FilmController {
 			if(filmOptional==null) {
 				return ResponseEntity.notFound().build();
 			}
-			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+tmdbId, Results.class);
+			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+environment.getRequiredProperty(TMDB_SERVICE_RESULTS)+"?tmdbId="+tmdbId, Results.class);
 			Film toUpdateFilm = transformTmdbFilmToDvdThequeFilm(film,results, new HashSet<Long>(), true);
 			if(toUpdateFilm != null) {
 				toUpdateFilm.setOrigine(film.getOrigine());
@@ -362,7 +367,7 @@ public class FilmController {
 		Date releaseDate = null;
 		try {
 			//releaseDate = retrieveTmdbFrReleaseDate(results.getId());
-			releaseDate = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+results.getId(), Date.class);
+			releaseDate = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+environment.getRequiredProperty(TMDB_SERVICE_RELEASE_DATE)+"?tmdbId="+results.getId(), Date.class);
 		}catch(RestClientException e) {
 			logger.error(e.getMessage()+" for id="+results.getId());
 			SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.TMDB_DATE_PATTERN,Locale.FRANCE);
@@ -409,7 +414,7 @@ public class FilmController {
 		return transformedfilm;
 	}
 	private void retrieveAndSetCredits(final boolean persistPersonne, final Results results, final Film transformedfilm) {
-		Credits credits = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+results.getId(), Credits.class);
+		Credits credits = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+environment.getRequiredProperty(TMDB_SERVICE_CREDITS)+"?tmdbId="+results.getId(), Credits.class);
 		if(CollectionUtils.isNotEmpty(credits.getCast())) {
 			int i=1;
 			for(Cast cast : credits.getCast()) {
@@ -541,7 +546,8 @@ public class FilmController {
 			if(this.filmService.checkIfTmdbFilmExists(tmdbId)) {
 				return ResponseEntity.noContent().build();
 			}
-			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+tmdbId, Results.class);
+			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)
+					+environment.getRequiredProperty(FilmController.TMDB_SERVICE_RESULTS)+"?tmdbId="+tmdbId, Results.class);
 			if(results != null) {
 				filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);
 				if(filmToSave != null) {
