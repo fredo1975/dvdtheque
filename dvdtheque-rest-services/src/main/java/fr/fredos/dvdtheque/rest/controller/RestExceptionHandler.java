@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -15,11 +17,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import fr.fredos.dvdtheque.rest.error.ApiError;
+import fr.fredos.dvdtheque.common.api.error.ApiError;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+	protected Logger logger = LoggerFactory.getLogger(RestExceptionHandler.class);
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -34,15 +37,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		apiError.setTimestamp(LocalDateTime.now());
 		return buildResponseEntity(apiError);
 	}
-	/*
+	
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<Object> handleServerError(Exception ex) {
+		logger.error("handleServerError",ex);
 		ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
 		apiError.setMessage(ex.getMessage());
 		apiError.setTimestamp(LocalDateTime.now());
 		apiError.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 		return buildResponseEntity(apiError);
-	}*/
+	}
 	private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
 		return new ResponseEntity<>(apiError, apiError.getStatus());
 	}

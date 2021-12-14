@@ -42,7 +42,7 @@ import fr.fredos.dvdtheque.common.tmdb.model.SearchResults;
 import fr.fredos.dvdtheque.common.utils.DateUtils;
 
 @RestController
-@RequestMapping("/tmdb-service")
+@RequestMapping("/dvdtheque-tmdb-service")
 public class TmdbServiceController {
 	protected Logger logger = LoggerFactory.getLogger(TmdbServiceController.class);
 	private static String TMDB_SEARCH_MOVIE_QUERY="themoviedb.search.movie.query";
