@@ -32,7 +32,7 @@
 		<java.version>11</java.version>
 		<keycloak.version>15.0.2</keycloak.version>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
-		<spring-cloud.dependency.version>2020.0.3</spring-cloud.dependency.version>
+		<spring-cloud.dependency.version>2020.0.4</spring-cloud.dependency.version>
 		<activemq.version>5.15.10</activemq.version>
 		<spring-boot-admin.version>2.3.0</spring-boot-admin.version>
 	</properties>
