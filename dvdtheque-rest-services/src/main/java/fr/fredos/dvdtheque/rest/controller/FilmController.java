@@ -33,8 +33,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -206,8 +208,13 @@ public class FilmController {
 	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		List<Film> films = null;
 		try {
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			ResponseEntity<Set<Results>> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
-					+environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE)+"?title="+titre, HttpMethod.GET, null, new ParameterizedTypeReference<Set<Results>>() {});
+					+environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE)+"?title="+titre, 
+					HttpMethod.GET, 
+					null, 
+					new ParameterizedTypeReference<Set<Results>>() {});
 			if(resultsResponse != null && CollectionUtils.isNotEmpty(resultsResponse.getBody())) {
 				Set<Results> results = resultsResponse.getBody();
 				films = new ArrayList<>(results.size());
