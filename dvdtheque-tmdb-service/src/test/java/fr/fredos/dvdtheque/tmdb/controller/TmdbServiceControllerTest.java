@@ -7,8 +7,6 @@ import java.nio.charset.Charset;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @ActiveProfiles("test")
 @WithMockUser(roles = "user")
 public class TmdbServiceControllerTest {
-	protected Logger 							logger = LoggerFactory.getLogger(TmdbServiceControllerTest.class);
+	//protected Logger 							logger = LoggerFactory.getLogger(TmdbServiceControllerTest.class);
 	public static final String 					TMDB_BASE_URI = "/dvdtheque-tmdb-service/";
 	public static final String 					SEARCH_BY_TMDB_ID = TMDB_BASE_URI + "/retrieveTmdbFilm/byTmdbId";
 	public static final String 					SEARCH_REL_DATE_BY_TMDB_ID = TMDB_BASE_URI + "/retrieveTmdbFrReleaseDate/byTmdbId";

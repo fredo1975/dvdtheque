@@ -13,19 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
-import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 
 import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
@@ -33,8 +31,8 @@ import fr.fredos.dvdtheque.rest.service.IFilmService;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@Import({ServletKeycloakAuthUnitTestingSupport.class})
 @ActiveProfiles("test")
+@WithMockUser(roles = "user")
 public class FilmControllerForImportFilmListTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmControllerForImportFilmListTest.class);
 	private static final String 					GET_ALL_FILMS_URI = "/dvdtheque/films/";
@@ -43,9 +41,7 @@ public class FilmControllerForImportFilmListTest {
 	@Autowired
 	ExcelFilmHandler 								excelFilmHandler;
 	@Autowired
-	private ServletKeycloakAuthUnitTestingSupport 	keycloak;
-	@Autowired
-	private MockMvcSupport 							api;
+	private MockMvc 								api;
 	private static final String 					IMPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "import";
 	private static final String 					contentType = "text/plain";
 	
@@ -59,7 +55,6 @@ public class FilmControllerForImportFilmListTest {
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(IMPORT_FILM_LIST_URI)
 				.file(mockMultipartFile);
 		api
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
 		.perform(builder)
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
@@ -76,7 +71,6 @@ public class FilmControllerForImportFilmListTest {
 				.file(mockMultipartFile);
 		
 		api
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
 		.perform(builder)
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful()).andReturn();
