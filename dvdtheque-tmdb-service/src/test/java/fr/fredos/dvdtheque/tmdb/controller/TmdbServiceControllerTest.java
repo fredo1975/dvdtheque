@@ -3,7 +3,6 @@ package fr.fredos.dvdtheque.tmdb.controller;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.Charset;
-import java.util.function.Consumer;
 
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
@@ -14,61 +13,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@WithMockUser(username = "fredo", roles = "user")
+@WithMockUser(roles = "user")
 public class TmdbServiceControllerTest {
-	protected Logger 								logger = LoggerFactory.getLogger(TmdbServiceControllerTest.class);
-	private static final String 					TMDB_BASE_URI = "/dvdtheque-tmdb-service/";
-	private static final String 					SEARCH_BY_TMDB_ID = TMDB_BASE_URI + "/retrieveTmdbFilm/byTmdbId";
-	private static final String 					SEARCH_REL_DATE_BY_TMDB_ID = TMDB_BASE_URI + "/retrieveTmdbFrReleaseDate/byTmdbId";
-	private static final String 					SEARCH_CREDITS_BY_TMDB_ID = TMDB_BASE_URI + "/retrieveTmdbCredits/byTmdbId";
-	private static final String 					SEARCH_RESULTS_BY_TITLE = TMDB_BASE_URI + "/retrieveTmdbFilmListByTitle/byTitle";
-	private static final String 					PROFILE_IMAGE_EXISTS_BY_POSTER_PATH = TMDB_BASE_URI + "/checkIfProfileImageExists/byPosterPath";
-	private static final String 					POSTER_IMAGE_EXISTS_BY_POSTER_PATH = TMDB_BASE_URI + "/checkIfPosterExists/byPosterPath";
-	private static final String 					TITLE_300 = "300";
-	private static final String 					POSTER_PATH_CRUELLA = "http://image.tmdb.org/t/p/w500/iXZUPOlWwifW73ObGoSCvZ5qVSQ.jpg";
-	private static final String 					POSTER_PATH_EMMA_STONE = "http://image.tmdb.org/t/p/w500/2hwXbPW2ffnXUe1Um0WXHG0cTwb.jpg";
+	protected Logger 							logger = LoggerFactory.getLogger(TmdbServiceControllerTest.class);
+	public static final String 					TMDB_BASE_URI = "/dvdtheque-tmdb-service/";
+	public static final String 					SEARCH_BY_TMDB_ID = TMDB_BASE_URI + "/retrieveTmdbFilm/byTmdbId";
+	public static final String 					SEARCH_REL_DATE_BY_TMDB_ID = TMDB_BASE_URI + "/retrieveTmdbFrReleaseDate/byTmdbId";
+	public static final String 					SEARCH_CREDITS_BY_TMDB_ID = TMDB_BASE_URI + "/retrieveTmdbCredits/byTmdbId";
+	public static final String 					SEARCH_RESULTS_BY_TITLE = TMDB_BASE_URI + "/retrieveTmdbFilmListByTitle/byTitle";
+	public static final String 					PROFILE_IMAGE_EXISTS_BY_POSTER_PATH = TMDB_BASE_URI + "/checkIfProfileImageExists/byPosterPath";
+	public static final String 					POSTER_IMAGE_EXISTS_BY_POSTER_PATH = TMDB_BASE_URI + "/checkIfPosterExists/byPosterPath";
+	public static final String 					TITLE_300 = "300";
+	public static final String 					POSTER_PATH_CRUELLA = "http://image.tmdb.org/t/p/w500/iXZUPOlWwifW73ObGoSCvZ5qVSQ.jpg";
+	public static final String 					POSTER_PATH_EMMA_STONE = "http://image.tmdb.org/t/p/w500/2hwXbPW2ffnXUe1Um0WXHG0cTwb.jpg";
 	
 	@Autowired
-	private MockMvc 								mvc;
-	public static final MediaType 					APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+	private MockMvc 							mvc;
+	public static final MediaType 				APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	
-	public static Long 								TMDB_ID_1 = Long.valueOf(1271);
-	/*
-	@MockBean
-    JwtDecoder 										jwtDecoder;
-	
-	private Jwt jwt() {
-        return new Jwt("token", null, null,
-                Map.of("alg", "none"), Map.of("realm_access", "betsy"));
-    }*/
-	@Autowired
-    private WebApplicationContext 					context;
-	
-    private Consumer<HttpHeaders> addJwt(Jwt jwt) {
-        return headers -> headers.setBearerAuth(jwt.getTokenValue());
-    }
-    
+	public static Long 							TMDB_ID_1 = Long.valueOf(1271);
 	
 	@Test
 	public void retrieveTmdbFilm() throws Exception {
-		/*Jwt jwt = jwt();
-		when(this.jwtDecoder.decode("")).thenReturn(jwt);*/
-		Consumer<HttpHeaders> headers = addJwt(null);
 		mvc.perform(MockMvcRequestBuilders.get(SEARCH_BY_TMDB_ID).param("tmdbId", Long.toString(TMDB_ID_1))
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -76,8 +54,6 @@ public class TmdbServiceControllerTest {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.poster_path", Is.is("/q31SmDy9UvSPIuTz65XsHuPwhuS.jpg")))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.original_title", Is.is("300")))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.title", Is.is("300")));
-		
-		
 	}
 	
 	@Test
