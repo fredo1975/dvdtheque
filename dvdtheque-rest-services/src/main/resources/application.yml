@@ -6,7 +6,12 @@ spring:
       fail-fast: true
 logging:
   level:
-    root: info      
+    org:
+        springframework:
+          cloud:
+            openfeign: TRACE
+          security:
+            web: TRACE
 management:
   endpoints:
     web:

@@ -4,13 +4,22 @@ logging:
   level:
     org:
         springframework:
+          cloud:
+            openfeign: TRACE
           test: TRACE
           security:
             web: TRACE
             
 spring:
-  security:  
-    oauth2:  
+  security:
+    oauth2:
+      client:
+        client-id: car-client
+        client-secret: 123456
+        grant-type: client_credentials
+        access-token-uri: http://fake/oauth/token
+        scope:
+          - all
       resourceserver:  
         jwt:  
           jwk-set-uri: http://fake
@@ -29,6 +38,15 @@ spring:
     job:
       enabled: false
   cloud:
+#    discovery:
+#      client:
+#        simple:
+#          instances:
+#            dvdtheque-tmdb-service[0]:
+#              uri: http://localhost:8081
+    loadbalancer:
+      ribbon:
+        enabled: false
     config:
       enabled: false
     stream:

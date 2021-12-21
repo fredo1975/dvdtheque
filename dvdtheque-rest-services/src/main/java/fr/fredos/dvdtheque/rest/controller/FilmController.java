@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,11 +34,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,6 +52,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -88,6 +96,8 @@ public class FilmController {
 	public static String TMDB_SERVICE_RESULTS="tmdb-service.get-results";
 	private static String NB_ACTEURS="batch.save.nb.acteurs";
 	@Autowired
+	private TmdbServiceFeignClient tmdbServiceFeignClient;
+	@Autowired
     Environment environment;
 	@Autowired
 	private IFilmService filmService;
@@ -112,7 +122,9 @@ public class FilmController {
 	public Map<Integer,Genres> getGenresById() {
 		return genresById;
 	}
-    
+	@Autowired
+	private AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager;
+
 	public void loadGenres() throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream("genres.json");
@@ -127,7 +139,11 @@ public class FilmController {
 	public FilmController() throws JsonParseException, JsonMappingException, IOException {
 		loadGenres();
 	}
-
+	@GetMapping("/whoami")
+	@ResponseBody
+	public Authentication whoami(Authentication auth) {
+		return auth;
+	}
 	@RolesAllowed("user")
 	@GetMapping("/films/byPersonne")
 	ResponseEntity<Personne> findPersonne(@RequestParam(name="nom",required = false) String nom) {
@@ -208,13 +224,50 @@ public class FilmController {
 	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		List<Film> films = null;
 		try {
+			/*HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);*/
+			/*
+			Set<Results> results = tmdbServiceFeignClient.retrieveTmdbFilmListByTitle(titre);
+			if(CollectionUtils.isNotEmpty(results)) {
+				films = new ArrayList<>(results.size());
+				Set<Long> tmdbIds = results.stream().map(r -> r.getId()).collect(Collectors.toSet());
+				Set<Long> tmdbFilmAlreadyInDvdthequeSet = filmService.findAllTmdbFilms(tmdbIds);
+				for(Results res : results) {
+					Film transformedFilm = transformTmdbFilmToDvdThequeFilm(null,res,tmdbFilmAlreadyInDvdthequeSet, false);
+					if(transformedFilm != null) {
+						films.add(transformedFilm);
+					}
+				}
+			}*/
+			// Build an OAuth2 request for the keykloak provider
+			OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
+					.principal("gateway_user")
+					.build();
+			
+			// Perform the actual authorization request using the authorized client service and authorized client
+			// manager. This is where the JWT is retrieved from the Okta servers.
+			OAuth2AuthorizedClient authorizedClient = this.authorizedClientServiceAndManager.authorize(authorizeRequest);
+
+			// Get the token from the authorized client object
+			OAuth2AccessToken accessToken = Objects.requireNonNull(authorizedClient).getAccessToken();
+
+			logger.info("Issued: " + accessToken.getIssuedAt().toString() + ", Expires:" + accessToken.getExpiresAt().toString());
+			logger.info("Scopes: " + accessToken.getScopes().toString());
+			logger.info("Token: " + accessToken.getTokenValue());
+
+			////////////////////////////////////////////////////
+			//  STEP 2: Use the JWT and call the service
+			////////////////////////////////////////////////////
+
+			// Add the JWT to the RestTemplate headers
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			ResponseEntity<Set<Results>> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
-					+environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE)+"?title="+titre, 
-					HttpMethod.GET, 
-					null, 
-					new ParameterizedTypeReference<Set<Results>>() {});
+			//headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
+			headers.add("Cookie", "JSESSIONID=E40BE1E1BD069EE2D3D65D413C75812C; SESSION=c4f4a3ce-3470-4913-a919-aa7ba0eb7b8c");
+			//ResponseEntity<Set<Results>> resultsResponse = tmdbServiceFeignClient.retrieveTmdbFilmListByTitle(titre);
+	        RestTemplate _restTemplate = new RestTemplate();
+			ResponseEntity<Set<Results>> resultsResponse = _restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
+					+environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE)+"?title="+titre, HttpMethod.GET, new HttpEntity(headers), new ParameterizedTypeReference<Set<Results>>() {});
+			
 			if(resultsResponse != null && CollectionUtils.isNotEmpty(resultsResponse.getBody())) {
 				Set<Results> results = resultsResponse.getBody();
 				films = new ArrayList<>(results.size());
@@ -514,9 +567,12 @@ public class FilmController {
 			if(film==null) {
 				return ResponseEntity.notFound().build();
 			}
-			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+film.getTmdbId(), Results.class);
-			film.setPosterPath(environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL)+results.getPoster_path());
-			return ResponseEntity.ok(filmService.updateFilm(film));
+			ResponseEntity<Results> resultsResponse = tmdbServiceFeignClient.retrieveTmdbFilm(film.getTmdbId());
+			if(resultsResponse != null && resultsResponse.getBody() != null) {
+				film.setPosterPath(environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL)+resultsResponse.getBody().getPoster_path());
+				return ResponseEntity.ok(filmService.updateFilm(film));
+			}
+			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
 			logger.error("an error occured while retrieving image for film id="+id,e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

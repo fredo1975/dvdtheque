@@ -144,6 +144,7 @@ public class TmdbServiceController {
 				searchResults = retrieveTmdbSearchResults(title, firstPage);
 				addResultsToSet(results, searchResults);
 			}
+			logger.debug(ResponseEntity.ok(results).toString());
 			return ResponseEntity.ok(results);
 		}catch (RestClientException e) {
 			logger.error(format("an error occured while retrieveTmdbFilmListByTitle title='%s' ", title),e);
