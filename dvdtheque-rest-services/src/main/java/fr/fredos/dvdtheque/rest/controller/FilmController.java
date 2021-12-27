@@ -38,7 +38,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
@@ -122,6 +121,7 @@ public class FilmController {
 	public Map<Integer,Genres> getGenresById() {
 		return genresById;
 	}
+	
 	@Autowired
 	private AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager;
 
@@ -224,21 +224,6 @@ public class FilmController {
 	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		List<Film> films = null;
 		try {
-			/*HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);*/
-			/*
-			Set<Results> results = tmdbServiceFeignClient.retrieveTmdbFilmListByTitle(titre);
-			if(CollectionUtils.isNotEmpty(results)) {
-				films = new ArrayList<>(results.size());
-				Set<Long> tmdbIds = results.stream().map(r -> r.getId()).collect(Collectors.toSet());
-				Set<Long> tmdbFilmAlreadyInDvdthequeSet = filmService.findAllTmdbFilms(tmdbIds);
-				for(Results res : results) {
-					Film transformedFilm = transformTmdbFilmToDvdThequeFilm(null,res,tmdbFilmAlreadyInDvdthequeSet, false);
-					if(transformedFilm != null) {
-						films.add(transformedFilm);
-					}
-				}
-			}*/
 			// Build an OAuth2 request for the keykloak provider
 			OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
 					.principal("gateway_user")
@@ -261,11 +246,13 @@ public class FilmController {
 
 			// Add the JWT to the RestTemplate headers
 			HttpHeaders headers = new HttpHeaders();
-			headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
-			//headers.add("Cookie", "JSESSIONID=E40BE1E1BD069EE2D3D65D413C75812C; SESSION=c4f4a3ce-3470-4913-a919-aa7ba0eb7b8c");
+			//headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
+			headers.add("Cookie", "SESSION=ac5d2b44-2681-4eeb-91af-e33bcb5c945c");
 			//ResponseEntity<Set<Results>> resultsResponse = tmdbServiceFeignClient.retrieveTmdbFilmListByTitle(titre);
+
 	        RestTemplate _restTemplate = new RestTemplate();
-			ResponseEntity<Set<Results>> resultsResponse = _restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
+	        
+			ResponseEntity<Set<Results>> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
 					+environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE)+"?title="+titre, HttpMethod.GET, new HttpEntity(headers), new ParameterizedTypeReference<Set<Results>>() {});
 			
 			if(resultsResponse != null && CollectionUtils.isNotEmpty(resultsResponse.getBody())) {

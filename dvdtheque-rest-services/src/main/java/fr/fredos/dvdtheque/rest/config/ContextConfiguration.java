@@ -26,6 +26,13 @@ public class ContextConfiguration {
 			MediaType.APPLICATION_JSON.getSubtype(), 
 			Charset.forName("utf8"));
 	
+	/*
+	@Bean
+	public RestTemplate restTemplate() {
+		RestTemplate restTemplate = new RestTemplate();
+	    return restTemplate;
+	}*/
+	
 	@Bean
 	public RestTemplate restTemplate() {
 		RestTemplate restTemplate = new RestTemplate(Arrays.asList(
@@ -36,10 +43,10 @@ public class ContextConfiguration {
 	// Create the Okta client registration
     @Bean
     ClientRegistration gatewayClientRegistration(
-            @Value("${spring.security.oauth2.client.provider.keycloak.token-uri}") String token_uri,
-            @Value("${spring.security.oauth2.client.registration.keycloak.client-id}") String client_id,
-            @Value("${spring.security.oauth2.client.registration.keycloak.client-secret}") String client_secret,
-            @Value("${spring.security.oauth2.client.registration.keycloak.authorization-grant-type}") String authorizationGrantType
+            @Value("${spring.security.client.registration.keycloak.token-uri}") String token_uri,
+            @Value("${spring.security.client.registration.keycloak.client-id}") String client_id,
+            @Value("${spring.security.client.registration.keycloak.client-secret}") String client_secret,
+            @Value("${spring.security.client.registration.keycloak.authorization-grant-type}") String authorizationGrantType
     ) {
         return ClientRegistration
                 .withRegistrationId("keycloak")

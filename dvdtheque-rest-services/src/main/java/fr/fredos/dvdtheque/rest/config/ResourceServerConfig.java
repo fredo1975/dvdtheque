@@ -28,8 +28,16 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.sessionManagement()
 	    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
+		// Require authentication for all requests
+		http.authorizeRequests().anyRequest().authenticated();
+		// Allow showing pages within a frame
+		http.headers().frameOptions().sameOrigin();
+		/*
+		http.sessionManagement()
+	    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests().anyRequest().authenticated().and().oauth2ResourceServer()
-				.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()));
+				.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()));*/
 	}
 
 	private Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter() {
@@ -65,22 +73,3 @@ class UsernameSubClaimAdapter implements Converter<Map<String, Object>, Map<Stri
 	}
 
 }
-
-/*
- * @Bean public JwtDecoder jwtDecoderByIssuerUri(OAuth2ResourceServerProperties
- * properties) { String issuerUri = properties.getJwt().getIssuerUri();
- * NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder)
- * JwtDecoders.fromIssuerLocation(issuerUri); // Use preferred_username from
- * claims as authentication name, instead of UUID // subject
- * jwtDecoder.setClaimSetConverter(new UsernameSubClaimAdapter()); return
- * jwtDecoder; }
- * 
- * class UsernameSubClaimAdapter implements Converter<Map<String, Object>,
- * Map<String, Object>> { private final MappedJwtClaimSetConverter delegate =
- * MappedJwtClaimSetConverter .withDefaults(Collections.emptyMap());
- * 
- * @Override public Map<String, Object> convert(Map<String, Object> claims) {
- * Map<String, Object> convertedClaims = this.delegate.convert(claims); String
- * username = (String) convertedClaims.get("preferred_username");
- * convertedClaims.put("sub", username); return convertedClaims; } }
- */
