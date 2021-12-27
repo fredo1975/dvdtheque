@@ -261,8 +261,8 @@ public class FilmController {
 
 			// Add the JWT to the RestTemplate headers
 			HttpHeaders headers = new HttpHeaders();
-			//headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
-			headers.add("Cookie", "JSESSIONID=E40BE1E1BD069EE2D3D65D413C75812C; SESSION=c4f4a3ce-3470-4913-a919-aa7ba0eb7b8c");
+			headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
+			//headers.add("Cookie", "JSESSIONID=E40BE1E1BD069EE2D3D65D413C75812C; SESSION=c4f4a3ce-3470-4913-a919-aa7ba0eb7b8c");
 			//ResponseEntity<Set<Results>> resultsResponse = tmdbServiceFeignClient.retrieveTmdbFilmListByTitle(titre);
 	        RestTemplate _restTemplate = new RestTemplate();
 			ResponseEntity<Set<Results>> resultsResponse = _restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
