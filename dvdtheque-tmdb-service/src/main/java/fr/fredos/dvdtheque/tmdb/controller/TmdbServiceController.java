@@ -18,7 +18,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,16 +44,15 @@ import fr.fredos.dvdtheque.common.utils.DateUtils;
 @RequestMapping("/dvdtheque-tmdb-service")
 public class TmdbServiceController {
 	protected Logger logger = LoggerFactory.getLogger(TmdbServiceController.class);
-	private static String TMDB_SEARCH_MOVIE_QUERY="themoviedb.search.movie.query";
-	private static String TMDB_API_KEY="themoviedb.api.key";
-	private static String TMDB_MOVIE_QUERY="themoviedb.movie.query";
-	private static String TMDB_POSTER_PATH_URL = "themoviedb.poster.path.url";
+	public static String TMDB_SEARCH_MOVIE_QUERY="themoviedb.search.movie.query";
+	public static String TMDB_API_KEY="themoviedb.api.key";
+	public static String TMDB_MOVIE_QUERY="themoviedb.movie.query";
+	public static String TMDB_POSTER_PATH_URL = "themoviedb.poster.path.url";
 	@Autowired
 	private Environment environment;
-	private final RestTemplate restTemplate;
-	public TmdbServiceController(RestTemplateBuilder restTemplateBuilder) {
-        restTemplate = restTemplateBuilder.build();
-    }
+	@Autowired
+	private RestTemplate restTemplate;
+	
 	
 	@RolesAllowed("user")
 	@GetMapping("/retrieveTmdbFilm/byTmdbId")

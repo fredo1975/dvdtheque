@@ -11,14 +11,14 @@ eureka:
 themoviedb:
   search:
     movie:
-      query: https://api.themoviedb.org/3/search/movie
+      query: https://fake/3/search/movie
   movie:
-    query: https://api.themoviedb.org/3/movie/
+    query: https://fake/3/movie/
   api:
     key: aa87a44fb22d65986512188cd2ec2ca0
   poster:
     path:
-      url: http://image.tmdb.org/t/p/w500
+      url: http://fake/t/p/w500
 
 keycloak:
   realm: dvdtheque

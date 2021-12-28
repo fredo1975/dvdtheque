@@ -121,7 +121,7 @@ keycloak:
   bearer-only: true
 
 tmdb-service:
-  url: http://localhost:8762/dvdtheque-tmdb-service
+  url: http://fake/dvdtheque-tmdb-service
   byTitle: /retrieveTmdbFilmListByTitle/byTitle
   release-date: /retrieveTmdbFrReleaseDate/byTmdbId
   get-credits: /retrieveTmdbCredits/byTmdbId
