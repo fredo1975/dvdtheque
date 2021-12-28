@@ -26,18 +26,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.sessionManagement()
-	    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
-		// Require authentication for all requests
-		http.authorizeRequests().anyRequest().authenticated();
-		// Allow showing pages within a frame
-		http.headers().frameOptions().sameOrigin();
-		/*
+		
 		http.sessionManagement()
 	    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests().anyRequest().authenticated().and().oauth2ResourceServer()
-				.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()));*/
+				.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()));
 	}
 
 	private Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter() {

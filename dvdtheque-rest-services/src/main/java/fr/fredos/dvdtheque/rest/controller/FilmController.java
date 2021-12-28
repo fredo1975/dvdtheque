@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -32,14 +31,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -121,10 +119,10 @@ public class FilmController {
 	public Map<Integer,Genres> getGenresById() {
 		return genresById;
 	}
-	
+	/*
 	@Autowired
 	private AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager;
-
+*/
 	public void loadGenres() throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream("genres.json");
@@ -224,6 +222,7 @@ public class FilmController {
 	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		List<Film> films = null;
 		try {
+			/*
 			// Build an OAuth2 request for the keykloak provider
 			OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
 					.principal("gateway_user")
@@ -243,15 +242,20 @@ public class FilmController {
 			////////////////////////////////////////////////////
 			//  STEP 2: Use the JWT and call the service
 			////////////////////////////////////////////////////
-
+*/
 			// Add the JWT to the RestTemplate headers
 			HttpHeaders headers = new HttpHeaders();
 			//headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
-			headers.add("Cookie", "SESSION=ac5d2b44-2681-4eeb-91af-e33bcb5c945c");
+			//headers.add("Cookie", "SESSION=ac5d2b44-2681-4eeb-91af-e33bcb5c945c");
 			//ResponseEntity<Set<Results>> resultsResponse = tmdbServiceFeignClient.retrieveTmdbFilmListByTitle(titre);
 
+			SecurityContext sc = SecurityContextHolder.getContext();
+			Authentication auth = sc.getAuthentication();
+			
 	        RestTemplate _restTemplate = new RestTemplate();
-	        
+	        Set<Results> set = (Set<Results>) restTemplate.getForEntity(environment.getRequiredProperty(TMDB_SERVICE_URL)
+					+environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE)+"?title="+titre, Set.class);
+	        /*
 			ResponseEntity<Set<Results>> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
 					+environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE)+"?title="+titre, HttpMethod.GET, new HttpEntity(headers), new ParameterizedTypeReference<Set<Results>>() {});
 			
@@ -267,6 +271,7 @@ public class FilmController {
 					}
 				}
 			}
+			*/
 			if(CollectionUtils.isNotEmpty(films)) {
 				Collections.sort(films);
 			}
