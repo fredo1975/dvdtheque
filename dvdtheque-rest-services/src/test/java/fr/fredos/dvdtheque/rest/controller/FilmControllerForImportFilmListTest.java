@@ -27,11 +27,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 
+import fr.fredos.dvdtheque.integration.config.ContextConfiguration;
+import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
 import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {HazelcastConfiguration.class, ContextConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @Import({ServletKeycloakAuthUnitTestingSupport.class})
 @ActiveProfiles("test")

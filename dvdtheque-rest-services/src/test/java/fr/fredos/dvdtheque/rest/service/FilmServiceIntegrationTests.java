@@ -38,6 +38,7 @@ import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
+import fr.fredos.dvdtheque.integration.config.ContextConfiguration;
 import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
@@ -47,7 +48,7 @@ import fr.fredos.dvdtheque.rest.dao.repository.FilmDao;
 import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 
-@SpringBootTest(classes = {HazelcastConfiguration.class})
+@SpringBootTest(classes = {HazelcastConfiguration.class, ContextConfiguration.class})
 @ActiveProfiles("test")
 public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceIntegrationTests.class);

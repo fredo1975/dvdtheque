@@ -1,13 +1,10 @@
-package fr.fredos.dvdtheque.rest.config;
+package fr.fredos.dvdtheque.integration.config;
 
 import org.keycloak.adapters.springsecurity.client.KeycloakClientRequestFactory;
 import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-
-@Configuration
+@TestConfiguration
 public class ContextConfiguration {
 	@Bean
     public KeycloakClientRequestFactory keycloakClientRequestFactory() {
@@ -15,7 +12,6 @@ public class ContextConfiguration {
 	}
 
     @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public KeycloakRestTemplate keycloakRestTemplate() {
         return new KeycloakRestTemplate(keycloakClientRequestFactory());
     }

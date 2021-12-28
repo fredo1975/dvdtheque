@@ -26,6 +26,7 @@ import javax.annotation.security.RolesAllowed;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
+import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -105,7 +106,7 @@ public class FilmController {
     @Value("${limit.film.size}")
     private int limitFilmSize;
     @Autowired
-    private RestTemplate restTemplate;
+    private KeycloakRestTemplate keycloakRestTemplate;
     private Map<Integer,Genres> genresById;
 	public Map<Integer,Genres> getGenresById() {
 		return genresById;
@@ -206,7 +207,7 @@ public class FilmController {
 	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		List<Film> films = null;
 		try {
-			ResponseEntity<Set<Results>> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
+			ResponseEntity<Set<Results>> resultsResponse = keycloakRestTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
 					+environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE)+"?title="+titre, HttpMethod.GET, null, new ParameterizedTypeReference<Set<Results>>() {});
 			if(resultsResponse != null && CollectionUtils.isNotEmpty(resultsResponse.getBody())) {
 				Set<Results> results = resultsResponse.getBody();
@@ -322,7 +323,7 @@ public class FilmController {
 			if(filmOptional==null) {
 				return ResponseEntity.notFound().build();
 			}
-			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+environment.getRequiredProperty(TMDB_SERVICE_RESULTS)+"?tmdbId="+tmdbId, Results.class);
+			Results results = keycloakRestTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+environment.getRequiredProperty(TMDB_SERVICE_RESULTS)+"?tmdbId="+tmdbId, Results.class);
 			Film toUpdateFilm = transformTmdbFilmToDvdThequeFilm(film,results, new HashSet<Long>(), true);
 			if(toUpdateFilm != null) {
 				toUpdateFilm.setOrigine(film.getOrigine());
@@ -367,7 +368,7 @@ public class FilmController {
 		Date releaseDate = null;
 		try {
 			//releaseDate = retrieveTmdbFrReleaseDate(results.getId());
-			releaseDate = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+environment.getRequiredProperty(TMDB_SERVICE_RELEASE_DATE)+"?tmdbId="+results.getId(), Date.class);
+			releaseDate = keycloakRestTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+environment.getRequiredProperty(TMDB_SERVICE_RELEASE_DATE)+"?tmdbId="+results.getId(), Date.class);
 		}catch(RestClientException e) {
 			logger.error(e.getMessage()+" for id="+results.getId());
 			SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.TMDB_DATE_PATTERN,Locale.FRANCE);
@@ -414,7 +415,7 @@ public class FilmController {
 		return transformedfilm;
 	}
 	private void retrieveAndSetCredits(final boolean persistPersonne, final Results results, final Film transformedfilm) {
-		Credits credits = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+environment.getRequiredProperty(TMDB_SERVICE_CREDITS)+"?tmdbId="+results.getId(), Credits.class);
+		Credits credits = keycloakRestTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+environment.getRequiredProperty(TMDB_SERVICE_CREDITS)+"?tmdbId="+results.getId(), Credits.class);
 		if(CollectionUtils.isNotEmpty(credits.getCast())) {
 			int i=1;
 			for(Cast cast : credits.getCast()) {
@@ -507,7 +508,7 @@ public class FilmController {
 			if(film==null) {
 				return ResponseEntity.notFound().build();
 			}
-			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+film.getTmdbId(), Results.class);
+			Results results = keycloakRestTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+film.getTmdbId(), Results.class);
 			film.setPosterPath(environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL)+results.getPoster_path());
 			return ResponseEntity.ok(filmService.updateFilm(film));
 		} catch (Exception e) {
@@ -523,9 +524,9 @@ public class FilmController {
 			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS);
 			List<Film> films = filmService.findAllFilms(filmDisplayTypeParam);
 			for(Film film : films) {
-				Boolean posterExists = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?posterPath="+film.getPosterPath(), Boolean.class);
+				Boolean posterExists = keycloakRestTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?posterPath="+film.getPosterPath(), Boolean.class);
 				if(!posterExists) {
-					results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+film.getTmdbId(), Results.class);
+					results = keycloakRestTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)+"?tmdbId="+film.getTmdbId(), Results.class);
 					film.setPosterPath(environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL)+results.getPoster_path());
 				}
 				filmService.updateFilm(film);
@@ -546,7 +547,7 @@ public class FilmController {
 			if(this.filmService.checkIfTmdbFilmExists(tmdbId)) {
 				return ResponseEntity.noContent().build();
 			}
-			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)
+			Results results = keycloakRestTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)
 					+environment.getRequiredProperty(FilmController.TMDB_SERVICE_RESULTS)+"?tmdbId="+tmdbId, Results.class);
 			if(results != null) {
 				filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);

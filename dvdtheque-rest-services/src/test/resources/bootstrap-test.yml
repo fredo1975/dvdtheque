@@ -26,6 +26,7 @@ spring:
   rabbitmq:
     host: 192.168.99.100
     port: 32777
+
 eureka:
   client:
     enabled: false
@@ -70,6 +71,7 @@ excel:
 dvd:
   file:
     path: G:/films
+
 themoviedb:
   search:
     movie:
@@ -81,6 +83,7 @@ themoviedb:
   poster:
     path:
       url: http://image.tmdb.org/t/p/w500
+
 allocine:
   url: http://api.allocine.fr/rest/v3/
   query:
@@ -91,6 +94,7 @@ allocine:
       desk-press: desk-press
       movie: movie
     reviewlist: reviewlist
+
 hazelcast:
   cluster-name: hazelcast-local
   networkconfig:
@@ -105,6 +109,7 @@ hazelcast:
     join:
       auto-detection:
         enabled: false
+
 keycloak:
   realm: dvdtheque
   auth-server-url: http://localhost:8080/auth
@@ -114,8 +119,9 @@ keycloak:
     secret: 14d4618c-c599-450f-ac22-3e2cda1a39d5
   use-resource-role-mappings: true
   bearer-only: true
+
 tmdb-service:
-  url: http://localhost
+  url: http://localhost:8762/dvdtheque-tmdb-service
   byTitle: /retrieveTmdbFilmListByTitle/byTitle
   release-date: /retrieveTmdbFrReleaseDate/byTmdbId
   get-credits: /retrieveTmdbCredits/byTmdbId

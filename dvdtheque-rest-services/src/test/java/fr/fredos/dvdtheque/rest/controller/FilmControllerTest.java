@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
@@ -71,6 +71,7 @@ import fr.fredos.dvdtheque.common.tmdb.model.Credits;
 import fr.fredos.dvdtheque.common.tmdb.model.Crew;
 import fr.fredos.dvdtheque.common.tmdb.model.Genres;
 import fr.fredos.dvdtheque.common.tmdb.model.Results;
+import fr.fredos.dvdtheque.integration.config.ContextConfiguration;
 import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
@@ -82,7 +83,7 @@ import fr.fredos.dvdtheque.rest.service.IPersonneService;
 import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {HazelcastConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {HazelcastConfiguration.class, ContextConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 //@ContextConfiguration
 @Import({ ServletKeycloakAuthUnitTestingSupport.class/*RippedFlagTasklet.class,BatchImportFilmsConfiguration.class,RetrieveDateInsertionTasklet.class*/})
@@ -103,7 +104,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private MockMvcSupport 							mockMvcSupport;
 	
 	@Autowired
-    private RestTemplate 							restTemplate;
+    private KeycloakRestTemplate 					keycloakRestTemplate;
 
     private MockRestServiceServer 					mockServer;
     
@@ -144,7 +145,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	
 	@BeforeEach()
 	public void setUp() throws Exception {
-		mockServer = MockRestServiceServer.createServer(restTemplate);
+		mockServer = MockRestServiceServer.createServer(keycloakRestTemplate);
 		filmService.cleanAllFilms();
 	}
 	
@@ -583,14 +584,16 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		res.setTitle(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		res.setId(film.getTmdbId());
 		results.add(res);
+		
+		
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
-		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_BY_TITLE)+"?title="+FilmBuilder.TITRE_FILM_TMBD_ID_844)))
+		          requestTo(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_BY_TITLE)+"?title="+FilmBuilder.TITRE_FILM_TMBD_ID_844))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(results), MediaType.APPLICATION_JSON));
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
-		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_RELEASE_DATE)+"?tmdbId="+res.getId())))
+		          requestTo(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_RELEASE_DATE)+"?tmdbId="+res.getId()))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString("2015-08-01T23:00:00.000+00:00"), MediaType.APPLICATION_JSON));
 		Credits credits = new Credits();
@@ -600,8 +603,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		crew.setJob("Director");
 		credits.setCrew(Lists.newArrayList(crew));
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
-							+environment.getRequiredProperty(FilmController.TMDB_SERVICE_CREDITS)+"?tmdbId="+res.getId())))
+		          requestTo(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+							+environment.getRequiredProperty(FilmController.TMDB_SERVICE_CREDITS)+"?tmdbId="+res.getId()))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		
@@ -1083,7 +1086,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(filmId);
 		
         mockServer.expect(ExpectedCount.once(), 
-          requestTo(new URI("http://localhost?posterPath="+film.getPosterPath())))
+          requestTo(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)+"?posterPath="+film.getPosterPath()))
           .andExpect(method(HttpMethod.GET))
           .andRespond(withSuccess("true", MediaType.APPLICATION_JSON).body(mapper.writeValueAsString(Boolean.TRUE)));
         
@@ -1127,10 +1130,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		res.setId(film.getTmdbId());
 		
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(new URI("http://localhost?tmdbId="+res.getId())))
+		          requestTo(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)+"?tmdbId="+res.getId()))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(res), MediaType.APPLICATION_JSON));
-		
 		
 		mockMvcSupport
 		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
