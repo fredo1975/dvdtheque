@@ -6,13 +6,9 @@ spring:
     url: jdbc:mysql://192.168.1.100/dvdtheque?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris
     username: fredo
     password: fredo
-  jpa:
-    show-sql: false
-    hibernate:
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   batch:
-    initialize-schema: always
+    initializer:
+      enabled: false
     job:
       enabled: false
   cloud:
@@ -30,10 +26,6 @@ spring:
 eureka:
   client:
     enabled: false
-
-hibernate:
-  hbm2ddl:
-    auto: validate
 
 batch:
   save:
@@ -63,34 +55,19 @@ dvd:
   file:
     path: G:/films
 
-themoviedb:
-  search:
-    movie:
-      query: https://api.themoviedb.org/3/search/movie
-  movie:
-    query: https://api.themoviedb.org/3/movie/
-  api:
-    key: aa87a44fb22d65986512188cd2ec2ca0
-  poster:
-    path:
-      url: http://image.tmdb.org/t/p/w500
-
-allocine:
-  url: http://api.allocine.fr/rest/v3/
-  query:
-    search:
-      film: search
-    partner: yW5kcm9pZC12M3M
-    filter:
-      desk-press: desk-press
-      movie: movie
-    reviewlist: reviewlist
-
 hazelcast:
   cluster-name: hazelcast-local
   networkconfig:
     interface: 127.0.0.1
-    
-dvdtheque:
-  service:
-    url: fake
+
+dvdtheque-service:
+  url: http://fake/dvdtheque-service
+  films: /films/
+  transformTmdbFilmToDvdThequeFilm: /transformTmdbFilmToDvdThequeFilm/tmdb
+  
+tmdb-service:
+  url: http://fake/dvdtheque-tmdb-service
+  byTitle: /retrieveTmdbFilmListByTitle/byTitle
+  release-date: /retrieveTmdbFrReleaseDate/byTmdbId
+  get-credits: /retrieveTmdbCredits/byTmdbId
+  get-results: /retrieveTmdbFilm/byTmdbId

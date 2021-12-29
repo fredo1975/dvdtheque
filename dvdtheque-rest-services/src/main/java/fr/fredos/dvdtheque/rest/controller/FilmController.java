@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -37,6 +38,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,9 +55,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
 import fr.fredos.dvdtheque.common.tmdb.model.Cast;
 import fr.fredos.dvdtheque.common.tmdb.model.Credits;
@@ -336,6 +340,19 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	@RolesAllowed("user")
+	@PutMapping("/transformTmdbFilmToDvdThequeFilm/tmdb/{tmdbId}")
+	ResponseEntity<Film> transformTmdbFilmToDvdThequeFilm(@RequestBody Results results,@PathVariable Long tmdbId){
+		Film filmToSave=null;
+		try {
+			filmToSave = transformTmdbFilmToDvdThequeFilm(null,results, new HashSet<Long>(), true);
+			return ResponseEntity.ok(filmToSave);
+		} catch (Exception e) {
+			logger.error("an error occured while transformTmdbFilmToDvdThequeFilm film tmdbId="+tmdbId,e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
 	/**
 	 * create a dvdtheque Film based on a TMBD film
 	 * @param film
@@ -625,6 +642,7 @@ public class FilmController {
 		}
 		return ResponseEntity.noContent().build();
 	}
+	*/
 	@RolesAllowed("user")
 	@PostMapping("/films/export")
 	ResponseEntity<byte[]> exportFilmList(@RequestBody String origine) throws DvdthequeServerRestException, IOException{
@@ -654,5 +672,5 @@ public class FilmController {
 	    	logger.error("an error occured while exporting film list",e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-	}*/
+	}
 }

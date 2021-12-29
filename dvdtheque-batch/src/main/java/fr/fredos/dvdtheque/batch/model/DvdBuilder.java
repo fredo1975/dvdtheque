@@ -1,8 +1,6 @@
 package fr.fredos.dvdtheque.batch.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import fr.fredos.dvdtheque.dao.model.object.Film;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DvdBuilder {
 	private Film filmToSave;

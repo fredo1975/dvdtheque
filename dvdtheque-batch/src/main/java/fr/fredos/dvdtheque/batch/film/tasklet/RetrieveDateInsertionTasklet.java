@@ -20,9 +20,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import fr.fredos.dvdtheque.batch.model.Film;
 import fr.fredos.dvdtheque.common.utils.DateUtils;
-import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.service.IFilmService;
 
 @Component(value="retrieveDateInsertionTasklet")
 public class RetrieveDateInsertionTasklet implements Tasklet{
@@ -30,11 +29,10 @@ public class RetrieveDateInsertionTasklet implements Tasklet{
 	private static String LISTE_DVD_FILE_PATH="dvd.file.path";
 	private static String RETRIEVE_DATE_INSERTION="retrieve.date.insertion";
 	@Autowired
-	protected IFilmService filmService;
-	@Autowired
     Environment environment;
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+		/*
 		boolean execute = Boolean.valueOf(environment.getRequiredProperty(RETRIEVE_DATE_INSERTION));
 		if(execute) {
 			Resource directory = new FileSystemResource(environment.getRequiredProperty(LISTE_DVD_FILE_PATH));
@@ -69,6 +67,7 @@ public class RetrieveDateInsertionTasklet implements Tasklet{
 		}else {
 			logger.info("nothing to do");
 		}
+		*/
 		return RepeatStatus.FINISHED;
 	}
 

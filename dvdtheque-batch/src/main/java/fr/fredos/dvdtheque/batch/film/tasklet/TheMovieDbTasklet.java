@@ -1,8 +1,5 @@
 package fr.fredos.dvdtheque.batch.film.tasklet;
 
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
@@ -12,26 +9,15 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
-
-import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.service.IFilmService;
-import fr.fredos.dvdtheque.tmdb.model.ImagesResults;
-import fr.fredos.dvdtheque.tmdb.model.Results;
-import fr.fredos.dvdtheque.tmdb.model.SearchResults;
-import fr.fredos.dvdtheque.tmdb.service.TmdbServiceImpl;
 
 @Component(value="theMovieDbTasklet")
 public class TheMovieDbTasklet implements Tasklet{
 	protected Logger logger = LoggerFactory.getLogger(TheMovieDbTasklet.class);
 	@Autowired
-	protected IFilmService filmService;
-	@Autowired
     Environment environment;
-	@Autowired
-    private TmdbServiceImpl tmdbServiceClient;
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+		/*
 		List<Film> filmList = filmService.findAllFilms(null);
 		filmList.forEach(film->{
 			logger.info(film.toString());
@@ -57,6 +43,7 @@ public class TheMovieDbTasklet implements Tasklet{
 				e.printStackTrace();
 			}
 		});
+		*/
 		return RepeatStatus.FINISHED;
 	}
 }

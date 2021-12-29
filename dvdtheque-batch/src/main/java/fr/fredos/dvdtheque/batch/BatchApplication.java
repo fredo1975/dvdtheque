@@ -4,17 +4,21 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-@EnableBatchProcessing
-@SpringBootApplication(scanBasePackages = {"fr.fredos.dvdtheque.batch",
-		"fr.fredos.dvdtheque.service",
-		"fr.fredos.dvdtheque.dao",
-		"fr.fredos.dvdtheque.tmdb.service",
-		"fr.fredos.dvdtheque.allocine.service",
-		"fr.fredos.dvdtheque.jms.publisher"})
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.web.client.RestTemplate;
+//@EnableBatchProcessing
+@SpringBootApplication
 public class BatchApplication {
 	public static void main(String[] args) throws Exception {
 		ConfigurableApplicationContext applicationContext =
                 SpringApplication.run(BatchApplication.class, args);
 		System.exit(SpringApplication.exit(applicationContext));
+    }
+	
+	@Bean
+	@Lazy(true)
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

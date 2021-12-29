@@ -5,11 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 @EnableBatchProcessing
-@SpringBootApplication(scanBasePackages = {"fr.fredos.dvdtheque.batch",
-		"fr.fredos.dvdtheque.service",
-		"fr.fredos.dvdtheque.dao",
-		"fr.fredos.dvdtheque.tmdb.service",
-		"fr.fredos.dvdtheque.allocine.service"})
+@SpringBootApplication(scanBasePackages = {"fr.fredos.dvdtheque.batch"})
 public class BatchApplicationApp {
 	public static void main(String[] args) throws Exception {
 		ConfigurableApplicationContext applicationContext =

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -55,6 +56,7 @@ public class AllocineServiceTest {
 	}
     
     @Test
+    @Disabled
     public void retrieveAllocineScrapingFicheFilmTest() throws IOException {
     	allocineService.retrieveAllocineScrapingFicheFilm();
 		List<FicheFilm> allFicheFilmFromPageRetrievedFromDb = allocineService.retrieveAllFicheFilm();

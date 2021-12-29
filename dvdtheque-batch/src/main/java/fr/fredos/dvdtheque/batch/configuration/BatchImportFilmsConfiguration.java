@@ -50,14 +50,15 @@ import org.springframework.web.client.RestTemplate;
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.film.processor.FilmProcessor;
 import fr.fredos.dvdtheque.batch.film.writer.DbFilmWriter;
+import fr.fredos.dvdtheque.batch.film.writer.ExcelStreamFilmWriter;
+import fr.fredos.dvdtheque.batch.model.Film;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
-import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.service.excel.ExcelFilmHandler;
 
 @Configuration
 @EnableBatchProcessing
 public class BatchImportFilmsConfiguration{
+	/*
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
 	private static String DVDTHEQUE_SERVICE_URL ="dvdtheque.service.url";
 	@Autowired
@@ -105,10 +106,6 @@ public class BatchImportFilmsConfiguration{
     @Bean
     public Topic topic(){
         return new ActiveMQTopic("topic");
-    }
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
     }
     @Bean
 	protected Tasklet cleanDBTasklet() {
@@ -196,7 +193,7 @@ public class BatchImportFilmsConfiguration{
     	jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_INIT, null,0l,JmsStatus.FILM_CSV_LINE_TOKENIZER_INIT.statusValue()));
         DelimitedLineTokenizer filmCsvImportFormatLineTokenizer = new DelimitedLineTokenizer();
         filmCsvImportFormatLineTokenizer.setDelimiter(";");
-        filmCsvImportFormatLineTokenizer.setNames(ExcelFilmHandler.EXCEL_HEADER_TAB);
+        filmCsvImportFormatLineTokenizer.setNames(ExcelStreamFilmWriter.EXCEL_HEADER_TAB);
         filmCsvImportFormatLineTokenizer.setStrict(false);
         watch.stop();
         jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_CSV_LINE_TOKENIZER_COMPLETED, null,watch.getTime(),JmsStatus.FILM_CSV_LINE_TOKENIZER_COMPLETED.statusValue()));
@@ -226,4 +223,5 @@ public class BatchImportFilmsConfiguration{
                 .writer(filmWriter())
                 .build();
     }
+    */
 }

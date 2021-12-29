@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.jms.Topic;
 
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -22,22 +24,18 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
+import fr.fredos.dvdtheque.batch.model.Dvd;
 import fr.fredos.dvdtheque.batch.model.DvdBuilder;
 import fr.fredos.dvdtheque.batch.model.FicheFilm;
+import fr.fredos.dvdtheque.batch.model.Film;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
-import fr.fredos.dvdtheque.dao.model.object.Dvd;
-import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.tmdb.model.Results;
-import fr.fredos.dvdtheque.tmdb.service.TmdbServiceImpl;
+import fr.fredos.dvdtheque.common.tmdb.model.Results;
 
 public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 	protected Logger logger = LoggerFactory.getLogger(FilmProcessor.class);
 	private static String ALLOCINE_SERVICE_URL ="allocine.service.url";
-	private static String DVDTHEQUE_SERVICE_URL ="dvdtheque.service.url";
-	@Autowired
-    private TmdbServiceImpl tmdbServiceClient;
 	@Autowired
     Environment environment;
 	@Autowired
@@ -49,6 +47,11 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 	public FilmProcessor() {
     }
 	private static String RIPPEDFLAGTASKLET_FROM_FILE="rippedFlagTasklet.from.file";
+	public static String TMDB_SERVICE_URL="tmdb-service.url";
+	public static String DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
+	public static String TMDB_SERVICE_BY_TMDBID="get-results";
+	public static String DVDTHEQUE_SERVICE_TRANSFORM_BY_TMDBID="transformTmdbFilmToDvdThequeFilm";
+	
 	@Override
 	public Film process(FilmCsvImportFormat item) throws Exception {
 		StopWatch watch = new StopWatch();
@@ -58,9 +61,16 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 		jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_INIT, filmTemp,0l,JmsStatus.FILM_PROCESSOR_INIT.statusValue()));
 		
 		Film filmToSave = null;
-		Results results = tmdbServiceClient.retrieveTmdbSearchResultsById(item.getTmdbId());
-		if(results != null) {
-			filmToSave = tmdbServiceClient.transformTmdbFilmToDvdThequeFilm(null, results, new HashSet<>(), true);
+		
+		ResponseEntity<Results> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
+				+environment.getRequiredProperty(TMDB_SERVICE_BY_TMDBID)+"?tmdbId="+item.getTmdbId(), HttpMethod.GET, null, Results.class);
+		
+		if(resultsResponse != null && resultsResponse.getBody() != null) {
+			ResponseEntity<Film> response = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)
+					+environment.getRequiredProperty(DVDTHEQUE_SERVICE_TRANSFORM_BY_TMDBID)+"?tmdbId="+item.getTmdbId(), HttpMethod.PUT, null, Film.class);
+			if(response != null && response.getBody() != null) {
+				filmToSave = response.getBody();
+			}
 		}
 		
 		if(filmToSave != null) {

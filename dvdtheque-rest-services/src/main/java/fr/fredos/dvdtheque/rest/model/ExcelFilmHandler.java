@@ -9,7 +9,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,14 +25,13 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
-import fr.fredos.dvdtheque.rest.service.IPersonneService;
+import fr.fredos.dvdtheque.rest.dao.domain.Personne;
 @Component
 public class ExcelFilmHandler {
 	protected Logger logger = LoggerFactory.getLogger(ExcelFilmHandler.class);
@@ -40,8 +41,7 @@ public class ExcelFilmHandler {
     private Integer currentRowNumber;
     private Integer currentColumnNumber;
     public static final String[] EXCEL_HEADER_TAB = new String[]{"Realisateur", "Titre", "Annee","Acteurs","Origine Film", "TMDB ID", "Vu","Date insertion", "Zonedvd","Rippé","RIP Date","Dvd Format","Date Sortie DVD"};
-    @Autowired
-	protected IPersonneService personneService;
+    
     @Bean
     @Scope("prototype")
     public SXSSFWorkbook getWorkBook() {
@@ -83,16 +83,27 @@ public class ExcelFilmHandler {
         cell.setCellValue(value);
         this.currentColumnNumber++;
     }
+
+    private String printPersonnes(final Set<Personne> personnes, final String separator) {
+		if (CollectionUtils.isNotEmpty(personnes)) {
+			StringBuilder sb = new StringBuilder();
+			personnes.forEach(real -> {
+				sb.append(real.getNom()).append(separator);
+			});
+			return StringUtils.chomp(sb.toString(), separator);
+		}
+		return StringUtils.EMPTY;
+	}
     public void writeBook(Film film) {
         addRow();
         // 0
-        addCell(personneService.printPersonnes(film.getRealisateurs(),","));
+        addCell(printPersonnes(film.getRealisateurs(),","));
         // 1
         addCell(film.getTitre());
         // 2
         addCell(film.getAnnee().toString());
         // 3
-        addCell(personneService.printPersonnes(film.getActeurs(),","));
+        addCell(printPersonnes(film.getActeurs(),","));
         // 4
         addCell(film.getOrigine()!=null?film.getOrigine().name():StringUtils.EMPTY);
         // 5

@@ -1755,4 +1755,36 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertEquals(relisateursReaded,filmListParamReaded.getRealisateurs());
 		assertEquals(filmsReaded,filmListParamReaded.getFilms());
 	}
+	@Test
+	public void transformTmdbFilmToDvdThequeFilm() throws Exception {
+		filmService.cleanAllFilms();
+		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setVu(true).setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1).setGenre2(genre2)
+				.setZone(Integer.valueOf(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		
+		final Set<Results> results = new HashSet<>();
+		Results res = new Results();
+		res.setTitle(FilmBuilder.TITRE_FILM_TMBD_ID_844);
+		res.setId(film.getTmdbId());
+		results.add(res);
+		
+		
+	}
 }

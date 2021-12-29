@@ -1,11 +1,7 @@
 package fr.fredos.dvdtheque.batch.csv.format.launcher;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.integration.file.FileReadingMessageSource;
-
 public class BackupLauncher {
-
+/*
 	@Autowired
 	FileReadingMessageSource source;
 	public static void main(String[] args) {
@@ -13,5 +9,5 @@ public class BackupLauncher {
 				"classpath*:applicationContext-batch.xml");
         cpt.registerShutdownHook();
         cpt.close();
-	}
+	}*/
 }
