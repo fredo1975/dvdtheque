@@ -1,7 +1,6 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,7 +19,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -60,16 +61,17 @@ public class BatchExportFilmsConfiguration {
     @Lazy(true)
     protected ListItemReader<Film> dvdthequeServiceFilmReader() {
     	logger.info("########### ListItemReader");
-    	/*
+    	
     	ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL), 
     			HttpMethod.GET, 
     			null, 
     			new ParameterizedTypeReference<List<Film>>(){});
     	
-    	return new ListItemReader<>(filmList.getBody());*/
-    	
+    	return new ListItemReader<>(filmList.getBody());
+    	/*
     	ResponseEntity<List<Film>> filmList2 = ResponseEntity.ok(new ArrayList<>());
     	return new ListItemReader<>(filmList2.getBody());
+    	*/
     }
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

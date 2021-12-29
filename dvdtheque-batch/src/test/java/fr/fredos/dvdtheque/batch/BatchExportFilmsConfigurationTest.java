@@ -3,12 +3,10 @@ package fr.fredos.dvdtheque.batch;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.batch.core.Job;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 import com.hazelcast.config.AutoDetectionConfig;
@@ -17,15 +15,9 @@ import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-
-import fr.fredos.dvdtheque.batch.configuration.BatchExportFilmsConfiguration;
-
-@SpringBootTest(classes = { BatchApplication.class,BatchExportFilmsConfiguration.class,
-		BatchExportFilmsConfigurationTest.HazelcastConfiguration.class})
+@EnableBatchProcessing
+@SpringBootTest
 public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
-	@Autowired
-	Job exportFilmsJob;
-	
 	@BeforeEach
 	public void init() {
 		//jobLauncherTestUtils = new JobLauncherTestUtils();

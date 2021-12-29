@@ -22,7 +22,6 @@
 		<!-- module>dvdtheque-jms-publisher</module -->
 		<module>dvdtheque-jms-receiver-test</module>
 		<module>dvdtheque-batch</module>
-		<module>dvdtheque-batch-app</module>
 		<module>dvdtheque-rest-services</module>
 		<!--module>dvdtheque-rest-services-test-integration</module -->
 		<!--module>dvdtheque-swing</module -->
