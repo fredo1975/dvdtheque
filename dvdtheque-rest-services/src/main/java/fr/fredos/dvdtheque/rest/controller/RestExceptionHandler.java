@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.rest.controller;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 
 import javax.persistence.EntityNotFoundException;
@@ -38,6 +39,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		return buildResponseEntity(apiError);
 	}
 	
+	@ExceptionHandler(AccessDeniedException.class)
+	protected ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
+		ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED);
+		apiError.setMessage(ex.getMessage());
+		apiError.setTimestamp(LocalDateTime.now());
+		apiError.setStatus(HttpStatus.FORBIDDEN);
+		return buildResponseEntity(apiError);
+	}
+	/*
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<Object> handleServerError(Exception ex) {
 		logger.error("handleServerError",ex);
@@ -46,7 +56,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		apiError.setTimestamp(LocalDateTime.now());
 		apiError.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 		return buildResponseEntity(apiError);
-	}
+	}*/
 	private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
 		return new ResponseEntity<>(apiError, apiError.getStatus());
 	}

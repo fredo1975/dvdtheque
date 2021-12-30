@@ -16,6 +16,12 @@
 		<dependency>
 			<artifactId>dvdtheque-commons</artifactId>
 			<groupId>${project.groupId}</groupId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-data-jpa</artifactId>
+				</exclusion>
+			</exclusions>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

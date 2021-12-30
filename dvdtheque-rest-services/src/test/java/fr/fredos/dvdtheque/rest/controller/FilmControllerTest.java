@@ -516,7 +516,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(filmToTest);
 		
 		ResultActions resultActions = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
+		.with(keycloak.keycloakAuthenticationToken().roles("batch","user").accessToken(token -> token.setPreferredUsername("fredo")))
 		.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI).param("displayType", FilmDisplayType.TOUS.name()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film.getTitre())));
@@ -1734,14 +1734,14 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		
 		
 		final String films = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
+		.with(keycloak.keycloakAuthenticationToken().roles("user","batch").accessToken(token -> token.setPreferredUsername("fredo")))
 		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.TOUS.name()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(status().isOk())
 		.andReturn().getResponse().getContentAsString();
 		
 		final String filmListParam = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
+		.with(keycloak.keycloakAuthenticationToken().roles("user","batch").accessToken(token -> token.setPreferredUsername("fredo")))
 		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_FILM_LIST_PARAM + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.TOUS.name()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(status().isOk())

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public abstract class AbstractBatchFilmsConfigurationTest {
+	
 	@Autowired
 	JobLauncher 							jobLauncher;
 	@Autowired
@@ -32,14 +33,14 @@ public abstract class AbstractBatchFilmsConfigurationTest {
 	@Autowired
     Environment 							environment;
 	MockRestServiceServer 					mockServer;
-	/*
+	@Autowired
+    JobLauncherTestUtils 					jobLauncherTestUtils;
 	@Bean
-	@Lazy(true)
 	protected JobLauncherTestUtils jobLauncherTestUtils(Job job) throws NoSuchJobException {
 		jobLauncherTestUtils.setJobLauncher(jobLauncher);
 		jobLauncherTestUtils.setJobRepository(jobRepository);
 		return jobLauncherTestUtils;
-	}*/
+	}
 	
 	
 }

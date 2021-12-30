@@ -1,7 +1,8 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,6 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +21,15 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,24 +39,26 @@ import fr.fredos.dvdtheque.batch.model.Film;
 
 @Configuration
 @EnableBatchProcessing
-@Lazy(true)
+@Lazy
 public class BatchExportFilmsConfiguration {
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfiguration.class);
 	@Autowired
-	protected JobBuilderFactory 					jobBuilderFactory;
+	protected JobBuilderFactory 									jobBuilderFactory;
     @Autowired
-    protected StepBuilderFactory 					stepBuilderFactory;
+    protected StepBuilderFactory 									stepBuilderFactory;
     @Autowired
-    RestTemplate									restTemplate;
+    RestTemplate													restTemplate;
     @Autowired
-    private Environment 							environment;
+    private Environment 											environment;
+    @Autowired
+	private AuthorizedClientServiceOAuth2AuthorizedClientManager 	authorizedClientServiceAndManager;
+
     public static String 							DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
 	public static String 							DVDTHEQUE_SERVICE_ALL="dvdtheque-service.films";
 	
     @Bean
-    @Qualifier("exportFilmsJob")
-    @Lazy(value = true)
-	public Job exportFilmsJob() throws IOException {
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public Job exportFilmsJob() {
     	logger.info("########### exportFilmsJob");
     	return jobBuilderFactory.get("exportFilms")
 				.incrementer(new RunIdIncrementer())
@@ -58,16 +67,46 @@ public class BatchExportFilmsConfiguration {
 	}
     
     @Bean
-    @Lazy(true)
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     protected ListItemReader<Film> dvdthequeServiceFilmReader() {
     	logger.info("########### ListItemReader");
+    	OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
+				.principal("user")
+				.build();
+
+		// Perform the actual authorization request using the authorized client service and authorized client
+		// manager. This is where the JWT is retrieved from the Okta servers.
+		OAuth2AuthorizedClient authorizedClient = this.authorizedClientServiceAndManager.authorize(authorizeRequest);
+
+		// Get the token from the authorized client object
+		OAuth2AccessToken accessToken = Objects.requireNonNull(authorizedClient).getAccessToken();
+
+		logger.info("Issued: " + accessToken.getIssuedAt().toString() + ", Expires:" + accessToken.getExpiresAt().toString());
+		logger.info("Scopes: " + accessToken.getScopes().toString());
+		logger.info("Token: " + accessToken.getTokenValue());
+
+		////////////////////////////////////////////////////
+		//  STEP 2: Use the JWT and call the service
+		////////////////////////////////////////////////////
+
+		// Add the JWT to the RestTemplate headers
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
+        HttpEntity request = new HttpEntity(headers);
+    	try {
+    		ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)
+        			/*"http://localhost:8762/dvdtheque-service/films?displayType=TOUS"*/, 
+        			HttpMethod.GET, 
+        			request, 
+        			new ParameterizedTypeReference<List<Film>>(){});
+        	
+        	return new ListItemReader<>(filmList.getBody());
+    	}catch(ResourceAccessException e) {
+    		logger.error(e.getMessage(),e);
+    		ResponseEntity<List<Film>> filmList2 = ResponseEntity.ok(new ArrayList<>());
+        	return new ListItemReader<>(filmList2.getBody());
+    	}
     	
-    	ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL), 
-    			HttpMethod.GET, 
-    			null, 
-    			new ParameterizedTypeReference<List<Film>>(){});
-    	
-    	return new ListItemReader<>(filmList.getBody());
     	/*
     	ResponseEntity<List<Film>> filmList2 = ResponseEntity.ok(new ArrayList<>());
     	return new ListItemReader<>(filmList2.getBody());
@@ -75,14 +114,13 @@ public class BatchExportFilmsConfiguration {
     }
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    @Lazy(true)
     protected ExcelStreamFilmWriter excelFilmWriter() {
     	logger.info("########### excelFilmWriter");
     	return new ExcelStreamFilmWriter();
     }
     
     @Bean
-    @Lazy(true)
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     protected Step exportFilmsStep() {
     	logger.info("########### exportFilmsStep");
         return stepBuilderFactory.get("exportFilms")
@@ -91,7 +129,6 @@ public class BatchExportFilmsConfiguration {
                 .build();
     }
     @Bean
-    @Lazy(true)
     public ObjectMapper mapper() {
     	return new ObjectMapper();
     }

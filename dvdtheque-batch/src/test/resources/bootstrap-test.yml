@@ -1,16 +1,18 @@
 debug: false
+
+server:
+  port: 8089
+
 spring:
   datasource:
     testWhileIdle: true
     validationQuery: SELECT 1
-    url: jdbc:mysql://192.168.1.100/dvdtheque?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris
-    username: fredo
-    password: fredo
+    url: jdbc:h2:file:./DB
   batch:
     initializer:
-      enabled: false
+      enabled: true
     job:
-      enabled: false
+      enabled: true
   cloud:
     config:
       enabled: false
@@ -47,7 +49,7 @@ excel:
   dvd:
     file:
       path:
-        export:
+        export: D:/dev/liste_dvd/
       name:
         export: export.xlsx
 

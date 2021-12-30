@@ -141,7 +141,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@GetMapping("/films")
 	ResponseEntity<List<Film>> findAllFilms(@RequestParam(name="displayType",required = false) String displayType) {
 		try {
@@ -178,7 +178,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@GetMapping("/films/byOrigine/{origine}")
 	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.debug("findAllFilmsByOrigine - instanceId="+instanceId);
@@ -192,7 +192,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@GetMapping("/filmListParam/byOrigine/{origine}")
 	ResponseEntity<FilmListParam> findFilmListParamByFilmDisplayTypeParam(@PathVariable String origine, @RequestParam(name="displayType",required = false) String displayType) {
 		logger.debug("findFilmListParamByFilmDisplayType - instanceId="+instanceId);
