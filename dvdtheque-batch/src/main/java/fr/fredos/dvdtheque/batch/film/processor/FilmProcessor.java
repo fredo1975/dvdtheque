@@ -2,9 +2,11 @@ package fr.fredos.dvdtheque.batch.film.processor;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.jms.Topic;
@@ -18,9 +20,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
@@ -44,13 +52,16 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
     private Topic topic;
 	@Autowired
     private RestTemplate restTemplate;
+	@Autowired
+	AuthorizedClientServiceOAuth2AuthorizedClientManager 			authorizedClientServiceAndManager;
 	public FilmProcessor() {
     }
 	private static String RIPPEDFLAGTASKLET_FROM_FILE="rippedFlagTasklet.from.file";
 	public static String TMDB_SERVICE_URL="tmdb-service.url";
 	public static String DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
-	public static String TMDB_SERVICE_BY_TMDBID="get-results";
-	public static String DVDTHEQUE_SERVICE_TRANSFORM_BY_TMDBID="transformTmdbFilmToDvdThequeFilm";
+	public static String TMDB_SERVICE_BY_TMDBID="tmdb-service.get-results";
+	public static String DVDTHEQUE_SERVICE_BUILD_DVD="dvdtheque-service.buildDvd";
+	public static String DVDTHEQUE_SERVICE_TRANSFORM_BY_TMDBID="dvdtheque-service.transformTmdbFilmToDvdThequeFilm";
 	
 	@Override
 	public Film process(FilmCsvImportFormat item) throws Exception {
@@ -61,13 +72,25 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 		jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.FILM_PROCESSOR_INIT, filmTemp,0l,JmsStatus.FILM_PROCESSOR_INIT.statusValue()));
 		
 		Film filmToSave = null;
-		
+		OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
+				.principal("batch")
+				.build();
+
+		OAuth2AuthorizedClient authorizedClient = this.authorizedClientServiceAndManager.authorize(authorizeRequest);
+
+		OAuth2AccessToken accessToken = Objects.requireNonNull(authorizedClient).getAccessToken();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
+        HttpEntity<?> request = new HttpEntity<>(headers);
 		ResponseEntity<Results> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(TMDB_SERVICE_URL)
-				+environment.getRequiredProperty(TMDB_SERVICE_BY_TMDBID)+"?tmdbId="+item.getTmdbId(), HttpMethod.GET, null, Results.class);
+				+environment.getRequiredProperty(TMDB_SERVICE_BY_TMDBID)+"?tmdbId="+item.getTmdbId(), HttpMethod.GET, request, Results.class);
 		
 		if(resultsResponse != null && resultsResponse.getBody() != null) {
+			request = new HttpEntity<>(resultsResponse.getBody(),headers);
 			ResponseEntity<Film> response = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)
-					+environment.getRequiredProperty(DVDTHEQUE_SERVICE_TRANSFORM_BY_TMDBID)+"?tmdbId="+item.getTmdbId(), HttpMethod.PUT, null, Film.class);
+					+environment.getRequiredProperty(DVDTHEQUE_SERVICE_TRANSFORM_BY_TMDBID)+"/"+item.getTmdbId(), HttpMethod.PUT, request, Film.class);
 			if(response != null && response.getBody() != null) {
 				filmToSave = response.getBody();
 			}
@@ -81,8 +104,12 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 				dvdBuilder.setDateSortieDvd(item.getDateSortieDvd());
 				dvdBuilder.setFilmToSave(filmToSave);
 				dvdBuilder.setZonedvd(item.getZonedvd());
-				HttpEntity<DvdBuilder> request = new HttpEntity<>(dvdBuilder);
-				ResponseEntity<Dvd> dvdResponse = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL), HttpMethod.POST, request, Dvd.class);
+				
+				request = new HttpEntity<>(dvdBuilder,headers);
+				ResponseEntity<Dvd> dvdResponse = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_BUILD_DVD), 
+						HttpMethod.POST, 
+						request, 
+						Dvd.class);
 				filmToSave.setDvd(dvdResponse.getBody());
 				boolean loadFromFile = Boolean.valueOf(environment.getRequiredProperty(RIPPEDFLAGTASKLET_FROM_FILE));
 				if(!loadFromFile) {
@@ -120,7 +147,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			}
 			filmToSave.setId(null);
 			
-			FicheFilm ficheFilm = restTemplate.getForObject(environment.getRequiredProperty(ALLOCINE_SERVICE_URL)+"?title="+item.getTitre(), FicheFilm.class);
+			//FicheFilm ficheFilm = restTemplate.getForObject(environment.getRequiredProperty(ALLOCINE_SERVICE_URL)+"?title="+item.getTitre(), FicheFilm.class);
 			//filmToSave.setCritiquesPresse(ficheFilm.getCritiquesPresse());
 			//allocineServiceClient.addCritiquesPresseToFilm(filmToSave);
 			

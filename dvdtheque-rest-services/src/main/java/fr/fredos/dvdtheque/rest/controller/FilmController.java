@@ -342,7 +342,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@PutMapping("/transformTmdbFilmToDvdThequeFilm/tmdb/{tmdbId}")
 	ResponseEntity<Film> transformTmdbFilmToDvdThequeFilm(@RequestBody Results results,@PathVariable Long tmdbId){
 		Film filmToSave=null;
@@ -593,7 +593,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@PostMapping("/films/buildDvd")
 	ResponseEntity<Dvd> buildDvd(@RequestBody DvdBuilder dvdBuilder) throws Exception {
 		try {

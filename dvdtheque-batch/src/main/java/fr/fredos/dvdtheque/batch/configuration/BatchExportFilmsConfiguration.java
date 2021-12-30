@@ -55,7 +55,6 @@ public class BatchExportFilmsConfiguration {
 	public static String 							DVDTHEQUE_SERVICE_ALL="dvdtheque-service.films";
 	
     @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public Job exportFilmsJob() {
     	logger.info("########### exportFilmsJob");
     	return jobBuilderFactory.get("exportFilms")
@@ -65,7 +64,6 @@ public class BatchExportFilmsConfiguration {
 	}
     
     @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     protected ListItemReader<Film> dvdthequeServiceFilmReader() {
     	logger.info("########### ListItemReader");
     	OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
@@ -99,14 +97,12 @@ public class BatchExportFilmsConfiguration {
     	*/
     }
     @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     protected ExcelStreamFilmWriter excelFilmWriter() {
     	logger.info("########### excelFilmWriter");
     	return new ExcelStreamFilmWriter();
     }
     
     @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     protected Step exportFilmsStep() {
     	logger.info("########### exportFilmsStep");
         return stepBuilderFactory.get("exportFilms")

@@ -54,7 +54,7 @@ public class TmdbServiceController {
 	private RestTemplate restTemplate;
 	
 	
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@GetMapping("/retrieveTmdbFilm/byTmdbId")
 	ResponseEntity<Results> retrieveTmdbFilm(@RequestParam(name="tmdbId",required = true) Long tmdbId) {
 		try {
@@ -89,7 +89,7 @@ public class TmdbServiceController {
 		return Optional.empty();
 	}
 	
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@GetMapping("/retrieveTmdbFrReleaseDate/byTmdbId")
 	public ResponseEntity<Date> retrieveTmdbFrReleaseDate(@RequestParam(name="tmdbId",required = true)Long tmdbId) throws ParseException {
 		try {
@@ -114,7 +114,7 @@ public class TmdbServiceController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@GetMapping("/retrieveTmdbCredits/byTmdbId")
 	public ResponseEntity<Credits> retrieveTmdbCredits(@RequestParam(name="tmdbId",required = true)Long tmdbId) {
 		try {
@@ -125,7 +125,7 @@ public class TmdbServiceController {
 		}
 	}
 	
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@GetMapping("/retrieveTmdbFilmListByTitle/byTitle")
 	public ResponseEntity<Set<Results>> retrieveTmdbFilmListByTitle(@RequestParam(name="title",required = true)String title){
 		Integer firstPage = Integer.valueOf(1);
@@ -161,7 +161,7 @@ public class TmdbServiceController {
 		}
 	}
 	
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@GetMapping("/checkIfPosterExists/byPosterPath")
 	public ResponseEntity<Boolean> checkIfPosterExists(String posterPath) {
 		try {
@@ -175,7 +175,7 @@ public class TmdbServiceController {
 		}
 		return ResponseEntity.ok(Boolean.FALSE);
 	}
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@GetMapping("/checkIfProfileImageExists/byPosterPath")
 	public ResponseEntity<Boolean> checkIfProfileImageExists(String profilePath) {
 		try {

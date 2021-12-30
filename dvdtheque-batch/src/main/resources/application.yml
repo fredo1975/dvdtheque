@@ -2,7 +2,7 @@ server:
   port: 8089
 spring:
   application:
-    name: dvdtheque-batch
+    name: dvdtheque-batch-service
   cloud:
     config:
       fail-fast: true

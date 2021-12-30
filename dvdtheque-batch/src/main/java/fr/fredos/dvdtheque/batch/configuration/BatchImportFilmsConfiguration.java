@@ -143,7 +143,7 @@ public class BatchImportFilmsConfiguration{
 				headers.setContentType(MediaType.APPLICATION_JSON);
 				headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
 		        HttpEntity<?> request = new HttpEntity(headers);
-				ResponseEntity<Void> response = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_CLEAN_ALL), 
+				restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_CLEAN_ALL), 
 						HttpMethod.PUT, 
 						request, 
 						Void.class);
