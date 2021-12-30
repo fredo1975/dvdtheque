@@ -3,16 +3,12 @@ package fr.fredos.dvdtheque.batch.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Dvd implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private Log logger = LogFactory.getLog(this.getClass());
 	private Long id;
 	private Integer annee;
 	private Date dateSortie;

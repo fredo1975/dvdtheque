@@ -22,8 +22,6 @@ import fr.fredos.dvdtheque.common.enums.DvdFormat;
 @Table(name = "DVD")
 public class Dvd implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@Transient
-	private Log logger = LogFactory.getLog(this.getClass());
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

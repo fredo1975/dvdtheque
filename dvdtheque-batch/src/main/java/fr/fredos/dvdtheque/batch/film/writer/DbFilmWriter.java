@@ -63,9 +63,12 @@ public class DbFilmWriter implements ItemWriter<Film> {
 				headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
 				headers.setContentType(MediaType.APPLICATION_JSON);
 				headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
-		        HttpEntity<?> request = new HttpEntity<>(film.getOrigine().name(),headers);
+		        HttpEntity<?> request = new HttpEntity<>(film,headers);
 		        ResponseEntity<Film> resultsResponse = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)
-						+environment.getRequiredProperty(DVDTHEQUE_SERVICE_SAVE_FILM)+film.getTmdbId(), HttpMethod.PUT, request, Film.class);
+						+environment.getRequiredProperty(DVDTHEQUE_SERVICE_SAVE_FILM), 
+						HttpMethod.POST, 
+						request, 
+						Film.class);
 				
 				//restTemplate.exchange(null, HttpMethod.PUT,)
 				watch.stop();

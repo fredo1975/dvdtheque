@@ -17,8 +17,6 @@ import org.slf4j.LoggerFactory;
 @Table(name = "GENRE")
 public class Genre implements Serializable{
 	private static final long serialVersionUID = 1L;
-	@Transient
-	protected Logger logger = LoggerFactory.getLogger(Genre.class);
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

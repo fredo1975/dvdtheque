@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Genre implements Serializable{
 	private static final long serialVersionUID = 1L;
-	protected Logger logger = LoggerFactory.getLogger(Genre.class);
 	private Long id;
 	private String name;
 	private int tmdbId;

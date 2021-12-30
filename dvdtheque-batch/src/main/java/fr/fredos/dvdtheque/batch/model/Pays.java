@@ -5,7 +5,6 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Pays implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 	private java.lang.Integer id;
 	private String lib;
