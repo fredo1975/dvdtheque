@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -91,29 +92,26 @@ public class FilmController {
 	public static String TMDB_SERVICE_RELEASE_DATE="tmdb-service.release-date";
 	public static String TMDB_SERVICE_CREDITS="tmdb-service.get-credits";
 	public static String TMDB_SERVICE_RESULTS="tmdb-service.get-results";
+	public static String DVDTHEQUE_BATCH_SERVICE_URL="dvdtheque-batch-service.url";
+	public static String DVDTHEQUE_BATCH_SERVICE_IMPORT="dvdtheque-batch-service.import";
 	private static String NB_ACTEURS="batch.save.nb.acteurs";
 	@Autowired
-    Environment environment;
+    Environment 						environment;
 	@Autowired
-	private IFilmService filmService;
+	private IFilmService 				filmService;
 	@Autowired
-	protected IPersonneService personneService;
+	protected IPersonneService 			personneService;
 	@Autowired
-    private ExcelFilmHandler excelFilmHandler;
-	/*
-	@Autowired
-	private JobLauncher jobLauncher;
+    private ExcelFilmHandler 			excelFilmHandler;
     @Autowired
-    private Job importFilmsJob;*/
-    @Autowired
-    private MultipartFileUtil multipartFileUtil;
+    private MultipartFileUtil 			multipartFileUtil;
     @Value("${eureka.instance.instance-id}")
-    private String instanceId;
+    private String 						instanceId;
     @Value("${limit.film.size}")
-    private int limitFilmSize;
+    private int 						limitFilmSize;
     @Autowired
-    private KeycloakRestTemplate keycloakRestTemplate;
-    private Map<Integer,Genres> genresById;
+    private KeycloakRestTemplate 		keycloakRestTemplate;
+    private Map<Integer,Genres> 		genresById;
 	public Map<Integer,Genres> getGenresById() {
 		return genresById;
 	}
@@ -556,7 +554,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@PutMapping("/films/save/{tmdbId}")
 	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
 		Film filmToSave=null;
@@ -633,6 +631,13 @@ public class FilmController {
 			logger.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
+		HttpEntity<?> request = new HttpEntity<>(resFile.getAbsolutePath());
+		ResponseEntity<String> resultsResponse = keycloakRestTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_BATCH_SERVICE_URL)
+				+environment.getRequiredProperty(DVDTHEQUE_BATCH_SERVICE_IMPORT), 
+				HttpMethod.POST, 
+				request, 
+				String.class);
+		logger.info(resultsResponse.getBody());
 		/*
 		try {
 			JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();

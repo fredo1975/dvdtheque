@@ -1368,7 +1368,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		
 		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
+		.with(keycloak.keycloakAuthenticationToken().roles("user","batch").accessToken(token -> token.setPreferredUsername("fredo")))
 		.perform(MockMvcRequestBuilders.put(SAVE_FILM_URI + FilmBuilder.tmdbId2).content(FilmOrigine.EN_SALLE.name()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())

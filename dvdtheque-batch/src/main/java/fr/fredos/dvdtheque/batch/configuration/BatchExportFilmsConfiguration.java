@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
@@ -37,7 +36,6 @@ import fr.fredos.dvdtheque.batch.model.Film;
 
 @Configuration
 @EnableBatchProcessing
-@Lazy
 public class BatchExportFilmsConfiguration {
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfiguration.class);
 	@Autowired
@@ -83,13 +81,13 @@ public class BatchExportFilmsConfiguration {
 */
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
-        HttpEntity request = new HttpEntity(headers);
+        HttpEntity<?> request = new HttpEntity<>(headers);
         ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)+"?displayType=TOUS"
     			/*"http://localhost:8762/dvdtheque-service/films?displayType=TOUS"*/, 
     			HttpMethod.GET, 
     			request, 
     			new ParameterizedTypeReference<List<Film>>(){});
-    	
+        logger.info("Issued: filmList.getBody().size()=" + filmList.getBody().size());
     	return new ListItemReader<>(filmList.getBody());
     	/*
     	ResponseEntity<List<Film>> filmList2 = ResponseEntity.ok(new ArrayList<>());

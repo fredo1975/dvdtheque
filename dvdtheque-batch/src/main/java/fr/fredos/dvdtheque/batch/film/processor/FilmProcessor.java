@@ -4,10 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.jms.Topic;
 
@@ -17,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,7 +31,6 @@ import org.springframework.web.client.RestTemplate;
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
 import fr.fredos.dvdtheque.batch.model.Dvd;
 import fr.fredos.dvdtheque.batch.model.DvdBuilder;
-import fr.fredos.dvdtheque.batch.model.FicheFilm;
 import fr.fredos.dvdtheque.batch.model.Film;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
@@ -45,13 +41,13 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 	protected Logger logger = LoggerFactory.getLogger(FilmProcessor.class);
 	private static String ALLOCINE_SERVICE_URL ="allocine.service.url";
 	@Autowired
-    Environment environment;
+    Environment 													environment;
 	@Autowired
-    private JmsTemplate jmsTemplate;
+    private JmsTemplate 											jmsTemplate;
 	@Autowired
-    private Topic topic;
+    private Topic 													topic;
 	@Autowired
-    private RestTemplate restTemplate;
+    private RestTemplate 											restTemplate;
 	@Autowired
 	AuthorizedClientServiceOAuth2AuthorizedClientManager 			authorizedClientServiceAndManager;
 	public FilmProcessor() {
