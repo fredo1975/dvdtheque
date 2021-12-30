@@ -558,7 +558,7 @@ public class FilmController {
 	@PutMapping("/films/save/{tmdbId}")
 	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
 		Film filmToSave=null;
-		logger.info("saveFilm - instanceId="+instanceId);
+		//logger.info("saveFilm - instanceId="+instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			if(this.filmService.checkIfTmdbFilmExists(tmdbId)) {
