@@ -1,6 +1,5 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +28,6 @@ import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2A
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,28 +83,16 @@ public class BatchExportFilmsConfiguration {
 		logger.info("Scopes: " + accessToken.getScopes().toString());
 		logger.info("Token: " + accessToken.getTokenValue());
 */
-		////////////////////////////////////////////////////
-		//  STEP 2: Use the JWT and call the service
-		////////////////////////////////////////////////////
-
-		// Add the JWT to the RestTemplate headers
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
         HttpEntity request = new HttpEntity(headers);
-    	try {
-    		ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)+"?displayType=TOUS"
-        			/*"http://localhost:8762/dvdtheque-service/films?displayType=TOUS"*/, 
-        			HttpMethod.GET, 
-        			request, 
-        			new ParameterizedTypeReference<List<Film>>(){});
-        	
-        	return new ListItemReader<>(filmList.getBody());
-    	}catch(ResourceAccessException e) {
-    		logger.error(e.getMessage(),e);
-    		ResponseEntity<List<Film>> filmList2 = ResponseEntity.ok(new ArrayList<>());
-        	return new ListItemReader<>(filmList2.getBody());
-    	}
+        ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)+"?displayType=TOUS"
+    			/*"http://localhost:8762/dvdtheque-service/films?displayType=TOUS"*/, 
+    			HttpMethod.GET, 
+    			request, 
+    			new ParameterizedTypeReference<List<Film>>(){});
     	
+    	return new ListItemReader<>(filmList.getBody());
     	/*
     	ResponseEntity<List<Film>> filmList2 = ResponseEntity.ok(new ArrayList<>());
     	return new ListItemReader<>(filmList2.getBody());

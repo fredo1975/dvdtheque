@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.jms.Topic;
 
@@ -45,6 +46,10 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
@@ -58,25 +63,25 @@ import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 @Configuration
 @EnableBatchProcessing
 public class BatchImportFilmsConfiguration{
-	/*
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
-	private static String DVDTHEQUE_SERVICE_URL ="dvdtheque.service.url";
+	private static String DVDTHEQUE_SERVICE_URL ="dvdtheque-service.url";
+	private static String DVDTHEQUE_SERVICE_CLEAN_ALL ="dvdtheque-service.cleanAllFilms";
 	@Autowired
-    Environment environment;
+    Environment 													environment;
 	@Autowired
-	protected JobBuilderFactory jobBuilderFactory;
+	JobBuilderFactory 												jobBuilderFactory;
     @Autowired
-    protected StepBuilderFactory stepBuilderFactory;
+    StepBuilderFactory 												stepBuilderFactory;
     @Autowired
     @Qualifier("rippedFlagTasklet")
-    protected Tasklet rippedFlagTasklet;
+    Tasklet 														rippedFlagTasklet;
     @Autowired
     @Qualifier("retrieveDateInsertionTasklet")
-    protected Tasklet retrieveDateInsertionTasklet;
+    Tasklet 														retrieveDateInsertionTasklet;
     @Autowired
-    private JmsTemplate jmsTemplate;
+    JmsTemplate 													jmsTemplate;
 	@Autowired
-    private Topic topic;
+    Topic 															topic;
 	
 	class DvdthequeJobResultListener implements JobExecutionListener{
 		@Override
@@ -111,24 +116,37 @@ public class BatchImportFilmsConfiguration{
 	protected Tasklet cleanDBTasklet() {
     	return new Tasklet() {
     		@Autowired
-    	    private RestTemplate restTemplate;
+    	    RestTemplate 													restTemplate;
 			@Autowired
-		    private JmsTemplate jmsTemplate;
+		    JmsTemplate 													jmsTemplate;
 			@Autowired
-		    private Topic topic;
+		    Topic 															topic;
+			@Autowired
+			AuthorizedClientServiceOAuth2AuthorizedClientManager 			authorizedClientServiceAndManager;
+			
 			@Override
 			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 				StopWatch watch = new StopWatch();
 				watch.start();
 				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT, null,0l,JmsStatus.CLEAN_DB_INIT.statusValue()));
 				//filmService.cleanAllFilms();
+				
+				OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
+						.principal("batch")
+						.build();
+
+				OAuth2AuthorizedClient authorizedClient = this.authorizedClientServiceAndManager.authorize(authorizeRequest);
+
+				OAuth2AccessToken accessToken = Objects.requireNonNull(authorizedClient).getAccessToken();
 				HttpHeaders headers = new HttpHeaders();
 				headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
-				// Request to return JSON format
 				headers.setContentType(MediaType.APPLICATION_JSON);
-				HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-				ResponseEntity<Void> response = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL), HttpMethod.PUT, entity, Void.class);
+				headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
+		        HttpEntity<?> request = new HttpEntity(headers);
+				ResponseEntity<Void> response = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_CLEAN_ALL), 
+						HttpMethod.PUT, 
+						request, 
+						Void.class);
 				watch.stop();
 				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_COMPLETED, null,watch.getTime(),JmsStatus.CLEAN_DB_COMPLETED.statusValue()));
 				logger.debug("database cleaning Time Elapsed: " + watch.getTime());
@@ -139,6 +157,7 @@ public class BatchImportFilmsConfiguration{
     
 	@Bean
 	public Job importFilmsJob() throws Exception {
+		logger.info("######## importFilmsJob");
 		return jobBuilderFactory.get("importFilms").listener(new DvdthequeJobResultListener()).incrementer(new RunIdIncrementer()).start(cleanDBStep())
 				.next(importFilmsStep()).next(setRippedFlagStep()).next(setRetrieveDateInsertionStep()).build();
 	}
@@ -216,6 +235,7 @@ public class BatchImportFilmsConfiguration{
     }
     @Bean
     protected Step importFilmsStep() {
+    	logger.info("######## importFilmsStep");
         return stepBuilderFactory.get("importFilmsStep")
                 .<FilmCsvImportFormat, Film>chunk(100)
                 .reader(reader(null))
@@ -223,5 +243,4 @@ public class BatchImportFilmsConfiguration{
                 .writer(filmWriter())
                 .build();
     }
-    */
 }

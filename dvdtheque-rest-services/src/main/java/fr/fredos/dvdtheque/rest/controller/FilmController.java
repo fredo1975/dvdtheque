@@ -3,6 +3,7 @@ package fr.fredos.dvdtheque.rest.controller;
 import static java.lang.String.format;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -163,7 +165,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	@RolesAllowed("user")
+	@RolesAllowed({"user","batch"})
 	@PutMapping("/films/cleanAllfilms")
 	void cleanAllFilms() {
 		filmService.cleanAllFilms();
@@ -620,7 +622,7 @@ public class FilmController {
 		logger.info(personne.toString());
 		return ResponseEntity.noContent().build();
 	}
-	/*
+	
 	@RolesAllowed("user")
 	@PostMapping("/films/import")
 	ResponseEntity<Void> importFilmList(@RequestParam("file") MultipartFile file) {
@@ -631,6 +633,7 @@ public class FilmController {
 			logger.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
+		/*
 		try {
 			JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
 	    	jobParametersBuilder.addString("INPUT_FILE_PATH", resFile.getAbsolutePath());
@@ -639,10 +642,10 @@ public class FilmController {
 		} catch (JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | JobParametersInvalidException | JobRestartException e) {
 			logger.error("an error occured while importFilmList",e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
+		}*/
 		return ResponseEntity.noContent().build();
 	}
-	*/
+	
 	@RolesAllowed("user")
 	@PostMapping("/films/export")
 	ResponseEntity<byte[]> exportFilmList(@RequestBody String origine) throws DvdthequeServerRestException, IOException{
