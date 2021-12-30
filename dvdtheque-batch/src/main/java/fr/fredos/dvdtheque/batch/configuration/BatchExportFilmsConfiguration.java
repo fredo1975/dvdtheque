@@ -71,7 +71,7 @@ public class BatchExportFilmsConfiguration {
     protected ListItemReader<Film> dvdthequeServiceFilmReader() {
     	logger.info("########### ListItemReader");
     	OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
-				.principal("user")
+				.principal("batch")
 				.build();
 
 		// Perform the actual authorization request using the authorized client service and authorized client
@@ -80,11 +80,11 @@ public class BatchExportFilmsConfiguration {
 
 		// Get the token from the authorized client object
 		OAuth2AccessToken accessToken = Objects.requireNonNull(authorizedClient).getAccessToken();
-
+/*
 		logger.info("Issued: " + accessToken.getIssuedAt().toString() + ", Expires:" + accessToken.getExpiresAt().toString());
 		logger.info("Scopes: " + accessToken.getScopes().toString());
 		logger.info("Token: " + accessToken.getTokenValue());
-
+*/
 		////////////////////////////////////////////////////
 		//  STEP 2: Use the JWT and call the service
 		////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ public class BatchExportFilmsConfiguration {
 		headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
         HttpEntity request = new HttpEntity(headers);
     	try {
-    		ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)
+    		ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)+"?displayType=TOUS"
         			/*"http://localhost:8762/dvdtheque-service/films?displayType=TOUS"*/, 
         			HttpMethod.GET, 
         			request, 

@@ -19,7 +19,6 @@ public class OAuthClientConfiguration {
     ClientRegistration dvdthequeClientRegistration(
             @Value("${spring.security.oauth2.client.provider.keycloak.token-uri}") String token_uri,
             @Value("${spring.security.oauth2.client.registration.keycloak.client-id}") String client_id,
-            @Value("${spring.security.oauth2.client.registration.keycloak.scope}") String scope,
             @Value("${spring.security.oauth2.client.registration.keycloak.client-secret}") String client_secret,
             @Value("${spring.security.oauth2.client.registration.keycloak.authorization-grant-type}") String authorizationGrantType
     ) {
@@ -28,8 +27,6 @@ public class OAuthClientConfiguration {
                 .tokenUri(token_uri)
                 .clientId(client_id)
                 .clientSecret(client_secret)
-                .userNameAttributeName("fredo")
-                //.scope(scope)
                 .authorizationGrantType(new AuthorizationGrantType(authorizationGrantType))
                 .build();
     }
