@@ -39,6 +39,7 @@ import fr.fredos.dvdtheque.batch.model.Film;
 	  DirtiesContextTestExecutionListener.class})
 	@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class BatchExportFilmsConfigurationTest2 {
+	/*
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfigurationTest2.class);
 	@Autowired
     JobLauncherTestUtils 					jobLauncherTestUtils;
@@ -55,32 +56,20 @@ public class BatchExportFilmsConfigurationTest2 {
     public void testEntireJob() throws Exception {
     	logger.info("##### testEntireJob");
     	
-    	/*
-    	logger.info("##### testEntireJob");
-    	ApplicationContext ctx = new AnnotationConfigApplicationContext(BatchApplication.class);
-    	RestTemplate restTemplate = ctx.getBean(RestTemplate.class);
-    	mockServer = MockRestServiceServer.createServer(restTemplate);
-    	JobLauncherTestUtils jobLauncherTestUtils = ctx.getBean(JobLauncherTestUtils.class);
-    	Job exportFilmsJob= ctx.getBean(Job.class);
-    	Environment environment = ctx.getBean(Environment.class);
-    	*/
-    	mockServer = MockRestServiceServer.createServer(restTemplate);
-    	
-    	
     	List<Film> l = new ArrayList<>();
 		Film film = new Film();
 		l.add(film);
-		/*
+		
 		mockServer.expect(ExpectedCount.once(), 
 				 requestTo(environment.getRequiredProperty(BatchExportFilmsConfiguration.DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(BatchExportFilmsConfiguration.DVDTHEQUE_SERVICE_ALL)))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess(mapper.writeValueAsString(l), MediaType.APPLICATION_JSON));
-		*/
+		
         final JobExecution result = jobLauncherTestUtils.getJobLauncher().run(exportFilmsJob, jobLauncherTestUtils.getUniqueJobParameters());
         mockServer.verify();
         Assert.assertNotNull(result);
         Assert.assertEquals(BatchStatus.COMPLETED, result.getStatus());
-    }
+    }*/
 /*
     @Test
     public void testSpecificStep() {
