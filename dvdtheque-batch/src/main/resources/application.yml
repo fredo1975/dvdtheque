@@ -1,6 +1,8 @@
 server:
   port: 8089
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: dvdtheque-batch-service
   cloud:

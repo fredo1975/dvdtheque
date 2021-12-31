@@ -18,8 +18,8 @@ public class JobInvokerController {
 	JobLauncher jobLauncher;
 
 	@Autowired
-	@Qualifier("exportFilmsJob")
-	Job exportFilmsJob;
+	@Qualifier("runExportFilmsJob")
+	Job runExportFilmsJob;
 
 	@Autowired
 	@Qualifier("importFilmsJob")
@@ -29,7 +29,7 @@ public class JobInvokerController {
 	public String handleExportFilmsJob() throws Exception {
 		JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
 				.toJobParameters();
-		jobLauncher.run(exportFilmsJob, jobParameters);
+		jobLauncher.run(runExportFilmsJob, jobParameters);
 		return "Batch exportFilmsJob has been invoked";
 	}
 
