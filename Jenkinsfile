@@ -17,7 +17,8 @@ pipeline {
         def GIT_BRANCH_NAME = getGitBranchName()
         def VERSION = getArtifactVersion(GIT_BRANCH_NAME,GIT_COMMIT_SHORT)
         def ARTIFACT = "dvdtheque-rest-services-${VERSION}.jar"
-        def BATCH_ARTIFACT = "dvdtheque-batch-app-${VERSION}.jar"
+        def TMDB_ARTIFACT = "dvdtheque-tmdb-service-${VERSION}.jar"
+        def BATCH_ARTIFACT = "dvdtheque-batch-${VERSION}.jar"
     }
     stages {
         stage ('Initialize') {
@@ -30,6 +31,7 @@ pipeline {
                     echo "DEV_SERVER2_IP = ${DEV_SERVER2_IP}"
                     echo "VERSION = ${VERSION}"
                     echo "ARTIFACT = ${ARTIFACT}"
+                    echo "TMDB_ARTIFACT = ${TMDB_ARTIFACT}"
                     echo "BATCH_ARTIFACT = ${BATCH_ARTIFACT}"
                 '''
             }
@@ -130,6 +132,22 @@ pipeline {
 	       		sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl stop dvdtheque-rest.service'
 	       	}
 	    }
+	    stage('Stopping Dev1 Tmdb service') {
+        	when {
+                branch 'develop'
+            }
+        	steps {
+	       		sh 'ssh jenkins@$DEV_SERVER1_IP sudo systemctl stop dvdtheque-tmdb.service'
+	       	}
+	    }
+	    stage('Stopping Dev2 Tmdb service') {
+	    	when {
+                branch 'develop'
+            }
+        	steps {
+	       		sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl stop dvdtheque-tmdb.service'
+	       	}
+	    }
 	    stage('Stopping Prod1 Rest service') {
         	when {
                 branch 'master'
@@ -161,14 +179,29 @@ pipeline {
 			 	}
             }
         }
-        stage('Copying develop dvdtheque-batch-app') {
+        stage('Copying develop dvdtheque-tmdb-service') {
 	    	when {
                 branch 'develop'
             }
             steps {
                 script {
 			 		sh """
-			 			scp dvdtheque-batch-app/target/$BATCH_ARTIFACT jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
+			 			scp dvdtheque-tmdb-service/target/$TMDB_ARTIFACT jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_tmdb_service/dvdtheque-tmdb-service.jar
+			 		"""
+			 		sh """
+			 			scp dvdtheque-tmdb-service/target/$TMDB_ARTIFACT jenkins@${DEV_SERVER2_IP}:/opt/dvdtheque_tmdb_service/dvdtheque-tmdb-service.jar
+			 		"""
+			 	}
+            }
+        }
+        stage('Copying develop dvdtheque-batch') {
+	    	when {
+                branch 'develop'
+            }
+            steps {
+                script {
+			 		sh """
+			 			scp dvdtheque-batch/target/$BATCH_ARTIFACT jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch.jar
 			 		"""
 			 	}
             }
@@ -216,6 +249,22 @@ pipeline {
 	        	sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl start dvdtheque-rest.service'
 	        }
    		}
+   		stage('Sarting Dev1 Tmdb service') {
+        	when {
+                branch 'develop'
+            }
+        	steps {
+	        	sh 'ssh jenkins@$DEV_SERVER1_IP sudo systemctl start dvdtheque-tmdb.service'
+	        }
+   		}
+   		stage('Sarting Dev2 Tmdb service') {
+   			when {
+                branch 'develop'
+            }
+        	steps {
+	        	sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl start dvdtheque-tmdb.service'
+	        }
+   		}
    		stage('Sarting Prod1 Rest service') {
         	when {
                 branch 'master'
@@ -249,6 +298,26 @@ pipeline {
 			steps {
 				script {
 				    sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl status dvdtheque-rest.service'
+			    }
+			}
+		}
+		stage('Check status Dev1 Tmdb service') {
+   			when {
+                branch 'develop'
+            }
+			steps {
+				script {
+				    sh 'ssh jenkins@$DEV_SERVER1_IP sudo systemctl status dvdtheque-tmdb.service'
+			    }
+			}
+		}
+		stage('Check status Dev2 Tmdb service') {
+			when {
+                branch 'develop'
+            }
+			steps {
+				script {
+				    sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl status dvdtheque-tmdb.service'
 			    }
 			}
 		}
