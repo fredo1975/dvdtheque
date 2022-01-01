@@ -19,8 +19,9 @@
 		<module>dvdtheque-commons</module>
 		<module>dvdtheque-allocine-service</module>
 		<module>dvdtheque-tmdb-service</module>
-		<!-- module>dvdtheque-jms-publisher</module -->
+		<!-- module>dvdtheque-jms-publisher</module 
 		<module>dvdtheque-jms-receiver-test</module>
+-->
 		<module>dvdtheque-batch</module>
 		<module>dvdtheque-rest-services</module>
 		<!--module>dvdtheque-rest-services-test-integration</module -->
