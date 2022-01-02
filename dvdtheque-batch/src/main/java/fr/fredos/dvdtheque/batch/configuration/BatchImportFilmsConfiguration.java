@@ -158,6 +158,7 @@ public class BatchImportFilmsConfiguration{
     
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Qualifier("importFilmsJob")
 	public Job importFilmsJob() throws Exception {
 		logger.info("######## importFilmsJob");
 		return jobBuilderFactory.get("importFilms").listener(new DvdthequeJobResultListener()).incrementer(new RunIdIncrementer()).start(cleanDBStep())

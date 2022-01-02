@@ -19,9 +19,5 @@ public class BatchApplication {
 		SpringApplication.run(BatchApplication.class,args);
     }
 	
-	@Bean
-	@Lazy
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
+	
 }

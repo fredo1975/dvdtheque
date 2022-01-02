@@ -29,14 +29,14 @@ public abstract class AbstractBatchFilmsConfigurationTest {
 	@Autowired
 	ObjectMapper 							mapper;
 	@Autowired
-    RestTemplate 							restTemplate;
+    RestTemplate							oAuthRestTemplate;
 	@Autowired
     Environment 							environment;
 	MockRestServiceServer 					mockServer;
-	@Autowired
     JobLauncherTestUtils 					jobLauncherTestUtils;
 	@Bean
 	protected JobLauncherTestUtils jobLauncherTestUtils(Job job) throws NoSuchJobException {
+		jobLauncherTestUtils = new JobLauncherTestUtils();
 		jobLauncherTestUtils.setJobLauncher(jobLauncher);
 		jobLauncherTestUtils.setJobRepository(jobRepository);
 		return jobLauncherTestUtils;

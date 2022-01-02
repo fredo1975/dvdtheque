@@ -18,7 +18,10 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.configuration.annotation.SimpleBatchConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.filter.TypeExcludeFilters;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -37,12 +40,13 @@ import com.hazelcast.core.HazelcastInstance;
 import fr.fredos.dvdtheque.batch.configuration.BatchExportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.model.Film;
 
-@SpringBootTest
+@SpringBootTest(classes = {BatchExportFilmsConfiguration.class,OAuth2ClientConfiguration.class})
 public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
-	/*
+	
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfigurationTest.class);
 	@Autowired
-	Job										exportFilmsJob;
+	@Qualifier(value = "runExportFilmsJob")
+	Job										runExportFilmsJob;
 	
 	@TestConfiguration
 	public static class HazelcastConfiguration {
@@ -59,7 +63,7 @@ public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	@Disabled
 	public void launchExportFilmsJob() throws Exception {
 		logger.info("##### testEntireJob");
-		mockServer = MockRestServiceServer.createServer(restTemplate);
+		mockServer = MockRestServiceServer.createServer(oAuthRestTemplate);
 		
 		List<Film> l = new ArrayList<>();
 		Film film = new Film();
@@ -73,8 +77,8 @@ public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		JobParametersBuilder builder = new JobParametersBuilder();
 		builder.addDate("TIMESTAMP", c.getTime());
 		JobParameters jobParameters = builder.toJobParameters();
-		JobExecution jobExecution = jobLauncherTestUtils(exportFilmsJob).launchJob(jobParameters);
+		JobExecution jobExecution = jobLauncherTestUtils(runExportFilmsJob).launchJob(jobParameters);
 		mockServer.verify();
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-	}*/
+	}
 }

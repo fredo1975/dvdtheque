@@ -1,8 +1,10 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
@@ -12,10 +14,19 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class OAuthClientConfiguration {
-    @Bean
+@Profile({ "prod","dev","local"})
+public class OAuth2ClientConfiguration {
+	private final RestTemplateBuilder restTemplateBuilder;
+    
+    public OAuth2ClientConfiguration(RestTemplateBuilder restTemplateBuilder) {
+		super();
+		this.restTemplateBuilder = restTemplateBuilder;
+	}
+
+	@Bean
     ClientRegistration dvdthequeClientRegistration(
             @Value("${spring.security.oauth2.client.provider.keycloak.token-uri}") String token_uri,
             @Value("${spring.security.oauth2.client.registration.keycloak.client-id}") String client_id,
@@ -28,6 +39,14 @@ public class OAuthClientConfiguration {
                 .clientId(client_id)
                 .clientSecret(client_secret)
                 .authorizationGrantType(new AuthorizationGrantType(authorizationGrantType))
+                .build();
+    }
+    
+    @Bean
+    RestTemplate oAuthRestTemplate(AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceOAuth2AuthorizedClientManager,
+    ClientRegistration dvdthequeClientRegistration) {
+        return restTemplateBuilder
+                .additionalInterceptors(new OAuthClientCredentialsRestTemplateInterceptor(authorizedClientServiceOAuth2AuthorizedClientManager, dvdthequeClientRegistration))
                 .build();
     }
 
