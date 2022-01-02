@@ -97,13 +97,13 @@ public class ExcelFilmHandler {
     public void writeBook(Film film) {
         addRow();
         // 0
-        addCell(printPersonnes(film.getRealisateurs(),","));
+        addCell(printPersonnes(film.getRealisateur(),","));
         // 1
         addCell(film.getTitre());
         // 2
         addCell(film.getAnnee().toString());
         // 3
-        addCell(printPersonnes(film.getActeurs(),","));
+        addCell(printPersonnes(film.getActeur(),","));
         // 4
         addCell(film.getOrigine()!=null?film.getOrigine().name():StringUtils.EMPTY);
         // 5

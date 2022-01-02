@@ -6,7 +6,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -32,8 +31,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 
-import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
-import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.integration.config.ContextConfiguration;
 import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
 import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;

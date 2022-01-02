@@ -142,9 +142,9 @@ public class FilmDto implements Serializable {
 		filmDto.setId(film.getId());
 		filmDto.setTitre(film.getTitre());
 		filmDto.setTitreO(film.getTitreO());
-		filmDto.getPersonnesFilm().addActeur(film.getActeurs());
-		if(!CollectionUtils.isEmpty(film.getRealisateurs())){
-			filmDto.getPersonnesFilm().setRealisateur(RealisateurDto.toDto(film.getRealisateurs().iterator().next()));
+		filmDto.getPersonnesFilm().addActeur(film.getActeur());
+		if(!CollectionUtils.isEmpty(film.getRealisateur())){
+			filmDto.getPersonnesFilm().setRealisateur(RealisateurDto.toDto(film.getRealisateur().iterator().next()));
 		}
 		filmDto.setRipped(film.getDvd().isRipped());
 		filmDto.setPosterPath(film.getPosterPath());
@@ -164,9 +164,9 @@ public class FilmDto implements Serializable {
 		for(ActeurDto acteurDto : this.getPersonnesFilm().getActeurs()){
 			acteurs.add(PersonneDto.fromDto(acteurDto.getPersonne()));
 		}
-		film.setActeurs(acteurs);
+		film.setActeur(acteurs);
 		realisateurs.add(PersonneDto.fromDto(this.getPersonnesFilm().getRealisateur().getPersonne()));
-		film.setRealisateurs(realisateurs);
+		film.setRealisateur(realisateurs);
 		film.getDvd().setRipped(this.isRipped());
 		film.setPosterPath(this.getPosterPath());
 		film.setTmdbId(this.getTmdbId());

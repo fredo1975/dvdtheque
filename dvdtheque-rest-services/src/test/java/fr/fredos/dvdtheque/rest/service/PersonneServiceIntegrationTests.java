@@ -61,7 +61,7 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 		Long filmId = filmService.saveNewFilm(film);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
 		assertNotNull(filmId);
-		Personne personneByLoad = personneService.loadPersonne(film.getRealisateurs().iterator().next().getId());
+		Personne personneByLoad = personneService.loadPersonne(film.getRealisateur().iterator().next().getId());
 		assertNotNull(personneByLoad);
 		logger.debug("personneByLoad=" + personneByLoad.toString());
 	}
@@ -87,7 +87,7 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
-		Personne personne = personneService.findByPersonneId(film.getRealisateurs().iterator().next().getId());
+		Personne personne = personneService.findByPersonneId(film.getRealisateur().iterator().next().getId());
 		assertNotNull(personne);
 	}
 	

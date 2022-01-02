@@ -38,43 +38,43 @@ public class PersonneDaoImpl implements PersonneDao{
 		return p;
 	}
 	public Personne findRealisateurByFilm(Film film)  {
-		Query q = this.em.createQuery("from Film film join fetch film.realisateurs real where film = :film");
+		Query q = this.em.createQuery("from Film film join fetch film.realisateur real where film = :film");
 		q.setParameter("film", film);
 		Film f = (Film) q.getSingleResult();
-		if(!CollectionUtils.isEmpty(f.getRealisateurs())) {
-			return f.getRealisateurs().iterator().next();
+		if(!CollectionUtils.isEmpty(f.getRealisateur())) {
+			return f.getRealisateur().iterator().next();
 		}else
 			return null;
 		
 	}
 	public List<Personne> findAllRealisateur(){
-		Query q = this.em.createQuery("from Film f join fetch f.realisateurs real");
+		Query q = this.em.createQuery("from Film f join fetch f.realisateur real");
 		List<Film> filmList = q.getResultList();
-		Set<Personne> set = filmList.stream().flatMap(list->list.getRealisateurs().stream()).collect(Collectors.toSet());
+		Set<Personne> set = filmList.stream().flatMap(list->list.getRealisateur().stream()).collect(Collectors.toSet());
 		List<Personne> l = new ArrayList<>(set);
 		return l;
 	}
 	public List<Personne> findAllRealisateursByOrigine(FilmOrigine filmOrigine){
-		Query q = this.em.createQuery("from Film f join fetch f.realisateurs real where f.origine=:origine");
+		Query q = this.em.createQuery("from Film f join fetch f.realisateur real where f.origine=:origine");
 		q.setParameter("origine", filmOrigine);
 		List<Film> filmList = q.getResultList();
-		Set<Personne> set = filmList.stream().flatMap(list->list.getRealisateurs().stream()).collect(Collectors.toSet());
+		Set<Personne> set = filmList.stream().flatMap(list->list.getRealisateur().stream()).collect(Collectors.toSet());
 		List<Personne> l = new ArrayList<>(set);
 		return l;
 	}
 	public List<Personne> findAllActeur(){
-		Query q = this.em.createQuery("from Film f join fetch f.acteurs act ");
+		Query q = this.em.createQuery("from Film f join fetch f.acteur act ");
 		List<Film> filmList = q.getResultList();
-		Set<Personne> set = filmList.stream().flatMap(list->list.getActeurs().stream()).collect(Collectors.toSet());
+		Set<Personne> set = filmList.stream().flatMap(list->list.getActeur().stream()).collect(Collectors.toSet());
 		List<Personne> l = new ArrayList<>(set);
 		Collections.sort(l, (p1,p2)->(p1.getPrenom()+" "+p1.getNom()).compareTo((p2.getPrenom()+" "+p2.getNom())));
 		return l;
 	}
 	public List<Personne> findAllActeursByOrigine(FilmOrigine filmOrigine){
-		Query q = this.em.createQuery("from Film f join fetch f.acteurs act where f.origine=:origine");
+		Query q = this.em.createQuery("from Film f join fetch f.acteur act where f.origine=:origine");
 		q.setParameter("origine", filmOrigine);
 		List<Film> filmList = q.getResultList();
-		Set<Personne> set = filmList.stream().flatMap(list->list.getActeurs().stream()).collect(Collectors.toSet());
+		Set<Personne> set = filmList.stream().flatMap(list->list.getActeur().stream()).collect(Collectors.toSet());
 		List<Personne> l = new ArrayList<>(set);
 		Collections.sort(l, (p1,p2)->(p1.getPrenom()+" "+p1.getNom()).compareTo((p2.getPrenom()+" "+p2.getNom())));
 		return l;
@@ -108,13 +108,13 @@ public class PersonneDaoImpl implements PersonneDao{
     }
     public List<Personne> findAllPersonneByFilm(Film film) {
 		List<Personne> persList = new ArrayList<Personne>();
-		StringBuilder sbRealisateur = new StringBuilder("from Film film join fetch film.realisateurs real join fetch film.acteurs act ");
+		StringBuilder sbRealisateur = new StringBuilder("from Film film join fetch film.realisateur real join fetch film.acteur act ");
 		sbRealisateur.append("where film = :film ");
 		Query queryRealisateur = this.em.createQuery(sbRealisateur.toString());
 		queryRealisateur.setParameter("film", film);
 		Film f = (Film) queryRealisateur.getSingleResult();
-		persList.addAll(f.getActeurs());
-		persList.addAll(f.getRealisateurs());
+		persList.addAll(f.getActeur());
+		persList.addAll(f.getRealisateur());
         return persList;
     }
 	public Long savePersonne(Personne p){

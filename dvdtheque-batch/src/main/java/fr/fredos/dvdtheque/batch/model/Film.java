@@ -20,15 +20,15 @@ public class Film implements Serializable, Comparable<Film>{
 	private String titreO;
 	private Dvd dvd;
 	private FilmOrigine origine;
-	private Set<Personne> realisateurs = new HashSet<>();
-	private Set<Personne> acteurs = new HashSet<>();
+	private Set<Personne> realisateur = new HashSet<>();
+	private Set<Personne> acteur = new HashSet<>();
 	private Set<CritiquesPresse> critiquesPresse = new TreeSet<>();
 	private boolean vu;
 	private String posterPath;
 	private Long tmdbId;
 	private String overview;
 	private Integer runtime;
-	private Set<Genre> genres = new HashSet<>();
+	private Set<Genre> genre = new HashSet<>();
 	private String homepage;
 	private boolean alreadyInDvdtheque;
 	
@@ -70,17 +70,23 @@ public class Film implements Serializable, Comparable<Film>{
 	public void setDvd(Dvd dvd) {
 		this.dvd = dvd;
 	}
-	public Set<Personne> getRealisateurs() {
-		return realisateurs;
+	public Set<Personne> getRealisateur() {
+		return realisateur;
 	}
-	public void setRealisateurs(Set<Personne> realisateurs) {
-		this.realisateurs = realisateurs;
+	public void setRealisateur(Set<Personne> realisateur) {
+		this.realisateur = realisateur;
 	}
-	public Set<Personne> getActeurs() {
-		return acteurs;
+	public Set<Genre> getGenre() {
+		return genre;
 	}
-	public void setActeurs(Set<Personne> acteurs) {
-		this.acteurs = acteurs;
+	public void setGenre(Set<Genre> genre) {
+		this.genre = genre;
+	}
+	public Set<Personne> getActeur() {
+		return acteur;
+	}
+	public void setActeur(Set<Personne> acteur) {
+		this.acteur = acteur;
 	}
 	public Set<CritiquesPresse> getCritiquesPresse() {
 		return critiquesPresse;
@@ -171,19 +177,13 @@ public class Film implements Serializable, Comparable<Film>{
 	public void setRuntime(Integer runtime) {
 		this.runtime = runtime;
 	}
-	public Set<Genre> getGenres() {
-		return genres;
-	}
-	public void setGenres(Set<Genre> genres) {
-		this.genres = genres;
-	}
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", dateInsertion=" + dateInsertion
 				+ ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd + ", origine=" + origine
-				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", critiquesPresse=" + critiquesPresse
+				+ ", realisateur=" + realisateur + ", acteur=" + acteur + ", critiquesPresse=" + critiquesPresse
 				+ ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview
-				+ ", runtime=" + runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
+				+ ", runtime=" + runtime + ", genre=" + genre + ", homepage=" + homepage + ", alreadyInDvdtheque="
 				+ alreadyInDvdtheque + "]";
 	}
 	@Override

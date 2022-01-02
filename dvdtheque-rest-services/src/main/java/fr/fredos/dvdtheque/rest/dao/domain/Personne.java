@@ -12,21 +12,21 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 @Entity
-@Table(name = "PERSONNE")
+@Table(name = "personne")
 public class Personne implements Serializable,Comparable<Personne> {
 	private static final long serialVersionUID = 1L;
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(name = "NOM")
+	@Column(name = "nom")
 	@Size(min = 1, max = 45)
 	private String nom;
-	@Column(name = "PRENOM")
+	@Column(name = "prenom")
 	@Size(min = 1, max = 45)
 	private String prenom;
-	@Column(name = "DATE_N")
+	@Column(name = "date_n")
 	private Date dateN;
-	@Column(name = "PROFILE_PATH")
+	@Column(name = "profile_path")
 	@Size(min = 1, max = 255)
 	private String profilePath;
 	//@JoinColumn(name = "ID_PAYS")

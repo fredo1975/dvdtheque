@@ -26,50 +26,50 @@ import javax.validation.constraints.NotNull;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 
 @Entity
-@Table(name = "FILM")
+@Table(name = "film")
 public class Film implements Serializable, Comparable<Film> {
 	private static final long serialVersionUID = -1382161470818168805L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(name = "ANNEE")
+	@Column(name = "annee")
 	private Integer annee;
-	@Column(name = "DATE_SORTIE")
+	@Column(name = "date_sortie")
 	@Temporal(TemporalType.DATE)
 	private Date dateSortie;
-	@Column(name = "DATE_INSERTION")
+	@Column(name = "date_insertion")
 	@Temporal(TemporalType.DATE)
 	private Date dateInsertion;
-	@Column(name = "TITRE")
+	@Column(name = "titre")
 	@NotNull
 	private String titre;
-	@Column(name = "TITRE_O")
+	@Column(name = "titre_o")
 	private String titreO;
-	@JoinColumn(name = "ID_DVD",nullable = true)
+	@JoinColumn(name = "dvd_id",nullable = true)
 	@ManyToOne(cascade=CascadeType.ALL)
 	private Dvd dvd;
-	@Column(name = "ORIGINE")
+	@Column(name = "origine")
 	private FilmOrigine origine;
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
-	private Set<Personne> realisateurs = new HashSet<>();
+	private Set<Personne> realisateur = new HashSet<>();
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
-	private Set<Personne> acteurs = new HashSet<>();
+	private Set<Personne> acteur = new HashSet<>();
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	@OrderBy("note desc")
 	private Set<CritiquesPresse> critiquesPresse = new TreeSet<>();
-	@Column(name = "VU")
+	@Column(name = "vu")
 	private boolean vu;
-	@Column(name = "POSTER_PATH")
+	@Column(name = "poster_path")
 	private String posterPath;
-	@Column(name = "TMDB_ID")
+	@Column(name = "tmdb_id")
 	private Long tmdbId;
-	@Column(name = "OVERVIEW",length=65535)
+	@Column(name = "overview",length=65535)
 	private String overview;
-	@Column(name = "RUNTIME")
+	@Column(name = "runtime")
 	private Integer runtime;
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
-	private Set<Genre> genres = new HashSet<>();
-	@Column(name = "HOMEPAGE")
+	private Set<Genre> genre = new HashSet<>();
+	@Column(name = "homepage")
 	private String homepage;
 	@Transient
 	private boolean alreadyInDvdtheque;
@@ -111,17 +111,17 @@ public class Film implements Serializable, Comparable<Film> {
 	public void setDvd(Dvd dvd) {
 		this.dvd = dvd;
 	}
-	public Set<Personne> getRealisateurs() {
-		return realisateurs;
+	public Set<Personne> getRealisateur() {
+		return realisateur;
 	}
-	public void setRealisateurs(Set<Personne> realisateurs) {
-		this.realisateurs = realisateurs;
+	public void setRealisateur(Set<Personne> realisateur) {
+		this.realisateur = realisateur;
 	}
-	public Set<Personne> getActeurs() {
-		return acteurs;
+	public Set<Personne> getActeur() {
+		return acteur;
 	}
-	public void setActeurs(Set<Personne> acteurs) {
-		this.acteurs = acteurs;
+	public void setActeur(Set<Personne> acteur) {
+		this.acteur = acteur;
 	}
 	public Set<CritiquesPresse> getCritiquesPresse() {
 		return critiquesPresse;
@@ -212,19 +212,20 @@ public class Film implements Serializable, Comparable<Film> {
 	public void setRuntime(Integer runtime) {
 		this.runtime = runtime;
 	}
-	public Set<Genre> getGenres() {
-		return genres;
+	
+	public Set<Genre> getGenre() {
+		return genre;
 	}
-	public void setGenres(Set<Genre> genres) {
-		this.genres = genres;
+	public void setGenre(Set<Genre> genre) {
+		this.genre = genre;
 	}
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", dateInsertion=" + dateInsertion
 				+ ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd + ", origine=" + origine
-				+ ", realisateurs=" + realisateurs + ", acteurs=" + acteurs + ", critiquesPresse=" + critiquesPresse
+				+ ", realisateur=" + realisateur + ", acteur=" + acteur + ", critiquesPresse=" + critiquesPresse
 				+ ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview
-				+ ", runtime=" + runtime + ", genres=" + genres + ", homepage=" + homepage + ", alreadyInDvdtheque="
+				+ ", runtime=" + runtime + ", genre=" + genre + ", homepage=" + homepage + ", alreadyInDvdtheque="
 				+ alreadyInDvdtheque + "]";
 	}
 	@Override

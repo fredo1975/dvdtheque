@@ -125,7 +125,7 @@ public class FilmDaoImpl implements FilmDao {
 		if(filmFilterCriteriaDto!=null) {
 			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.ACTEUR)
 					&& filmFilterCriteriaDto.getSelectedActeur()!=null) {
-				sb.append("join film.acteurs act ");
+				sb.append("join film.acteur act ");
 			}
 			sb.append("where 1=1 ");
 			if(filmFilterCriteriaDto.getFilmFilterCriteriaTypeSet().contains(FilmFilterCriteriaType.TITRE)

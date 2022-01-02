@@ -465,7 +465,7 @@ public class FilmController {
 					} else {
 						genre = filmService.attachToSession(genre);
 					}
-					transformedfilm.getGenres().add(genre);
+					transformedfilm.getGenre().add(genre);
 				} else {
 					logger.error("genre " + g.getName() + " not found in loaded genres");
 				}
@@ -497,7 +497,7 @@ public class FilmController {
 							environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL)
 									+ cast.getProfile_path());
 				}
-				transformedfilm.getActeurs().add(personne);
+				transformedfilm.getActeur().add(personne);
 				if (i++ == Integer.parseInt(environment.getRequiredProperty(NB_ACTEURS))) {
 					break;
 				}
@@ -513,7 +513,7 @@ public class FilmController {
 				} else {
 					realisateur = personneService.createOrRetrievePersonne(StringUtils.upperCase(c.getName()), null);
 				}
-				transformedfilm.getRealisateurs().add(realisateur);
+				transformedfilm.getRealisateur().add(realisateur);
 			}
 		}
 	}

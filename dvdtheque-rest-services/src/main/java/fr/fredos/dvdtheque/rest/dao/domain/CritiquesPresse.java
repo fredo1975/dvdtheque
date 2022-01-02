@@ -10,21 +10,21 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "CRITIQUES_PRESSE")
+@Table(name = "critiques_presse")
 public class CritiquesPresse implements Serializable,Comparable<CritiquesPresse>{
 	private static final long serialVersionUID = 1L;
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(name = "CODE")
+	@Column(name = "code")
 	private Integer code;
-	@Column(name = "NOM_SOURCE")
+	@Column(name = "nom_source")
 	private String nomSource;
-	@Column(name = "AUTEUR")
+	@Column(name = "auteur")
 	private String auteur;
-	@Column(name = "CRITIQUE",length=65535)
+	@Column(name = "critique",length=65535)
 	private String critique;
-	@Column(name = "NOTE")
+	@Column(name = "note")
 	private Double note;
 	
 	public CritiquesPresse() {

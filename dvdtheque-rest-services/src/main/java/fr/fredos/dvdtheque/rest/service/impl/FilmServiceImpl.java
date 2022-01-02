@@ -175,7 +175,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Override
 	@Transactional(readOnly = false)
 	public Long saveNewFilm(Film film) {
-		Assert.notEmpty(film.getRealisateurs(), REALISATEUR_MESSAGE_WARNING);
+		Assert.notEmpty(film.getRealisateur(), REALISATEUR_MESSAGE_WARNING);
 		upperCaseTitre(film);
 		Long id = filmDao.saveNewFilm(film);
 		mapFilms.putIfAbsent(id, film);
@@ -427,11 +427,11 @@ public class FilmServiceImpl implements IFilmService {
 		Set<Personne> realisateursByOrigineToReturnSet = new TreeSet<Personne>();
 		List<Film> films = findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
 		if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-			realisateursByOrigineToReturnSet = findAllFilmsByFilmDisplayType(filmDisplayTypeParam).stream().map(Film::getRealisateurs).flatMap(x->x.stream()).collect(Collectors.toSet());
+			realisateursByOrigineToReturnSet = findAllFilmsByFilmDisplayType(filmDisplayTypeParam).stream().map(Film::getRealisateur).flatMap(x->x.stream()).collect(Collectors.toSet());
 		}else {
 			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
 			for(Film film : sortedFilms) {
-				realisateursByOrigineToReturnSet.addAll(film.getRealisateurs());
+				realisateursByOrigineToReturnSet.addAll(film.getRealisateur());
 			}
 		}
 		watch.stop();
@@ -463,7 +463,7 @@ public class FilmServiceImpl implements IFilmService {
 	
 	private List<Personne> iterateThroughFilmsToGetPersonnesListSorted(final PersonneType personneType,final Collection<Film> films,final Set<Personne> personnes){
 		films.parallelStream().forEach(it -> {
-			personnes.addAll(PersonneType.ACTEUR.equals(personneType)?it.getActeurs():it.getRealisateurs());
+			personnes.addAll(PersonneType.ACTEUR.equals(personneType)?it.getActeur():it.getRealisateur());
 		});
 		return personnes.stream().collect(Collectors.toList());
 	}
@@ -475,11 +475,11 @@ public class FilmServiceImpl implements IFilmService {
 		Set<Personne> acteursByOrigineToReturnSet = new TreeSet<Personne>();
 		List<Film> films = findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
 		if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-			acteursByOrigineToReturnSet = findAllFilmsByFilmDisplayType(filmDisplayTypeParam).stream().map(Film::getActeurs).flatMap(x->x.stream()).collect(Collectors.toSet());
+			acteursByOrigineToReturnSet = findAllFilmsByFilmDisplayType(filmDisplayTypeParam).stream().map(Film::getActeur).flatMap(x->x.stream()).collect(Collectors.toSet());
 		}else {
 			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
 			for(Film film : sortedFilms) {
-				acteursByOrigineToReturnSet.addAll(film.getActeurs());
+				acteursByOrigineToReturnSet.addAll(film.getActeur());
 			}
 		}
 		watch.stop();
@@ -491,10 +491,10 @@ public class FilmServiceImpl implements IFilmService {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		List<Film> films = this.findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
-		Set<Personne> acteurs = films.stream().map(Film::getActeurs).flatMap(x->x.stream()).sorted().collect(Collectors.toSet());
+		Set<Personne> acteurs = films.stream().map(Film::getActeur).flatMap(x->x.stream()).sorted().collect(Collectors.toSet());
 		List<Personne> acteursList = new ArrayList<Personne>(acteurs);
 		Collections.sort(acteursList);
-		Set<Personne> realisateurs = films.stream().map(Film::getRealisateurs).flatMap(x->x.stream()).sorted().collect(Collectors.toSet());
+		Set<Personne> realisateurs = films.stream().map(Film::getRealisateur).flatMap(x->x.stream()).sorted().collect(Collectors.toSet());
 		List<Personne> realisateursList = new ArrayList<Personne>(realisateurs);
 		Collections.sort(realisateursList);
 		int realisateursLength = realisateurs.size();

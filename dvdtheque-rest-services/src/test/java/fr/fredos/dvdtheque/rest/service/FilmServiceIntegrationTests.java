@@ -205,10 +205,10 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Film retrievedFilm = filmService.findFilmWithAllObjectGraph(film.getId());
 		FilmBuilder.assertFilmIsNotNull(retrievedFilm,false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		logger.debug(methodName + "retrievedFilm ="+retrievedFilm.toString());
-		for(Personne acteur : retrievedFilm.getActeurs()){
+		for(Personne acteur : retrievedFilm.getActeur()){
 			logger.debug(methodName + " acteur="+acteur.toString());
 		}
-		for(Personne realisateur : retrievedFilm.getRealisateurs()){
+		for(Personne realisateur : retrievedFilm.getRealisateur()){
 			logger.debug(methodName + " realisateur="+realisateur.toString());
 		}
 		logger.debug(methodName + "end");
@@ -452,16 +452,16 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Long idreal = personneService.savePersonne(real);
 		assertNotNull(idreal);
 		real.setId(idreal);
-		film.getRealisateurs().clear();
-		film.getRealisateurs().add(real);
+		film.getRealisateur().clear();
+		film.getRealisateur().add(real);
 		
 		Personne act = personneService.buildPersonne(FilmBuilder.ACT4_TMBD_ID_844, null);
 		assertNotNull(act);
 		Long idAct = personneService.savePersonne(act);
 		assertNotNull(idAct);
 		act.setId(idAct);
-		film.getActeurs().clear();
-		film.getActeurs().add(act);
+		film.getActeur().clear();
+		film.getActeur().add(act);
 		
 		final String posterPath = "posterPath";
 		film.setPosterPath(posterPath);
@@ -471,8 +471,8 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		assertNotNull(filmUpdated);
 		//FilmBuilder.assertFilmIsNotNull(filmUpdated, true,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD);
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780), filmUpdated.getTitre());
-		assertEquals(FilmBuilder.REAL_NOM_TMBD_ID_4780, filmUpdated.getRealisateurs().iterator().next().getNom());
-		assertEquals(FilmBuilder.ACT4_TMBD_ID_844, filmUpdated.getActeurs().iterator().next().getNom());
+		assertEquals(FilmBuilder.REAL_NOM_TMBD_ID_4780, filmUpdated.getRealisateur().iterator().next().getNom());
+		assertEquals(FilmBuilder.ACT4_TMBD_ID_844, filmUpdated.getActeur().iterator().next().getNom());
 		assertEquals(posterPath, filmUpdated.getPosterPath());
 		
 		FilmDisplayTypeParam enSalleDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.EN_SALLE);
@@ -519,8 +519,8 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
-		filmToUpdate.setActeurs(film.getActeurs());
-		filmToUpdate.setRealisateurs(film.getRealisateurs());
+		filmToUpdate.setActeur(film.getActeur());
+		filmToUpdate.setRealisateur(film.getRealisateur());
 		filmToUpdate.setId(filmId);
 		assertNotNull(filmToUpdate);
 		logger.debug("filmToUpdate=" + filmToUpdate.toString());
@@ -695,7 +695,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
-		Long selectedActeurId = film.getActeurs().iterator().next().getId();
+		Long selectedActeurId = film.getActeur().iterator().next().getId();
 		logger.debug("selectedActeurId="+selectedActeurId);
 		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(null,null,null,selectedActeurId,null, null, null);
 		List<Film> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
@@ -706,8 +706,8 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		assertEquals(1, films.size());
 		Film f2 = films.get(0);
 		assertNotNull(f2);
-		assertNotNull(f2.getActeurs());
-		Optional<Personne> op = f2.getActeurs().stream().filter(acteurDto -> acteurDto.getId().equals(selectedActeurId)).findAny();
+		assertNotNull(f2.getActeur());
+		Optional<Personne> op = f2.getActeur().stream().filter(acteurDto -> acteurDto.getId().equals(selectedActeurId)).findAny();
 		Personne acteur = op.get();
 		assertNotNull(acteur);
 		assertEquals(selectedActeurId, acteur.getId());
@@ -741,7 +741,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		assertEquals(1, films.size());
 		Film f2 = films.get(0);
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844),f2.getTitre());
-		Set<Personne> realisateurSet = f2.getRealisateurs();
+		Set<Personne> realisateurSet = f2.getRealisateur();
 		assertNotNull(realisateurSet);
 		assertEquals(1,realisateurSet.size());
 		Personne realisateur = realisateurSet.iterator().next();
@@ -799,7 +799,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		assertEquals(2, films.size());
 		Film f2 = films.get(0);
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780),f2.getTitre());
-		Set<Personne> realisateurSet = f2.getRealisateurs();
+		Set<Personne> realisateurSet = f2.getRealisateur();
 		assertNotNull(realisateurSet);
 		assertEquals(1,realisateurSet.size());
 		Personne realisateur = realisateurSet.iterator().next();
@@ -828,7 +828,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
-		Personne real = film.getRealisateurs().iterator().next();
+		Personne real = film.getRealisateur().iterator().next();
 		assertNotNull(real);
 		filmDao.removeFilm(film);
 		Film removedFilm = filmService.findFilmByTitre(film.getTitre());

@@ -8,22 +8,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 @Entity
-@Table(name = "GENRE")
+@Table(name = "genre")
 public class Genre implements Serializable{
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(name = "NAME")
+	@Column(name = "name")
 	@NotNull
 	private String name;
-	@Column(name = "TMDB_ID")
+	@Column(name = "tmdb_id")
 	@NotNull
 	private int tmdbId;
 	public Genre() {

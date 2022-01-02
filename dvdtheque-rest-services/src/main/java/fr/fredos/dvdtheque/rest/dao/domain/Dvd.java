@@ -11,35 +11,31 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 
 @Entity
-@Table(name = "DVD")
+@Table(name = "dvd")
 public class Dvd implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(name = "ANNEE")
+	@Column(name = "annee")
 	private Integer annee;
-	@Column(name = "DATE_SORTIE")
+	@Column(name = "date_sortie")
 	@Temporal(TemporalType.DATE)
 	private Date dateSortie;
-	@Column(name = "ZONE")
+	@Column(name = "zone")
 	private Integer zone;
-	@Column(name = "EDITION")
+	@Column(name = "edition")
 	private String edition;
-	@Column(name = "DATE_RIP")
+	@Column(name = "date_rip")
 	@Temporal(TemporalType.DATE)
 	private Date dateRip;
-	@Column(name = "FORMAT")
+	@Column(name = "format")
 	private DvdFormat format;
-	@Column(name = "RIPPED")
+	@Column(name = "ripped")
 	private boolean ripped;
 	public Long getId() {
 		return id;

@@ -1197,8 +1197,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
-		filmToUpdate.setActeurs(film.getActeurs());
-		filmToUpdate.setRealisateurs(film.getRealisateurs());
+		filmToUpdate.setActeur(film.getActeur());
+		filmToUpdate.setRealisateur(film.getRealisateur());
 		filmToUpdate.setId(filmId);
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		

@@ -201,11 +201,11 @@ public class FilmBuilder {
 			film.setAnnee(this.annee);
 			film.setDateSortie(this.dateSortie);
 			film.setDateInsertion(this.dateInsertion);
-			film.setRealisateurs(realisateurs);
-			film.setActeurs(acteurs);
+			film.setRealisateur(realisateurs);
+			film.setActeur(acteurs);
 			genres.add(this.genre1);
 			genres.add(this.genre2);
-			film.setGenres(genres);
+			film.setGenre(genres);
 			if(this.ripDate!=null || this.dvdFormat!=null || this.zone!=null || this.ripped==true || this.dvdDateSortie!=null) {
 				Dvd dvd = new Dvd();
 				dvd.setDateRip(this.ripDate);
@@ -270,11 +270,11 @@ public class FilmBuilder {
 				assertEquals("dvd date sortie should match",film.getDvd().getDateSortie(), dvdDateSortie);
 			}
 		}
-		assertTrue("genres Should exists",CollectionUtils.isNotEmpty(film.getGenres()));
-		assertTrue("actors Should exists",CollectionUtils.isNotEmpty(film.getActeurs()));
-		assertTrue("there Should be at least 3 actors",film.getActeurs().size() >= 3);
-		assertTrue("realisateur Should exists",CollectionUtils.isNotEmpty(film.getRealisateurs()));
-		assertTrue("Should be 1 realisateur",film.getRealisateurs().size() == 1);
+		assertTrue("genres Should exists",CollectionUtils.isNotEmpty(film.getGenre()));
+		assertTrue("actors Should exists",CollectionUtils.isNotEmpty(film.getActeur()));
+		assertTrue("there Should be at least 3 actors",film.getActeur().size() >= 3);
+		assertTrue("realisateur Should exists",CollectionUtils.isNotEmpty(film.getRealisateur()));
+		assertTrue("Should be 1 realisateur",film.getRealisateur().size() == 1);
 	}
 	public static String createDateInsertion(Date dateInsertion, String pattern) {
 		String resultPattern=null;
