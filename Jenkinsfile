@@ -148,6 +148,14 @@ pipeline {
 	       		sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl stop dvdtheque-tmdb.service'
 	       	}
 	    }
+	    stage('Stopping Dev Batch service') {
+        	when {
+                branch 'develop'
+            }
+        	steps {
+	       		sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl stop dvdtheque-batch.service'
+	       	}
+	    }
 	    stage('Stopping Prod1 Rest service') {
         	when {
                 branch 'master'
@@ -201,7 +209,7 @@ pipeline {
             steps {
                 script {
 			 		sh """
-			 			scp dvdtheque-batch/target/$BATCH_ARTIFACT jenkins@${DEV_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch.jar
+			 			scp dvdtheque-batch/target/$BATCH_ARTIFACT jenkins@${DEV_SERVER2_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch.jar
 			 		"""
 			 	}
             }
@@ -265,6 +273,14 @@ pipeline {
 	        	sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl start dvdtheque-tmdb.service'
 	        }
    		}
+   		stage('Sarting Dev Batch service') {
+   			when {
+                branch 'develop'
+            }
+        	steps {
+	        	sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl start dvdtheque-batch.service'
+	        }
+   		}
    		stage('Sarting Prod1 Rest service') {
         	when {
                 branch 'master'
@@ -318,6 +334,16 @@ pipeline {
 			steps {
 				script {
 				    sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl status dvdtheque-tmdb.service'
+			    }
+			}
+		}
+		stage('Check status Dev Batch service') {
+			when {
+                branch 'develop'
+            }
+			steps {
+				script {
+				    sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl status dvdtheque-batch.service'
 			    }
 			}
 		}
