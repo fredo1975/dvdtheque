@@ -61,6 +61,10 @@ public class AllocineServiceImpl implements AllocineService {
 	private final static String CRITIQUE_PRESSE_FILM_BASE_URL = "/film/fichefilm-";
 	private final static String CRITIQUE_PRESSE_FILM_END_URL = "/critiques/presse/";
 
+	public AllocineServiceImpl() {
+		super();
+	}
+
 	/**
 	 * 
 	 */
@@ -145,7 +149,7 @@ public class AllocineServiceImpl implements AllocineService {
 										cp.setNewsSource(e9.text());
 										// logger.debug("### cp="+cp.toString());
 										map.put(Integer.valueOf(index++), cp);
-										ficheFilm.addCritiquePresse(cp);
+										ficheFilm.addCritiques(cp);
 									}
 								}
 							}

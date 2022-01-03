@@ -29,7 +29,7 @@ public class FicheFilm {
 	@Column(name="title")
 	private String title;
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
-	private Set<CritiquePresse> critiquePresse = new HashSet<>();
+	private Set<CritiquePresse> critiques = new HashSet<>();
  
 	public FicheFilm() {
 		super();
@@ -72,14 +72,14 @@ public class FicheFilm {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public Set<CritiquePresse> getCritiquePresse() {
-		return critiquePresse;
+	public Set<CritiquePresse> getCritiques() {
+		return critiques;
 	}
-	public void setCritiquePresse(Set<CritiquePresse> critiquesPresse) {
-		this.critiquePresse = critiquesPresse;
+	public void setCritiques(Set<CritiquePresse> critiques) {
+		this.critiques = critiques;
 	}
-	public void addCritiquePresse(CritiquePresse critiquePresse) {
-		this.critiquePresse.add(critiquePresse);
+	public void addCritiques(CritiquePresse critique) {
+		this.critiques.add(critique);
 	}
 	@Override
 	public int hashCode() {
@@ -98,7 +98,7 @@ public class FicheFilm {
 	}
 	@Override
 	public String toString() {
-		return "FicheFilm [id=" + id + ", ficheFilm=" + ficheFilm + ", url=" + url + ", pageNumber=" + pageNumber + ", title=" + title + ", critiquePresse="
-				+ critiquePresse + "]";
+		return "FicheFilm [id=" + id + ", ficheFilm=" + ficheFilm + ", url=" + url + ", pageNumber=" + pageNumber + ", title=" + title + ", critiques="
+				+ critiques + "]";
 	}
 }

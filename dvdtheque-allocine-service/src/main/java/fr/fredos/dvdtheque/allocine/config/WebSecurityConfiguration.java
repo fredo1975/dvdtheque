@@ -25,9 +25,10 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import com.nimbusds.jose.shaded.json.JSONArray;
 import com.nimbusds.jose.shaded.json.JSONObject;
 
-@Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
+//@Configuration
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class WebSecurityConfiguration /*extends WebSecurityConfigurerAdapter*/{
+	/*
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests(authorizeRequests -> authorizeRequests
@@ -89,5 +90,5 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
                 return grantedAuthorities;
             }
         };
-    }
+    }*/
 }
