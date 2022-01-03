@@ -29,8 +29,6 @@ public class Personne implements Serializable,Comparable<Personne> {
 	@Column(name = "profile_path")
 	@Size(min = 1, max = 255)
 	private String profilePath;
-	//@JoinColumn(name = "ID_PAYS")
-	//@ManyToOne
 	@Transient
 	private Pays pays;
 	public Personne() {

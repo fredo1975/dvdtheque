@@ -7,39 +7,38 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "fiche_film")
 public class FicheFilm {
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-	@Column(name="ficheFilm")
-	private String ficheFilm;
+	@Column(name="fiche_film")
+	private int ficheFilm;
 	@Column(name="url")
 	private String url;
-	@Column(name="allocineFilmId")
-	private String allocineFilmId;
-	@Column(name="pageNumber")
+	@Column(name="page_number")
 	private int pageNumber;
 	@Column(name="title")
 	private String title;
-	@OneToMany(mappedBy="ficheFilm", cascade = CascadeType.ALL)
-	private Set<CritiquePresse> critiquesPresse = new HashSet<>();
+	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
+	private Set<CritiquePresse> critiquePresse = new HashSet<>();
  
 	public FicheFilm() {
 		super();
 	}
-	public FicheFilm(String title,String ficheFilm, String url, String allocineFilmId, int pageNumber) {
+	public FicheFilm(String title,int ficheFilm, String url,int pageNumber) {
 		super();
 		this.title = title;
 		this.ficheFilm = ficheFilm;
 		this.url = url;
-		this.allocineFilmId = allocineFilmId;
 		this.pageNumber = pageNumber;
 	}
 	
@@ -49,10 +48,10 @@ public class FicheFilm {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getFicheFilm() {
+	public int getFicheFilm() {
 		return ficheFilm;
 	}
-	public void setFicheFilm(String ficheFilm) {
+	public void setFicheFilm(int ficheFilm) {
 		this.ficheFilm = ficheFilm;
 	}
 	public String getUrl() {
@@ -60,12 +59,6 @@ public class FicheFilm {
 	}
 	public void setUrl(String url) {
 		this.url = url;
-	}
-	public String getAllocineFilmId() {
-		return allocineFilmId;
-	}
-	public void setAllocineFilmId(String allocineFilmId) {
-		this.allocineFilmId = allocineFilmId;
 	}
 	public int getPageNumber() {
 		return pageNumber;
@@ -79,18 +72,18 @@ public class FicheFilm {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public Set<CritiquePresse> getCritiquesPresse() {
-		return critiquesPresse;
+	public Set<CritiquePresse> getCritiquePresse() {
+		return critiquePresse;
 	}
-	public void setCritiquesPresse(Set<CritiquePresse> critiquesPresse) {
-		this.critiquesPresse = critiquesPresse;
+	public void setCritiquePresse(Set<CritiquePresse> critiquesPresse) {
+		this.critiquePresse = critiquesPresse;
 	}
 	public void addCritiquePresse(CritiquePresse critiquePresse) {
-		this.critiquesPresse.add(critiquePresse);
+		this.critiquePresse.add(critiquePresse);
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(allocineFilmId);
+		return Objects.hash(ficheFilm);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -101,12 +94,11 @@ public class FicheFilm {
 		if (getClass() != obj.getClass())
 			return false;
 		FicheFilm other = (FicheFilm) obj;
-		return Objects.equals(allocineFilmId, other.allocineFilmId);
+		return Objects.equals(ficheFilm, other.ficheFilm);
 	}
 	@Override
 	public String toString() {
-		return "FicheFilm [id=" + id + ", ficheFilm=" + ficheFilm + ", url=" + url + ", allocineFilmId="
-				+ allocineFilmId + ", pageNumber=" + pageNumber + ", title=" + title + ", critiquesPresse="
-				+ critiquesPresse + "]";
+		return "FicheFilm [id=" + id + ", ficheFilm=" + ficheFilm + ", url=" + url + ", pageNumber=" + pageNumber + ", title=" + title + ", critiquePresse="
+				+ critiquePresse + "]";
 	}
 }

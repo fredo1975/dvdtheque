@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS "dvdtheque-service".film (
   origine INT NOT NULL,
   poster_path varchar(255) DEFAULT NULL,
   tmdb_id INT DEFAULT NULL,
-  overview text,
+  overview TEXT,
   runtime INT DEFAULT NULL,
   date_sortie TIMESTAMP NOT NULL,
   date_insertion TIMESTAMP NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS "dvdtheque-service".personne (
 
 CREATE TABLE IF NOT EXISTS "dvdtheque-service".genre (
   id serial PRIMARY KEY,
-  name varchar(2500) DEFAULT NULL,
+  name varchar(250) DEFAULT NULL,
   tmdb_id INT NOT NULL
 );
 

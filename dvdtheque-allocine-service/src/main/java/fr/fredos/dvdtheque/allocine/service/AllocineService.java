@@ -10,4 +10,5 @@ public interface AllocineService {
 	List<FicheFilm> retrieveAllFicheFilm();
 	Optional<FicheFilm> retrieveFicheFilm(int id);
 	FicheFilm retrieveFicheFilmByTitle(String title);
+	Optional<FicheFilm> retrievefindByFicheFilmId(Integer ficheFilmId);
 }

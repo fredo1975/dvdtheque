@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.fredos.dvdtheque.allocine.domain.CritiquePresse;
@@ -70,7 +71,10 @@ public class AllocineServiceImpl implements AllocineService {
 		Set<FicheFilm> allFicheFilmFromPage = retrieveAllFicheFilmFromPage(page);
 		if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
 			for (FicheFilm ficheFilm : allFicheFilmFromPage) {
-				saveFicheFilm(ficheFilm);
+				Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getFicheFilm());
+				if(op.isEmpty()) {
+					saveFicheFilm(ficheFilm);
+				}
 			}
 		}
 		processCritiquePress(allFicheFilmFromPage);
@@ -81,14 +85,17 @@ public class AllocineServiceImpl implements AllocineService {
 			allFicheFilmFromPage = retrieveAllFicheFilmFromPage(page);
 			if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
 				for (FicheFilm ficheFilm : allFicheFilmFromPage) {
-					saveFicheFilm(ficheFilm);
+					Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getFicheFilm());
+					if(op.isEmpty()) {
+						saveFicheFilm(ficheFilm);
+					}
 				}
 			}
 			processCritiquePress(allFicheFilmFromPage);
 		}
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW,readOnly = false)
 	private void saveFicheFilm(FicheFilm ficheFilm) {
 		ficheFilmRepository.save(ficheFilm);
 	}
@@ -136,7 +143,6 @@ public class AllocineServiceImpl implements AllocineService {
 									if (StringUtils.isNotEmpty(e9.text())) {
 										CritiquePresse cp = new CritiquePresse();
 										cp.setNewsSource(e9.text());
-										cp.setFilmId(ficheFilm.getAllocineFilmId());
 										// logger.debug("### cp="+cp.toString());
 										map.put(Integer.valueOf(index++), cp);
 										ficheFilm.addCritiquePresse(cp);
@@ -246,7 +252,7 @@ public class AllocineServiceImpl implements AllocineService {
 				logger.debug("### filmId : " + filmId);
 				String url = BASE_URL + CRITIQUE_PRESSE_FILM_BASE_URL + filmId + CRITIQUE_PRESSE_FILM_END_URL;
 				logger.debug("### url : " + url);
-				set.add(new FicheFilm(link.text(), filmId, url, filmId, numPage));
+				set.add(new FicheFilm(link.text(), Integer.valueOf(filmId), url, numPage));
 			}
 		}
 		return set;
@@ -264,5 +270,10 @@ public class AllocineServiceImpl implements AllocineService {
 	@Override
 	public FicheFilm retrieveFicheFilmByTitle(String title) {
 		return ficheFilmRepository.findByTitle(title);
+	}
+	
+	@Override
+	public Optional<FicheFilm> retrievefindByFicheFilmId(Integer ficheFilmId) {
+		return Optional.ofNullable(ficheFilmRepository.findByFicheFilmId(ficheFilmId));
 	}
 }

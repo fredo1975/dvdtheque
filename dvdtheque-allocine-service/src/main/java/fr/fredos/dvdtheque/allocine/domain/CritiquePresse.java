@@ -5,18 +5,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "critique_presse")
 public class CritiquePresse {
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-	@Column(name="filmId")
-	private String filmId;
-	@Column(name="newsSource")
+	@Column(name="news_source")
 	private String newsSource;
 	@Column(name="rating")
 	private Double rating;
@@ -24,9 +21,6 @@ public class CritiquePresse {
 	private String body;
 	@Column(name="author")
 	private String author;
-	@ManyToOne
-    @JoinColumn(name ="ficheFilmId")
-    private FicheFilm ficheFilm;
 	
 	public CritiquePresse() {
 		super();
@@ -61,23 +55,11 @@ public class CritiquePresse {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
-	public String getFilmId() {
-		return filmId;
-	}
-	public void setFilmId(String filmId) {
-		this.filmId = filmId;
-	}
 	
-	public FicheFilm getFicheFilm() {
-		return ficheFilm;
-	}
-	public void setFicheFilm(FicheFilm ficheFilm) {
-		this.ficheFilm = ficheFilm;
-	}
 	@Override
 	public String toString() {
-		return "CritiquePresse [id=" + id + ", filmId=" + filmId + ", newsSource=" + newsSource + ", rating=" + rating
-				+ ", body=" + body + ", author=" + author + ", ficheFilm=" + ficheFilm + "]";
+		return "CritiquePresse [id=" + id + ", newsSource=" + newsSource + ", rating=" + rating
+				+ ", body=" + body + ", author=" + author + "]";
 	}
 	
 }
