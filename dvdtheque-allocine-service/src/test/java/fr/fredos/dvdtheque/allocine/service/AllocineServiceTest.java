@@ -23,7 +23,7 @@ public class AllocineServiceTest {
 	public void testFindByTitle() {
 		FicheFilm ficheFilm = new FicheFilm();
 		ficheFilm.setTitle("title");
-		ficheFilm.setFicheFilm(1);
+		ficheFilm.setAllocineFilmId(1);
 		ficheFilm.setPageNumber(1);
 		ficheFilm.setUrl("url");
 		CritiquePresse cp = new CritiquePresse();
@@ -31,7 +31,7 @@ public class AllocineServiceTest {
 		cp.setBody("body1");
 		cp.setNewsSource("source1");
 		cp.setRating(4d);
-		ficheFilm.addCritiques(cp);
+		ficheFilm.addCritiquePresse(cp);
 		FicheFilm ficheFilmSaved = ficheFilmRepository.save(ficheFilm);
 		assertNotNull(ficheFilmSaved);
 		FicheFilm ficheFilmRetrieved = ficheFilmRepository.findByTitle("title");

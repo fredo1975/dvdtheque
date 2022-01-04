@@ -31,12 +31,10 @@ import fr.fredos.dvdtheque.allocine.repository.FicheFilmRepository;
 public class AllocineServiceImpl implements AllocineService {
 	protected Logger logger = LoggerFactory.getLogger(AllocineServiceImpl.class);
 	FicheFilmRepository ficheFilmRepository;
-
 	@Autowired
-	public AllocineServiceImpl(FicheFilmRepository ficheFilmRepository) {
+	AllocineServiceImpl(FicheFilmRepository ficheFilmRepository) {
 		this.ficheFilmRepository = ficheFilmRepository;
 	}
-
 	@Autowired
 	Environment environment;
 	private final static String AHREF = "a[href]";
@@ -61,10 +59,6 @@ public class AllocineServiceImpl implements AllocineService {
 	private final static String CRITIQUE_PRESSE_FILM_BASE_URL = "/film/fichefilm-";
 	private final static String CRITIQUE_PRESSE_FILM_END_URL = "/critiques/presse/";
 
-	public AllocineServiceImpl() {
-		super();
-	}
-
 	/**
 	 * 
 	 */
@@ -75,7 +69,7 @@ public class AllocineServiceImpl implements AllocineService {
 		Set<FicheFilm> allFicheFilmFromPage = retrieveAllFicheFilmFromPage(page);
 		if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
 			for (FicheFilm ficheFilm : allFicheFilmFromPage) {
-				Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getFicheFilm());
+				Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getAllocineFilmId());
 				if(op.isEmpty()) {
 					saveFicheFilm(ficheFilm);
 				}
@@ -83,13 +77,13 @@ public class AllocineServiceImpl implements AllocineService {
 		}
 		processCritiquePress(allFicheFilmFromPage);
 
-		while (page.getNumPage() < 2) {
+		while (page.getNumPage() < 10) {
 			allFicheFilmFromPage.clear();
 			page.setNumPage(page.getNumPage() + 1);
 			allFicheFilmFromPage = retrieveAllFicheFilmFromPage(page);
 			if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
 				for (FicheFilm ficheFilm : allFicheFilmFromPage) {
-					Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getFicheFilm());
+					Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getAllocineFilmId());
 					if(op.isEmpty()) {
 						saveFicheFilm(ficheFilm);
 					}
@@ -149,7 +143,8 @@ public class AllocineServiceImpl implements AllocineService {
 										cp.setNewsSource(e9.text());
 										// logger.debug("### cp="+cp.toString());
 										map.put(Integer.valueOf(index++), cp);
-										ficheFilm.addCritiques(cp);
+										cp.setFicheFilm(ficheFilm);
+										ficheFilm.addCritiquePresse(cp);
 									}
 								}
 							}
@@ -192,6 +187,8 @@ public class AllocineServiceImpl implements AllocineService {
 								if (e5.select(DIV_RATING_MDL_5_HOLDER).size() > 0) {
 									// logger.debug("######### 5**");
 									rating = 5.0d;
+								}if (rating == null) {
+									rating = 0.0d;
 								}
 								cp.setRating(rating);
 								logger.debug("### cp=" + cp.toString());

@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,29 +14,29 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "fiche_film")
+@Table(name = "fichefilm")
 public class FicheFilm {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-	@Column(name="fiche_film")
-	private int ficheFilm;
+	@Column(name="allocine_film_id")
+	private int allocineFilmId;
 	@Column(name="url")
 	private String url;
 	@Column(name="page_number")
 	private int pageNumber;
 	@Column(name="title")
 	private String title;
-	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
-	private Set<CritiquePresse> critiques = new HashSet<>();
+	@OneToMany(mappedBy = "ficheFilm",cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<CritiquePresse> critiquePresse = new HashSet<>();
  
 	public FicheFilm() {
 		super();
 	}
-	public FicheFilm(String title,int ficheFilm, String url,int pageNumber) {
+	public FicheFilm(String title,int allocineFilmId, String url,int pageNumber) {
 		super();
 		this.title = title;
-		this.ficheFilm = ficheFilm;
+		this.allocineFilmId = allocineFilmId;
 		this.url = url;
 		this.pageNumber = pageNumber;
 	}
@@ -48,11 +47,11 @@ public class FicheFilm {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getFicheFilm() {
-		return ficheFilm;
+	public int getAllocineFilmId() {
+		return allocineFilmId;
 	}
-	public void setFicheFilm(int ficheFilm) {
-		this.ficheFilm = ficheFilm;
+	public void setAllocineFilmId(int allocineFilmId) {
+		this.allocineFilmId = allocineFilmId;
 	}
 	public String getUrl() {
 		return url;
@@ -72,18 +71,19 @@ public class FicheFilm {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public Set<CritiquePresse> getCritiques() {
-		return critiques;
+	
+	public Set<CritiquePresse> getCritiquePresse() {
+		return critiquePresse;
 	}
-	public void setCritiques(Set<CritiquePresse> critiques) {
-		this.critiques = critiques;
+	public void setCritiquePresse(Set<CritiquePresse> critiquePresse) {
+		this.critiquePresse = critiquePresse;
 	}
-	public void addCritiques(CritiquePresse critique) {
-		this.critiques.add(critique);
+	public void addCritiquePresse(CritiquePresse critique) {
+		this.critiquePresse.add(critique);
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(ficheFilm);
+		return Objects.hash(allocineFilmId);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -94,11 +94,11 @@ public class FicheFilm {
 		if (getClass() != obj.getClass())
 			return false;
 		FicheFilm other = (FicheFilm) obj;
-		return Objects.equals(ficheFilm, other.ficheFilm);
+		return Objects.equals(allocineFilmId, other.allocineFilmId);
 	}
 	@Override
 	public String toString() {
-		return "FicheFilm [id=" + id + ", ficheFilm=" + ficheFilm + ", url=" + url + ", pageNumber=" + pageNumber + ", title=" + title + ", critiques="
-				+ critiques + "]";
+		return "FicheFilm [id=" + id + ", id=" + id + ", url=" + url + ", pageNumber=" + pageNumber + ", title=" + title + ", critiquePresse="
+				+ critiquePresse + "]";
 	}
 }

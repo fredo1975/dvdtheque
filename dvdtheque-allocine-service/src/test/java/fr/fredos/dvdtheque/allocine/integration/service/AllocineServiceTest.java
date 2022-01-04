@@ -32,7 +32,7 @@ import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
 import fr.fredos.dvdtheque.allocine.service.AllocineService;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {AllocineServiceTest.HazelcastConfiguration.class})
+@SpringBootTest
 @ActiveProfiles("test")
 @Transactional
 public class AllocineServiceTest {
@@ -42,7 +42,7 @@ public class AllocineServiceTest {
 	private static final String ALLOCINE_FIULM_ID_136316 = "136316";
 	private static final String ALLOCINE_FIULM_ID_136316_TITLE = "Les Eternels";
 	@Autowired
-    private AllocineService allocineService;
+    AllocineService allocineService;
     @TestConfiguration
 	public static class HazelcastConfiguration {
 		@Bean
@@ -62,10 +62,10 @@ public class AllocineServiceTest {
     	TestTransaction.flagForCommit();
 		List<FicheFilm> allFicheFilmFromPageRetrievedFromDb = allocineService.retrieveAllFicheFilm();
 		assertEquals(30,allFicheFilmFromPageRetrievedFromDb.size());
-		assertEquals(ALLOCINE_FIULM_ID_289301,allFicheFilmFromPageRetrievedFromDb.get(0).getFicheFilm());
+		assertEquals(ALLOCINE_FIULM_ID_289301,allFicheFilmFromPageRetrievedFromDb.get(0).getAllocineFilmId());
 		assertEquals(ALLOCINE_FIULM_ID_289301_TITLE,allFicheFilmFromPageRetrievedFromDb.get(0).getTitle());
-		logger.info("critique presses from {} are {}",allFicheFilmFromPageRetrievedFromDb.get(0).getTitle(),allFicheFilmFromPageRetrievedFromDb.get(0).getCritiques().toString());
-		assertEquals(ALLOCINE_FIULM_ID_136316,allFicheFilmFromPageRetrievedFromDb.get(1).getFicheFilm());
+		logger.info("critique presses from {} are {}",allFicheFilmFromPageRetrievedFromDb.get(0).getTitle(),allFicheFilmFromPageRetrievedFromDb.get(0).getCritiquePresse().toString());
+		assertEquals(ALLOCINE_FIULM_ID_136316,allFicheFilmFromPageRetrievedFromDb.get(1).getAllocineFilmId());
 		assertEquals(ALLOCINE_FIULM_ID_136316_TITLE,allFicheFilmFromPageRetrievedFromDb.get(1).getTitle());
 		Optional<FicheFilm> optionalFicheFilmRetrievedFromDb = allocineService.retrieveFicheFilm(allFicheFilmFromPageRetrievedFromDb.get(0).getId());
 		FicheFilm ficheFilmRetrievedFromDb = allocineService.retrieveFicheFilmByTitle(allFicheFilmFromPageRetrievedFromDb.get(0).getTitle());

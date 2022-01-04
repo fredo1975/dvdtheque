@@ -12,6 +12,6 @@ public interface FicheFilmRepository extends JpaRepository<FicheFilm, Integer>{
 	@Query("from FicheFilm f where f.title = :title")
 	FicheFilm findByTitle(@Param("title") String title);
 	
-	@Query("from FicheFilm f where f.ficheFilm = :ficheFilm")
+	@Query("from FicheFilm f where f.allocineFilmId = :ficheFilm")
 	FicheFilm findByFicheFilmId(@Param("ficheFilm") Integer ficheFilm);
 }
