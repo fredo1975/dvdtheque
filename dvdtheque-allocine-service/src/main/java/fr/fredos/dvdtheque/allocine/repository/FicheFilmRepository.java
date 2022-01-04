@@ -1,5 +1,7 @@
 package fr.fredos.dvdtheque.allocine.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +16,7 @@ public interface FicheFilmRepository extends JpaRepository<FicheFilm, Integer>{
 	
 	@Query("from FicheFilm f where f.allocineFilmId = :ficheFilm")
 	FicheFilm findByFicheFilmId(@Param("ficheFilm") Integer ficheFilm);
+	
+	@Query("from FicheFilm f join fetch f.critiquePresse as cp where cp is empty")
+	List<FicheFilm> findAllFilmWithoutCritique();
 }

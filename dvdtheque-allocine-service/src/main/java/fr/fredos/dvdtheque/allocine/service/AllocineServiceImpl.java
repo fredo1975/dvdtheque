@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,6 +18,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -59,6 +61,9 @@ public class AllocineServiceImpl implements AllocineService {
 	private final static String CRITIQUE_PRESSE_FILM_BASE_URL = "/film/fichefilm-";
 	private final static String CRITIQUE_PRESSE_FILM_END_URL = "/critiques/presse/";
 
+	@Value("${fichefilm.parsing.page}")
+	private int nbParsedPage;
+	
 	/**
 	 * 
 	 */
@@ -68,34 +73,28 @@ public class AllocineServiceImpl implements AllocineService {
 		Page page = new Page(_page);
 		Set<FicheFilm> allFicheFilmFromPage = retrieveAllFicheFilmFromPage(page);
 		if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
-			for (FicheFilm ficheFilm : allFicheFilmFromPage) {
-				Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getAllocineFilmId());
-				if(op.isEmpty()) {
-					saveFicheFilm(ficheFilm);
-				}
-			}
+			processCritiquePress(allFicheFilmFromPage);
 		}
-		processCritiquePress(allFicheFilmFromPage);
 
-		while (page.getNumPage() < 10) {
+		while (page.getNumPage() < nbParsedPage) {
 			allFicheFilmFromPage.clear();
 			page.setNumPage(page.getNumPage() + 1);
 			allFicheFilmFromPage = retrieveAllFicheFilmFromPage(page);
 			if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
-				for (FicheFilm ficheFilm : allFicheFilmFromPage) {
-					Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getAllocineFilmId());
-					if(op.isEmpty()) {
-						saveFicheFilm(ficheFilm);
-					}
-				}
+				processCritiquePress(allFicheFilmFromPage);
 			}
-			processCritiquePress(allFicheFilmFromPage);
 		}
 	}
-
+	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW,readOnly = false)
-	private void saveFicheFilm(FicheFilm ficheFilm) {
-		ficheFilmRepository.save(ficheFilm);
+	public void removeAllFilmWithoutCritique() {
+		List<FicheFilm> l = findAllFilmWithoutCritique();
+		ficheFilmRepository.deleteAll(l);
+	}
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW,readOnly = false)
+	public FicheFilm saveFicheFilm(FicheFilm ficheFilm) {
+		return ficheFilmRepository.save(ficheFilm);
 	}
 
 	/**
@@ -105,7 +104,10 @@ public class AllocineServiceImpl implements AllocineService {
 	private void processCritiquePress(final Set<FicheFilm> allFicheFilmFromPage) {
 		if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
 			for (FicheFilm ficheFilm : allFicheFilmFromPage) {
-				retrieveCritiquePresseMap(ficheFilm);
+				Map<Integer, CritiquePresse> map = retrieveCritiquePresseMap(ficheFilm);
+				if(MapUtils.isNotEmpty(map)) {
+					saveFicheFilm(ficheFilm);
+				}
 			}
 		}
 	}
@@ -115,7 +117,7 @@ public class AllocineServiceImpl implements AllocineService {
 	 * @param ficheFilm
 	 * @return
 	 */
-	private void retrieveCritiquePresseMap(FicheFilm ficheFilm) {
+	private Map<Integer, CritiquePresse> retrieveCritiquePresseMap(FicheFilm ficheFilm) {
 		Map<Integer, CritiquePresse> map = new HashMap<>();
 		Document document;
 		try {
@@ -201,6 +203,7 @@ public class AllocineServiceImpl implements AllocineService {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		return map;
 	}
 
 	/**
@@ -276,5 +279,9 @@ public class AllocineServiceImpl implements AllocineService {
 	@Override
 	public Optional<FicheFilm> retrievefindByFicheFilmId(Integer ficheFilmId) {
 		return Optional.ofNullable(ficheFilmRepository.findByFicheFilmId(ficheFilmId));
+	}
+	@Override
+	public List<FicheFilm> findAllFilmWithoutCritique() {
+		return ficheFilmRepository.findAllFilmWithoutCritique();
 	}
 }

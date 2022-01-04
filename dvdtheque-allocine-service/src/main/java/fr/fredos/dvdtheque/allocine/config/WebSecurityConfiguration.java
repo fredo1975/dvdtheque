@@ -34,9 +34,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
 				.anyRequest().authenticated())
 				.oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
                         .jwt(jwtConfigurer -> jwtConfigurer
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                );
-
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())));
 	}
 
 	@Bean

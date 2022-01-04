@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.allocine.service;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -15,12 +16,18 @@ import fr.fredos.dvdtheque.allocine.repository.FicheFilmRepository;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class AllocineServiceTest {
-
 	@Autowired
 	private FicheFilmRepository ficheFilmRepository;
 
 	@Test
-	public void testFindByTitle() {
+	public void testRemoveFilm() {
+		FicheFilm ficheFilmSaved = saveFilm();
+		final String title = ficheFilmSaved.getTitle();
+		ficheFilmRepository.delete(ficheFilmSaved);
+		FicheFilm ficheFilmRetrieved = ficheFilmRepository.findByTitle(title);
+		assertNull(ficheFilmRetrieved);
+	}
+	private FicheFilm saveFilm() {
 		FicheFilm ficheFilm = new FicheFilm();
 		ficheFilm.setTitle("title");
 		ficheFilm.setAllocineFilmId(1);
@@ -31,8 +38,15 @@ public class AllocineServiceTest {
 		cp.setBody("body1");
 		cp.setNewsSource("source1");
 		cp.setRating(4d);
+		cp.setFicheFilm(ficheFilm);
 		ficheFilm.addCritiquePresse(cp);
 		FicheFilm ficheFilmSaved = ficheFilmRepository.save(ficheFilm);
+		assertNotNull(ficheFilmSaved);
+		return ficheFilmSaved;
+	}
+	@Test
+	public void testFindByTitle() {
+		FicheFilm ficheFilmSaved = saveFilm();
 		assertNotNull(ficheFilmSaved);
 		FicheFilm ficheFilmRetrieved = ficheFilmRepository.findByTitle("title");
 		assertNotNull(ficheFilmRetrieved);

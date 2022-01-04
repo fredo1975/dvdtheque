@@ -25,3 +25,8 @@ hazelcast:
   cluster-name: hazelcast-allocine-local
   networkconfig:
     interface: 127.0.0.1
+    
+fichefilm:
+  parsing:
+    page: 1
+    cron: 0 44 23 * * ?
