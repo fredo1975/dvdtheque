@@ -68,7 +68,7 @@ public class AllocineServiceImpl implements AllocineService {
 	 * 
 	 */
 	@Override
-	public void retrieveAllocineScrapingFicheFilm() {
+	public void scrapAllAllocineFicheFilm() {
 		Integer _page = Integer.valueOf(1);
 		Page page = new Page(_page);
 		Set<FicheFilm> allFicheFilmFromPage = retrieveAllFicheFilmFromPage(page);

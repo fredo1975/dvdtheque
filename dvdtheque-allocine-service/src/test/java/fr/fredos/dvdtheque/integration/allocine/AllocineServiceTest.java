@@ -1,7 +1,6 @@
 package fr.fredos.dvdtheque.integration.allocine;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -31,7 +30,6 @@ import fr.fredos.dvdtheque.allocine.service.AllocineService;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {AllocineServiceApplication.class})
 @ActiveProfiles("test")
-@Transactional
 public class AllocineServiceTest {
 	@MockBean
 	JwtDecoder jwtDecoder;
@@ -42,14 +40,13 @@ public class AllocineServiceTest {
 	private static final String ALLOCINE_FIULM_ID_136316_TITLE = "Les Eternels";
 	@Autowired
     AllocineService allocineService;
-	
+	/*
 	private FicheFilm saveFilm() {
 		FicheFilm ficheFilm = new FicheFilm();
 		ficheFilm.setTitle("title");
 		ficheFilm.setAllocineFilmId(1);
 		ficheFilm.setPageNumber(1);
 		ficheFilm.setUrl("url");
-		/*
 		CritiquePresse cp = new CritiquePresse();
 		cp.setAuthor("author1");
 		cp.setBody("body1");
@@ -57,29 +54,21 @@ public class AllocineServiceTest {
 		cp.setRating(4d);
 		cp.setFicheFilm(ficheFilm);
 		ficheFilm.addCritiquePresse(cp);
-		*/
 		FicheFilm ficheFilmSaved = allocineService.saveFicheFilm(ficheFilm);
 		assertNotNull(ficheFilmSaved);
 		return ficheFilmSaved;
-	}
+	}*/
 	
-	@Test
-	public void removeAllFilmWithoutCritique() {
-		FicheFilm ficheFilmSaved = saveFilm();
-		allocineService.removeAllFilmWithoutCritique();
-		List<FicheFilm> allFilms = allocineService.retrieveAllFicheFilm();
-		assertNull(allFilms);
-	}
-    
     @Test
-    //@Disabled
+    @Transactional
+    @Disabled
     public void retrieveAllocineScrapingFicheFilmTest() throws IOException {
     	/*
 		Jwt jwt = Jwt.withTokenValue("token").header("alg", "none").claim("sub", "user").build();
 		Collection<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("SCOPE_read");
 		JwtAuthenticationToken token = new JwtAuthenticationToken(jwt, authorities);
     		*/
-    	allocineService.retrieveAllocineScrapingFicheFilm();
+    	allocineService.scrapAllAllocineFicheFilm();
     	TestTransaction.flagForCommit();
 		List<FicheFilm> allFicheFilmFromPageRetrievedFromDb = allocineService.retrieveAllFicheFilm();
 		assertEquals(30,allFicheFilmFromPageRetrievedFromDb.size());
