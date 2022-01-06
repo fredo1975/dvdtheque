@@ -105,7 +105,8 @@ public class AllocineServiceImpl implements AllocineService {
 		if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
 			for (FicheFilm ficheFilm : allFicheFilmFromPage) {
 				Map<Integer, CritiquePresse> map = retrieveCritiquePresseMap(ficheFilm);
-				if(MapUtils.isNotEmpty(map)) {
+				Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getAllocineFilmId());
+				if(MapUtils.isNotEmpty(map) && op.isEmpty()) {
 					saveFicheFilm(ficheFilm);
 				}
 			}

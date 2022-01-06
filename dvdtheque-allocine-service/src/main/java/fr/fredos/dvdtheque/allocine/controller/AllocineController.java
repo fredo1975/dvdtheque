@@ -28,8 +28,11 @@ public class AllocineController {
 		return ResponseEntity.ok(convertToDto(allocineService.retrieveFicheFilmByTitle(title)));
 	}
 	private FicheFilmDto convertToDto(FicheFilm ficheFilm) {
-		FicheFilmDto ficheFilmDto = modelMapper.map(ficheFilm, FicheFilmDto.class);
-	    return ficheFilmDto;
+		if(ficheFilm != null) {
+			FicheFilmDto ficheFilmDto = modelMapper.map(ficheFilm, FicheFilmDto.class);
+		    return ficheFilmDto;
+		}
+		return null;
 	}
 	/*
 	@GetMapping("/byFicheFilmId/{ficheFilmId}")

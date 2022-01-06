@@ -34,6 +34,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
@@ -63,7 +64,7 @@ public class BatchExportFilmsConfiguration {
 	public static String 											DVDTHEQUE_SERVICE_ALL="dvdtheque-service.films";
 	
     //@Bean
-    //@Scheduled(cron = "*/5 * * * * *")
+    @Scheduled(cron = "0 00 20 * * ?")
 	public void exportFilmsJob() {
     	logger.info("########### exportFilmsJob");
     	Map<String, JobParameter> jobConfigMap = new HashMap<>();

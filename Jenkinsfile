@@ -19,6 +19,7 @@ pipeline {
         def ARTIFACT = "dvdtheque-rest-services-${VERSION}.jar"
         def TMDB_ARTIFACT = "dvdtheque-tmdb-service-${VERSION}.jar"
         def BATCH_ARTIFACT = "dvdtheque-batch-${VERSION}.jar"
+        def ALLOCINE_ARTIFACT = "dvdtheque-allocine-service-${VERSION}.jar"
     }
     stages {
         stage ('Initialize') {
@@ -33,6 +34,7 @@ pipeline {
                     echo "ARTIFACT = ${ARTIFACT}"
                     echo "TMDB_ARTIFACT = ${TMDB_ARTIFACT}"
                     echo "BATCH_ARTIFACT = ${BATCH_ARTIFACT}"
+                    echo "ALLOCINE_ARTIFACT = ${ALLOCINE_ARTIFACT}"
                 '''
             }
         }
@@ -148,6 +150,14 @@ pipeline {
 	       		sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl stop dvdtheque-tmdb.service'
 	       	}
 	    }
+	    stage('Stopping Dev2 Allocine service') {
+        	when {
+                branch 'develop'
+            }
+        	steps {
+	       		sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl stop dvdtheque-allocine.service'
+	       	}
+	    }
 	    stage('Stopping Dev Batch service') {
         	when {
                 branch 'develop'
@@ -202,6 +212,18 @@ pipeline {
 			 	}
             }
         }
+        stage('Copying develop dvdtheque-allocine-service') {
+	    	when {
+                branch 'develop'
+            }
+            steps {
+                script {
+			 		sh """
+			 			scp dvdtheque-allocine-service/target/$ALLOCINE_ARTIFACT jenkins@${DEV_SERVER2_IP}:/opt/dvdtheque_allocine_service/dvdtheque-allocine-service.jar
+			 		"""
+			 	}
+            }
+        }
         stage('Copying develop dvdtheque-batch') {
 	    	when {
                 branch 'develop'
@@ -225,18 +247,6 @@ pipeline {
 			 		"""
 			 		sh """
 			 			scp dvdtheque-rest-services/target/$ARTIFACT jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_rest_service/dvdtheque-rest-services.jar
-			 		"""
-			 	}
-            }
-        }
-        stage('Copying prouction dvdtheque-batch-app') {
-	    	when {
-                branch 'master'
-            }
-            steps {
-                script {
-			 		sh """
-			 			scp dvdtheque-batch-app/target/$BATCH_ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch-app.jar
 			 		"""
 			 	}
             }
@@ -271,6 +281,14 @@ pipeline {
             }
         	steps {
 	        	sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl start dvdtheque-tmdb.service'
+	        }
+   		}
+   		stage('Sarting Dev2 Allocine service') {
+        	when {
+                branch 'develop'
+            }
+        	steps {
+	        	sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl start dvdtheque-allocine.service'
 	        }
    		}
    		stage('Sarting Dev Batch service') {
@@ -334,6 +352,16 @@ pipeline {
 			steps {
 				script {
 				    sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl status dvdtheque-tmdb.service'
+			    }
+			}
+		}
+		stage('Check status Dev2 Allocine service') {
+			when {
+                branch 'develop'
+            }
+			steps {
+				script {
+				    sh 'ssh jenkins@$DEV_SERVER2_IP sudo systemctl status dvdtheque-allocine.service'
 			    }
 			}
 		}

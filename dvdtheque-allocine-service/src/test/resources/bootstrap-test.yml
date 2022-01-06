@@ -28,5 +28,5 @@ hazelcast:
     
 fichefilm:
   parsing:
-    page: 1
+    page: 20
     cron: 0 44 23 * * ?

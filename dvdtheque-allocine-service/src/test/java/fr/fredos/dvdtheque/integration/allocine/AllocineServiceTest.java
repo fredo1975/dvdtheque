@@ -61,7 +61,7 @@ public class AllocineServiceTest {
 	
     @Test
     @Transactional
-    @Disabled
+    //@Disabled
     public void retrieveAllocineScrapingFicheFilmTest() throws IOException {
     	/*
 		Jwt jwt = Jwt.withTokenValue("token").header("alg", "none").claim("sub", "user").build();
