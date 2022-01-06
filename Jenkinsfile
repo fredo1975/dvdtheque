@@ -90,6 +90,20 @@ pipeline {
 			    }
 			}   
         }
+        stage('Deploy for development') {
+            when {
+                branch 'develop'
+            }
+            steps {
+		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		 			script {
+			 			sh """
+					    	 mvn -B install -DskipTests
+					    """
+			 		}
+		    	}
+		    }
+        }
         stage('Deploy for production') {
             when {
                 branch 'master'
