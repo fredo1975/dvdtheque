@@ -2,12 +2,12 @@ debug: true
 
 spring:
   datasource:
-    #username: sa
-    #password: sa
-    username: postgres
-    password: zotla7
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/dvdthequedb?currentSchema=dvdtheque-allocine-service
+    username: sa
+    password: sa
+    #username: postgres
+    #password: zotla7
+    #type: com.zaxxer.hikari.HikariDataSource
+    #url: jdbc:postgresql://localhost:5432/dvdthequedb?currentSchema=dvdtheque-allocine-service
     testWhileIdle: true
     validationQuery: SELECT 1
   cloud:
