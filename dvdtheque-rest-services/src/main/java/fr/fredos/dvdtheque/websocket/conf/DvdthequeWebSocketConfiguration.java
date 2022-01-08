@@ -1,12 +1,9 @@
 package fr.fredos.dvdtheque.websocket.conf;
 
-import java.util.Collection;
-import java.util.List;
-
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -20,8 +17,9 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -52,9 +50,14 @@ public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerCo
 			public Message<?> preSend(Message<?> message, MessageChannel channel) {
 				StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 				if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-					List<String> authorization = accessor.getNativeHeader("X-Authorization");
-					logger.debug("X-Authorization: {}", authorization);
-
+					KeycloakAuthenticationToken keycloakAuthenticationToken = (KeycloakAuthenticationToken) accessor.getHeader("simpUser");
+					logger.debug("keycloakAuthenticationToken: {}", keycloakAuthenticationToken.toString());
+					accessor.setUser(keycloakAuthenticationToken);
+					
+					/*
+					Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+					logger.debug("auth: {}", auth.toString());
+					*/
 					/*
 					Jwt jwt = jwtDecoder.decode(accessToken);
 					JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
