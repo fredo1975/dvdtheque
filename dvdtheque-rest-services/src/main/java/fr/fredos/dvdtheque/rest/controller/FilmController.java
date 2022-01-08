@@ -230,8 +230,7 @@ public class FilmController {
 			ResponseEntity<Set<Results>> resultsResponse = keycloakRestTemplate.exchange(
 					environment.getRequiredProperty(TMDB_SERVICE_URL)
 							+ environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE) + "?title=" + titre,
-					HttpMethod.GET, null, new ParameterizedTypeReference<Set<Results>>() {
-					});
+					HttpMethod.GET, null, new ParameterizedTypeReference<Set<Results>>() {});
 			if (resultsResponse != null && CollectionUtils.isNotEmpty(resultsResponse.getBody())) {
 				Set<Results> results = resultsResponse.getBody();
 				films = new ArrayList<>(results.size());

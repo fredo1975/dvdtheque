@@ -66,7 +66,6 @@ public class BatchExportFilmsConfiguration {
     //@Bean
     @Scheduled(cron = "0 00 20 * * ?")
 	public void exportFilmsJob() {
-    	logger.info("########### exportFilmsJob");
     	Map<String, JobParameter> jobConfigMap = new HashMap<>();
         jobConfigMap.put("time", new JobParameter(System.currentTimeMillis()));
         JobParameters parameters = new JobParameters(jobConfigMap);
@@ -80,7 +79,6 @@ public class BatchExportFilmsConfiguration {
 	@Bean
 	@Qualifier("runExportFilmsJob")
 	public Job runExportFilmsJob() {
-		logger.info("########### runExportFilmsJob");
 		return jobBuilderFactory.get("exportFilms")
 				.incrementer(new RunIdIncrementer())
 				.start(exportFilmsStep())
@@ -89,7 +87,6 @@ public class BatchExportFilmsConfiguration {
     
     @Bean
     protected ListItemReader<Film> dvdthequeServiceFilmReader() {
-    	logger.info("########### ListItemReader");
         ResponseEntity<List<Film>> filmList = oAuthRestTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)+"?displayType=TOUS", 
     			HttpMethod.GET, 
     			null, 
@@ -103,14 +100,11 @@ public class BatchExportFilmsConfiguration {
     }
     @Bean
     protected ExcelStreamFilmWriter excelFilmWriter() {
-    	logger.info("########### excelFilmWriter");
     	return new ExcelStreamFilmWriter();
     }
     
     @Bean
     protected Step exportFilmsStep() {
-    	logger.info("########### exportFilmsStep");
-    	
         return stepBuilderFactory.get("exportFilms")
                 .<Film, Film>chunk(800).reader(dvdthequeServiceFilmReader())
                 .writer(excelFilmWriter())
