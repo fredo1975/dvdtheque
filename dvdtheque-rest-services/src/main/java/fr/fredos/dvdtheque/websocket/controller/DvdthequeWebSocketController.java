@@ -22,7 +22,7 @@ public class DvdthequeWebSocketController {
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
 
-	@MessageMapping("/dvdtheque-service")
+	@MessageMapping("/dvdtheque-websocket")
 	public void onReceiveMessage(JmsStatusMessage<Film> jmsStatusMessage) {
 		logger.info("onReceiveMessage jmsStatusMessage="+jmsStatusMessage.toString()); 
 		this.simpMessagingTemplate.convertAndSend("/topic", jmsStatusMessage);

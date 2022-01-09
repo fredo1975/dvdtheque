@@ -37,7 +37,7 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/stomp/**","/ws/**");
+		web.ignoring().antMatchers("/dvdtheque-websocket/**");
 		 
 	}
 
