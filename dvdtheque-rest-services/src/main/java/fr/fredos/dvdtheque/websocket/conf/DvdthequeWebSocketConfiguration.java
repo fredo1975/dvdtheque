@@ -53,16 +53,6 @@ public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerCo
 					KeycloakAuthenticationToken keycloakAuthenticationToken = (KeycloakAuthenticationToken) accessor.getHeader("simpUser");
 					logger.debug("keycloakAuthenticationToken: {}", keycloakAuthenticationToken.toString());
 					accessor.setUser(keycloakAuthenticationToken);
-					
-					/*
-					Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-					logger.debug("auth: {}", auth.toString());
-					*/
-					/*
-					Jwt jwt = jwtDecoder.decode(accessToken);
-					JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-					Authentication authentication = converter.convert(jwt);
-					accessor.setUser(authentication);*/
 				}
 				return message;
 			}
