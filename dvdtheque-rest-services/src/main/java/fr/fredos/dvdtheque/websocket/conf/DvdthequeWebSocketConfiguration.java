@@ -1,5 +1,7 @@
 package fr.fredos.dvdtheque.websocket.conf;
 
+import java.util.Optional;
+
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,18 +44,39 @@ public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerCo
 
 	@Override
 	public void configureClientInboundChannel(ChannelRegistration registration) {
+		/*
+		
 		registration.interceptors(new ChannelInterceptor() {
 			@Override
 			public Message<?> preSend(Message<?> message, MessageChannel channel) {
 				StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 				if (StompCommand.CONNECT.equals(accessor.getCommand())) {
 					KeycloakAuthenticationToken keycloakAuthenticationToken = (KeycloakAuthenticationToken) accessor.getHeader("simpUser");
-					logger.debug("keycloakAuthenticationToken: {}", keycloakAuthenticationToken.toString());
+					logger.debug("keycloakAuthenticationToken: CONNECT {}", keycloakAuthenticationToken.toString());
+
+					Optional.ofNullable(accessor.getNativeHeader("Authorization")).ifPresent(ah -> {
+			            String bearerToken = ah.get(0).replace("Bearer ", "");
+			            logger.debug("Received bearer token {}", bearerToken);
+			          });
+					
 					accessor.setUser(keycloakAuthenticationToken);
 				}
 				return message;
 			}
+
+			@Override
+			public void postSend(Message<?> message, MessageChannel channel, boolean sent) {
+				StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+				if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+					KeycloakAuthenticationToken keycloakAuthenticationToken = (KeycloakAuthenticationToken) accessor.getHeader("simpUser");
+					logger.debug("keycloakAuthenticationToken: DISCONNECT {}", keycloakAuthenticationToken.toString());
+				}
+				ChannelInterceptor.super.postSend(message, channel, sent);
+			}
+			
+			
 		});
+		*/
 	}
 
 	@Override

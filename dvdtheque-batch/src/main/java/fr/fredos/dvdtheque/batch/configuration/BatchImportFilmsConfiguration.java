@@ -87,7 +87,7 @@ public class BatchImportFilmsConfiguration{
 	class DvdthequeJobResultListener implements JobExecutionListener{
 		@Override
 		public void beforeJob(JobExecution jobExecution) {
-			logger.debug("beforeJob");
+			//logger.debug("beforeJob");
 			jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.IMPORT_INIT, null,0l,JmsStatus.IMPORT_INIT.statusValue()));
 		}
 
@@ -130,14 +130,10 @@ public class BatchImportFilmsConfiguration{
 				StopWatch watch = new StopWatch();
 				watch.start();
 				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT, null,0l,JmsStatus.CLEAN_DB_INIT.statusValue()));
-				//filmService.cleanAllFilms();
-				
 				OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
 						.principal("batch")
 						.build();
-
 				OAuth2AuthorizedClient authorizedClient = this.authorizedClientServiceAndManager.authorize(authorizeRequest);
-
 				OAuth2AccessToken accessToken = Objects.requireNonNull(authorizedClient).getAccessToken();
 				HttpHeaders headers = new HttpHeaders();
 				headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
@@ -160,7 +156,7 @@ public class BatchImportFilmsConfiguration{
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	@Qualifier("importFilmsJob")
 	public Job importFilmsJob() throws Exception {
-		logger.info("######## importFilmsJob");
+		//logger.info("######## importFilmsJob");
 		return jobBuilderFactory.get("importFilms").listener(new DvdthequeJobResultListener()).incrementer(new RunIdIncrementer()).start(cleanDBStep())
 				.next(importFilmsStep()).next(setRippedFlagStep()).next(setRetrieveDateInsertionStep()).build();
 	}
@@ -238,7 +234,6 @@ public class BatchImportFilmsConfiguration{
     }
     @Bean
     protected Step importFilmsStep() {
-    	logger.info("######## importFilmsStep");
         return stepBuilderFactory.get("importFilmsStep")
                 .<FilmCsvImportFormat, Film>chunk(100)
                 .reader(reader(null))

@@ -31,13 +31,14 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		super.configure(http);
+		http.authorizeRequests().antMatchers("/dvdtheque-ws/**").permitAll();
 		http.authorizeRequests().anyRequest().fullyAuthenticated();
 		http.csrf().disable();
 	}
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/dvdtheque-websocket/**");
+		web.ignoring().antMatchers("/websocket/**");
 		 
 	}
 
