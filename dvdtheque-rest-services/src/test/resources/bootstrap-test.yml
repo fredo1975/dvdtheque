@@ -84,16 +84,6 @@ themoviedb:
     path:
       url: http://image.tmdb.org/t/p/w500
 
-allocine:
-  url: http://api.allocine.fr/rest/v3/
-  query:
-    search:
-      film: search
-    partner: yW5kcm9pZC12M3M
-    filter:
-      desk-press: desk-press
-      movie: movie
-    reviewlist: reviewlist
 
 hazelcast:
   cluster-name: hazelcast-local
@@ -130,3 +120,7 @@ tmdb-service:
 dvdtheque-batch-service:
   url: http://fake/dvdtheque-batch-service
   import: /invokejob/importFilmsJob
+  
+allocine-service:
+  url: http://fake/dvdtheque-allocine-service
+  byTitle: /byTitle

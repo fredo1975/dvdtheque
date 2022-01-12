@@ -73,6 +73,7 @@ import fr.fredos.dvdtheque.common.tmdb.model.Genres;
 import fr.fredos.dvdtheque.common.tmdb.model.Results;
 import fr.fredos.dvdtheque.integration.config.ContextConfiguration;
 import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
+import fr.fredos.dvdtheque.rest.allocine.model.FicheFilmDto;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
@@ -640,6 +641,18 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		
+		FicheFilmDto ficheFilmDto = new FicheFilmDto();
+		ficheFilmDto.setAllocineFilmId(15);
+		ficheFilmDto.setPageNumber(1);
+		ficheFilmDto.setTitle(film.getTitre());
+		ficheFilmDto.setUrl("fakeurl");
+		
+		mockServer.expect(ExpectedCount.once(), 
+		          requestTo(environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_URL)
+							+environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_BY_TITLE)+"?title="+film.getTitre()))
+		          .andExpect(method(HttpMethod.GET))
+		          .andRespond(withSuccess(mapper.writeValueAsString(ficheFilmDto), MediaType.APPLICATION_JSON));
 		
 		ResultActions resultActions = mockMvcSupport
 		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
