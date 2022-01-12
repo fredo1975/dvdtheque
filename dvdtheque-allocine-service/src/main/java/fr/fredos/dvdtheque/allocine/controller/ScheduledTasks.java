@@ -15,7 +15,7 @@ public class ScheduledTasks {
     AllocineService allocineService;
 	
 	
-	@Scheduled(cron = "${fichefilm.parsing.cron}", zone = "Europe/Paris")
+	@Scheduled(cron = "${fichefilm.parsing.cron}")
 	public void retrieveAllocineScrapingFicheFilm() {
 		logger.info("retrieveAllocineScrapingFicheFilm");
 		allocineService.scrapAllAllocineFicheFilm();
