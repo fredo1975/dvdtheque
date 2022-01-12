@@ -1,17 +1,21 @@
-package fr.fredos.dvdtheque.rest.service.model;
+package fr.fredos.dvdtheque.rest.allocine.model;
 
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class CritiquePresse {
+public class CritiquePresseDto {
+	private int id;
 	private String newsSource;
 	private Double rating;
 	private String body;
 	private String author;
-	public CritiquePresse() {
+	public CritiquePresseDto() {
 		super();
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 	public String getNewsSource() {
 		return newsSource;
@@ -39,7 +43,7 @@ public class CritiquePresse {
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(newsSource);
+		return Objects.hash(id);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -49,12 +53,13 @@ public class CritiquePresse {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CritiquePresse other = (CritiquePresse) obj;
-		return Objects.equals(newsSource, other.newsSource);
+		CritiquePresseDto other = (CritiquePresseDto) obj;
+		return id == other.id;
 	}
 	@Override
 	public String toString() {
-		return "CritiquePresse [newsSource=" + newsSource + ", rating=" + rating + ", body=" + body + ", author="
-				+ author + "]";
+		return "CritiquePresseDto [id=" + id + ", newsSource=" + newsSource + ", rating=" + rating + ", body=" + body
+				+ ", author=" + author + "]";
 	}
+	
 }

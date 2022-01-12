@@ -71,7 +71,9 @@ import fr.fredos.dvdtheque.common.tmdb.model.Genres;
 import fr.fredos.dvdtheque.common.tmdb.model.Results;
 import fr.fredos.dvdtheque.common.tmdb.model.TmdbServiceCommon;
 import fr.fredos.dvdtheque.common.utils.DateUtils;
+import fr.fredos.dvdtheque.rest.allocine.model.CritiquePresseDto;
 import fr.fredos.dvdtheque.rest.allocine.model.DvdBuilder;
+import fr.fredos.dvdtheque.rest.allocine.model.FicheFilmDto;
 import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
@@ -80,6 +82,7 @@ import fr.fredos.dvdtheque.rest.file.util.MultipartFileUtil;
 import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
 import fr.fredos.dvdtheque.rest.service.IPersonneService;
+import fr.fredos.dvdtheque.rest.service.model.CritiquePresse;
 import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 
 @RestController
@@ -94,6 +97,8 @@ public class FilmController {
 	public static String TMDB_SERVICE_RESULTS = "tmdb-service.get-results";
 	public static String DVDTHEQUE_BATCH_SERVICE_URL = "dvdtheque-batch-service.url";
 	public static String DVDTHEQUE_BATCH_SERVICE_IMPORT = "dvdtheque-batch-service.import";
+	public static String ALLOCINE_SERVICE_URL = "allocine-service.url";
+	public static String ALLOCINE_SERVICE_BY_TITLE = "allocine-service.byTitle";
 	private static String NB_ACTEURS = "batch.save.nb.acteurs";
 	@Autowired
 	Environment environment;
@@ -258,7 +263,25 @@ public class FilmController {
 	@GetMapping("/films/byId/{id}")
 	ResponseEntity<Film> findFilmById(@PathVariable Long id) {
 		try {
-			return ResponseEntity.ok(filmService.findFilm(id));
+			Film film = filmService.findFilm(id);
+			ResponseEntity<FicheFilmDto> ficheFilmDtoResponse = keycloakRestTemplate.exchange(
+					environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
+							+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + film.getTitre(),
+					HttpMethod.GET, null, new ParameterizedTypeReference<FicheFilmDto>() {});
+			if(ficheFilmDtoResponse.getBody() != null) {
+				Set<CritiquePresseDto> cpDtoSet = ficheFilmDtoResponse.getBody().getCritiquePresse();
+				if(CollectionUtils.isNotEmpty(cpDtoSet)) {
+					for(CritiquePresseDto cto : cpDtoSet) {
+						CritiquePresse cp = new CritiquePresse();
+						cp.setAuthor(cto.getAuthor());
+						cp.setBody(cto.getBody());
+						cp.setRating(cto.getRating());
+						cp.setNewsSource(cto.getNewsSource());
+						film.addCritiquePresse(cp);
+					}
+				}
+			}
+			return ResponseEntity.ok(film);
 		} catch (Exception e) {
 			logger.error(format("an error occured while findFilmById id='%s' ", id), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

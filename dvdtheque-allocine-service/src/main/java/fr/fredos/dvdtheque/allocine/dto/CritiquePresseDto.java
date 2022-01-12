@@ -39,5 +39,10 @@ public class CritiquePresseDto {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
+	@Override
+	public String toString() {
+		return "CritiquePresseDto [id=" + id + ", newsSource=" + newsSource + ", rating=" + rating + ", body=" + body
+				+ ", author=" + author + "]";
+	}
     
 }

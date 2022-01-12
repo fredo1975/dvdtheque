@@ -11,7 +11,7 @@ import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
 
 @Repository
 public interface FicheFilmRepository extends JpaRepository<FicheFilm, Integer>{
-	@Query("from FicheFilm f where f.title = :title")
+	@Query("from FicheFilm f join fetch f.critiquePresse where upper(f.title) = upper(:title)")
 	FicheFilm findByTitle(@Param("title") String title);
 	
 	@Query("from FicheFilm f where f.allocineFilmId = :ficheFilm")

@@ -2,6 +2,7 @@ package fr.fredos.dvdtheque.allocine.service;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -50,6 +51,8 @@ public class AllocineServiceTest {
 		assertNotNull(ficheFilmSaved);
 		FicheFilm ficheFilmRetrieved = ficheFilmRepository.findByTitle("title");
 		assertNotNull(ficheFilmRetrieved);
+		assertNotNull(ficheFilmRetrieved.getCritiquePresse());
+		assertTrue(ficheFilmRetrieved.getCritiquePresse().iterator().next().getNewsSource().equals("source1"));
 		System.out.println(ficheFilmRetrieved);
 	}
 }

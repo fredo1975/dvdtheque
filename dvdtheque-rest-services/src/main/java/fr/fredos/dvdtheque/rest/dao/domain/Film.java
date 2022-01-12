@@ -23,7 +23,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.rest.service.model.CritiquePresse;
 
 @Entity
 @Table(name = "film")
@@ -73,6 +76,8 @@ public class Film implements Serializable, Comparable<Film> {
 	private String homepage;
 	@Transient
 	private boolean alreadyInDvdtheque;
+	@Transient
+	private Set<CritiquePresse> critiquePresse;
 	public Film() {
 		super();
 	}
@@ -219,17 +224,34 @@ public class Film implements Serializable, Comparable<Film> {
 	public void setGenre(Set<Genre> genre) {
 		this.genre = genre;
 	}
-	@Override
-	public String toString() {
-		return "Film [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", dateInsertion=" + dateInsertion
-				+ ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd + ", origine=" + origine
-				+ ", realisateur=" + realisateur + ", acteur=" + acteur + ", critiquesPresse=" + critiquesPresse
-				+ ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview
-				+ ", runtime=" + runtime + ", genre=" + genre + ", homepage=" + homepage + ", alreadyInDvdtheque="
-				+ alreadyInDvdtheque + "]";
+	
+	
+	public Set<CritiquePresse> getCritiquePresse() {
+		return critiquePresse;
+	}
+	public void setCritiquePresse(Set<CritiquePresse> critiquePresse) {
+		this.critiquePresse = critiquePresse;
+	}
+	
+	public void addCritiquePresse(CritiquePresse critiquePresse) {
+		if(CollectionUtils.isEmpty(this.critiquePresse)) {
+			this.critiquePresse = new HashSet<>();
+		}
+		this.critiquePresse.add(critiquePresse);
 	}
 	@Override
 	public int compareTo(Film film) {
 		return this.getTitre().compareTo(film.getTitre());
 	}
+	@Override
+	public String toString() {
+		return "Film [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", dateInsertion=" + dateInsertion
+				+ ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd + ", origine=" + origine + ", realisateur="
+				+ realisateur + ", acteur=" + acteur + ", critiquesPresse=" + critiquesPresse + ", vu=" + vu
+				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
+				+ runtime + ", genre=" + genre + ", homepage=" + homepage + ", alreadyInDvdtheque=" + alreadyInDvdtheque
+				+ ", critiquePresse=" + critiquePresse + "]";
+	}
+	
+	
 }

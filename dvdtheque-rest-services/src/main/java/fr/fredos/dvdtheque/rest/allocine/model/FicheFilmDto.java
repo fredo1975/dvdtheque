@@ -1,6 +1,7 @@
-package fr.fredos.dvdtheque.allocine.dto;
+package fr.fredos.dvdtheque.rest.allocine.model;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class FicheFilmDto {
@@ -50,10 +51,24 @@ public class FicheFilmDto {
 		this.critiquePresse = critiquePresse;
 	}
 	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FicheFilmDto other = (FicheFilmDto) obj;
+		return id == other.id;
+	}
+	@Override
 	public String toString() {
 		return "FicheFilmDto [id=" + id + ", allocineFilmId=" + allocineFilmId + ", url=" + url + ", pageNumber="
 				+ pageNumber + ", title=" + title + ", critiquePresse=" + critiquePresse + "]";
 	}
-	
 	
 }
