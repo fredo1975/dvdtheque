@@ -17,8 +17,9 @@ public class ScheduledTasks {
 	
 	@Scheduled(cron = "${fichefilm.parsing.cron}")
 	public void retrieveAllocineScrapingFicheFilm() {
-		logger.info("retrieveAllocineScrapingFicheFilm");
+		logger.info("retrieveAllocineScrapingFicheFilm start");
 		allocineService.scrapAllAllocineFicheFilm();
+		logger.info("retrieveAllocineScrapingFicheFilm end");
 	}
 	
 }
