@@ -77,7 +77,9 @@ public class AllocineServiceImpl implements AllocineService {
 		}
 
 		while (page.getNumPage() < nbParsedPage) {
-			allFicheFilmFromPage.clear();
+			if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
+				allFicheFilmFromPage.clear();
+			}
 			page.setNumPage(page.getNumPage() + 1);
 			allFicheFilmFromPage = retrieveAllFicheFilmFromPage(page);
 			if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
