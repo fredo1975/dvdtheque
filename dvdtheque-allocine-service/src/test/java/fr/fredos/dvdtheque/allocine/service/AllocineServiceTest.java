@@ -1,11 +1,11 @@
 package fr.fredos.dvdtheque.allocine.service;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class AllocineServiceTest {
 		final String title = ficheFilmSaved.getTitle();
 		ficheFilmRepository.delete(ficheFilmSaved);
 		List<FicheFilm> ficheFilmRetrieved = ficheFilmRepository.findByTitle(title);
-		assertNull(ficheFilmRetrieved);
+		assertTrue(CollectionUtils.isEmpty(ficheFilmRetrieved));
 	}
 	private FicheFilm saveFilm() {
 		FicheFilm ficheFilm = new FicheFilm();
