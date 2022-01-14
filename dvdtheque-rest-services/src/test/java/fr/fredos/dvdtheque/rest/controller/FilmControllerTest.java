@@ -647,12 +647,13 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		ficheFilmDto.setPageNumber(1);
 		ficheFilmDto.setTitle(film.getTitre());
 		ficheFilmDto.setUrl("fakeurl");
-		
+		List<FicheFilmDto> l = new ArrayList<>();
+		l.add(ficheFilmDto);
 		mockServer.expect(ExpectedCount.once(), 
 		          requestTo(environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_URL)
 							+environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_BY_TITLE)+"?title="+film.getTitre()))
 		          .andExpect(method(HttpMethod.GET))
-		          .andRespond(withSuccess(mapper.writeValueAsString(ficheFilmDto), MediaType.APPLICATION_JSON));
+		          .andRespond(withSuccess(mapper.writeValueAsString(l), MediaType.APPLICATION_JSON));
 		
 		ResultActions resultActions = mockMvcSupport
 		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))

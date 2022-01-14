@@ -265,12 +265,12 @@ public class FilmController {
 	ResponseEntity<Film> findFilmById(@PathVariable Long id) {
 		try {
 			Film film = filmService.findFilm(id);
-			ResponseEntity<FicheFilmDto> ficheFilmDtoResponse = keycloakRestTemplate.exchange(
+			ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = keycloakRestTemplate.exchange(
 					environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
 							+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + film.getTitre(),
-					HttpMethod.GET, null, new ParameterizedTypeReference<FicheFilmDto>() {});
+					HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
 			if(ficheFilmDtoResponse.getBody() != null) {
-				Set<CritiquePresseDto> cpDtoSet = ficheFilmDtoResponse.getBody().getCritiquePresse();
+				Set<CritiquePresseDto> cpDtoSet = ficheFilmDtoResponse.getBody().get(0).getCritiquePresse();
 				if(CollectionUtils.isNotEmpty(cpDtoSet)) {
 					for(CritiquePresseDto cto : cpDtoSet) {
 						CritiquePresse cp = new CritiquePresse();

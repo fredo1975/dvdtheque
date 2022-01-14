@@ -9,7 +9,7 @@ public interface AllocineService {
 	void scrapAllAllocineFicheFilm();
 	List<FicheFilm> retrieveAllFicheFilm();
 	Optional<FicheFilm> retrieveFicheFilm(int id);
-	FicheFilm retrieveFicheFilmByTitle(String title);
+	List<FicheFilm> retrieveFicheFilmByTitle(String title);
 	Optional<FicheFilm> retrievefindByFicheFilmId(Integer ficheFilmId);
 	void removeAllFilmWithoutCritique();
 	List<FicheFilm> findAllFilmWithoutCritique();

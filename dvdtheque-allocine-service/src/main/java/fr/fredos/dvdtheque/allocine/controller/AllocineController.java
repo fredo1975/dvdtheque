@@ -1,5 +1,9 @@
 package fr.fredos.dvdtheque.allocine.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +28,15 @@ public class AllocineController {
         this.allocineService = allocineScrapingService;
     }
 	@GetMapping("/byTitle")
-	public ResponseEntity<FicheFilmDto> getAllocineFicheFilmByTitle(@RequestParam(name = "title", required = false) String title) {
-		return ResponseEntity.ok(convertToDto(allocineService.retrieveFicheFilmByTitle(title)));
+	public ResponseEntity<List<FicheFilmDto>> getAllocineFicheFilmByTitle(@RequestParam(name = "title", required = false) String title) {
+		List<FicheFilm> l = allocineService.retrieveFicheFilmByTitle(title);
+		List<FicheFilmDto> ll = new ArrayList<>();
+		if(CollectionUtils.isNotEmpty(l)) {
+			for(FicheFilm ficheFilm : l) {
+				ll.add(convertToDto(ficheFilm));
+			}
+		}
+		return ResponseEntity.ok(ll);
 	}
 	private FicheFilmDto convertToDto(FicheFilm ficheFilm) {
 		if(ficheFilm != null) {

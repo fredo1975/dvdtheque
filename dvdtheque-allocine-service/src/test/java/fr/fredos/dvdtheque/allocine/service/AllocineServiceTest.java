@@ -4,6 +4,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ public class AllocineServiceTest {
 		FicheFilm ficheFilmSaved = saveFilm();
 		final String title = ficheFilmSaved.getTitle();
 		ficheFilmRepository.delete(ficheFilmSaved);
-		FicheFilm ficheFilmRetrieved = ficheFilmRepository.findByTitle(title);
+		List<FicheFilm> ficheFilmRetrieved = ficheFilmRepository.findByTitle(title);
 		assertNull(ficheFilmRetrieved);
 	}
 	private FicheFilm saveFilm() {
@@ -49,10 +51,11 @@ public class AllocineServiceTest {
 	public void testFindByTitle() {
 		FicheFilm ficheFilmSaved = saveFilm();
 		assertNotNull(ficheFilmSaved);
-		FicheFilm ficheFilmRetrieved = ficheFilmRepository.findByTitle("title");
+		List<FicheFilm> ficheFilmRetrieved = ficheFilmRepository.findByTitle("title");
 		assertNotNull(ficheFilmRetrieved);
-		assertNotNull(ficheFilmRetrieved.getCritiquePresse());
-		assertTrue(ficheFilmRetrieved.getCritiquePresse().iterator().next().getNewsSource().equals("source1"));
+		assertNotNull(ficheFilmRetrieved.get(0));
+		assertNotNull(ficheFilmRetrieved.get(0).getCritiquePresse());
+		assertTrue(ficheFilmRetrieved.get(0).getCritiquePresse().iterator().next().getNewsSource().equals("source1"));
 		System.out.println(ficheFilmRetrieved);
 	}
 }

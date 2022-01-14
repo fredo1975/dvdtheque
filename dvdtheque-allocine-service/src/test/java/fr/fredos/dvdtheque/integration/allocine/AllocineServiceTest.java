@@ -78,10 +78,10 @@ public class AllocineServiceTest {
 		assertEquals(ALLOCINE_FIULM_ID_136316,allFicheFilmFromPageRetrievedFromDb.get(1).getAllocineFilmId());
 		assertEquals(ALLOCINE_FIULM_ID_136316_TITLE,allFicheFilmFromPageRetrievedFromDb.get(1).getTitle());
 		Optional<FicheFilm> optionalFicheFilmRetrievedFromDb = allocineService.retrieveFicheFilm(allFicheFilmFromPageRetrievedFromDb.get(0).getId());
-		FicheFilm ficheFilmRetrievedFromDb = allocineService.retrieveFicheFilmByTitle(allFicheFilmFromPageRetrievedFromDb.get(0).getTitle());
+		List<FicheFilm> ficheFilmRetrievedFromDb = allocineService.retrieveFicheFilmByTitle(allFicheFilmFromPageRetrievedFromDb.get(0).getTitle());
 		assertTrue(optionalFicheFilmRetrievedFromDb.isPresent());
 		assertEquals(allFicheFilmFromPageRetrievedFromDb.get(0),optionalFicheFilmRetrievedFromDb.get());
 		assertEquals(allFicheFilmFromPageRetrievedFromDb.get(0).getTitle(),optionalFicheFilmRetrievedFromDb.get().getTitle());
-		assertEquals(allFicheFilmFromPageRetrievedFromDb.get(0),ficheFilmRetrievedFromDb);
+		assertEquals(allFicheFilmFromPageRetrievedFromDb.get(0),ficheFilmRetrievedFromDb.get(0));
     }
 }

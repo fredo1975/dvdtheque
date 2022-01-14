@@ -275,7 +275,7 @@ public class AllocineServiceImpl implements AllocineService {
 		return ficheFilmRepository.findById(id);
 	}
 	@Override
-	public FicheFilm retrieveFicheFilmByTitle(String title) {
+	public List<FicheFilm> retrieveFicheFilmByTitle(String title) {
 		return ficheFilmRepository.findByTitle(title);
 	}
 	
