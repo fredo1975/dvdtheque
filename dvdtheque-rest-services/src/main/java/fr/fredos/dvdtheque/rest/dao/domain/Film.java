@@ -1,8 +1,10 @@
 package fr.fredos.dvdtheque.rest.dao.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -77,7 +79,7 @@ public class Film implements Serializable, Comparable<Film> {
 	@Transient
 	private boolean alreadyInDvdtheque;
 	@Transient
-	private Set<CritiquePresse> critiquePresse;
+	private List<CritiquePresse> critiquePresse;
 	public Film() {
 		super();
 	}
@@ -226,16 +228,16 @@ public class Film implements Serializable, Comparable<Film> {
 	}
 	
 	
-	public Set<CritiquePresse> getCritiquePresse() {
+	public List<CritiquePresse> getCritiquePresse() {
 		return critiquePresse;
 	}
-	public void setCritiquePresse(Set<CritiquePresse> critiquePresse) {
+	public void setCritiquePresse(List<CritiquePresse> critiquePresse) {
 		this.critiquePresse = critiquePresse;
 	}
 	
 	public void addCritiquePresse(CritiquePresse critiquePresse) {
 		if(CollectionUtils.isEmpty(this.critiquePresse)) {
-			this.critiquePresse = new HashSet<>();
+			this.critiquePresse = new ArrayList<>();
 		}
 		this.critiquePresse.add(critiquePresse);
 	}

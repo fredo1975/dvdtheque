@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -279,6 +280,12 @@ public class FilmController {
 						cp.setNewsSource(cto.getNewsSource());
 						film.addCritiquePresse(cp);
 					}
+					Collections.sort(film.getCritiquePresse(),new Comparator<CritiquePresse>(){
+						@Override
+						public int compare(CritiquePresse o1, CritiquePresse o2) {
+							return o1.getRating().compareTo(o2.getRating());
+						}
+					});
 				}
 			}
 			return ResponseEntity.ok(film);
