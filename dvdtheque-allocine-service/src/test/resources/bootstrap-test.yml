@@ -21,10 +21,6 @@ spring:
 eureka:
   client:
     enabled: false        
-hazelcast:
-  cluster-name: hazelcast-allocine-local
-  networkconfig:
-    interface: 127.0.0.1
     
 fichefilm:
   parsing:
