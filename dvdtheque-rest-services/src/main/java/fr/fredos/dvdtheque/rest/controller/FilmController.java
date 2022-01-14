@@ -269,7 +269,7 @@ public class FilmController {
 					environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
 							+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + film.getTitre(),
 					HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
-			if(ficheFilmDtoResponse.getBody() != null) {
+			if(ficheFilmDtoResponse.getBody() != null && CollectionUtils.isNotEmpty(ficheFilmDtoResponse.getBody())) {
 				Set<CritiquePresseDto> cpDtoSet = ficheFilmDtoResponse.getBody().get(0).getCritiquePresse();
 				if(CollectionUtils.isNotEmpty(cpDtoSet)) {
 					for(CritiquePresseDto cto : cpDtoSet) {
