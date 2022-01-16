@@ -157,12 +157,15 @@ public class AllocineServiceImpl implements AllocineService {
 							index = 0;
 							for (Element e8 : esP) {
 								if (StringUtils.isNotEmpty(e8.text())) {
-									CritiquePresse cp = map.get(index++);
-									cp.setBody(e8.text());
+									var cp = map.get(index++);
+									if(StringUtils.isNotEmpty(e8.text())) {
+										cp.setBody(e8.text());
+									}else {
+										map.remove(cp);
+									}
 									// logger.debug("### cp="+cp.toString());
 								}
 							}
-
 							Elements es4 = ec.select(DIV_EVAL_HOLDER);
 							index = 0;
 							for (Element e5 : es4) {
@@ -170,33 +173,35 @@ public class AllocineServiceImpl implements AllocineService {
 								Elements a = e5.select(DIV_EVAL_HOLDER);
 								// logger.debug("######### a="+a.text());
 								CritiquePresse cp = map.get(index++);
-								cp.setAuthor(a.text());
+								if(cp != null && StringUtils.isNotEmpty(cp.getBody())) {
+									cp.setAuthor(a.text());
 
-								Double rating = null;
-								if (e5.select(DIV_RATING_MDL_1_HOLDER).size() > 0) {
-									// logger.debug("######### 1**");
-									rating = 1.0d;
+									Double rating = null;
+									if (e5.select(DIV_RATING_MDL_1_HOLDER).size() > 0) {
+										// logger.debug("######### 1**");
+										rating = 1.0d;
+									}
+									if (e5.select(DIV_RATING_MDL_2_HOLDER).size() > 0) {
+										// logger.debug("######### 2**");
+										rating = 2.0d;
+									}
+									if (e5.select(DIV_RATING_MDL_3_HOLDER).size() > 0) {
+										// logger.debug("######### 3**");
+										rating = 3.0d;
+									}
+									if (e5.select(DIV_RATING_MDL_4_HOLDER).size() > 0) {
+										// logger.debug("######### 4**");
+										rating = 4.0d;
+									}
+									if (e5.select(DIV_RATING_MDL_5_HOLDER).size() > 0) {
+										// logger.debug("######### 5**");
+										rating = 5.0d;
+									}if (rating == null) {
+										rating = 0.0d;
+									}
+									cp.setRating(rating);
+									logger.debug("### cp=" + cp.toString());
 								}
-								if (e5.select(DIV_RATING_MDL_2_HOLDER).size() > 0) {
-									// logger.debug("######### 2**");
-									rating = 2.0d;
-								}
-								if (e5.select(DIV_RATING_MDL_3_HOLDER).size() > 0) {
-									// logger.debug("######### 3**");
-									rating = 3.0d;
-								}
-								if (e5.select(DIV_RATING_MDL_4_HOLDER).size() > 0) {
-									// logger.debug("######### 4**");
-									rating = 4.0d;
-								}
-								if (e5.select(DIV_RATING_MDL_5_HOLDER).size() > 0) {
-									// logger.debug("######### 5**");
-									rating = 5.0d;
-								}if (rating == null) {
-									rating = 0.0d;
-								}
-								cp.setRating(rating);
-								logger.debug("### cp=" + cp.toString());
 							}
 						}
 					}
