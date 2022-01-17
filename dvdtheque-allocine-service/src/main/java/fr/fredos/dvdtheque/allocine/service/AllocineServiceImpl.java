@@ -96,7 +96,12 @@ public class AllocineServiceImpl implements AllocineService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW,readOnly = false)
 	public FicheFilm saveFicheFilm(FicheFilm ficheFilm) {
-		return ficheFilmRepository.save(ficheFilm);
+		try{
+			return ficheFilmRepository.save(ficheFilm);
+		}catch(Exception e) {
+			logger.error("an error occured while saving ficheFilm {}",ficheFilm.toString(),e);
+		}
+		return null;
 	}
 
 	/**
