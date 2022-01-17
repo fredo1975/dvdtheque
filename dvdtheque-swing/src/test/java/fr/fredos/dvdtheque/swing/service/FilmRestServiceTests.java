@@ -36,7 +36,7 @@ import fr.fredos.dvdtheque.service.IPersonneService;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
+		fr.fredos.dvdtheque.tmdb.TmdbServiceApplication.class,
 		fr.fredos.dvdtheque.swing.service.FilmRestService.class})
 @AutoConfigureMockMvc
 public class FilmRestServiceTests extends AbstractTransactionalJUnit4SpringContextTests{

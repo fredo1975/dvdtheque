@@ -1,0 +1,31 @@
+debug: true
+
+spring:
+  cloud:
+    config:
+      enabled: false
+eureka:
+  client:
+    enabled: false
+    
+themoviedb:
+  search:
+    movie:
+      query: https://fake/3/search/movie
+  movie:
+    query: https://fake/3/movie/
+  api:
+    key: aa87a44fb22d65986512188cd2ec2ca0
+  poster:
+    path:
+      url: http://fake/t/p/w500
+
+keycloak:
+  realm: dvdtheque
+  auth-server-url: http://localhost:8080/auth
+  ssl-required: external
+  resource: dvdtheque-app
+  credentials:
+    secret: 14d4618c-c599-450f-ac22-3e2cda1a39d5
+  use-resource-role-mappings: true
+  bearer-only: true

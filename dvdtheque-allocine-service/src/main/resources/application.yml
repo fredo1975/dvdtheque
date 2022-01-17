@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: dvdtheque-allocine-service
+  cloud:
+    config:
+      fail-fast: true
+logging:
+  level:
+    root: info      
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

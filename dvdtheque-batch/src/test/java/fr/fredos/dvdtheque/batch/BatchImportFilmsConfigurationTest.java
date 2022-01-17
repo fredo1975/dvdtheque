@@ -1,18 +1,9 @@
 package fr.fredos.dvdtheque.batch;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
-import java.text.SimpleDateFormat;
-import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,29 +29,18 @@ import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.configuration.MessageConsumer;
 import fr.fredos.dvdtheque.batch.film.tasklet.RetrieveDateInsertionTasklet;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
-import fr.fredos.dvdtheque.common.enums.DvdFormat;
-import fr.fredos.dvdtheque.common.enums.FilmOrigine;
-import fr.fredos.dvdtheque.common.utils.DateUtils;
-import fr.fredos.dvdtheque.dao.model.object.Film;
-import fr.fredos.dvdtheque.dao.model.object.Personne;
-import fr.fredos.dvdtheque.dao.model.utils.FilmBuilder;
 
-@SpringBootTest(classes = { BatchImportFilmsConfiguration.class,MessageConsumer.class,
+@SpringBootTest(classes = { BatchImportFilmsConfiguration.class,
+		MessageConsumer.class,
 		RippedFlagTasklet.class,
-		RetrieveDateInsertionTasklet.class,
-		fr.fredos.dvdtheque.dao.Application.class,
-		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
-		fr.fredos.dvdtheque.allocine.service.AllocineServiceApplication.class,
-		BatchImportFilmsConfigurationTest.HazelcastConfiguration.class})
+		RetrieveDateInsertionTasklet.class})
 public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
+	
+	/*
 	@Autowired
 	public Job importFilmsJob;
 	@Autowired
     protected Environment environment;
-	/*
-	@Autowired
-	protected MessageConsumer messageConsumer;*/
 	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
 	public static final String TITRE_FILM_2001 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_AD_ASTRA = "AD ASTRA";
@@ -113,6 +93,8 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		jobParametersBuilder.addString("INPUT_FILE_PATH", environment.getRequiredProperty(LISTE_DVD_FILE_NAME));
 		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchJob(jobParametersBuilder.toJobParameters());
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+		
+		
 		List<Film> films = filmService.findAllFilms(null);
 		assertTrue(films.size()==8);
 		boolean isAdAstraExists = false;
@@ -159,5 +141,6 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		assertTrue(isAdAstraExists);
 		assertTrue(is2046Exists);
 		assertTrue(is40ansExists);
-	}
+		
+	}*/
 }

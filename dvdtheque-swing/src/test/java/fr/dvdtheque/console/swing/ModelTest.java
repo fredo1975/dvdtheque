@@ -28,7 +28,7 @@ import fr.fredos.dvdtheque.swing.model.FilmTableModel;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {fr.fredos.dvdtheque.dao.Application.class,
 		fr.fredos.dvdtheque.service.ServiceApplication.class,
-		fr.fredos.dvdtheque.tmdb.service.TmdbServiceApplication.class,
+		fr.fredos.dvdtheque.tmdb.TmdbServiceApplication.class,
 		TestConfig.class,
 		fr.fredos.dvdtheque.swing.service.FilmRestService.class})
 @Ignore

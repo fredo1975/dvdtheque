@@ -12,7 +12,7 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
-import fr.fredos.dvdtheque.dao.model.object.Film;
+import fr.fredos.dvdtheque.rest.dao.domain.Film;
 
 @Controller
 @ComponentScan({ "fr.fredos.dvdtheque.websocket" })
@@ -22,7 +22,7 @@ public class DvdthequeWebSocketController {
 	@Autowired
 	SimpMessagingTemplate simpMessagingTemplate;
 
-	@MessageMapping("/dvdtheque")
+	@MessageMapping("/dvdtheque-service")
 	public void onReceiveMessage(JmsStatusMessage<Film> jmsStatusMessage) {
 		logger.info("onReceiveMessage jmsStatusMessage="+jmsStatusMessage.toString()); 
 		this.simpMessagingTemplate.convertAndSend("/topic", jmsStatusMessage);

@@ -2,8 +2,8 @@
 <configuration scan="true">
 	<property name="LOG_TEMP" value="./logs"/>
 	<include resource="org/springframework/boot/logging/logback/base.xml" />
-	<logger name="com.example" level="INFO"/>
-    <root level="WARN">
+	<logger name="fr.fredos.dvdtheque.allocine" level="DEBUG"/>
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

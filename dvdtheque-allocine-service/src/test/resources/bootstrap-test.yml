@@ -1,0 +1,28 @@
+debug: true
+
+spring:
+  datasource:
+    username: sa
+    password: sa
+    #username: postgres
+    #password: zotla7
+    #type: com.zaxxer.hikari.HikariDataSource
+    #url: jdbc:postgresql://localhost:5432/dvdthequedb?currentSchema=dvdtheque-allocine-service
+    testWhileIdle: true
+    validationQuery: SELECT 1
+  cloud:
+    config:
+      enabled: false
+  jpa:
+    show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+eureka:
+  client:
+    enabled: false        
+    
+fichefilm:
+  parsing:
+    page: 20
+    cron: 0 44 23 * * ?

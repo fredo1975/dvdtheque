@@ -1,0 +1,78 @@
+debug: false
+
+server:
+  port: 8089
+
+spring:
+  datasource:
+    testWhileIdle: true
+    validationQuery: SELECT 1
+    url: jdbc:h2:file:./DB
+  batch:
+    initializer:
+      enabled: false
+    job:
+      enabled: false
+  cloud:
+    config:
+      enabled: false
+    stream:
+      bindings:
+        output:
+          destination: input
+      default:
+        contentType: application/json
+  rabbitmq:
+    host: 192.168.99.100
+    port: 32777
+eureka:
+  client:
+    enabled: false
+
+batch:
+  save:
+    nb:
+      acteurs: 12
+
+csv:
+  dvd:
+    file:
+      name:
+        import: src/test/resources/ListeDVD.csv
+rippedFlagTasklet:
+  from:
+    file: true
+retrieve:
+  date:
+    insertion: false
+excel:
+  dvd:
+    file:
+      path:
+        export: D:/dev/liste_dvd/
+      name:
+        export: export.xlsx
+
+dvd:
+  file:
+    path: G:/films
+
+hazelcast:
+  cluster-name: hazelcast-local
+  networkconfig:
+    interface: 127.0.0.1
+
+dvdtheque-service:
+  url: http://fake/dvdtheque-service
+  films: /films/
+  transformTmdbFilmToDvdThequeFilm: /transformTmdbFilmToDvdThequeFilm/tmdb
+  cleanAllFilms: /films/cleanAllfilms
+  buildDvd: /films/buildDvd
+  saveFilm: /films/saveProcessedFilm
+  
+tmdb-service:
+  url: http://fake/dvdtheque-tmdb-service
+  byTitle: /retrieveTmdbFilmListByTitle/byTitle
+  release-date: /retrieveTmdbFrReleaseDate/byTmdbId
+  get-credits: /retrieveTmdbCredits/byTmdbId
+  get-results: /retrieveTmdbFilm/byTmdbId
