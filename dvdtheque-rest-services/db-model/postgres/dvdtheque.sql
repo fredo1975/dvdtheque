@@ -10,6 +10,9 @@ CREATE DATABASE dvdthequedb
     LC_CTYPE = 'French_France.1252'
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1;
+	
+CREATE SCHEMA IF NOT EXISTS "dvdtheque-service"
+    AUTHORIZATION dvdtheque;
 
 DROP TABLE IF EXISTS "dvdtheque-service".film_realisateur;
 
