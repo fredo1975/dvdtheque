@@ -182,6 +182,38 @@ pipeline {
         		sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl stop dvdtheque-rest.service'
 	       	}
 	    }
+	    stage('Stopping Prod1 Tmdb service') {
+        	when {
+                branch 'master'
+            }
+        	steps {
+        		sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl stop dvdtheque-tmdb.service'
+	       	}
+	    }
+	    stage('Stopping Prod2 Tmdb service') {
+        	when {
+                branch 'master'
+            }
+        	steps {
+        		sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl stop dvdtheque-tmdb.service'
+	       	}
+	    }
+	    stage('Stopping Prod2 Allocine service') {
+        	when {
+                branch 'master'
+            }
+        	steps {
+        		sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl stop dvdtheque-allocine.service'
+	       	}
+	    }
+	    stage('Stopping Prod Batch service') {
+        	when {
+                branch 'master'
+            }
+        	steps {
+        		sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl stop dvdtheque-batch.service'
+	       	}
+	    }
 	    stage('Copying develop dvdtheque-rest-services') {
 	    	when {
                 branch 'develop'
@@ -251,6 +283,45 @@ pipeline {
 			 	}
             }
         }
+        stage('Copying prouction dvdtheque-tmdb-service') {
+	    	when {
+                branch 'master'
+            }
+            steps {
+                script {
+                	sh """
+			 			scp dvdtheque-tmdb-service/target/$ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_tmdb_service/dvdtheque-tmdb-service.jar
+			 		"""
+			 		sh """
+			 			scp dvdtheque-tmdb-service/target/$ARTIFACT jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_tmdb_service/dvdtheque-tmdb-service.jar
+			 		"""
+			 	}
+            }
+        }
+        stage('Copying prouction dvdtheque-allocine-service') {
+	    	when {
+                branch 'master'
+            }
+            steps {
+                script {
+                	sh """
+			 			scp dvdtheque-allocine-service/target/$ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_allocine_service/dvdtheque-allocine-service.jar
+			 		"""
+			 	}
+            }
+        }
+        stage('Copying prouction dvdtheque-batch-service') {
+	    	when {
+                branch 'master'
+            }
+            steps {
+                script {
+                	sh """
+			 			scp dvdtheque-batch/target/$ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch.jar
+			 		"""
+			 	}
+            }
+        }
         stage('Sarting Dev1 Rest service') {
         	when {
                 branch 'develop'
@@ -313,6 +384,38 @@ pipeline {
             }
         	steps {
 	        	sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl start dvdtheque-rest.service'
+	        }
+   		}
+   		stage('Sarting Prod1 tmdb service') {
+        	when {
+                branch 'master'
+            }
+        	steps {
+	        	sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl start dvdtheque-tmdb.service'
+	        }
+   		}
+   		stage('Sarting Prod2 tmdb service') {
+   			when {
+                branch 'master'
+            }
+        	steps {
+	        	sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl start dvdtheque-tmdb.service'
+	        }
+   		}
+   		stage('Sarting Prod2 Allocine service') {
+   			when {
+                branch 'master'
+            }
+        	steps {
+	        	sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl start dvdtheque-allocine.service'
+	        }
+   		}
+   		stage('Sarting Prod2 Batch service') {
+   			when {
+                branch 'master'
+            }
+        	steps {
+	        	sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl start dvdtheque-batch.service'
 	        }
    		}
    		stage('Check status Dev1 Rest service') {
@@ -392,6 +495,46 @@ pipeline {
 			steps {
 				script {
 				    sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl status dvdtheque-rest.service'
+			    }
+			}
+		}
+		stage('Check status Prod1 tmdb service') {
+			when {
+                branch 'master'
+            }
+			steps {
+				script {
+				    sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl status dvdtheque-tmdb.service'
+			    }
+			}
+		}
+		stage('Check status Prod2 tmdb service') {
+			when {
+                branch 'master'
+            }
+			steps {
+				script {
+				    sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl status dvdtheque-tmdb.service'
+			    }
+			}
+		}
+		stage('Check status Prod2 Allocine tmdb service') {
+			when {
+                branch 'master'
+            }
+			steps {
+				script {
+				    sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl status dvdtheque-allocine.service'
+			    }
+			}
+		}
+		stage('Check status Prod2 Batch tmdb service') {
+			when {
+                branch 'master'
+            }
+			steps {
+				script {
+				    sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl status dvdtheque-batch.service'
 			    }
 			}
 		}
