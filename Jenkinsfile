@@ -290,10 +290,10 @@ pipeline {
             steps {
                 script {
                 	sh """
-			 			scp dvdtheque-tmdb-service/target/$ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_tmdb_service/dvdtheque-tmdb-service.jar
+			 			scp dvdtheque-tmdb-service/target/$TMDB_ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_tmdb_service/dvdtheque-tmdb-service.jar
 			 		"""
 			 		sh """
-			 			scp dvdtheque-tmdb-service/target/$ARTIFACT jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_tmdb_service/dvdtheque-tmdb-service.jar
+			 			scp dvdtheque-tmdb-service/target/$TMDB_ARTIFACT jenkins@${PROD_SERVER2_IP}:/opt/dvdtheque_tmdb_service/dvdtheque-tmdb-service.jar
 			 		"""
 			 	}
             }
@@ -305,7 +305,7 @@ pipeline {
             steps {
                 script {
                 	sh """
-			 			scp dvdtheque-allocine-service/target/$ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_allocine_service/dvdtheque-allocine-service.jar
+			 			scp dvdtheque-allocine-service/target/$ALLOCINE_ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_allocine_service/dvdtheque-allocine-service.jar
 			 		"""
 			 	}
             }
@@ -317,7 +317,7 @@ pipeline {
             steps {
                 script {
                 	sh """
-			 			scp dvdtheque-batch/target/$ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch.jar
+			 			scp dvdtheque-batch/target/$BATCH_ARTIFACT jenkins@${PROD_SERVER1_IP}:/opt/dvdtheque_batch_service/dvdtheque-batch.jar
 			 		"""
 			 	}
             }
