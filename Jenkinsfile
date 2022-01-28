@@ -189,7 +189,7 @@ pipeline {
                 branch 'master'
             }
         	steps {
-        		sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl stop dvdtheque-allocine.service'
+        		sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl stop dvdtheque-allocine.service'
 	       	}
 	    }
 	    stage('Stopping Prod Batch service') {
@@ -197,7 +197,7 @@ pipeline {
                 branch 'master'
             }
         	steps {
-        		sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl stop dvdtheque-batch.service'
+        		sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl stop dvdtheque-batch.service'
 	       	}
 	    }
 	    stage('Copying develop dvdtheque-rest-services') {
@@ -393,7 +393,7 @@ pipeline {
                 branch 'master'
             }
         	steps {
-	        	sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl start dvdtheque-allocine.service'
+	        	sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl start dvdtheque-allocine.service'
 	        }
    		}
    		stage('Sarting Prod2 Batch service') {
@@ -401,7 +401,7 @@ pipeline {
                 branch 'master'
             }
         	steps {
-	        	sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl start dvdtheque-batch.service'
+	        	sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl start dvdtheque-batch.service'
 	        }
    		}
    		stage('Check status Dev1 Rest service') {
@@ -510,7 +510,7 @@ pipeline {
             }
 			steps {
 				script {
-				    sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl status dvdtheque-allocine.service'
+				    sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl status dvdtheque-allocine.service'
 			    }
 			}
 		}
@@ -520,7 +520,7 @@ pipeline {
             }
 			steps {
 				script {
-				    sh 'ssh jenkins@$PROD_SERVER2_IP sudo systemctl status dvdtheque-batch.service'
+				    sh 'ssh jenkins@$PROD_SERVER1_IP sudo systemctl status dvdtheque-batch.service'
 			    }
 			}
 		}
