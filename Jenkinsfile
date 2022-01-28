@@ -104,20 +104,6 @@ pipeline {
 		    	}
 		    }
         }
-        stage('Deploy for production') {
-            when {
-                branch 'master'
-            }
-            steps {
-		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
-		 			script {
-			 			sh """
-					    	 mvn -B deploy -DskipTests
-					    """
-			 		}
-		    	}
-		    }
-        }
         stage('Stopping Dev1 Rest service') {
         	when {
                 branch 'develop'
