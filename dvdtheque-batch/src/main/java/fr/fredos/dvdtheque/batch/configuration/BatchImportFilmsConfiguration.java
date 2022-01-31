@@ -62,7 +62,6 @@ import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 
 @Configuration
-@EnableBatchProcessing
 public class BatchImportFilmsConfiguration{
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
 	private static String DVDTHEQUE_SERVICE_URL ="dvdtheque-service.url";
@@ -153,7 +152,7 @@ public class BatchImportFilmsConfiguration{
 	}
     
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	//@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	@Qualifier("importFilmsJob")
 	public Job importFilmsJob() throws Exception {
 		//logger.info("######## importFilmsJob");

@@ -12,9 +12,9 @@ import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -45,7 +45,6 @@ import fr.fredos.dvdtheque.batch.model.Film;
 
 @Configuration
 @EnableScheduling
-@EnableBatchProcessing
 public class BatchExportFilmsConfiguration {
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfiguration.class);
 	@Autowired
@@ -63,7 +62,6 @@ public class BatchExportFilmsConfiguration {
     public static String 											DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
 	public static String 											DVDTHEQUE_SERVICE_ALL="dvdtheque-service.films";
 	
-    //@Bean
     @Scheduled(cron = "0 00 20 * * ?")
 	public void exportFilmsJob() {
     	Map<String, JobParameter> jobConfigMap = new HashMap<>();
@@ -84,7 +82,7 @@ public class BatchExportFilmsConfiguration {
 				.start(exportFilmsStep())
 				.build();
 	}
-    
+	@StepScope
     @Bean
     protected ListItemReader<Film> dvdthequeServiceFilmReader() {
         ResponseEntity<List<Film>> filmList = oAuthRestTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)+"?displayType=TOUS", 
