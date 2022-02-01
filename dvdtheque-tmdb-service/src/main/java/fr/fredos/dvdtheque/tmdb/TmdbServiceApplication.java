@@ -10,4 +10,5 @@ public class TmdbServiceApplication {
 	public static void main(String... args){
         SpringApplication.run(TmdbServiceApplication.class,args);
     }
+	
 }
