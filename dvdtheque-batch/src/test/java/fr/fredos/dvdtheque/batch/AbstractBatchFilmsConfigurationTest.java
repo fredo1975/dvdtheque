@@ -8,7 +8,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,7 +24,6 @@ public abstract class AbstractBatchFilmsConfigurationTest {
 	JobLauncher 							jobLauncher;
 	@Autowired
 	JobRepository 							jobRepository;
-	//JobLauncherTestUtils 					jobLauncherTestUtils;
 	@Autowired
 	ObjectMapper 							mapper;
 	@Autowired
