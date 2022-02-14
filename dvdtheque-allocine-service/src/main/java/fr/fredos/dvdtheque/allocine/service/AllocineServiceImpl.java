@@ -201,7 +201,8 @@ public class AllocineServiceImpl implements AllocineService {
 									if (e5.select(DIV_RATING_MDL_5_HOLDER).size() > 0) {
 										// logger.debug("######### 5**");
 										rating = 5.0d;
-									}if (rating == null) {
+									}
+									if (rating == null) {
 										rating = 0.0d;
 									}
 									cp.setRating(rating);

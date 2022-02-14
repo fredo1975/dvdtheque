@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -13,34 +13,20 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
-
-import com.hazelcast.config.AutoDetectionConfig;
-import com.hazelcast.config.Config;
-import com.hazelcast.config.JoinConfig;
-import com.hazelcast.config.MapConfig;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
+import org.springframework.test.context.ContextConfiguration;
 
 import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
-import fr.fredos.dvdtheque.batch.configuration.MessageConsumer;
-import fr.fredos.dvdtheque.batch.film.tasklet.RetrieveDateInsertionTasklet;
-import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 
-@SpringBootTest(classes = { BatchImportFilmsConfiguration.class,
-		MessageConsumer.class,
-		RippedFlagTasklet.class,
-		RetrieveDateInsertionTasklet.class})
+@ContextConfiguration(classes={BatchImportFilmsConfiguration.class,OAuth2ClientConfiguration.class})
+@SpringBootTest(classes = {OAuth2ClientConfiguration.class,BatchImportFilmsConfiguration.class}, properties = "spring.batch.job.enabled=false" )
+@Disabled
 public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
+	@Autowired
+	@Qualifier(value = "importFilmsJob")
+	public Job job;
 	
-	/*
-	@Autowired
-	public Job importFilmsJob;
-	@Autowired
-    protected Environment environment;
 	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
 	public static final String TITRE_FILM_2001 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_AD_ASTRA = "AD ASTRA";
@@ -59,30 +45,32 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public static final String ACT2_AD_ASTRA = "LOREN DEAN";
 	public static final String ACT3_AD_ASTRA = "KIMBERLY ELISE";
 	public static final String ACT4_AD_ASTRA = "LISAGAY HAMILTON";
+	@Autowired
+	JobLauncherTestUtils 					jobLauncherTestUtils;
 	
 	@BeforeEach
 	public void init() {
 		jobLauncherTestUtils = new JobLauncherTestUtils();
+		jobLauncherTestUtils.setJobLauncher(jobLauncher);
+		jobLauncherTestUtils.setJobRepository(jobRepository);
+		jobLauncherTestUtils.setJob(job);
+	}
+	/*
+	@Bean
+	protected JobLauncherTestUtils jobLauncherTestUtils() throws NoSuchJobException {
+		jobLauncherTestUtils = new JobLauncherTestUtils();
+		jobLauncherTestUtils.setJobLauncher(jobLauncher);
+		jobLauncherTestUtils.setJobRepository(jobRepository);
 		jobLauncherTestUtils.setJob(importFilmsJob);
-	}
-    @TestConfiguration
-	public static class HazelcastConfiguration {
-		@Bean
-		public HazelcastInstance hazelcastInstance() {
-			Config config = new Config();
-			config.getNetworkConfig().setJoin(new JoinConfig().setAutoDetectionConfig(new AutoDetectionConfig().setEnabled(false)));
-			config.setInstanceName(RandomStringUtils.random(8, true, false))
-					.addMapConfig(new MapConfig().setName("films"));
-			return Hazelcast.newHazelcastInstance(config);
-		}
-	}
-	
+		return jobLauncherTestUtils;
+	}*/
+ 
 	@Test
 	public void contextLoads() {
 	}
 	@Test
 	public void launchCleanDBStep() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchStep("cleanDBStep");
+		JobExecution jobExecution = jobLauncherTestUtils.launchStep("cleanDBStep");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 	@Test
@@ -91,10 +79,10 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
 		jobParametersBuilder.addDate("TIMESTAMP", c.getTime());
 		jobParametersBuilder.addString("INPUT_FILE_PATH", environment.getRequiredProperty(LISTE_DVD_FILE_NAME));
-		JobExecution jobExecution = jobLauncherTestUtils(importFilmsJob).launchJob(jobParametersBuilder.toJobParameters());
+		JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParametersBuilder.toJobParameters());
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 		
-		
+		/*
 		List<Film> films = filmService.findAllFilms(null);
 		assertTrue(films.size()==8);
 		boolean isAdAstraExists = false;
@@ -140,7 +128,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		}
 		assertTrue(isAdAstraExists);
 		assertTrue(is2046Exists);
-		assertTrue(is40ansExists);
+		assertTrue(is40ansExists);*/
 		
-	}*/
+	}
 }

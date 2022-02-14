@@ -11,8 +11,7 @@ spring:
   batch:
     initializer:
       enabled: false
-    job:
-      enabled: false
+    enabled: false
   cloud:
     config:
       enabled: false
