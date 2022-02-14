@@ -12,6 +12,7 @@ import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -25,7 +26,6 @@ import org.springframework.batch.core.launch.support.SimpleJobOperator;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
@@ -45,10 +45,11 @@ import fr.fredos.dvdtheque.batch.model.Film;
 
 @Configuration
 @EnableScheduling
+@EnableBatchProcessing(modular = true)
 public class BatchExportFilmsConfiguration {
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfiguration.class);
 	@Autowired
-	protected JobBuilderFactory 									jobBuilderFactory;
+	protected JobBuilderFactory 									jobBuilders;
     @Autowired
     protected StepBuilderFactory 									stepBuilderFactory;
     @Autowired
@@ -62,7 +63,7 @@ public class BatchExportFilmsConfiguration {
     public static String 											DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
 	public static String 											DVDTHEQUE_SERVICE_ALL="dvdtheque-service.films";
 	
-    @Scheduled(cron = "0 00 20 * * ?")
+    @Scheduled(cron = "0 27 21 * * ?")
 	public void exportFilmsJob() {
     	Map<String, JobParameter> jobConfigMap = new HashMap<>();
         jobConfigMap.put("time", new JobParameter(System.currentTimeMillis()));
@@ -74,10 +75,10 @@ public class BatchExportFilmsConfiguration {
         }
 	}
 	
-	@Bean
-	@Qualifier("runExportFilmsJob")
+	@Bean(name = "runExportFilmsJob")
+	//@Qualifier("runExportFilmsJob")
 	public Job runExportFilmsJob() {
-		return jobBuilderFactory.get("exportFilms")
+		return jobBuilders.get("exportFilms")
 				.incrementer(new RunIdIncrementer())
 				.start(exportFilmsStep())
 				.build();

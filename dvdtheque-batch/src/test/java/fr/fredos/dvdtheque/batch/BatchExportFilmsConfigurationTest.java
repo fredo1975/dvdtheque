@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -18,49 +17,37 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.configuration.annotation.SimpleBatchConfiguration;
+import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.autoconfigure.filter.TypeExcludeFilters;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
-
-import com.hazelcast.config.AutoDetectionConfig;
-import com.hazelcast.config.Config;
-import com.hazelcast.config.JoinConfig;
-import com.hazelcast.config.MapConfig;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
 
 import fr.fredos.dvdtheque.batch.configuration.BatchExportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.model.Film;
 
-@SpringBootTest(classes = {BatchExportFilmsConfiguration.class,OAuth2ClientConfiguration.class})
+//@SpringBootTest(classes = {BatchExportFilmsConfiguration.class,OAuth2ClientConfiguration.class})
+@Disabled
+@ContextConfiguration(classes={BatchExportFilmsConfiguration.class,OAuth2ClientConfiguration.class})
 public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfigurationTest.class);
 	@Autowired
 	@Qualifier(value = "runExportFilmsJob")
-	Job										runExportFilmsJob;
-	
-	@TestConfiguration
-	public static class HazelcastConfiguration {
-		@Bean
-		public HazelcastInstance hazelcastInstance() {
-			Config config = new Config();
-			config.getNetworkConfig().setJoin(new JoinConfig().setAutoDetectionConfig(new AutoDetectionConfig().setEnabled(false)));
-			config.setInstanceName(RandomStringUtils.random(8, true, false))
-					.addMapConfig(new MapConfig().setName("films"));
-			return Hazelcast.newHazelcastInstance(config);
-		}
-	}
+	Job										job;
+	JobLauncherTestUtils 					jobLauncherTestUtils;
+	/*
+	@BeforeEach
+	public void setUp() throws Exception {
+		jobLauncherTestUtils = new JobLauncherTestUtils();
+		jobLauncherTestUtils.setJobLauncher(jobLauncher);
+		jobLauncherTestUtils.setJobRepository(jobRepository);
+		jobLauncherTestUtils.setJob(job);
+	}*/
 	@Test
-	@Disabled
 	public void launchExportFilmsJob() throws Exception {
 		logger.info("##### testEntireJob");
 		mockServer = MockRestServiceServer.createServer(oAuthRestTemplate);
@@ -77,7 +64,7 @@ public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		JobParametersBuilder builder = new JobParametersBuilder();
 		builder.addDate("TIMESTAMP", c.getTime());
 		JobParameters jobParameters = builder.toJobParameters();
-		JobExecution jobExecution = jobLauncherTestUtils(runExportFilmsJob).launchJob(jobParameters);
+		JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 		mockServer.verify();
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}

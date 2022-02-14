@@ -11,8 +11,7 @@ spring:
   batch:
     initializer:
       enabled: false
-    job:
-      enabled: false
+    enabled: false
   cloud:
     config:
       enabled: false
@@ -56,11 +55,6 @@ excel:
 dvd:
   file:
     path: G:/films
-
-hazelcast:
-  cluster-name: hazelcast-local
-  networkconfig:
-    interface: 127.0.0.1
 
 dvdtheque-service:
   url: http://fake/dvdtheque-service
