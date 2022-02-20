@@ -265,7 +265,7 @@ public class FilmController {
 	@GetMapping("/films/byId/{id}")
 	ResponseEntity<Film> findFilmById(@PathVariable Long id) {
 		try {
-			return ResponseEntity.ok(processRetrieveCritiquePresse(id, (film,set) -> addCritiquePresseToFilm(set, film)));
+			return ResponseEntity.ok(processRetrieveCritiquePresse(id, (film,set) -> addCritiquePresseToFilm(set, film), null));
 		} catch (Exception e) {
 			logger.error(format("an error occured while findFilmById id='%s' ", id), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -290,7 +290,7 @@ public class FilmController {
 			});
 		}
 	}
-	private Film processRetrieveCritiquePresse(Long id,BiConsumer<Film,Set<CritiquePresseDto>> consumer) {
+	private Film processRetrieveCritiquePresse(Long id,BiConsumer<Film,Set<CritiquePresseDto>> consumer, Film updatedFilm) {
 		Film film = filmService.findFilm(id);
 		if(film != null) {
 			ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = keycloakRestTemplate.exchange(
@@ -302,7 +302,13 @@ public class FilmController {
 				consumer.accept(film,cpDtoSet);
 			}
 		}
-		return film;
+		if(updatedFilm == null) {
+			return film;
+		}
+		if (updatedFilm.getDvd() != null && updatedFilm.getDvd().isRipped()) {
+			updatedFilm.getDvd().setDateRip(new Date());
+		}
+		return updatedFilm;
 	}
 
 	@RolesAllowed("user")
@@ -572,6 +578,7 @@ public class FilmController {
 	@PutMapping("/films/update/{id}")
 	ResponseEntity<Film> updateFilm(@RequestBody Film film, @PathVariable Long id) {
 		try {
+			/*
 			Film filmOptional = filmService.findFilm(id);
 			if (filmOptional == null) {
 				return ResponseEntity.notFound().build();
@@ -580,8 +587,12 @@ public class FilmController {
 			if (filmOptional.getDvd() != null && !filmOptional.getDvd().isRipped() && film.getDvd() != null
 					&& film.getDvd().isRipped()) {
 				film.getDvd().setDateRip(new Date());
-			}
-			Film mergedFilm = filmService.updateFilm(film);
+			}*/
+			Film filmWithCritiquePresse = processRetrieveCritiquePresse(id, (f, set) -> {
+				addCritiquePresseToFilm(set, film);
+			},film);
+			Film mergedFilm = filmService.updateFilm(filmWithCritiquePresse);
+			
 			return ResponseEntity.ok(mergedFilm);
 		} catch (Exception e) {
 			logger.error("an error occured while updating film id=" + id, e);
