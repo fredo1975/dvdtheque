@@ -15,10 +15,9 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {OAuth2ClientConfiguration.class,BatchApplication.class})
+@SpringBootTest(classes = {OAuth2ClientConfiguration.class},properties = "export.cron=0 10 20 * * ?")
 @ActiveProfiles("test")
 public abstract class AbstractBatchFilmsConfigurationTest {
-	
 	@Autowired
 	JobLauncher 							jobLauncher;
 	
@@ -35,6 +34,7 @@ public abstract class AbstractBatchFilmsConfigurationTest {
     Environment 							environment;
 	
 	MockRestServiceServer 					mockServer;
-    
+	JobLauncherTestUtils 					jobLauncherTestUtils;
+	
 	
 }

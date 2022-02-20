@@ -672,6 +672,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.perform(MockMvcRequestBuilders.get(SEARCH_FILM_BY_ID + film.getId()))
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
+		mockServer.verify();
 		assertNotNull(resultActions.andReturn().getResponse().getContentAsString());
 	}
 
@@ -984,7 +985,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate).contentType(MediaType.APPLICATION_JSON).content(filmJsonString)).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.dvd.ripped", Is.is(false)));
-		
+		mockServer.verify();
 		Film filmUpdated = filmService.findFilm(filmToUpdate.getId());
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmUpdated.getTitre());
 		assertFalse(filmUpdated.getDvd().isRipped());
@@ -1029,7 +1030,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.origine", Is.is(FilmOrigine.GOOGLE_PLAY.name())));
-		
+		mockServer.verify();
 		Film filmUpdated = filmService.findFilm(filmToUpdate.getId());
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmUpdated.getTitre());
 		assertFalse(filmUpdated.getDvd().isRipped());
@@ -1225,7 +1226,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
-		
+		mockServer.verify();
 		Film filmUpdated = filmService.findFilm(film.getId());
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmUpdated.getTitre());
 		assertEquals(FilmOrigine.DVD, filmUpdated.getOrigine());

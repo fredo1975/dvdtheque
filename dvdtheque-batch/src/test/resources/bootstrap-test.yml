@@ -58,7 +58,7 @@ dvd:
 
 dvdtheque-service:
   url: http://fake/dvdtheque-service
-  films: /films/
+  films: /films
   transformTmdbFilmToDvdThequeFilm: /transformTmdbFilmToDvdThequeFilm/tmdb
   cleanAllFilms: /films/cleanAllfilms
   buildDvd: /films/buildDvd
@@ -70,3 +70,5 @@ tmdb-service:
   release-date: /retrieveTmdbFrReleaseDate/byTmdbId
   get-credits: /retrieveTmdbCredits/byTmdbId
   get-results: /retrieveTmdbFilm/byTmdbId
+  
+export.cron: 0 10 20 * * ?
