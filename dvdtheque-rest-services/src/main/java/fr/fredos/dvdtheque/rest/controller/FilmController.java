@@ -578,22 +578,11 @@ public class FilmController {
 	@PutMapping("/films/update/{id}")
 	ResponseEntity<Film> updateFilm(@RequestBody Film film, @PathVariable Long id) {
 		try {
-			/*
-			Film filmOptional = filmService.findFilm(id);
-			if (filmOptional == null) {
-				return ResponseEntity.notFound().build();
-			}
-			// handle date rip
-			if (filmOptional.getDvd() != null && !filmOptional.getDvd().isRipped() && film.getDvd() != null
-					&& film.getDvd().isRipped()) {
-				film.getDvd().setDateRip(new Date());
-			}*/
-			Film filmWithCritiquePresse = processRetrieveCritiquePresse(id, (f, set) -> {
-				addCritiquePresseToFilm(set, film);
-			},film);
-			Film mergedFilm = filmService.updateFilm(filmWithCritiquePresse);
-			
-			return ResponseEntity.ok(mergedFilm);
+			Film mergedFilm = filmService.updateFilm(film);
+			Film filmUpdatedWithCritiquePresse = processRetrieveCritiquePresse(id, (f, set) -> {
+				addCritiquePresseToFilm(set, mergedFilm);
+			},mergedFilm);
+			return ResponseEntity.ok(filmUpdatedWithCritiquePresse);
 		} catch (Exception e) {
 			logger.error("an error occured while updating film id=" + id, e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
