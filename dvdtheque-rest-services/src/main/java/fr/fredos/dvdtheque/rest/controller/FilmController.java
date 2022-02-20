@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -264,35 +265,44 @@ public class FilmController {
 	@GetMapping("/films/byId/{id}")
 	ResponseEntity<Film> findFilmById(@PathVariable Long id) {
 		try {
-			Film film = filmService.findFilm(id);
+			return ResponseEntity.ok(processRetrieveCritiquePresse(id, (film,set) -> addCritiquePresseToFilm(set, film)));
+		} catch (Exception e) {
+			logger.error(format("an error occured while findFilmById id='%s' ", id), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	private void addCritiquePresseToFilm(Set<CritiquePresseDto> cpDtoSet,Film film) {
+		if(CollectionUtils.isNotEmpty(cpDtoSet)) {
+			for(CritiquePresseDto cto : cpDtoSet) {
+				CritiquePresse cp = new CritiquePresse();
+				cp.setAuthor(cto.getAuthor());
+				cp.setBody(cto.getBody());
+				cp.setRating(cto.getRating());
+				cp.setNewsSource(cto.getNewsSource());
+				film.addCritiquePresse(cp);
+			}
+			Collections.sort(film.getCritiquePresse(),new Comparator<CritiquePresse>(){
+				@Override
+				public int compare(CritiquePresse o1, CritiquePresse o2) {
+					return o1.getRating().compareTo(o2.getRating());
+				}
+			});
+		}
+	}
+	private Film processRetrieveCritiquePresse(Long id,BiConsumer<Film,Set<CritiquePresseDto>> consumer) {
+		Film film = filmService.findFilm(id);
+		if(film != null) {
 			ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = keycloakRestTemplate.exchange(
 					environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
 							+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + film.getTitre(),
 					HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
 			if(ficheFilmDtoResponse.getBody() != null && CollectionUtils.isNotEmpty(ficheFilmDtoResponse.getBody())) {
 				Set<CritiquePresseDto> cpDtoSet = ficheFilmDtoResponse.getBody().get(0).getCritiquePresse();
-				if(CollectionUtils.isNotEmpty(cpDtoSet)) {
-					for(CritiquePresseDto cto : cpDtoSet) {
-						CritiquePresse cp = new CritiquePresse();
-						cp.setAuthor(cto.getAuthor());
-						cp.setBody(cto.getBody());
-						cp.setRating(cto.getRating());
-						cp.setNewsSource(cto.getNewsSource());
-						film.addCritiquePresse(cp);
-					}
-					Collections.sort(film.getCritiquePresse(),new Comparator<CritiquePresse>(){
-						@Override
-						public int compare(CritiquePresse o1, CritiquePresse o2) {
-							return o1.getRating().compareTo(o2.getRating());
-						}
-					});
-				}
+				consumer.accept(film,cpDtoSet);
 			}
-			return ResponseEntity.ok(film);
-		} catch (Exception e) {
-			logger.error(format("an error occured while findFilmById id='%s' ", id), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
+		return film;
 	}
 
 	@RolesAllowed("user")

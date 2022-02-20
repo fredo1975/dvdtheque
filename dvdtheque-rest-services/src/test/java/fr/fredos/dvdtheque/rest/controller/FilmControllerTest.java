@@ -73,6 +73,7 @@ import fr.fredos.dvdtheque.common.tmdb.model.Genres;
 import fr.fredos.dvdtheque.common.tmdb.model.Results;
 import fr.fredos.dvdtheque.integration.config.ContextConfiguration;
 import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
+import fr.fredos.dvdtheque.rest.allocine.model.CritiquePresseDto;
 import fr.fredos.dvdtheque.rest.allocine.model.FicheFilmDto;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
@@ -648,6 +649,14 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		ficheFilmDto.setTitle(film.getTitre());
 		ficheFilmDto.setUrl("fakeurl");
 		List<FicheFilmDto> l = new ArrayList<>();
+		CritiquePresseDto cp = new CritiquePresseDto();
+		cp.setAuthor("author");
+		cp.setBody("une critique presse bien ficellée");
+		cp.setNewsSource("Telerama");
+		cp.setRating(5d);
+		Set<CritiquePresseDto> critiquesPresses = new HashSet<>();
+		critiquesPresses.add(cp);
+		ficheFilmDto.setCritiquePresse(critiquesPresses);
 		l.add(ficheFilmDto);
 		mockServer.expect(ExpectedCount.once(), 
 		          requestTo(environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_URL)
