@@ -680,7 +680,6 @@ public class FilmController {
 				if (filmToSave != null) {
 					filmToSave.setId(null);
 					filmToSave.setOrigine(film.getOrigine());
-					filmToSave.setId(null);
 					if(film.getDateInsertion() != null) {
 						filmToSave.setDateInsertion(film.getDateInsertion());
 					}else {
