@@ -41,7 +41,6 @@ public class AllocineServiceImpl implements AllocineService {
 	Environment environment;
 	private final static String AHREF = "a[href]";
 	private final static String HREF = "href";
-	private final static String NAV = "nav.pagination";
 	private final static String SPAN = "span";
 	private final static String P = "p";
 	private final static String H2 = "h2";
