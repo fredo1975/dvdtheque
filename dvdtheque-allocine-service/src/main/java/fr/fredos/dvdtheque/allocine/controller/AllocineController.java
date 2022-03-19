@@ -3,6 +3,8 @@ package fr.fredos.dvdtheque.allocine.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ public class AllocineController {
     public AllocineController(AllocineService allocineScrapingService) {
         this.allocineService = allocineScrapingService;
     }
+	@RolesAllowed({"user"})
 	@GetMapping("/byTitle")
 	public ResponseEntity<List<FicheFilmDto>> getAllocineFicheFilmByTitle(@RequestParam(name = "title", required = false) String title) {
 		List<FicheFilm> l = allocineService.retrieveFicheFilmByTitle(title);
