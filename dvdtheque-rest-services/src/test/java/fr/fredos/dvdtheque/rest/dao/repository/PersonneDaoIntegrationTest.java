@@ -10,15 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
-import fr.fredos.dvdtheque.rest.dao.repository.impl.PersonneDaoImpl;
 
 @ExtendWith(SpringExtension.class)
-@Import(PersonneDaoImpl.class)
+//@Import(PersonneDaoImpl.class)
 @DataJpaTest
 @ActiveProfiles("test")
 public class PersonneDaoIntegrationTest {

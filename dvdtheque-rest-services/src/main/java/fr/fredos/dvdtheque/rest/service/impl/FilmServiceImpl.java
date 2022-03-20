@@ -85,7 +85,6 @@ public class FilmServiceImpl implements IFilmService {
 		this.init();
 	}
 	
-	//@PostConstruct
 	public void init() {
 		mapFilms = instance.getMap(CACHE_FILM);
 		/*mapFilms.addIndex("id", false);

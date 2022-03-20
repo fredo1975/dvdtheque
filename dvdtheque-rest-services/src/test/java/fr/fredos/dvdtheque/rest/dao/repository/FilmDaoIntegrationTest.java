@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -21,12 +20,11 @@ import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
 import fr.fredos.dvdtheque.rest.dao.model.utils.FilmBuilder;
-import fr.fredos.dvdtheque.rest.dao.repository.impl.FilmDaoImpl;
 
 
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@Import(FilmDaoImpl.class)
+//@Import(FilmDaoImpl.class)
 @DataJpaTest
 public class FilmDaoIntegrationTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmDaoIntegrationTest.class);

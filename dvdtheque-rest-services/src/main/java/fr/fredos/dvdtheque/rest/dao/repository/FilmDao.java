@@ -3,14 +3,17 @@ package fr.fredos.dvdtheque.rest.dao.repository;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.rest.dao.domain.CritiquesPresse;
 import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
-
-public interface FilmDao {
+@Repository("filmDao")
+public interface FilmDao extends JpaRepository<Film, Long>{
 	Film findFilm(Long id);
 	Genre findGenre(int id);
 	Genre attachToSession(Genre genre);

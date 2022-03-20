@@ -13,15 +13,14 @@ import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
 import fr.fredos.dvdtheque.rest.dao.repository.PersonneDao;
-@Repository("personneDao")
-public class PersonneDaoImpl implements PersonneDao{
+
+public class PersonneDaoImpl /*implements PersonneDao*/{
 	protected Logger logger = LoggerFactory.getLogger(PersonneDao.class);
 	@PersistenceContext
     private EntityManager em;

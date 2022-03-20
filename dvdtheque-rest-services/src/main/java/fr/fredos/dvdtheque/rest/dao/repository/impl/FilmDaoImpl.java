@@ -15,7 +15,6 @@ import javax.persistence.Query;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Repository;
 
 import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.FilmFilterCriteriaType;
@@ -24,9 +23,8 @@ import fr.fredos.dvdtheque.rest.dao.domain.CritiquesPresse;
 import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
-import fr.fredos.dvdtheque.rest.dao.repository.FilmDao;
-@Repository("filmDao")
-public class FilmDaoImpl implements FilmDao {
+
+public class FilmDaoImpl /*implements FilmDao */{
 	protected final Log logger = LogFactory.getLog(getClass());
 	@PersistenceContext
     private EntityManager entityManager;
@@ -216,26 +214,26 @@ public class FilmDaoImpl implements FilmDao {
 		this.entityManager.remove(film);
 		//this.entityManager.flush();
 	}
-	@Override
+	//@Override
 	public Set<Long> findAllTmdbFilms(final Set<Long> tmdbIds) {
 		StringBuilder sb = new StringBuilder("select film.tmdbId from Film film where film.tmdbId in (:tmdbIds) ");
 		Query q = this.entityManager.createQuery(sb.toString());
 		q.setParameter("tmdbIds", tmdbIds);
 		return new HashSet<Long>(q.getResultList());
 	}
-	@Override
+	//@Override
 	public Boolean checkIfTmdbFilmExists(final Long tmdbId) {
 		StringBuilder sb = new StringBuilder("select count(1) from Film film where film.tmdbId = :tmdbId ");
 		Query q = this.entityManager.createQuery(sb.toString());
 		q.setParameter("tmdbId", tmdbId);
 		return ((Long)q.getSingleResult())==1;
 	}
-	@Override
+	//@Override
 	public Genre attachToSession(final Genre genre) {
 		//Genre genre = findGenre(id);
 		return this.entityManager.merge(genre);
 	}
-	@Override
+	//@Override
 	public List<Film> findAllFilmsByOrigine(final FilmOrigine filmOrigine) {
 		StringBuilder sb = new StringBuilder("from Film film ");
 		if(!FilmOrigine.TOUS.equals(filmOrigine)) {
