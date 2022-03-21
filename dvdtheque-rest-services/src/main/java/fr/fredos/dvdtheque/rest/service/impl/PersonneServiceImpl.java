@@ -19,7 +19,6 @@ import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicate;
 import com.hazelcast.query.Predicates;
 
-import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
 import fr.fredos.dvdtheque.rest.dao.repository.PersonneDao;
 import fr.fredos.dvdtheque.rest.service.IPersonneService;
@@ -54,7 +53,11 @@ public class PersonneServiceImpl implements IPersonneService {
 		Personne personne = mapPersonnes.get(id);
 		if (personne != null)
 			return personne;
-		personne = personneDao.findByPersonneId(id);
+		Optional<Personne> personneOpt = personneDao.findById(id);
+		if(personneOpt.isEmpty()) {
+			return null;
+		}
+		personne = personneOpt.get();
 		mapPersonnes.put(id, personne);
 		return personne;
 	}
@@ -64,7 +67,11 @@ public class PersonneServiceImpl implements IPersonneService {
 		Personne personne = mapPersonnes.get(id);
 		if (personne != null)
 			return personne;
-		personne = personneDao.getPersonne(id);
+		Optional<Personne> personneOpt = personneDao.findById(id);
+		if(personneOpt.isEmpty()) {
+			return null;
+		}
+		personne = personneOpt.get();
 		mapPersonnes.put(id, personne);
 		return personne;
 	}
@@ -74,17 +81,15 @@ public class PersonneServiceImpl implements IPersonneService {
 		Personne personne = mapPersonnes.get(id);
 		if (personne != null)
 			return personne;
-		personne = personneDao.loadPersonne(id);
+		Optional<Personne> personneOpt = personneDao.findById(id);
+		if(personneOpt.isEmpty()) {
+			return null;
+		}
+		personne = personneOpt.get();
 		mapPersonnes.put(id, personne);
 		return personne;
 	}
 
-	@Transactional(readOnly = true)
-	public Personne findRealisateurByFilm(Film film) {
-		Personne realisateur = null;
-		realisateur = personneDao.findRealisateurByFilm(film);
-		return realisateur;
-	}
 
 	// @Cacheable(value= CACHE_PERSONNE)
 	@Transactional(readOnly = true)
@@ -97,7 +102,7 @@ public class PersonneServiceImpl implements IPersonneService {
 			return l;
 		}
 		logger.info("personnes find");
-		List<Personne> personnesList = this.personneDao.findAllPersonne();
+		List<Personne> personnesList = this.personneDao.findAll();
 		logger.info("personnesList size: " + personnesList.size());
 		personnesList.parallelStream().forEach(it -> {
 			mapPersonnes.putIfAbsent(it.getId(), it);
@@ -108,23 +113,23 @@ public class PersonneServiceImpl implements IPersonneService {
 	// @CacheEvict(value= CACHE_PERSONNE, allEntries = true)
 	@Transactional(readOnly = false)
 	public Long savePersonne(Personne personne) {
-		Long id = personneDao.savePersonne(personne);
-		mapPersonnes.put(id, personne);
-		return id;
+		Personne savedPersonne = personneDao.save(personne);
+		mapPersonnes.put(savedPersonne.getId(), savedPersonne);
+		return savedPersonne.getId();
 	}
 
 	// @CacheEvict(value= CACHE_PERSONNE, allEntries = true)
 	@Transactional(readOnly = false)
 	public void updatePersonne(Personne personne) {
 		if (null != personne) {
-			personneDao.updatePersonne(personne);
+			personneDao.save(personne);
 			mapPersonnes.put(personne.getId(), personne);
 		}
 	}
 
 	@Transactional(readOnly = true)
 	public Personne attachSessionPersonneByName(String nom) {
-		return personneDao.findPersonneByName(nom);
+		return personneDao.findPersonneByNom(nom);
 	}
 	@Transactional(readOnly = true)
 	public Personne findPersonneByName(String nom) {
@@ -136,7 +141,7 @@ public class PersonneServiceImpl implements IPersonneService {
 		if (e.isPresent())
 			return e.get();
 		logger.info("no Personne cache find");
-		Personne personne = personneDao.findPersonneByName(nom);
+		Personne personne = personneDao.findPersonneByNom(nom);
 		if(personne == null) {
 			return null;
 		}
@@ -149,7 +154,7 @@ public class PersonneServiceImpl implements IPersonneService {
 	@Transactional(readOnly = false)
 	public void cleanAllPersonnes() {
 		mapPersonnes.clear();
-		personneDao.cleanAllPersons();
+		personneDao.deleteAll();
 	}
 
 	@Override

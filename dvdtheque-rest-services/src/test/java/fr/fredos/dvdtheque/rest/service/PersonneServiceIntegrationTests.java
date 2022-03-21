@@ -116,7 +116,7 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 		film = filmService.findFilm(film.getId());
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
-		Personne real = personneService.findRealisateurByFilm(film);
+		Personne real = personneService.findByPersonneId(film.getRealisateur().iterator().next().getId());
 		assertNotNull(real);
 	}
 	@Test

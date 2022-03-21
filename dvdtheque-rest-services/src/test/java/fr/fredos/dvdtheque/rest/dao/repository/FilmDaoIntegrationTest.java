@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,19 +25,20 @@ import fr.fredos.dvdtheque.rest.dao.model.utils.FilmBuilder;
 
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-//@Import(FilmDaoImpl.class)
 @DataJpaTest
 public class FilmDaoIntegrationTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmDaoIntegrationTest.class);
 	@Autowired
-    private FilmDao filmDao;
+    private GenreDao 	genreDao;
+	@Autowired
+    private FilmDao 	filmDao;
 	private static final int GENRE_TMDB_ID_1 = 28;
 	private static final int GENRE_TMDB_ID_2 = 29;
 	private static final String GENRE_NAME_1 = "Action";
 	private static final String GENRE_NAME_2 = "Comédie";
 	
 	private Genre saveGenre(final int tmdbId, final String name) {
-		return filmDao.saveGenre(new Genre(tmdbId,name));
+		return genreDao.save(new Genre(tmdbId,name));
 	}
 	
 	@Test
@@ -66,9 +68,9 @@ public class FilmDaoIntegrationTest {
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
 				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
-		Long filmId = filmDao.saveNewFilm(film);
-		assertNotNull(filmId);
-		List<Film> films = filmDao.findAllFilms();
+		Film savedFilm = filmDao.save(film);
+		assertNotNull(savedFilm);
+		List<Film> films = filmDao.findAll();
 		assertNotNull(films);
 		assertEquals(1, films.size());
 		FilmBuilder.assertFilmIsNotNull(films.get(0), false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
@@ -81,17 +83,17 @@ public class FilmDaoIntegrationTest {
 		Genre genre2 = saveGenre(GENRE_TMDB_ID_2, GENRE_NAME_2);
 		assertNotNull(genre1);
 		assertNotNull(genre2);
-		final List<Genre> genreList = filmDao.findAllGenres();
+		final List<Genre> genreList = genreDao.findAll();
 		assertNotNull(genreList);
 		assertEquals(2, genreList.size());
-		Genre genreRetrieved1 = filmDao.findGenre(genreList.get(0).getTmdbId());
-		assertNotNull(genreRetrieved1);
-		assertEquals(GENRE_TMDB_ID_1, genreRetrieved1.getTmdbId());
-		assertEquals(GENRE_NAME_1, genreRetrieved1.getName());
-		Genre genreRetrieved2 = filmDao.findGenre(genreList.get(1).getTmdbId());
-		assertNotNull(genreRetrieved2);
-		assertEquals(GENRE_TMDB_ID_2, genreRetrieved2.getTmdbId());
-		assertEquals(GENRE_NAME_2, genreRetrieved2.getName());
+		Optional<Genre> genreRetrieved1 = genreDao.findById(genreList.get(0).getId());
+		assertNotNull(genreRetrieved1.get());
+		assertEquals(GENRE_TMDB_ID_1, genreRetrieved1.get().getTmdbId());
+		assertEquals(GENRE_NAME_1, genreRetrieved1.get().getName());
+		Optional<Genre> genreRetrieved2 = genreDao.findById(genreList.get(1).getId());
+		assertNotNull(genreRetrieved2.get());
+		assertEquals(GENRE_TMDB_ID_2, genreRetrieved2.get().getTmdbId());
+		assertEquals(GENRE_NAME_2, genreRetrieved2.get().getName());
 	}
 	
 }

@@ -25,19 +25,19 @@ public class PersonneDaoIntegrationTest {
     private PersonneDao personneDao;
 	@Test
 	public void findAllRealisateur(){
-		List<Personne> realisateurs = personneDao.findAllRealisateur();
+		List<Personne> realisateurs = personneDao.findAll();
 		assertNotNull(realisateurs);
 		logger.info("realisateurs.size()="+realisateurs.size());
 	}
 	@Test
 	public void findAllActeur(){
-		List<Personne> acteurs = personneDao.findAllActeur();
+		List<Personne> acteurs = personneDao.findAll();
 		assertNotNull(acteurs);
 		logger.info("acteurs.size()="+acteurs.size());
 	}
 	@Test
 	public void findAllPersonne(){
-		List<Personne> personnes = personneDao.findAllPersonne();
+		List<Personne> personnes = personneDao.findAll();
 		assertNotNull(personnes);
 		logger.info("personnes.size()="+personnes.size());
 	}

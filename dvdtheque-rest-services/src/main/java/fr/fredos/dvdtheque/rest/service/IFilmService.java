@@ -5,10 +5,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
+import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
-import fr.fredos.dvdtheque.rest.dao.domain.CritiquesPresse;
 import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
@@ -19,24 +18,20 @@ public interface IFilmService {
 	public static final String CACHE_DIST_FILM = "dist-film";
 	Date clearDate(final Date dateToClear);
 	Film findFilm(Long id);
-	Film findFilmWithAllObjectGraph(final Long id);
 	List<Film> findAllFilms(FilmDisplayTypeParam filmDisplayTypeParam);
 	Set<Long> findAllTmdbFilms(final Set<Long> tmdbIds);
 	Film updateFilm(Film film);
 	Long saveNewFilm(Film film);
 	//public List<FilmDto> getAllFilmDtos();
 	void cleanAllFilms();
-	Film findFilmByTitre(final String titre);
+	List<Film> findFilmByTitre(final String titre);
 	Film findFilmByTitreWithoutSpecialsCharacters(final String titre);
 	List<Film> getAllRippedFilms();
-	List<Film> findAllFilmsByCriteria(final FilmFilterCriteriaDto filmFilterCriteriaDto);
 	void removeFilm(Film film);
 	Dvd buildDvd(final Integer annee,final Integer zone,final String edition,final Date ripDate,final DvdFormat dvdFormat, final String dateSortieDvd) throws ParseException;
 	Boolean checkIfTmdbFilmExists(final Long tmdbId);
 	Genre findGenre(final int id);
-	Genre attachToSession(final Genre genre);
 	Genre saveGenre(final Genre genre);
-	CritiquesPresse saveCritiquesPresse(final CritiquesPresse critiquesPresse);
 	List<Genre> findAllGenres();
 	List<Film> findAllFilmsByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
 	void cleanAllCaches();
@@ -45,4 +40,6 @@ public interface IFilmService {
 	List<Personne> findAllActeursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Personne> findAllRealisateursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
 	FilmListParam findFilmListParamByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam);
+	List<Film> search(String query,Integer offset,Integer limit,String sort);
+	List<Film> findFilmByOrigine(final FilmOrigine origine);
 }

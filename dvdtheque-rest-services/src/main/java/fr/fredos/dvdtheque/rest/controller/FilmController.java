@@ -60,7 +60,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -180,7 +179,7 @@ public class FilmController {
 	void cleanAllFilms() {
 		filmService.cleanAllFilms();
 	}
-
+/*
 	@RolesAllowed("user")
 	@GetMapping("/films/byTitre/{titre}")
 	ResponseEntity<Film> findFilmByTitre(@PathVariable String titre) {
@@ -190,7 +189,7 @@ public class FilmController {
 			logger.error(format("an error occured while findFilmByTitre titre='%s' ", titre), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-	}
+	}*/
 
 	@RolesAllowed({ "user", "batch" })
 	@GetMapping("/films/byOrigine/{origine}")
@@ -507,8 +506,6 @@ public class FilmController {
 					Genre genre = filmService.findGenre(_g.getId());
 					if (genre == null) {
 						genre = filmService.saveGenre(new Genre(_g.getId(), _g.getName()));
-					} else {
-						genre = filmService.attachToSession(genre);
 					}
 					transformedfilm.getGenre().add(genre);
 				} else {
@@ -815,8 +812,7 @@ public class FilmController {
 						FilmOrigine.TOUS);
 				list = filmService.findAllFilms(filmDisplayTypeParam);
 			} else {
-				list = filmService.findAllFilmsByCriteria(
-						new FilmFilterCriteriaDto(null, null, null, null, null, null, filmOrigine));
+				list = filmService.findFilmByOrigine(filmOrigine);
 			}
 			if (list == null) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -3,12 +3,10 @@ package fr.fredos.dvdtheque.rest.service;
 import java.util.List;
 import java.util.Set;
 
-import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
 
 public interface IPersonneService {
 	public Personne findByPersonneId(Long id);
-	public Personne findRealisateurByFilm(Film film);
 	public List<Personne> findAllPersonne();
 	public Long savePersonne(Personne personne);
 	public void updatePersonne(Personne p);
