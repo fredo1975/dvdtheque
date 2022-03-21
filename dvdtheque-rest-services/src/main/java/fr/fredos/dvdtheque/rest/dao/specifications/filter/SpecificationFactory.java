@@ -19,6 +19,7 @@ public class SpecificationFactory<T> {
 		specs.put(FilterOperation.EQUAL, this::getEqualsSpecification);
 		specs.put(FilterOperation.GREATER_THAN, this::getGreaterThanSpecification);
 		specs.put(FilterOperation.LESS_THAN, this::getLessThanSpecification);
+		specs.put(FilterOperation.IN, this::getInSpecification);
 	}
 	
 	public Specification<T> getByCriteria(SearchCriteria criteria) {
@@ -47,6 +48,11 @@ public class SpecificationFactory<T> {
 		return (root, query, builder) -> {
 			return builder
 				.lessThan(root.<String> get(criteria.getKey()), criteria.getValue().toString());
+		};
+	}
+	private Specification<T> getInSpecification(SearchCriteria criteria) {
+		return (root, query, builder) -> {
+			return builder.in(root.get(criteria.getKey())).in(criteria.getValue());
 		};
 	}
 }

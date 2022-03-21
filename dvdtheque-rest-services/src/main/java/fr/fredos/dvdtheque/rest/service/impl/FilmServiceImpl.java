@@ -334,7 +334,7 @@ public class FilmServiceImpl implements IFilmService {
 
 	@Override
 	public Boolean checkIfTmdbFilmExists(final Long tmdbId) {
-		return this.filmDao.checkIfTmdbFilmExists(tmdbId);
+		return filmDao.checkIfTmdbFilmExists(tmdbId).equals(Integer.valueOf(1))?Boolean.TRUE:Boolean.FALSE;
 	}
 
 	/**
@@ -360,8 +360,7 @@ public class FilmServiceImpl implements IFilmService {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		if(filmDisplayTypeParam != null
-				&& FilmOrigine.TOUS.equals(filmDisplayTypeParam.getFilmOrigine()) 
-				&& FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+				&& FilmOrigine.TOUS.equals(filmDisplayTypeParam.getFilmOrigine())) {
 			return findAllFilms(filmDisplayTypeParam);
 		}else {
 			Predicate<Long, Film> predicate = Predicates.equal("origine", filmDisplayTypeParam.getFilmOrigine());
@@ -373,7 +372,7 @@ public class FilmServiceImpl implements IFilmService {
 				//logger.info("findAllFilmsByFilmDisplayType="+watch.getTotalTimeSeconds());
 				return sortListAccordingToFilmDisplayType(films,filmDisplayTypeParam);
 			}
-			logger.debug("no films find");
+			logger.debug("no films found");
 			List<Film> filmsRes = this.filmDao.findFilmByOrigine(filmDisplayTypeParam.getFilmOrigine());
 			logger.debug("findAllFilmsByFilmDisplayType films size: " + filmsRes.size());
 			filmsRes.stream().forEach(it -> {

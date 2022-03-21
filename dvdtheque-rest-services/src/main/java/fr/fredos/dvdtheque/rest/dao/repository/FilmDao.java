@@ -24,7 +24,7 @@ public interface FilmDao extends JpaRepository<Film, Long>, JpaSpecificationExec
 	Set<Long> findAllTmdbFilms(final Set<Long> tmdbIds);
 	
 	@Query("select count(1) from Film film where film.tmdbId = :tmdbId ")
-	Boolean checkIfTmdbFilmExists(final Long tmdbId);
+	Integer checkIfTmdbFilmExists(final Long tmdbId);
 	
 	
 	List<Film> findFilmByOrigine(final FilmOrigine origine);
