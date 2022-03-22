@@ -20,7 +20,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -669,7 +668,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		logger.debug(methodName + "end");
 	}
 	@Test
-	public void findAllFilmsByCriteriaActeursService() throws ParseException {
+	public void findAllFilmsByCriteriaActeur() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -689,9 +688,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		Long selectedActeurId = film.getActeur().iterator().next().getId();
-		logger.debug("selectedActeurId="+selectedActeurId);
-		final String query = "acteur:in:"+film.getActeur().iterator().next()+":AND";
-		List<Film> films = filmService.search(query,1,1,"-titre");
+		List<Film> films = filmDao.findFilmByActeur(film.getActeur().iterator().next());
 		assertNotNull(films);
 		for(Film f2 : films){
 			logger.debug(f2.toString());

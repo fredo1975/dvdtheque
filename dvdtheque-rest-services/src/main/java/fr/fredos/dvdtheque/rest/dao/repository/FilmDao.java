@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
+import fr.fredos.dvdtheque.rest.dao.domain.Personne;
 @Repository("filmDao")
 public interface FilmDao extends JpaRepository<Film, Long>, JpaSpecificationExecutor<Film>{
 	List<Film> findFilmByTitre(final String titre);
@@ -28,4 +29,6 @@ public interface FilmDao extends JpaRepository<Film, Long>, JpaSpecificationExec
 	
 	
 	List<Film> findFilmByOrigine(final FilmOrigine origine);
+	
+	List<Film> findFilmByActeur(final Personne acteur);
 }

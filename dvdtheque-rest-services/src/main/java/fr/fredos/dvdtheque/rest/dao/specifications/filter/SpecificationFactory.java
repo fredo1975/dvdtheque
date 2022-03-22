@@ -52,7 +52,7 @@ public class SpecificationFactory<T> {
 	}
 	private Specification<T> getInSpecification(SearchCriteria criteria) {
 		return (root, query, builder) -> {
-			return builder.in(root.get(criteria.getKey())).in(criteria.getValue());
+			return builder.in(root.get(criteria.getKey())).value(criteria.getValue());
 		};
 	}
 }

@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.rest.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -91,23 +92,34 @@ public class PersonneServiceImpl implements IPersonneService {
 	}
 
 
+	private List<Personne> sortPersonneList(Collection<Personne> personnes) {
+		if (personnes.size() > 0) {
+			List<Personne> l = personnes.stream().collect(Collectors.toList());
+			Collections.sort(l, (f1,f2)->f1.getNom().compareTo(f2.getNom()));
+			return l;
+		}
+		return new ArrayList<>();
+	}
 	// @Cacheable(value= CACHE_PERSONNE)
 	@Transactional(readOnly = true)
 	public List<Personne> findAllPersonne() {
 		Collection<Personne> personnes = mapPersonnes.values();
 		logger.info("personnes cache size: " + personnes.size());
 		if (personnes.size() > 0) {
-			List<Personne> l = personnes.stream().collect(Collectors.toList());
-			Collections.sort(l, (f1,f2)->f1.getNom().compareTo(f2.getNom()));
+			List<Personne> l = sortPersonneList(personnes);
 			return l;
 		}
 		logger.info("personnes find");
 		List<Personne> personnesList = this.personneDao.findAll();
-		logger.info("personnesList size: " + personnesList.size());
-		personnesList.parallelStream().forEach(it -> {
+		List<Personne> l = new ArrayList<>();
+		if (personnesList.size() > 0) {
+			l.addAll(sortPersonneList(personnesList));
+		}
+		logger.info("personnesList size: " + l.size());
+		l.parallelStream().forEach(it -> {
 			mapPersonnes.putIfAbsent(it.getId(), it);
 		});
-		return personnesList;
+		return l;
 	}
 
 	// @CacheEvict(value= CACHE_PERSONNE, allEntries = true)
