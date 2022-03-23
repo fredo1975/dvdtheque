@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -59,9 +57,6 @@ public class Film implements Serializable, Comparable<Film> {
 	private Set<Personne> realisateur = new HashSet<>();
 	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
 	private Set<Personne> acteur = new HashSet<>();
-	@OneToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
-	@OrderBy("note desc")
-	private Set<CritiquesPresse> critiquesPresse = new TreeSet<>();
 	@Column(name = "vu")
 	private boolean vu;
 	@Column(name = "poster_path")
@@ -129,12 +124,6 @@ public class Film implements Serializable, Comparable<Film> {
 	}
 	public void setActeur(Set<Personne> acteur) {
 		this.acteur = acteur;
-	}
-	public Set<CritiquesPresse> getCritiquesPresse() {
-		return critiquesPresse;
-	}
-	public void setCritiquesPresse(Set<CritiquesPresse> critiquesPresse) {
-		this.critiquesPresse = critiquesPresse;
 	}
 	public String getOverview() {
 		return overview;
@@ -249,11 +238,8 @@ public class Film implements Serializable, Comparable<Film> {
 	public String toString() {
 		return "Film [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", dateInsertion=" + dateInsertion
 				+ ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd + ", origine=" + origine + ", realisateur="
-				+ realisateur + ", acteur=" + acteur + ", critiquesPresse=" + critiquesPresse + ", vu=" + vu
-				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
-				+ runtime + ", genre=" + genre + ", homepage=" + homepage + ", alreadyInDvdtheque=" + alreadyInDvdtheque
-				+ ", critiquePresse=" + critiquePresse + "]";
+				+ realisateur + ", acteur=" + acteur + ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId="
+				+ tmdbId + ", overview=" + overview + ", runtime=" + runtime + ", genre=" + genre + ", homepage="
+				+ homepage + ", alreadyInDvdtheque=" + alreadyInDvdtheque + ", critiquePresse=" + critiquePresse + "]";
 	}
-	
-	
 }
