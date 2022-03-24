@@ -5,20 +5,24 @@ import static java.lang.String.format;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -127,7 +131,7 @@ public class TmdbServiceController {
 	
 	@RolesAllowed({"user","batch"})
 	@GetMapping("/retrieveTmdbFilmListByTitle/byTitle")
-	public ResponseEntity<Set<Results>> retrieveTmdbFilmListByTitle(@RequestParam(name="title",required = true)String title){
+	public ResponseEntity<List<Results>> retrieveTmdbFilmListByTitle(@RequestParam(name="title",required = true)String title){
 		Integer firstPage = Integer.valueOf(1);
 		Set<Results> results = null;
 		try {
@@ -141,7 +145,13 @@ public class TmdbServiceController {
 				searchResults = retrieveTmdbSearchResults(title, firstPage);
 				addResultsToSet(results, searchResults);
 			}
-			return ResponseEntity.ok(results);
+			List<Results> resultsSorted = results.stream().filter(film->StringUtils.isNotEmpty(film.getRelease_date())).sorted(new Comparator<>() {
+				@Override
+				public int compare(Results o1, Results o2) {
+					return o2.getRelease_date().compareTo(o1.getRelease_date());
+				}
+			}).collect(Collectors.toList());
+			return ResponseEntity.ok(resultsSorted);
 		}catch (RestClientException e) {
 			logger.error(format("an error occured while retrieveTmdbFilmListByTitle title='%s' ", title),e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
