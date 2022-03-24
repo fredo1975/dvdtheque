@@ -60,7 +60,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -180,7 +179,7 @@ public class FilmController {
 	void cleanAllFilms() {
 		filmService.cleanAllFilms();
 	}
-
+/*
 	@RolesAllowed("user")
 	@GetMapping("/films/byTitre/{titre}")
 	ResponseEntity<Film> findFilmByTitre(@PathVariable String titre) {
@@ -190,7 +189,7 @@ public class FilmController {
 			logger.error(format("an error occured while findFilmByTitre titre='%s' ", titre), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-	}
+	}*/
 
 	@RolesAllowed({ "user", "batch" })
 	@GetMapping("/films/byOrigine/{origine}")
@@ -234,12 +233,12 @@ public class FilmController {
 	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		List<Film> films = null;
 		try {
-			ResponseEntity<Set<Results>> resultsResponse = keycloakRestTemplate.exchange(
+			ResponseEntity<List<Results>> resultsResponse = keycloakRestTemplate.exchange(
 					environment.getRequiredProperty(TMDB_SERVICE_URL)
 							+ environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE) + "?title=" + titre,
-					HttpMethod.GET, null, new ParameterizedTypeReference<Set<Results>>() {});
+					HttpMethod.GET, null, new ParameterizedTypeReference<List<Results>>() {});
 			if (resultsResponse != null && CollectionUtils.isNotEmpty(resultsResponse.getBody())) {
-				Set<Results> results = resultsResponse.getBody();
+				List<Results> results = resultsResponse.getBody();
 				films = new ArrayList<>(results.size());
 				Set<Long> tmdbIds = results.stream().map(r -> r.getId()).collect(Collectors.toSet());
 				Set<Long> tmdbFilmAlreadyInDvdthequeSet = filmService.findAllTmdbFilms(tmdbIds);
@@ -251,9 +250,7 @@ public class FilmController {
 					}
 				}
 			}
-			if (CollectionUtils.isNotEmpty(films)) {
-				Collections.sort(films);
-			}
+			
 			return ResponseEntity.ok(films);
 		} catch (Exception e) {
 			logger.error(format("an error occured while findTmdbFilmByTitre titre='%s' ", titre), e);
@@ -507,8 +504,6 @@ public class FilmController {
 					Genre genre = filmService.findGenre(_g.getId());
 					if (genre == null) {
 						genre = filmService.saveGenre(new Genre(_g.getId(), _g.getName()));
-					} else {
-						genre = filmService.attachToSession(genre);
 					}
 					transformedfilm.getGenre().add(genre);
 				} else {
@@ -680,7 +675,6 @@ public class FilmController {
 				if (filmToSave != null) {
 					filmToSave.setId(null);
 					filmToSave.setOrigine(film.getOrigine());
-					filmToSave.setId(null);
 					if(film.getDateInsertion() != null) {
 						filmToSave.setDateInsertion(film.getDateInsertion());
 					}else {
@@ -816,8 +810,7 @@ public class FilmController {
 						FilmOrigine.TOUS);
 				list = filmService.findAllFilms(filmDisplayTypeParam);
 			} else {
-				list = filmService.findAllFilmsByCriteria(
-						new FilmFilterCriteriaDto(null, null, null, null, null, null, filmOrigine));
+				list = filmService.findFilmByOrigine(filmOrigine);
 			}
 			if (list == null) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

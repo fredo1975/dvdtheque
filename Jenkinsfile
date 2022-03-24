@@ -268,7 +268,7 @@ pipeline {
 			 	}
             }
         }
-        stage('Copying prouction dvdtheque-rest-services') {
+        stage('Copying production dvdtheque-rest-services') {
 	    	when {
                 branch 'master'
             }
@@ -283,7 +283,7 @@ pipeline {
 			 	}
             }
         }
-        stage('Copying prouction dvdtheque-tmdb-service') {
+        stage('Copying production dvdtheque-tmdb-service') {
 	    	when {
                 branch 'master'
             }
@@ -298,7 +298,7 @@ pipeline {
 			 	}
             }
         }
-        stage('Copying prouction dvdtheque-allocine-service') {
+        stage('Copying production dvdtheque-allocine-service') {
 	    	when {
                 branch 'master'
             }
@@ -310,7 +310,7 @@ pipeline {
 			 	}
             }
         }
-        stage('Copying prouction dvdtheque-batch-service') {
+        stage('Copying production dvdtheque-batch-service') {
 	    	when {
                 branch 'master'
             }

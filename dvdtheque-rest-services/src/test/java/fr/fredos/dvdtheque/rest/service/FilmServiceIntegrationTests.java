@@ -20,7 +20,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.util.StopWatch;
 
-import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -115,7 +113,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
-		film = filmService.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
+		film = filmService.findFilm(filmId);
 		assertNotNull(film);
 		StopWatch watch = new StopWatch();
 		logger.debug(watch.prettyPrint());
@@ -147,7 +145,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		Film retrievedFilm = filmService.findFilmByTitre(film.getTitre());
+		Film retrievedFilm = filmService.findFilm(filmId);
 		FilmBuilder.assertFilmIsNotNull(retrievedFilm, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		logger.debug(methodName + "end");
 	}
@@ -202,7 +200,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		Film retrievedFilm = filmService.findFilmWithAllObjectGraph(film.getId());
+		Film retrievedFilm = filmService.findFilm(film.getId());
 		FilmBuilder.assertFilmIsNotNull(retrievedFilm,false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		logger.debug(methodName + "retrievedFilm ="+retrievedFilm.toString());
 		for(Personne acteur : retrievedFilm.getActeur()){
@@ -617,14 +615,9 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
-		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(StringUtils.left(FilmBuilder.TITRE_FILM_TMBD_ID_844, 5),null,null,null,null, null, null);
-		List<Film> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
-		assertNotNull(films);
-		for(Film f : films){
-			logger.debug(f.toString());
-		}
-		assertEquals(1, films.size());
-		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844),films.get(0).getTitre());
+		Film filmRetrieved = filmService.findFilm(filmId);
+		assertNotNull(filmRetrieved);
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844),filmRetrieved.getTitre());
 		logger.debug(methodName + "end");
 	}
 	@Test
@@ -665,8 +658,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Long enSalleFilmId = filmService.saveNewFilm(enSalleFilm);
 		assertNotNull(enSalleFilmId);
 		FilmBuilder.assertFilmIsNotNull(enSalleFilm, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE, null);
-		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(null,null,null,null,null, null, FilmOrigine.EN_SALLE);
-		List<Film> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
+		List<Film> films = filmService.findFilmByOrigine(FilmOrigine.EN_SALLE);
 		assertNotNull(films);
 		for(Film f : films){
 			logger.debug(f.toString());
@@ -676,7 +668,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		logger.debug(methodName + "end");
 	}
 	@Test
-	public void findAllFilmsByCriteriaActeursService() throws ParseException {
+	public void findAllFilmsByCriteriaActeur() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
 		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
@@ -696,9 +688,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		Long selectedActeurId = film.getActeur().iterator().next().getId();
-		logger.debug("selectedActeurId="+selectedActeurId);
-		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(null,null,null,selectedActeurId,null, null, null);
-		List<Film> films = filmService.findAllFilmsByCriteria(filmFilterCriteriaDto);
+		List<Film> films = filmDao.findFilmByActeur(film.getActeur().iterator().next());
 		assertNotNull(films);
 		for(Film f2 : films){
 			logger.debug(f2.toString());
@@ -732,8 +722,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
-		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(StringUtils.left(FilmBuilder.TITRE_FILM_TMBD_ID_844, 2),null,null,null,null, null, null);
-		List<Film> films = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
+		List<Film> films = filmDao.findFilmByTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		assertNotNull(films);
 		for(Film f2 : films){
 			logger.debug(f2.toString());
@@ -746,7 +735,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		assertEquals(1,realisateurSet.size());
 		Personne realisateur = realisateurSet.iterator().next();
 		assertNotNull(realisateur);
-		Personne real = personneService.findRealisateurByFilm(film);
+		Personne real = personneService.findByPersonneId(realisateur.getId());
 		assertEquals(real.getNom(),realisateur.getNom());
 		assertEquals(real.getPrenom(),realisateur.getPrenom());
 	}
@@ -790,8 +779,8 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Long filmId2 = filmService.saveNewFilm(film2);
 		assertNotNull(filmId2);
 		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
-		FilmFilterCriteriaDto filmFilterCriteriaDto = new FilmFilterCriteriaDto(null,null,null,null,null, Boolean.TRUE, null);
-		List<Film> films = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
+		final String query = "dvd.ripped:eq:"+Boolean.TRUE+":AND";
+		List<Film> films = filmService.search(query, 1, 1, "-titre");
 		assertNotNull(films);
 		for(Film f2 : films){
 			logger.debug(f2.toString());
@@ -804,7 +793,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		assertEquals(1,realisateurSet.size());
 		Personne realisateur = realisateurSet.iterator().next();
 		assertNotNull(realisateur);
-		Personne real = personneService.findRealisateurByFilm(film2);
+		Personne real = personneService.findByPersonneId(realisateur.getId());
 		assertEquals(real.getNom(),realisateur.getNom());
 		assertEquals(real.getPrenom(),realisateur.getPrenom());
 	}
@@ -830,36 +819,9 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		Personne real = film.getRealisateur().iterator().next();
 		assertNotNull(real);
-		filmDao.removeFilm(film);
-		Film removedFilm = filmService.findFilmByTitre(film.getTitre());
-		assertNull(removedFilm);
-	}
-	
-	@Test
-	public void removeFilmService() throws ParseException {
-		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
-		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
-		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
-				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
-				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
-				.setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD)
-				.setGenre1(genre1)
-				.setGenre2(genre2)
-				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
-		Long filmId = filmService.saveNewFilm(film);
-		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		filmService.removeFilm(film);
-		Assertions.assertThrows(Exception.class, () -> {
-			Film deletedFilm = filmService.findFilm(film.getId());
-			assertNull(deletedFilm);
-		  });
+		Film removedFilm = filmService.findFilm(filmId);
+		assertNull(removedFilm);
 	}
 	
 	@Test
@@ -1740,7 +1702,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Long filmId5 = filmService.saveNewFilm(film5);
 		FilmBuilder.assertFilmIsNotNull(film5, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		assertNotNull(filmId5);
-		List<Film> l = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.DERNIERS_AJOUTS_NON_VUS,rowNumber,FilmOrigine.TOUS));
+		List<Film> l = filmService.findAllFilmsByFilmDisplayType(new FilmDisplayTypeParam(FilmDisplayType.DERNIERS_AJOUTS_NON_VUS,rowNumber,FilmOrigine.DVD));
 		assertTrue(CollectionUtils.isNotEmpty(l));
 		assertTrue("list should be equals to "+numberFilmDisplayed,l.size()==numberFilmDisplayed);
 		Film f1 = l.get(0);

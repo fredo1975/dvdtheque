@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -17,13 +18,14 @@ import org.springframework.web.client.RestTemplate;
 @TestConfiguration
 public class OAuth2ClientConfiguration {
 	//private final RestTemplateBuilder restTemplateBuilder;
-	
+	@Autowired
+	ClientRegistrationRepository registrations;
 	@Bean
-    public RestTemplate restTemplate() {
+    RestTemplate restTemplate() {
         return Mockito.mock(RestTemplate.class);
     }
 	@Bean
-    public AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager (
+    AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager (
             ClientRegistrationRepository clientRegistrationRepository,
             OAuth2AuthorizedClientService authorizedClientService) {
 
@@ -40,11 +42,10 @@ public class OAuth2ClientConfiguration {
         return authorizedClientManager;
     }
 	@Bean
-    public ClientRegistrationRepository clientRegistrationRepository(ClientRegistration dvdthequeClientRegistration) {
+    ClientRegistrationRepository clientRegistrationRepository(ClientRegistration dvdthequeClientRegistration) {
         return new InMemoryClientRegistrationRepository(dvdthequeClientRegistration);
     }
-	@Autowired
-	ClientRegistrationRepository registrations;
+	
 	@Bean
     ClientRegistration dvdthequeClientRegistration() {
         return ClientRegistration
@@ -55,7 +56,10 @@ public class OAuth2ClientConfiguration {
                 .authorizationGrantType(new AuthorizationGrantType("client_credentials"))
                 .build();
     }
-
+	@Bean
+    public OAuth2AuthorizedClientService auth2AuthorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
+        return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
+    }
 	/*
 	@Autowired
 	ClientRegistrationRepository registrations;

@@ -15,6 +15,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -59,6 +60,7 @@ import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 
 @Configuration
+@EnableBatchProcessing(modular = true)
 public class BatchImportFilmsConfiguration{
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
 	private static String DVDTHEQUE_SERVICE_URL ="dvdtheque-service.url";
@@ -149,8 +151,6 @@ public class BatchImportFilmsConfiguration{
 	}
     
 	@Bean(name = "importFilmsJob")
-	//@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	//@Qualifier("importFilmsJob")
 	public Job importFilmsJob() throws Exception {
 		//logger.info("######## importFilmsJob");
 		return jobBuilderFactory.get("importFilms").listener(new DvdthequeJobResultListener()).incrementer(new RunIdIncrementer()).start(cleanDBStep())

@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -25,6 +26,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,18 +38,19 @@ import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicate;
 import com.hazelcast.query.Predicates;
 
-import fr.fredos.dvdtheque.common.dto.FilmFilterCriteriaDto;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.enums.PersonneType;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
-import fr.fredos.dvdtheque.rest.dao.domain.CritiquesPresse;
 import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
 import fr.fredos.dvdtheque.rest.dao.repository.FilmDao;
+import fr.fredos.dvdtheque.rest.dao.repository.GenreDao;
+import fr.fredos.dvdtheque.rest.dao.specifications.filter.PageRequestBuilder;
+import fr.fredos.dvdtheque.rest.dao.specifications.filter.SpecificationsBuilder;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
 import fr.fredos.dvdtheque.rest.service.IPersonneService;
 import fr.fredos.dvdtheque.rest.service.model.FilmDto;
@@ -75,17 +78,21 @@ public class FilmServiceImpl implements IFilmService {
 	IMap<FilmOrigine, Map<Film,Set<Personne>>> mapRealisateursByOrigine;
 	
 	private final FilmDao filmDao;
+	private final GenreDao genreDao;
 	private final IPersonneService personneService;
 	private final HazelcastInstance instance;
 	
-	public FilmServiceImpl(FilmDao filmDao,IPersonneService personneService,HazelcastInstance instance) {
+	@Autowired
+	private SpecificationsBuilder<Film> builder;
+	
+	public FilmServiceImpl(FilmDao filmDao,GenreDao genreDao,IPersonneService personneService,HazelcastInstance instance) {
 		this.filmDao = filmDao;
+		this.genreDao = genreDao;
 		this.personneService = personneService;
 		this.instance = instance;
 		this.init();
 	}
 	
-	//@PostConstruct
 	public void init() {
 		mapFilms = instance.getMap(CACHE_FILM);
 		/*mapFilms.addIndex("id", false);
@@ -103,7 +110,7 @@ public class FilmServiceImpl implements IFilmService {
 		List<Film> filmList = null;
 		List<FilmDto> filmDtoList = new ArrayList<>();
 		try {
-			filmList = filmDao.findAllFilms();
+			filmList = filmDao.findAll();
 			if (!CollectionUtils.isEmpty(filmList)) {
 				logger.debug("####################   filmList.size()=" + filmList.size());
 				for (Film film : filmList) {
@@ -119,7 +126,7 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Transactional(readOnly = true, noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })
-	public Film findFilmByTitre(final String titre) {
+	public List<Film> findFilmByTitre(final String titre) {
 		return filmDao.findFilmByTitre(titre);
 	}
 	
@@ -128,26 +135,24 @@ public class FilmServiceImpl implements IFilmService {
 		return filmDao.findFilmByTitreWithoutSpecialsCharacters(titre);
 	}
 
-	@Transactional(readOnly = true)
-	public Film findFilmWithAllObjectGraph(final Long id) {
-		return filmDao.findFilmWithAllObjectGraph(id);
-	}
-
 	@Override
 	@Transactional(readOnly = true)
 	public Film findFilm(final Long id) {
 		Film film = mapFilms.get(id);
 		if (film != null)
 			return film;
-		film = filmDao.findFilm(id);
-		mapFilms.putIfAbsent(id, film);
-		return film;
+		Optional<Film> filmOpt = filmDao.findById(id);
+		if(filmOpt.isEmpty()) {
+			return null;
+		}
+		mapFilms.putIfAbsent(id, filmOpt.get());
+		return filmOpt.get();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public Genre findGenre(int tmdbId) {
-		return filmDao.findGenre(tmdbId);
+		return genreDao.findGenreByTmdbId(tmdbId);
 	}
 
 	@Override
@@ -157,10 +162,7 @@ public class FilmServiceImpl implements IFilmService {
 		if (film.getDvd() != null && !film.getDvd().isRipped()) {
 			film.getDvd().setDateRip(null);
 		}
-		Film mergedFilm = filmDao.updateFilm(film);
-		Set<CritiquesPresse> newSortedCritiquesPresseSet = new TreeSet<>(mergedFilm.getCritiquesPresse());
-		mergedFilm.getCritiquesPresse().clear();
-		mergedFilm.getCritiquesPresse().addAll(newSortedCritiquesPresseSet);
+		Film mergedFilm = filmDao.save(film);
 		mapFilms.put(film.getId(), mergedFilm);
 		return mergedFilm;
 	}
@@ -177,26 +179,19 @@ public class FilmServiceImpl implements IFilmService {
 	public Long saveNewFilm(Film film) {
 		Assert.notEmpty(film.getRealisateur(), REALISATEUR_MESSAGE_WARNING);
 		upperCaseTitre(film);
-		Long id = filmDao.saveNewFilm(film);
-		mapFilms.putIfAbsent(id, film);
-		return id;
+		Film savedFilm = filmDao.save(film);
+		mapFilms.putIfAbsent(savedFilm.getId(), savedFilm);
+		return savedFilm.getId();
 	}
 	
 	@Override
 	@Transactional(readOnly = false)
 	public Genre saveGenre(final Genre genre) {
-		Genre persistedGenre = filmDao.saveGenre(genre);
+		Genre persistedGenre = genreDao.save(genre);
 		mapGenres.putIfAbsent(persistedGenre.getId(), persistedGenre);
 		return persistedGenre;
 	}
 	
-	@Override
-	@Transactional(readOnly = false)
-	public CritiquesPresse saveCritiquesPresse(final CritiquesPresse critiquesPresse) {
-		CritiquesPresse persistedCritiquesPresse = filmDao.saveCritiquesPresse(critiquesPresse);
-		return persistedCritiquesPresse;
-	}
-
 	@Override
 	@Transactional(readOnly = true)
 	public List<Film> findAllFilms(FilmDisplayTypeParam filmDisplayTypeParam) {
@@ -206,7 +201,7 @@ public class FilmServiceImpl implements IFilmService {
 			return sortListAccordingToFilmDisplayType(films,filmDisplayTypeParam);
 		}
 		logger.debug("no films find");
-		List<Film> filmList = this.filmDao.findAllFilms();
+		List<Film> filmList = this.filmDao.findAll();
 		logger.debug("filmList size: " + filmList.size());
 		filmList.parallelStream().forEach(it -> {
 			mapFilms.putIfAbsent(it.getId(), it);
@@ -228,7 +223,7 @@ public class FilmServiceImpl implements IFilmService {
 			return l;
 		}
 		logger.debug("no genres find");
-		List<Genre> e = this.filmDao.findAllGenres();
+		List<Genre> e = this.genreDao.findAll();
 		logger.debug("genres size: " + e.size());
 		if(CollectionUtils.isNotEmpty(e)) {
 			e.parallelStream().forEach(it -> {
@@ -241,10 +236,9 @@ public class FilmServiceImpl implements IFilmService {
 	@Override
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
-		filmDao.cleanAllFilms();
+		filmDao.deleteAll();
 		mapFilms.clear();
-		filmDao.cleanAllGenres();
-		filmDao.cleanAllCritiquesPresse();
+		genreDao.deleteAll();
 		mapGenres.clear();
 		personneService.cleanAllPersonnes();
 	}
@@ -254,22 +248,27 @@ public class FilmServiceImpl implements IFilmService {
 	public List<Film> getAllRippedFilms() {
 		return filmDao.getAllRippedFilms();
 	}
-
+	
 	@Override
 	@Transactional(readOnly = true)
-	public List<Film> findAllFilmsByCriteria(final FilmFilterCriteriaDto filmFilterCriteriaDto) {
-		List<Film> filmList = filmDao.findAllFilmsByCriteria(filmFilterCriteriaDto);
-		filmList.sort(Comparator.comparing(Film::getTitre));
-		return filmList;
+	public List<Film> search(String query,Integer offset,Integer limit,String sort){
+		var page = PageRequestBuilder.getPageRequest(limit,offset, sort);
+        return filmDao.findAll(builder.with(query).build(), page).getContent();
 	}
-
+	@Override
+	public List<Film> findFilmByOrigine(final FilmOrigine origine){
+		return filmDao.findFilmByOrigine(origine);
+	}
+	
 	@Override
 	@Transactional(readOnly = false)
 	public void removeFilm(Film film) {
 		//film = mapFilms.get(film.getId());
-		film = filmDao.findFilm(film.getId());
-		filmDao.removeFilm(film);
-		mapFilms.remove(film.getId());
+		Optional<Film> filmOpt = filmDao.findById(film.getId());
+		if(filmOpt.isPresent()) {
+			filmDao.delete(filmOpt.get());
+			mapFilms.remove(filmOpt.get().getId());
+		}
 	}
 
 	public static void saveImage(final String imageUrl, final String destinationFile) throws IOException {
@@ -335,13 +334,7 @@ public class FilmServiceImpl implements IFilmService {
 
 	@Override
 	public Boolean checkIfTmdbFilmExists(final Long tmdbId) {
-		return this.filmDao.checkIfTmdbFilmExists(tmdbId);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public Genre attachToSession(final Genre genre) {
-		return this.filmDao.attachToSession(genre);
+		return filmDao.checkIfTmdbFilmExists(tmdbId).equals(Integer.valueOf(1))?Boolean.TRUE:Boolean.FALSE;
 	}
 
 	/**
@@ -367,8 +360,7 @@ public class FilmServiceImpl implements IFilmService {
 		StopWatch watch = new StopWatch();
 		watch.start();
 		if(filmDisplayTypeParam != null
-				&& FilmOrigine.TOUS.equals(filmDisplayTypeParam.getFilmOrigine()) 
-				&& FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+				&& FilmOrigine.TOUS.equals(filmDisplayTypeParam.getFilmOrigine())) {
 			return findAllFilms(filmDisplayTypeParam);
 		}else {
 			Predicate<Long, Film> predicate = Predicates.equal("origine", filmDisplayTypeParam.getFilmOrigine());
@@ -380,8 +372,8 @@ public class FilmServiceImpl implements IFilmService {
 				//logger.info("findAllFilmsByFilmDisplayType="+watch.getTotalTimeSeconds());
 				return sortListAccordingToFilmDisplayType(films,filmDisplayTypeParam);
 			}
-			logger.debug("no films find");
-			List<Film> filmsRes = this.filmDao.findAllFilmsByOrigine(filmDisplayTypeParam.getFilmOrigine());
+			logger.debug("no films found");
+			List<Film> filmsRes = this.filmDao.findFilmByOrigine(filmDisplayTypeParam.getFilmOrigine());
 			logger.debug("findAllFilmsByFilmDisplayType films size: " + filmsRes.size());
 			filmsRes.stream().forEach(it -> {
 				mapFilms.put(it.getId(), it);
@@ -411,7 +403,7 @@ public class FilmServiceImpl implements IFilmService {
 			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.REALISATEUR,films, realisateurs);
 		}
 		logger.debug("findAllRealisateurs no films find");
-		List<Film> filmList = this.filmDao.findAllFilms();
+		List<Film> filmList = this.filmDao.findAll();
 		logger.debug("findAllRealisateurs filmList size: " + filmList.size());
 		if(FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
@@ -452,7 +444,7 @@ public class FilmServiceImpl implements IFilmService {
 			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,films, acteurs);
 		}
 		logger.debug("findAllActeurs no films find");
-		List<Film> filmList = this.filmDao.findAllFilms();
+		List<Film> filmList = this.filmDao.findAll();
 		logger.debug("findAllActeurs filmList size: " + filmList.size());
 		if(FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);

@@ -14,14 +14,11 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
 import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
-
-@ContextConfiguration(classes={BatchImportFilmsConfiguration.class,OAuth2ClientConfiguration.class})
-@SpringBootTest(classes = {OAuth2ClientConfiguration.class,BatchImportFilmsConfiguration.class}, properties = "spring.batch.job.enabled=false" )
 @Disabled
+@ContextConfiguration(classes={BatchImportFilmsConfiguration.class,OAuth2ClientConfiguration.class})
 public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	@Autowired
 	@Qualifier(value = "importFilmsJob")
@@ -45,8 +42,6 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public static final String ACT2_AD_ASTRA = "LOREN DEAN";
 	public static final String ACT3_AD_ASTRA = "KIMBERLY ELISE";
 	public static final String ACT4_AD_ASTRA = "LISAGAY HAMILTON";
-	@Autowired
-	JobLauncherTestUtils 					jobLauncherTestUtils;
 	
 	@BeforeEach
 	public void init() {
@@ -56,15 +51,6 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 		jobLauncherTestUtils.setJob(job);
 	}
 	/*
-	@Bean
-	protected JobLauncherTestUtils jobLauncherTestUtils() throws NoSuchJobException {
-		jobLauncherTestUtils = new JobLauncherTestUtils();
-		jobLauncherTestUtils.setJobLauncher(jobLauncher);
-		jobLauncherTestUtils.setJobRepository(jobRepository);
-		jobLauncherTestUtils.setJob(importFilmsJob);
-		return jobLauncherTestUtils;
-	}*/
- 
 	@Test
 	public void contextLoads() {
 	}
@@ -72,7 +58,7 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public void launchCleanDBStep() throws Exception {
 		JobExecution jobExecution = jobLauncherTestUtils.launchStep("cleanDBStep");
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-	}
+	}*/
 	@Test
 	public void launchImportFilmsJob() throws Exception {
 		Calendar c = Calendar.getInstance();
