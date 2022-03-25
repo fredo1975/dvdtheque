@@ -1,5 +1,7 @@
 package fr.fredos.dvdtheque.rest.controller;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
@@ -15,21 +17,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
-import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 
 import fr.fredos.dvdtheque.integration.config.ContextConfiguration;
 import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
@@ -39,7 +39,6 @@ import fr.fredos.dvdtheque.rest.service.IFilmService;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {HazelcastConfiguration.class, ContextConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@Import({ServletKeycloakAuthUnitTestingSupport.class})
 @ActiveProfiles("test")
 public class FilmControllerForImportFilmListTest {
 	protected Logger logger = LoggerFactory.getLogger(FilmControllerForImportFilmListTest.class);
@@ -48,19 +47,18 @@ public class FilmControllerForImportFilmListTest {
 	protected IFilmService 							filmService;
 	@Autowired
 	ExcelFilmHandler 								excelFilmHandler;
-	@Autowired
-	private ServletKeycloakAuthUnitTestingSupport 	keycloak;
-	@Autowired
-	private MockMvcSupport 							api;
 
-	private MockRestServiceServer 					mockServer;
     
     @Autowired
     private Environment 							environment;
     
 	private static final String 					IMPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "import";
 	private static final String 					contentType = "text/plain";
-	
+	@Autowired
+	private MockMvc 								mockmvc;
+	@MockBean
+	private JwtDecoder 								jwtDecoder;
+
 	@Test
 	@Disabled
 	public void testImportFilmListFromCsv() throws Exception {
@@ -71,15 +69,12 @@ public class FilmControllerForImportFilmListTest {
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(IMPORT_FILM_LIST_URI)
 				.file(mockMultipartFile);
 		
-		api
-		.with(keycloak.keycloakAuthenticationToken().roles("user","batch").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(environment.getRequiredProperty(FilmController.DVDTHEQUE_BATCH_SERVICE_URL)
+		mockmvc.perform(MockMvcRequestBuilders.get(environment.getRequiredProperty(FilmController.DVDTHEQUE_BATCH_SERVICE_URL)
 				+ environment.getRequiredProperty(FilmController.DVDTHEQUE_BATCH_SERVICE_IMPORT)))
 		.andExpect(status().isOk());
 		
-		api
-		.with(keycloak.keycloakAuthenticationToken().roles("user","batch").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(builder)
+		mockmvc.perform(builder.with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isNoContent()).andReturn();
 	}
@@ -93,14 +88,11 @@ public class FilmControllerForImportFilmListTest {
 		MockMultipartFile mockMultipartFile = new MockMultipartFile("file", file.getName(), contentType, bFile);
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(IMPORT_FILM_LIST_URI)
 				.file(mockMultipartFile);
-		api
-		.with(keycloak.keycloakAuthenticationToken().roles("user","batch").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(environment.getRequiredProperty(FilmController.DVDTHEQUE_BATCH_SERVICE_URL)
-				+ environment.getRequiredProperty(FilmController.DVDTHEQUE_BATCH_SERVICE_IMPORT)))
+		mockmvc.perform(MockMvcRequestBuilders.get(environment.getRequiredProperty(FilmController.DVDTHEQUE_BATCH_SERVICE_URL)
+				+ environment.getRequiredProperty(FilmController.DVDTHEQUE_BATCH_SERVICE_IMPORT)).with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk());
-		api
-		.with(keycloak.keycloakAuthenticationToken().roles("user","batch").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(builder)
+		mockmvc.perform(builder)
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isNoContent()).andReturn();
 	}

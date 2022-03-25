@@ -61,12 +61,6 @@ public class TmdbServiceControllerTest {
 	private static final String 					TITLE_300 = "300";
 	private static final String 					POSTER_PATH_CRUELLA = "http://image.tmdb.org/t/p/w500/iXZUPOlWwifW73ObGoSCvZ5qVSQ.jpg";
 	private static final String 					POSTER_PATH_EMMA_STONE = "http://image.tmdb.org/t/p/w500/2hwXbPW2ffnXUe1Um0WXHG0cTwb.jpg";
-	@Autowired
-	private RestTemplate 							restTemplate;
-	@Autowired
-	private Environment 							environment;
-	@Autowired
-	private ObjectMapper 							mapper;
 	public static final MediaType 					APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	private MockRestServiceServer 					mockServer;
 	public static Long 								TMDB_ID_1271 = Long.valueOf(1271);
@@ -77,7 +71,12 @@ public class TmdbServiceControllerTest {
 	private MockMvc 								mockmvc;
 	@MockBean
 	private JwtDecoder 								jwtDecoder;
-	
+	@Autowired
+	private RestTemplate 							restTemplate;
+	@Autowired
+	private Environment 							environment;
+	@Autowired
+	private ObjectMapper 							mapper;
 	@BeforeEach()
 	public void setUp() throws Exception {
 		mockServer = MockRestServiceServer.createServer(restTemplate);
@@ -92,7 +91,7 @@ public class TmdbServiceControllerTest {
 		results.setOriginal_title(TITRE_FILM_TMBD_ID_1271);
 		return results;
 	}
-	@WithMockUser(roles = "user")
+	@WithMockUser(roles = "use")
 	@Test
 	public void retrieveTmdbFilm() throws Exception {
 		
