@@ -29,7 +29,7 @@ import com.nimbusds.jose.shaded.json.JSONObject;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class OAuth2ClientSecurityConfig  extends WebSecurityConfigurerAdapter {
+public class OAuth2ClientSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests(authorizeRequests -> authorizeRequests
