@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.tmdb.controller;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -18,20 +19,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.client.RestTemplate;
 
-import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
-import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.common.tmdb.model.Credits;
@@ -45,9 +47,9 @@ import fr.fredos.dvdtheque.common.tmdb.model.SearchResults;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ContextConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@Import({ ServletKeycloakAuthUnitTestingSupport.class})
 @ActiveProfiles("test")
 public class TmdbServiceControllerTest {
+	
 	protected Logger 								logger = LoggerFactory.getLogger(TmdbServiceControllerTest.class);
 	private static final String 					TMDB_BASE_URI = "/dvdtheque-tmdb-service/";
 	private static final String 					SEARCH_BY_TMDB_ID = TMDB_BASE_URI + "/retrieveTmdbFilm/byTmdbId";
@@ -59,23 +61,22 @@ public class TmdbServiceControllerTest {
 	private static final String 					TITLE_300 = "300";
 	private static final String 					POSTER_PATH_CRUELLA = "http://image.tmdb.org/t/p/w500/iXZUPOlWwifW73ObGoSCvZ5qVSQ.jpg";
 	private static final String 					POSTER_PATH_EMMA_STONE = "http://image.tmdb.org/t/p/w500/2hwXbPW2ffnXUe1Um0WXHG0cTwb.jpg";
-	@Autowired
-	private RestTemplate 							restTemplate;
-	@Autowired
-	private ServletKeycloakAuthUnitTestingSupport 	keycloak;
-	@Autowired
-	private Environment 							environment;
-	@Autowired
-	private ObjectMapper 							mapper;
-	@Autowired
-	private MockMvcSupport 							mockMvcSupport;
 	public static final MediaType 					APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	private MockRestServiceServer 					mockServer;
 	public static Long 								TMDB_ID_1271 = Long.valueOf(1271);
 	public static final String 						TITRE_FILM_TMBD_ID_1271 = "300";
 	public static final String 						RELEASE_DATE_FILM_TMBD_ID_1271 = "2007-03-07";
 	public static final String 						POSTER_PATH_FILM_TMBD_ID_1271 = "/q31SmDy9UvSPIuTz65XsHuPwhuS.jpg";
-	
+	@Autowired
+	private MockMvc 								mockmvc;
+	@MockBean
+	private JwtDecoder 								jwtDecoder;
+	@Autowired
+	private RestTemplate 							restTemplate;
+	@Autowired
+	private Environment 							environment;
+	@Autowired
+	private ObjectMapper 							mapper;
 	@BeforeEach()
 	public void setUp() throws Exception {
 		mockServer = MockRestServiceServer.createServer(restTemplate);
@@ -90,6 +91,7 @@ public class TmdbServiceControllerTest {
 		results.setOriginal_title(TITRE_FILM_TMBD_ID_1271);
 		return results;
 	}
+	@WithMockUser(roles = "use")
 	@Test
 	public void retrieveTmdbFilm() throws Exception {
 		
@@ -99,16 +101,15 @@ public class TmdbServiceControllerTest {
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(results), MediaType.APPLICATION_JSON));
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_BY_TMDB_ID).param("tmdbId", Long.toString(TMDB_ID_1271)))
-		.andExpect(status().isOk())
+		mockmvc.perform((MockMvcRequestBuilders.get(SEARCH_BY_TMDB_ID)
+				.with(csrf()).param("tmdbId", Long.toString(TMDB_ID_1271)))).andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Is.is(1271)))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.poster_path", Is.is("/q31SmDy9UvSPIuTz65XsHuPwhuS.jpg")))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.original_title", Is.is("300")))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.release_date", Is.is("2007-03-07")))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.title", Is.is("300")));
 	}
+	@WithMockUser(roles = "user")
 	@Test
 	public void retrieveTmdbFrReleaseDate() throws Exception {
 		
@@ -126,12 +127,11 @@ public class TmdbServiceControllerTest {
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(relDates), MediaType.APPLICATION_JSON));
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_REL_DATE_BY_TMDB_ID).param("tmdbId", Long.toString(TMDB_ID_1271)))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_REL_DATE_BY_TMDB_ID).param("tmdbId", Long.toString(TMDB_ID_1271)))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$", Is.is("2007-03-06T23:00:00.000+00:00")));
 	}
+	@WithMockUser(roles = "user")
 	@Test
 	public void retrieveTmdbCredits() throws Exception{
 		Credits credits = new Credits();
@@ -146,14 +146,13 @@ public class TmdbServiceControllerTest {
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_CREDITS_BY_TMDB_ID).param("tmdbId", Long.toString(TMDB_ID_1271)))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_CREDITS_BY_TMDB_ID).param("tmdbId", Long.toString(TMDB_ID_1271)))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Is.is(1271)))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.crew[0].credit_id", Is.is("52fe42ecc3a36847f802d26d")))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.crew[0].name", Is.is("William Hoy")));
 	}
+	@WithMockUser(roles = "user")
 	@Test
 	public void retrieveTmdbFilmListByTitle() throws Exception{
 		SearchResults searchResults = new SearchResults();
@@ -173,9 +172,7 @@ public class TmdbServiceControllerTest {
 		          .andRespond(withSuccess(mapper.writeValueAsString(searchResults), MediaType.APPLICATION_JSON));
 		
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_RESULTS_BY_TITLE).param("title", TITLE_300))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_RESULTS_BY_TITLE).param("title", TITLE_300))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Is.is(1271)))
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].title", Is.is(TITRE_FILM_TMBD_ID_1271)))
@@ -183,6 +180,7 @@ public class TmdbServiceControllerTest {
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].poster_path", Is.is(POSTER_PATH_FILM_TMBD_ID_1271)))
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].release_date", Is.is(RELEASE_DATE_FILM_TMBD_ID_1271)));
 	}
+	@WithMockUser(roles = "user")
 	@Test
 	public void checkIfPosterExists() throws Exception {
 		byte[] imageBytes = new byte[10];
@@ -191,12 +189,11 @@ public class TmdbServiceControllerTest {
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(imageBytes), MediaType.APPLICATION_OCTET_STREAM));
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(POSTER_IMAGE_EXISTS_BY_POSTER_PATH).param("posterPath", POSTER_PATH_CRUELLA))
+		mockmvc.perform(MockMvcRequestBuilders.get(POSTER_IMAGE_EXISTS_BY_POSTER_PATH).param("posterPath", POSTER_PATH_CRUELLA))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$", Is.is(Boolean.TRUE)));
 	}
+	@WithMockUser(roles = "user")
 	@Test
 	public void checkIfProfileImageExists() throws Exception {
 		byte[] imageBytes = new byte[10];
@@ -205,9 +202,7 @@ public class TmdbServiceControllerTest {
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(imageBytes), MediaType.APPLICATION_OCTET_STREAM));
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(PROFILE_IMAGE_EXISTS_BY_POSTER_PATH).param("profilePath", POSTER_PATH_EMMA_STONE))
+		mockmvc.perform(MockMvcRequestBuilders.get(PROFILE_IMAGE_EXISTS_BY_POSTER_PATH).param("profilePath", POSTER_PATH_EMMA_STONE))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$", Is.is(Boolean.TRUE)));
 	}

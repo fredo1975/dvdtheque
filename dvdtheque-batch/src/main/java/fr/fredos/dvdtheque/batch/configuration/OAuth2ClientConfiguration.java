@@ -1,10 +1,11 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
@@ -13,19 +14,38 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.core.AbstractOAuth2Token;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @Profile({ "prod","dev","local"})
 public class OAuth2ClientConfiguration {
-	private final RestTemplateBuilder restTemplateBuilder;
+	//private final RestTemplateBuilder restTemplateBuilder;
     
-    public OAuth2ClientConfiguration(RestTemplateBuilder restTemplateBuilder) {
+    public OAuth2ClientConfiguration() {
 		super();
-		this.restTemplateBuilder = restTemplateBuilder;
+		//this.restTemplateBuilder = restTemplateBuilder;
 	}
+    @Bean
+    public RestTemplate restTemplate() {
+		RestTemplate rest = new RestTemplate();
+		rest.getInterceptors().add((request, body, execution) -> {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			if (authentication == null) {
+				return execution.execute(request, body);
+			}
 
+			if (!(authentication.getCredentials() instanceof AbstractOAuth2Token)) {
+				return execution.execute(request, body);
+			}
+
+			AbstractOAuth2Token token = (AbstractOAuth2Token) authentication.getCredentials();
+		    request.getHeaders().setBearerAuth(token.getTokenValue());
+		    return execution.execute(request, body);
+		});
+		return rest;
+    }
 	@Bean
     ClientRegistration dvdthequeClientRegistration(
             @Value("${spring.security.oauth2.client.provider.keycloak.token-uri}") String token_uri,
@@ -42,13 +62,6 @@ public class OAuth2ClientConfiguration {
                 .build();
     }
     
-    @Bean
-    RestTemplate oAuthRestTemplate(AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceOAuth2AuthorizedClientManager,
-    ClientRegistration dvdthequeClientRegistration) {
-        return restTemplateBuilder
-                .additionalInterceptors(new OAuthClientCredentialsRestTemplateInterceptor(authorizedClientServiceOAuth2AuthorizedClientManager, dvdthequeClientRegistration))
-                .build();
-    }
 
     // Create the client registration repository
     @Bean
