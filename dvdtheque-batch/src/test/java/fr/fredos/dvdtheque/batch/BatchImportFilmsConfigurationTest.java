@@ -18,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
 @Disabled
-@ContextConfiguration(classes={BatchImportFilmsConfiguration.class,OAuth2ClientConfiguration.class})
+@ContextConfiguration(classes={BatchImportFilmsConfiguration.class,BatchTestConfiguration.class})
 public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	@Autowired
 	@Qualifier(value = "importFilmsJob")

@@ -29,6 +29,7 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
@@ -99,6 +100,7 @@ public class DvdthequeWebSocketControllerTest {
     }*/
 	
 	@Test
+	@WithMockUser(roles = "user")
     public void shouldReceiveAMessageFromTheServer() throws Exception {
 		CompletableFuture<JmsStatusMessage<Film>> resultKeeper = new CompletableFuture<>();
         stompSession.subscribe(SUBSCRIBE_TOPIC_ENDPOINT, new MyStompFrameHandler((payload) -> resultKeeper.complete(payload)));
