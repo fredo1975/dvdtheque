@@ -15,6 +15,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -37,9 +38,16 @@ public class OAuth2ClientSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value("${stomp.endpoint}")
 	private String stompEndpoint;
 	
+	
+	
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers("/dvdtheque-ws/**");
+	}
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
+		http.authorizeRequests(authorizeRequests -> authorizeRequests.antMatchers("/websocket/**").permitAll().anyRequest().authenticated())
 				.oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
 						.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter())));
 	}
