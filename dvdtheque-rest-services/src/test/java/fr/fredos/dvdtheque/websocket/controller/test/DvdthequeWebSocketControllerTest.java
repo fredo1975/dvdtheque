@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -46,11 +47,13 @@ import com.hazelcast.core.Hazelcast;
 
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
+import fr.fredos.dvdtheque.integration.config.ContextConfiguration;
+import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
 import fr.fredos.dvdtheque.rest.DvdthequeRestApplication;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 /*
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+@SpringBootTest(classes = {ContextConfiguration.class},webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
 		properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
 @ActiveProfiles("test")*/
 public class DvdthequeWebSocketControllerTest {
@@ -63,17 +66,11 @@ public class DvdthequeWebSocketControllerTest {
     private static final String SEND_CREATE_JMS_STATUS_ENDPOINT = "/app/dvdtheque-ws/websocket";
     private static final String SUBSCRIBE_TOPIC_ENDPOINT = "/topic";
     private StompSession stompSession;
+    @Autowired
+	private RestTemplate 							restTemplate;
     @BeforeEach
     public void setup() throws InterruptedException, ExecutionException, TimeoutException {
-    	stompClient = new WebSocketStompClient(new SockJsClient(Arrays.asList(new WebSocketTransport(new StandardWebSocketClient()))));
-    	stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-    	String host = "localhost";
-        WEBSOCKET_URI = "ws://"+host+":"+port+"/dvdtheque-ws/websocket";
-        String homeUrl = "http://{host}:{port}/dvdtheque-ws/websocket";
-		logger.debug("Sending warm-up HTTP request to " + homeUrl);
-        HttpStatus status = new RestTemplate().getForEntity(homeUrl, Void.class, host, port).getStatusCode();
-		Assert.state(status == HttpStatus.OK);
-        stompSession = stompClient.connect(WEBSOCKET_URI, new MyStompSessionHandlerAdapter() {}).get(1, TimeUnit.SECONDS);
+    	
     }
     
     @After
@@ -102,6 +99,16 @@ public class DvdthequeWebSocketControllerTest {
 	@Test
 	@WithMockUser(roles = "user")
     public void shouldReceiveAMessageFromTheServer() throws Exception {
+		stompClient = new WebSocketStompClient(new SockJsClient(Arrays.asList(new WebSocketTransport(new StandardWebSocketClient()))));
+    	stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+    	String host = "localhost";
+        WEBSOCKET_URI = "ws://"+host+":"+port+"/dvdtheque-ws/websocket";
+        String homeUrl = "http://localhost:"+port+"/dvdtheque-ws/websocket";
+		logger.debug("Sending warm-up HTTP request to" + homeUrl);
+        
+		HttpStatus status = restTemplate.getForEntity(homeUrl, Void.class, host, port).getStatusCode();
+		Assert.state(status == HttpStatus.OK);
+        stompSession = stompClient.connect(WEBSOCKET_URI, new MyStompSessionHandlerAdapter() {}).get(1, TimeUnit.SECONDS);
 		CompletableFuture<JmsStatusMessage<Film>> resultKeeper = new CompletableFuture<>();
         stompSession.subscribe(SUBSCRIBE_TOPIC_ENDPOINT, new MyStompFrameHandler((payload) -> resultKeeper.complete(payload)));
         JmsStatusMessage<Film> jms = new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT,null,0l,JmsStatus.CLEAN_DB_INIT.statusValue());
