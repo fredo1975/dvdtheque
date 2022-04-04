@@ -28,7 +28,6 @@
 	</modules>
 	<properties>
 		<java.version>11</java.version>
-		<keycloak.version>15.0.2</keycloak.version>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<spring-cloud.dependency.version>2021.0.1</spring-cloud.dependency.version>
 		<activemq.version>5.15.10</activemq.version>
