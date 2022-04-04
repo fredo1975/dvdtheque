@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS "dvdtheque-service".film (
   runtime INT DEFAULT NULL,
   date_sortie TIMESTAMP NOT NULL,
   date_insertion TIMESTAMP NOT NULL,
+  update_ts  TIMESTAMP NOT NULL,
   FOREIGN KEY (dvd_id)
       REFERENCES "dvdtheque-service".dvd (id)
 );

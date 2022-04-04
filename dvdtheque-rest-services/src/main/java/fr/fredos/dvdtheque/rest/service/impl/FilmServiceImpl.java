@@ -8,6 +8,8 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -159,8 +161,24 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = false)
 	public Film updateFilm(Film film) {
 		upperCaseTitre(film);
-		if (film.getDvd() != null && !film.getDvd().isRipped()) {
-			film.getDvd().setDateRip(null);
+		film.setDateMaj(LocalDateTime.now());
+		Film filmRetrieved = mapFilms.get(film.getId());
+		if(filmRetrieved != null) {
+			if(!filmRetrieved.isVu() && film.isVu()) {
+				film.setDateVue(LocalDate.now());
+			}
+			if(filmRetrieved.isVu() && !film.isVu()) {
+				film.setDateVue(null);
+			}
+			if (filmRetrieved.getDvd() != null) {
+				if (!filmRetrieved.getDvd().isRipped() && film.getDvd().isRipped()) {
+					film.getDvd().setDateRip(new Date());
+				}
+				if (filmRetrieved.getDvd().isRipped() && !film.getDvd().isRipped()) {
+					film.getDvd().setDateRip(null);
+				}
+			}
+			
 		}
 		Film mergedFilm = filmDao.save(film);
 		mapFilms.put(film.getId(), mergedFilm);
