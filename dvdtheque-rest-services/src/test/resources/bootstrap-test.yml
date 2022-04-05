@@ -99,7 +99,11 @@ hazelcast:
     join:
       auto-detection:
         enabled: false
-
+stomp:
+  endpoint: /dvdtheque-ws
+  relay:
+    host: 192.168.1.105
+    port: 61613
 keycloak:
   realm: dvdtheque
   auth-server-url: http://localhost:8080/auth

@@ -57,7 +57,7 @@ public class BatchExportFilmsConfiguration {
     @Autowired
     private JobExplorer 											jobExplorer;
     @Autowired
-    RestTemplate													oAuthRestTemplate;
+    RestTemplate													restTemplate;
     @Autowired
     private Environment 											environment;
     public static String 											DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
@@ -85,7 +85,7 @@ public class BatchExportFilmsConfiguration {
 	@StepScope
     @Bean
     protected ListItemReader<Film> dvdthequeServiceFilmReader() {
-        ResponseEntity<List<Film>> filmList = oAuthRestTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)+"?displayType=TOUS", 
+        ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)+"?displayType=TOUS", 
     			HttpMethod.GET, 
     			null, 
     			new ParameterizedTypeReference<List<Film>>(){});

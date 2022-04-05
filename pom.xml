@@ -5,12 +5,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.fredos.dvdtheque</groupId>
 	<artifactId>dvdtheque</artifactId>
-	<version>4.0.0-SNAPSHOT</version>
+	<version>4.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.8</version>
+		<version>2.6.6</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<name>dvdtheque</name>
@@ -28,9 +28,8 @@
 	</modules>
 	<properties>
 		<java.version>11</java.version>
-		<keycloak.version>15.0.2</keycloak.version>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
-		<spring-cloud.dependency.version>2020.0.4</spring-cloud.dependency.version>
+		<spring-cloud.dependency.version>2021.0.1</spring-cloud.dependency.version>
 		<activemq.version>5.15.10</activemq.version>
 		<spring-boot-admin.version>2.3.0</spring-boot-admin.version>
 	</properties>

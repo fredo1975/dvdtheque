@@ -1,5 +1,7 @@
 package fr.fredos.dvdtheque.batch.controller;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -25,6 +27,7 @@ public class JobInvokerController {
 	@Qualifier("importFilmsJob")
 	Job importFilmsJob;
 
+	@RolesAllowed("user")
 	@RequestMapping("/exportFilmsJob")
 	public String handleExportFilmsJob() throws Exception {
 		JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
@@ -33,6 +36,7 @@ public class JobInvokerController {
 		return "Batch exportFilmsJob has been invoked";
 	}
 
+	@RolesAllowed("user")
 	@RequestMapping("/importFilmsJob")
 	@PostMapping("/importFilmsJob")
 	public String handleImportFilmsJob(@RequestBody String filePath) throws Exception {

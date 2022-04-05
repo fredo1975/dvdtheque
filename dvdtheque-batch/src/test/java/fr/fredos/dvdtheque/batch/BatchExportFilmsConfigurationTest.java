@@ -24,7 +24,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import fr.fredos.dvdtheque.batch.configuration.BatchExportFilmsConfiguration;
 import fr.fredos.dvdtheque.batch.model.Film;
 
-@ContextConfiguration(classes={BatchExportFilmsConfiguration.class,OAuth2ClientConfiguration.class})
+@ContextConfiguration(classes={BatchExportFilmsConfiguration.class,BatchTestConfiguration.class})
 public class BatchExportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfigurationTest.class);
 	@Autowired

@@ -27,7 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.util.StopWatch;
@@ -52,14 +54,15 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceIntegrationTests.class);
 	
 	@Autowired
-	private FilmDao filmDao;
+	private FilmDao 			filmDao;
 	@Autowired
-	private IFilmService filmService;
+	private IFilmService 		filmService;
 	@Autowired
-	private IPersonneService personneService;
+	private IPersonneService 	personneService;
 	@Autowired
-	private ExcelFilmHandler excelFilmHandler;
-	
+	private ExcelFilmHandler 	excelFilmHandler;
+	@MockBean
+	private JwtDecoder 			jwtDecoder;
 	@BeforeEach
 	public void cleanAllCaches() {
 		filmService.cleanAllCaches();

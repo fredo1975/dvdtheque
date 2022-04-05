@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
@@ -30,10 +32,11 @@ import fr.fredos.dvdtheque.rest.service.model.PersonneDto;
 public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceIntegrationTests.class);
 	@Autowired
-	protected IPersonneService personneService;
+	protected IPersonneService 	personneService;
 	@Autowired
-	protected IFilmService filmService;
-	
+	protected IFilmService 		filmService;
+	@MockBean
+	private JwtDecoder 			jwtDecoder;
 	@BeforeEach
 	public void cleanAllCaches() {
 		personneService.cleanAllCaches();

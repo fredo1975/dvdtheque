@@ -4,11 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -30,32 +32,33 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
-import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
-import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,10 +87,8 @@ import fr.fredos.dvdtheque.rest.service.IPersonneService;
 import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {HazelcastConfiguration.class, ContextConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {ContextConfiguration.class,HazelcastConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-//@ContextConfiguration
-@Import({ ServletKeycloakAuthUnitTestingSupport.class/*RippedFlagTasklet.class,BatchImportFilmsConfiguration.class,RetrieveDateInsertionTasklet.class*/})
 @ActiveProfiles("test")
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger 								logger = LoggerFactory.getLogger(FilmControllerTest.class);
@@ -99,18 +100,15 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private ObjectMapper 							mapper;
 	@Autowired
 	private ExcelFilmHandler 						excelFilmHandler;
-	@Autowired
-	private ServletKeycloakAuthUnitTestingSupport 	keycloak;
-	@Autowired
-	private MockMvcSupport 							mockMvcSupport;
-	
-	@Autowired
-    private KeycloakRestTemplate 					keycloakRestTemplate;
-
     private MockRestServiceServer 					mockServer;
-    
     @Autowired
     private Environment 							environment;
+    @Autowired
+	private MockMvc 								mockmvc;
+	@MockBean
+	private JwtDecoder 								jwtDecoder;
+	@Autowired
+	private RestTemplate 							restTemplate;
 	
 	public static final MediaType 					APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(),
@@ -139,70 +137,30 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String 					CLEAN_ALL_CACHES_URI = GET_ALL_FILMS_URI + "cleanCaches/";
 	private static final String 					SEARCH_ALL_PERSONNE_URI = "/dvdtheque-service/personnes";
 	private static final String 					EXPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "export";
-
 	public static final String 						SHEET_NAME = "Films";
-	
 	
 	@BeforeEach()
 	public void setUp() throws Exception {
-		mockServer = MockRestServiceServer.createServer(keycloakRestTemplate);
+		mockServer = MockRestServiceServer.createServer(restTemplate);
 		filmService.cleanAllFilms();
 	}
-	
-/*
-	@Before
-	public void beforeSetup() {
-		mvc = MockMvcBuilders.webAppContextSetup(context)
-				   .alwaysDo(print())
-				   .apply(springSecurity())
-				   .build(); 
-	}*/
-	/*
-	@Before
-	public void beforeSetUp() {
-		when(filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.TOUS))).thenAnswer(invocation -> {
-			final Authentication auth = invocation.getArgument(0, Authentication.class);
-			Personne p = new Personne();
-			p.setNom("nom");
-			p.setPrenom("fredo");
-			return p;
-		});
-	}*/
-	@Test
-	//@WithMockUser(username="fredo",authorities={"user"})
-	//@WithMockKeycloackAuth("fredo")
-	//@WithMockKeycloackAuth
-	public void findAllActeurs() throws Exception {
-		/*
-		Collection<GrantedAuthority> authorities = new ArrayList<>();
-		GrantedAuthority aut = new GrantedAuthority() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public String getAuthority() {
-				return "user";
-			}
-		};
-		authorities.add(aut);
-		
-		api
-		.with(keycloak.keycloakAuthenticationToken().authorities(authorities).accessToken(token -> token.setPreferredUsername("fredo")))
-		.get(SEARCH_ALL_ACTTEUR_URI)
-		.andExpect(status().isOk());*/
-		
-		mockMvcSupport.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.get(SEARCH_ALL_ACTTEUR_URI)
-		.andExpect(status().isOk());
-		//assertNotNull(resultActions.andReturn().getResponse().getContentAsString());
-	}
 
+	@Test
+	@WithMockUser(roles = "user")
+	public void findAllActeurs() throws Exception {
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_URI).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+	}
+	@WithMockUser(roles = "user")
 	@Test
 	public void cleanAllFilms() throws Exception {
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(GET_CLEAN_ALL_FILMS_URI))
+		mockmvc.perform(MockMvcRequestBuilders.put(GET_CLEAN_ALL_FILMS_URI).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk());
 	}
-
+	@WithMockUser(roles = "user")
 	@Test
 	public void findAllFilmsByOrigine() throws Exception {
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
@@ -298,9 +256,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film _dvdFilm1 = dvdFilms.get(0);
 		Film _dvdFilm2 = dvdFilms.get(1);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.TOUS.name()))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_dvdFilm1.getTitre())))
 		.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(_dvdFilm2.getTitre())));
@@ -311,9 +268,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film _enSalleFilmsfilm1 = enSalleFilms.get(0);
 		Film _enSalleFilmsfilm2 = enSalleFilms.get(1);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name()).param("displayType", FilmDisplayType.TOUS.name()))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_enSalleFilmsfilm1.getTitre())))
@@ -324,9 +280,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertTrue("tvFilms size should be 1", tvFilms.size() == 1);
 		Film _tvFilm1 = tvFilms.get(0);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name()).param("displayType", FilmDisplayType.TOUS.name()))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_tvFilm1.getTitre())));
@@ -340,9 +295,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film _film4 = allFilms.get(3);
 		Film _film5 = allFilms.get(4);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.TOUS.name()))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_film1.getTitre())))
 		.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(_film2.getTitre())))
@@ -351,7 +305,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andExpect(MockMvcResultMatchers.jsonPath("$[4].titre", Is.is(_film5.getTitre())));
 		
 	}
-
+	@WithMockUser(roles = "user")
 	@Test
 	public void findAllLastAddedFilmsByOrigine() throws Exception {
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
@@ -450,9 +404,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull("dvdFilms size should be 1", dvdFilms);
 		assertTrue("dvdFilms size should be 1", dvdFilms.size() == 1);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film2.getTitre())));
 		
@@ -460,9 +413,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull("enSalleFilms size should be 1", dvdFilms);
 		assertTrue("enSalleFilms size should be 1", enSalleFilms.size() == 1);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film4.getTitre())));
 		
@@ -470,15 +422,13 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull("tvFilms size should be 1", tvFilms);
 		assertTrue("tvFilms size should be 1", tvFilms.size() == 1);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film5.getTitre())));
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film5.getTitre())))
@@ -515,9 +465,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film filmToTest = filmService.findFilm(filmId);
 		assertNotNull(filmToTest);
 		
-		ResultActions resultActions = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("batch","user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI).param("displayType", FilmDisplayType.TOUS.name()))
+		ResultActions resultActions = mockmvc.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film.getTitre())));
 		
@@ -550,9 +499,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(allGenres);
 		assertTrue(CollectionUtils.isNotEmpty(allGenres));
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(GET_ALL_GENRES_URI)).andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
+		mockmvc.perform(MockMvcRequestBuilders.get(GET_ALL_GENRES_URI).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf())).andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Is.is("Action")));
 		
 	}
@@ -608,9 +556,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		
-		ResultActions resultActions = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_TMDB_FILM_BY_TITRE + FilmBuilder.TITRE_FILM_TMBD_ID_844)).andDo(MockMvcResultHandlers.print())
+		ResultActions resultActions = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_TMDB_FILM_BY_TITRE + FilmBuilder.TITRE_FILM_TMBD_ID_844).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf())).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
 		mockServer.verify();
@@ -665,9 +612,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		simulateAlloCineServiceCall(film);
 		
 		
-		ResultActions resultActions = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILM_BY_ID + film.getId()))
+		ResultActions resultActions = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILM_BY_ID + film.getId()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
 		mockServer.verify();
@@ -701,9 +647,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(allRealisateur);
 		if (CollectionUtils.isNotEmpty(allRealisateur)) {
 			Personne realisateur = allRealisateur.get(0);
-			ResultActions resultActions = mockMvcSupport
-			.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-			.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_URI)).andExpect(MockMvcResultMatchers.status().isOk())
+			ResultActions resultActions = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_URI).with(jwt().jwt(builder -> builder.subject("test")))
+					.with(csrf())).andExpect(MockMvcResultMatchers.status().isOk())
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(realisateur.getNom())));
 			
 			assertNotNull(resultActions.andReturn().getResponse().getContentAsString());
@@ -739,9 +684,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertTrue("allRealisateurs size should be 1", allRealisateurs.size() == 1);
 		Personne real1 = allRealisateurs.get(0);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.TOUS.name()))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(real1.getNom())));
@@ -775,9 +719,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		if (CollectionUtils.isNotEmpty(allPersonne)) {
 			Personne personne = allPersonne.get(0);
 			
-			ResultActions resultActions = mockMvcSupport
-			.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-			.perform(MockMvcRequestBuilders.get(SEARCH_ALL_PERSONNE_URI))
+			ResultActions resultActions = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_PERSONNE_URI).with(jwt().jwt(builder -> builder.subject("test")))
+					.with(csrf()))
 					.andExpect(MockMvcResultMatchers.status().isOk())
 					.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(personne.getNom())));
 			
@@ -817,9 +760,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Personne acteur2 = allActeur.get(1);
 		Personne acteur3 = allActeur.get(2);
 		
-		ResultActions resultActions = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.TOUS.name()))
+		ResultActions resultActions = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].nom", Is.is(acteur1.getNom())))
 		.andExpect(MockMvcResultMatchers.jsonPath("$[1].nom", Is.is(acteur2.getNom())))
@@ -851,9 +793,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		
-		ResultActions resultActions = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILM_BY_TMDBID + film.getTmdbId()).contentType(MediaType.APPLICATION_JSON))
+		ResultActions resultActions = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILM_BY_TMDBID + film.getTmdbId()).contentType(MediaType.APPLICATION_JSON).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$", Is.is(Boolean.TRUE)));
 		
@@ -931,9 +872,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(UPDATE_TMDB_FILM_BY_TMDBID + FilmBuilder.tmdbId1, film).contentType(MediaType.APPLICATION_JSON).content(filmJsonString))
+		mockmvc.perform(MockMvcRequestBuilders.put(UPDATE_TMDB_FILM_BY_TMDBID + FilmBuilder.tmdbId1, film).contentType(MediaType.APPLICATION_JSON).content(filmJsonString).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(film.getTitre())));
@@ -978,9 +918,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		
 		simulateAlloCineServiceCall(filmToUpdate);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate).contentType(MediaType.APPLICATION_JSON).content(filmJsonString)).andDo(MockMvcResultHandlers.print())
+		mockmvc.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate).contentType(MediaType.APPLICATION_JSON).content(filmJsonString).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf())).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.dvd.ripped", Is.is(false)));
 		mockServer.verify();
@@ -1022,9 +961,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		FilmBuilder.assertFilmIsNotNull(filmToUpdate, true, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		simulateAlloCineServiceCall(filmToUpdate);
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate).contentType(MediaType.APPLICATION_JSON).content(filmJsonString))
+		mockmvc.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate).contentType(MediaType.APPLICATION_JSON).content(filmJsonString).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.origine", Is.is(FilmOrigine.GOOGLE_PLAY.name())));
@@ -1063,9 +1001,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(filmToRemove);
 		logger.debug("filmToRemove=" + filmToRemove.toString());
 
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(REMOVE_FILM_URI + film.getId())).andDo(MockMvcResultHandlers.print()).andDo(MockMvcResultHandlers.print())
+		mockmvc.perform(MockMvcRequestBuilders.put(REMOVE_FILM_URI + film.getId()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf())).andDo(MockMvcResultHandlers.print()).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		
 		FilmDisplayTypeParam dvdDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.DVD);
@@ -1075,9 +1012,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	@Transactional
 	public void testcleanAllCaches() throws Exception {
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(CLEAN_ALL_CACHES_URI)).andDo(MockMvcResultHandlers.print())
+		mockmvc.perform(MockMvcRequestBuilders.put(CLEAN_ALL_CACHES_URI).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf())).andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		
 	}
@@ -1113,9 +1049,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
           .andExpect(method(HttpMethod.GET))
           .andRespond(withSuccess("true", MediaType.APPLICATION_JSON).body(mapper.writeValueAsString(Boolean.TRUE)));
         
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(RETRIEVE_ALL_FILM_IMAGE_URI))
+        mockmvc.perform(MockMvcRequestBuilders.put(RETRIEVE_ALL_FILM_IMAGE_URI).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		
@@ -1157,9 +1092,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(res), MediaType.APPLICATION_JSON));
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(RETRIEVE_FILM_IMAGE_URI + film.getId()))
+		mockmvc.perform(MockMvcRequestBuilders.put(RETRIEVE_FILM_IMAGE_URI + film.getId()).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
@@ -1213,9 +1147,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		filmToUpdate.setId(filmId);
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		simulateAlloCineServiceCall(filmToUpdate);
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate).contentType(MediaType.APPLICATION_JSON).content(filmJsonString))
+		mockmvc.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate).contentType(MediaType.APPLICATION_JSON).content(filmJsonString).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
@@ -1239,15 +1172,12 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(SAVE_FILM_URI + FilmBuilder.tmdbId3)
 				.contentType(MediaType.APPLICATION_JSON);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(builder)
+		mockmvc.perform(builder.with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		
-		String response = mockMvcSupport
-				.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-				.perform(builder).andReturn().getResponse().getContentAsString();
+		String response = mockmvc.perform(builder).andReturn().getResponse().getContentAsString();
 		logger.debug("response=" + response);
 		Film filmToUpdate = mapper.readValue(response, Film.class);
 		logger.debug("filmToUpdate=" + filmToUpdate);
@@ -1255,9 +1185,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		filmToUpdate.getDvd().setRipped(true);
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + filmToUpdate.getId(), filmToUpdate).content(filmJsonString))
+		mockmvc.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + filmToUpdate.getId(), filmToUpdate).content(filmJsonString).with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		
@@ -1313,9 +1242,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(SAVE_FILM_URI + FilmBuilder.tmdbId2).contentType(MediaType.APPLICATION_JSON).content(FilmOrigine.DVD.name()))
+		mockmvc.perform(MockMvcRequestBuilders.put(SAVE_FILM_URI + FilmBuilder.tmdbId2).contentType(MediaType.APPLICATION_JSON).content(FilmOrigine.DVD.name()).with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
@@ -1378,9 +1306,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user","batch").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(SAVE_FILM_URI + FilmBuilder.tmdbId2).content(FilmOrigine.EN_SALLE.name()))
+		mockmvc.perform(MockMvcRequestBuilders.put(SAVE_FILM_URI + FilmBuilder.tmdbId2).content(FilmOrigine.EN_SALLE.name()).with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
@@ -1421,9 +1348,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
 		Personne personne = personneService.findPersonneByName(FilmBuilder.REAL_NOM_TMBD_ID_844);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_PERSONNE_URI).param("nom", personne.getNom()))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_PERSONNE_URI).param("nom", personne.getNom()).with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.nom", Is.is(personne.getNom())));
@@ -1456,9 +1382,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		personne.setNom(FilmBuilder.ACT2_TMBD_ID_844);
 		String personneJsonString = mapper.writeValueAsString(personne);
 		
-		mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.put(UPDATE_PERSONNE_URI + personne.getId(), personne).contentType(MediaType.APPLICATION_JSON).content(personneJsonString))
+		mockmvc.perform(MockMvcRequestBuilders.put(UPDATE_PERSONNE_URI + personne.getId(), personne).contentType(MediaType.APPLICATION_JSON).content(personneJsonString).with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 		
@@ -1505,9 +1430,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		// FilmBuilder.assertFilmIsNotNull(film2, false, FilmBuilder.RIP_DATE_OFFSET2,
 		// FilmOrigine.DVD);
 		
-		byte[] b = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI).content(FilmOrigine.DVD.name()))
+		byte[] b = mockmvc.perform(MockMvcRequestBuilders.post(EXPORT_FILM_LIST_URI).content(FilmOrigine.DVD.name()).with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 		.andReturn().getResponse().getContentAsByteArray();
@@ -1734,24 +1658,21 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull("dvdFilms size should be 3", dvdFilms);
 		
 		
-		final String realisateurs = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.TOUS.name()))
+		final String realisateurs = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(status().isOk())
 		.andReturn().getResponse().getContentAsString();
 		
 		
-		final String films = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user","batch").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.TOUS.name()))
+		final String films = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(status().isOk())
 		.andReturn().getResponse().getContentAsString();
 		
-		final String filmListParam = mockMvcSupport
-		.with(keycloak.keycloakAuthenticationToken().roles("user","batch").accessToken(token -> token.setPreferredUsername("fredo")))
-		.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_FILM_LIST_PARAM + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.TOUS.name()))
+		final String filmListParam = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_FILM_LIST_PARAM + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(status().isOk())
 		.andReturn().getResponse().getContentAsString();

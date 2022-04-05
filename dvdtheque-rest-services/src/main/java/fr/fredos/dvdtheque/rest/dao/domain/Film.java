@@ -1,6 +1,8 @@
 package fr.fredos.dvdtheque.rest.dao.domain;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -73,6 +75,10 @@ public class Film implements Serializable, Comparable<Film> {
 	private String homepage;
 	@Transient
 	private boolean alreadyInDvdtheque;
+	@Column(name="update_ts", insertable=false, updatable=true)
+	private LocalDateTime dateMaj;
+	@Column(name="vue_date", insertable=false, updatable=true)
+	private LocalDate dateVue;
 	@Transient
 	private List<CritiquePresse> critiquePresse;
 	public Film() {
@@ -161,6 +167,7 @@ public class Film implements Serializable, Comparable<Film> {
 	public void setDateInsertion(Date dateInsertion) {
 		this.dateInsertion = dateInsertion;
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -215,15 +222,24 @@ public class Film implements Serializable, Comparable<Film> {
 	public void setGenre(Set<Genre> genre) {
 		this.genre = genre;
 	}
-	
-	
+	public LocalDateTime getDateMaj() {
+		return dateMaj;
+	}
+	public void setDateMaj(LocalDateTime dateMaj) {
+		this.dateMaj = dateMaj;
+	}
 	public List<CritiquePresse> getCritiquePresse() {
 		return critiquePresse;
 	}
 	public void setCritiquePresse(List<CritiquePresse> critiquePresse) {
 		this.critiquePresse = critiquePresse;
 	}
-	
+	public LocalDate getDateVue() {
+		return dateVue;
+	}
+	public void setDateVue(LocalDate dateVue) {
+		this.dateVue = dateVue;
+	}
 	public void addCritiquePresse(CritiquePresse critiquePresse) {
 		if(CollectionUtils.isEmpty(this.critiquePresse)) {
 			this.critiquePresse = new ArrayList<>();
@@ -240,6 +256,7 @@ public class Film implements Serializable, Comparable<Film> {
 				+ ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd + ", origine=" + origine + ", realisateur="
 				+ realisateur + ", acteur=" + acteur + ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId="
 				+ tmdbId + ", overview=" + overview + ", runtime=" + runtime + ", genre=" + genre + ", homepage="
-				+ homepage + ", alreadyInDvdtheque=" + alreadyInDvdtheque + ", critiquePresse=" + critiquePresse + "]";
+				+ homepage + ", alreadyInDvdtheque=" + alreadyInDvdtheque + ", dateMaj=" + dateMaj + ", dateVue="
+				+ dateVue + ", critiquePresse=" + critiquePresse + "]";
 	}
 }

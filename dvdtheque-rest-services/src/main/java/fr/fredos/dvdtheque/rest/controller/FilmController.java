@@ -30,12 +30,10 @@ import javax.annotation.security.RolesAllowed;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
-import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -53,6 +51,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -87,7 +86,7 @@ import fr.fredos.dvdtheque.rest.service.model.CritiquePresse;
 import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 
 @RestController
-@ComponentScan({ "fr.fredos.dvdtheque" })
+//@ComponentScan({ "fr.fredos.dvdtheque" })
 @RequestMapping("/dvdtheque-service")
 public class FilmController {
 	protected Logger logger = LoggerFactory.getLogger(FilmController.class);
@@ -116,7 +115,7 @@ public class FilmController {
 	@Value("${limit.film.size}")
 	private int limitFilmSize;
 	@Autowired
-	private KeycloakRestTemplate keycloakRestTemplate;
+	private RestTemplate restTemplate;
 	private Map<Integer, Genres> genresById;
 
 	public Map<Integer, Genres> getGenresById() {
@@ -141,7 +140,7 @@ public class FilmController {
 
 	@RolesAllowed("user")
 	@GetMapping("/films/byPersonne")
-	ResponseEntity<Personne> findPersonne(@RequestParam(name = "nom", required = false) String nom) {
+	ResponseEntity<Personne> findPersonne(@RequestParam(name = "nom", required = true) String nom) {
 		try {
 			return ResponseEntity.ok(personneService.findPersonneByName(nom));
 		} catch (Exception e) {
@@ -152,7 +151,7 @@ public class FilmController {
 
 	@RolesAllowed({ "user", "batch" })
 	@GetMapping("/films")
-	ResponseEntity<List<Film>> findAllFilms(@RequestParam(name = "displayType", required = false) String displayType) {
+	ResponseEntity<List<Film>> findAllFilms(@RequestParam(name = "displayType", required = true) String displayType) {
 		try {
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
 			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, 0, FilmOrigine.TOUS);
@@ -194,7 +193,7 @@ public class FilmController {
 	@RolesAllowed({ "user", "batch" })
 	@GetMapping("/films/byOrigine/{origine}")
 	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine,
-			@RequestParam(name = "displayType", required = false) String displayType) {
+			@RequestParam(name = "displayType", required = true) String displayType) {
 		logger.debug("findAllFilmsByOrigine - instanceId=" + instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
@@ -212,7 +211,7 @@ public class FilmController {
 	@RolesAllowed({ "user", "batch" })
 	@GetMapping("/filmListParam/byOrigine/{origine}")
 	ResponseEntity<FilmListParam> findFilmListParamByFilmDisplayTypeParam(@PathVariable String origine,
-			@RequestParam(name = "displayType", required = false) String displayType) {
+			@RequestParam(name = "displayType", required = true) String displayType) {
 		logger.debug("findFilmListParamByFilmDisplayType - instanceId=" + instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
@@ -233,7 +232,7 @@ public class FilmController {
 	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
 		List<Film> films = null;
 		try {
-			ResponseEntity<List<Results>> resultsResponse = keycloakRestTemplate.exchange(
+			ResponseEntity<List<Results>> resultsResponse = restTemplate.exchange(
 					environment.getRequiredProperty(TMDB_SERVICE_URL)
 							+ environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE) + "?title=" + titre,
 					HttpMethod.GET, null, new ParameterizedTypeReference<List<Results>>() {});
@@ -290,7 +289,7 @@ public class FilmController {
 	private Film processRetrieveCritiquePresse(Long id,BiConsumer<Film,Set<CritiquePresseDto>> consumer, Film updatedFilm) {
 		Film film = filmService.findFilm(id);
 		if(film != null) {
-			ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = keycloakRestTemplate.exchange(
+			ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = restTemplate.exchange(
 					environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
 							+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + film.getTitre(),
 					HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
@@ -334,7 +333,7 @@ public class FilmController {
 	@RolesAllowed("user")
 	@GetMapping("/realisateurs/byOrigine/{origine}")
 	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@PathVariable String origine,
-			@RequestParam(name = "displayType", required = false) String displayType) {
+			@RequestParam(name = "displayType", required = true) String displayType) {
 		logger.info("findAllRealisateursByOrigine - instanceId=" + instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
@@ -370,7 +369,7 @@ public class FilmController {
 	@RolesAllowed("user")
 	@GetMapping("/acteurs/byOrigine/{origine}")
 	ResponseEntity<List<Personne>> findAllActeursByOrigine(@PathVariable String origine,
-			@RequestParam(name = "displayType", required = false) String displayType) {
+			@RequestParam(name = "displayType", required = true) String displayType) {
 		logger.info("findAllActeursByOrigine - instanceId=" + instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
@@ -407,7 +406,7 @@ public class FilmController {
 			if (filmOptional == null) {
 				return ResponseEntity.notFound().build();
 			}
-			Results results = keycloakRestTemplate.getForObject(
+			Results results = restTemplate.getForObject(
 					environment.getRequiredProperty(TMDB_SERVICE_URL)
 							+ environment.getRequiredProperty(TMDB_SERVICE_RESULTS) + "?tmdbId=" + tmdbId,
 					Results.class);
@@ -469,7 +468,7 @@ public class FilmController {
 		Date releaseDate = null;
 		try {
 			// releaseDate = retrieveTmdbFrReleaseDate(results.getId());
-			releaseDate = keycloakRestTemplate.getForObject(
+			releaseDate = restTemplate.getForObject(
 					environment.getRequiredProperty(TMDB_SERVICE_URL)
 							+ environment.getRequiredProperty(TMDB_SERVICE_RELEASE_DATE) + "?tmdbId=" + results.getId(),
 					Date.class);
@@ -519,7 +518,7 @@ public class FilmController {
 
 	private void retrieveAndSetCredits(final boolean persistPersonne, final Results results,
 			final Film transformedfilm) {
-		Credits credits = keycloakRestTemplate.getForObject(
+		Credits credits = restTemplate.getForObject(
 				environment.getRequiredProperty(TMDB_SERVICE_URL)
 						+ environment.getRequiredProperty(TMDB_SERVICE_CREDITS) + "?tmdbId=" + results.getId(),
 				Credits.class);
@@ -620,7 +619,7 @@ public class FilmController {
 			if (film == null) {
 				return ResponseEntity.notFound().build();
 			}
-			Results results = keycloakRestTemplate.getForObject(
+			Results results = restTemplate.getForObject(
 					environment.getRequiredProperty(TMDB_SERVICE_URL) + "?tmdbId=" + film.getTmdbId(), Results.class);
 			film.setPosterPath(
 					environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL) + results.getPoster_path());
@@ -640,11 +639,11 @@ public class FilmController {
 					FilmOrigine.TOUS);
 			List<Film> films = filmService.findAllFilms(filmDisplayTypeParam);
 			for (Film film : films) {
-				Boolean posterExists = keycloakRestTemplate.getForObject(
+				Boolean posterExists = restTemplate.getForObject(
 						environment.getRequiredProperty(TMDB_SERVICE_URL) + "?posterPath=" + film.getPosterPath(),
 						Boolean.class);
 				if (!posterExists) {
-					results = keycloakRestTemplate.getForObject(
+					results = restTemplate.getForObject(
 							environment.getRequiredProperty(TMDB_SERVICE_URL) + "?tmdbId=" + film.getTmdbId(),
 							Results.class);
 					film.setPosterPath(environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL)
@@ -664,7 +663,7 @@ public class FilmController {
 	ResponseEntity<Film> saveProcessedFilm(@RequestBody Film film) throws Exception {
 		Film filmToSave = null;
 		try {
-			Results results = keycloakRestTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)
+			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)
 					+ environment.getRequiredProperty(FilmController.TMDB_SERVICE_RESULTS) + "?tmdbId="
 					+ film.getTmdbId(), Results.class);
 			if (results != null) {
@@ -703,7 +702,7 @@ public class FilmController {
 			if (this.filmService.checkIfTmdbFilmExists(tmdbId)) {
 				return ResponseEntity.noContent().build();
 			}
-			Results results = keycloakRestTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)
+			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)
 					+ environment.getRequiredProperty(FilmController.TMDB_SERVICE_RESULTS) + "?tmdbId=" + tmdbId,
 					Results.class);
 			if (results != null) {
@@ -774,7 +773,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 		HttpEntity<?> request = new HttpEntity<>(resFile.getAbsolutePath());
-		ResponseEntity<String> resultsResponse = keycloakRestTemplate.exchange(
+		ResponseEntity<String> resultsResponse = restTemplate.exchange(
 				environment.getRequiredProperty(DVDTHEQUE_BATCH_SERVICE_URL)
 						+ environment.getRequiredProperty(DVDTHEQUE_BATCH_SERVICE_IMPORT),
 				HttpMethod.POST, request, String.class);
