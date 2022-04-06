@@ -1,5 +1,8 @@
 package fr.fredos.dvdtheque.batch.csv.format;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class FilmCsvImportFormat {
 	public FilmCsvImportFormat() {
 		super();
@@ -17,6 +20,8 @@ public class FilmCsvImportFormat {
 	private String filmFormat;
 	private Long tmdbId;
 	private String vu;
+	private LocalDateTime dateMaj;
+	private String dateVue;
 	public String getRealisateur() {
 		return realisateur;
 	}
@@ -95,12 +100,24 @@ public class FilmCsvImportFormat {
 	public void setDateInsertion(String dateInsertion) {
 		this.dateInsertion = dateInsertion;
 	}
+	public LocalDateTime getDateMaj() {
+		return dateMaj;
+	}
+	public void setDateMaj(LocalDateTime dateMaj) {
+		this.dateMaj = dateMaj;
+	}
+	public String getDateVue() {
+		return dateVue;
+	}
+	public void setDateVue(String dateVue) {
+		this.dateVue = dateVue;
+	}
 	@Override
 	public String toString() {
 		return "FilmCsvImportFormat [realisateur=" + realisateur + ", titre=" + titre + ", origine=" + origine
 				+ ", zonedvd=" + zonedvd + ", annee=" + annee + ", acteurs=" + acteurs + ", ripped=" + ripped
 				+ ", ripDate=" + ripDate + ", dateSortieDvd=" + dateSortieDvd + ", dateInsertion=" + dateInsertion
-				+ ", filmFormat=" + filmFormat + ", tmdbId=" + tmdbId + ", vu=" + vu + "]";
+				+ ", filmFormat=" + filmFormat + ", tmdbId=" + tmdbId + ", vu=" + vu + ", dateMaj=" + dateMaj
+				+ ", dateVue=" + dateVue + "]";
 	}
-	
 }
