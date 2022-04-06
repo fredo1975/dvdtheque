@@ -1,9 +1,11 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +33,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,6 +69,8 @@ public class BatchExportFilmsConfiguration {
     RestTemplate													restTemplate;
     @Autowired
     private Environment 											environment;
+    @Autowired
+	AuthorizedClientServiceOAuth2AuthorizedClientManager 			authorizedClientServiceAndManager;
     public static String 											DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
 	public static String 											DVDTHEQUE_SERVICE_ALL="dvdtheque-service.films";
 	
@@ -85,9 +96,19 @@ public class BatchExportFilmsConfiguration {
 	@StepScope
     @Bean
     protected ListItemReader<Film> dvdthequeServiceFilmReader() {
+		OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("keycloak")
+				.principal("batch")
+				.build();
+		OAuth2AuthorizedClient authorizedClient = this.authorizedClientServiceAndManager.authorize(authorizeRequest);
+		OAuth2AccessToken accessToken = Objects.requireNonNull(authorizedClient).getAccessToken();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
+        HttpEntity<?> request = new HttpEntity(headers);
         ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)+"?displayType=TOUS", 
     			HttpMethod.GET, 
-    			null, 
+    			request, 
     			new ParameterizedTypeReference<List<Film>>(){});
         if(filmList != null) {
         	logger.info("Issued: filmList.getBody().size()=" + filmList.getBody().size());
