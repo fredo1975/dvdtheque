@@ -137,7 +137,7 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			filmTemp.setVu(item.getVu().equalsIgnoreCase("oui")?true:false);
 		}
 		if(StringUtils.isNotEmpty(item.getDateVue())) {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			filmTemp.setDateVue(LocalDate.parse(item.getDateVue(),formatter));
 		}else {
 			filmTemp.setDateVue(null);
