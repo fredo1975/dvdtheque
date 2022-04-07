@@ -113,16 +113,17 @@ public class ExcelFilmHandler {
         // 6
         addCell(film.isVu()?"oui":"non");
         // 7
-        if(film.getDateInsertion() != null) {
-        	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        	addCell(sdf.format(film.getDateInsertion()));
-        }else {
-        	addCell("");
-        }
-        // 8
         if(film.getDateVue() != null) {
         	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         	addCell(film.getDateVue().format(formatter));
+        }else {
+        	addCell("");
+        }
+        
+        // 8
+        if(film.getDateInsertion() != null) {
+        	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        	addCell(sdf.format(film.getDateInsertion()));
         }else {
         	addCell("");
         }
