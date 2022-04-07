@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -168,8 +169,8 @@ public class ExcelStreamFilmWriter implements ItemStreamWriter<Film> {
         addCell(film.isVu()?"oui":"non");
         // 7
         if(film.getDateVue() != null) {
-        	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        	addCell(sdf.format(film.getDateVue()));
+        	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        	addCell(film.getDateVue().format(formatter));
         }else {
         	addCell("");
         }
