@@ -3,6 +3,7 @@ package fr.fredos.dvdtheque.batch.film.processor;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
@@ -136,7 +137,8 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			filmTemp.setVu(item.getVu().equalsIgnoreCase("oui")?true:false);
 		}
 		if(StringUtils.isNotEmpty(item.getDateVue())) {
-			filmTemp.setDateVue(LocalDate.parse(item.getDateVue()));
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			filmTemp.setDateVue(LocalDate.parse(item.getDateVue(),formatter));
 		}else {
 			filmTemp.setDateVue(null);
 		}
