@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
-import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Component;
 
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
@@ -119,7 +118,6 @@ public class ExcelFilmHandler {
         }else {
         	addCell("");
         }
-        
         // 8
         if(film.getDateInsertion() != null) {
         	DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

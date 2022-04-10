@@ -74,7 +74,7 @@ public class BatchExportFilmsConfiguration {
     public static String 											DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
 	public static String 											DVDTHEQUE_SERVICE_ALL="dvdtheque-service.films";
 	
-    @Scheduled(cron = "0 10 20 * * ?")
+    @Scheduled(cron = "0 16 22 * * ?")
 	public void exportFilmsJob() {
     	Map<String, JobParameter> jobConfigMap = new HashMap<>();
         jobConfigMap.put("time", new JobParameter(System.currentTimeMillis()));

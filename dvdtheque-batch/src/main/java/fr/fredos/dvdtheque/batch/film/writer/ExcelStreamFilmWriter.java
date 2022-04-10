@@ -167,6 +167,7 @@ public class ExcelStreamFilmWriter implements ItemStreamWriter<Film> {
         addCell(film.getTmdbId().toString());
         // 6
         addCell(film.isVu()?"oui":"non");
+        
         // 7
         if(film.getDateVue() != null) {
         	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");

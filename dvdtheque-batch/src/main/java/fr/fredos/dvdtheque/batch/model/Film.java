@@ -2,13 +2,16 @@ package fr.fredos.dvdtheque.batch.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,7 +36,8 @@ public class Film implements Serializable, Comparable<Film>{
 	private Set<Genre> genre = new HashSet<>();
 	private String homepage;
 	private boolean alreadyInDvdtheque;
-	private LocalDateTime dateMaj;
+	@JsonDeserialize(using = LocalDateDeserializer.class)  
+	@JsonSerialize(using = LocalDateSerializer.class)  
 	private LocalDate dateVue;
 	public Film() {
 		super();
@@ -133,12 +137,6 @@ public class Film implements Serializable, Comparable<Film>{
 	public void setDateInsertion(Date dateInsertion) {
 		this.dateInsertion = dateInsertion;
 	}
-	public LocalDateTime getDateMaj() {
-		return dateMaj;
-	}
-	public void setDateMaj(LocalDateTime dateMaj) {
-		this.dateMaj = dateMaj;
-	}
 	public LocalDate getDateVue() {
 		return dateVue;
 	}
@@ -200,7 +198,7 @@ public class Film implements Serializable, Comparable<Film>{
 				+ realisateur + ", acteur=" + acteur + ", critiquesPresse=" + critiquesPresse + ", vu=" + vu
 				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
 				+ runtime + ", genre=" + genre + ", homepage=" + homepage + ", alreadyInDvdtheque=" + alreadyInDvdtheque
-				+ ", dateMaj=" + dateMaj + ", dateVue=" + dateVue + "]";
+				+ ", dateVue=" + dateVue + "]";
 	}
 	@Override
 	public int compareTo(Film film) {
