@@ -28,6 +28,7 @@ import org.springframework.batch.core.launch.support.SimpleJobOperator;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
@@ -74,7 +75,7 @@ public class BatchExportFilmsConfiguration {
     public static String 											DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
 	public static String 											DVDTHEQUE_SERVICE_ALL="dvdtheque-service.films";
 	
-    @Scheduled(cron = "0 16 22 * * ?")
+    @Scheduled(cron = "${batch.export.cron}")
 	public void exportFilmsJob() {
     	Map<String, JobParameter> jobConfigMap = new HashMap<>();
         jobConfigMap.put("time", new JobParameter(System.currentTimeMillis()));
