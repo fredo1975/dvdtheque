@@ -2,6 +2,8 @@ package fr.fredos.dvdtheque.batch.film.processor;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
@@ -38,7 +40,7 @@ import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 
 public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 	protected Logger logger = LoggerFactory.getLogger(FilmProcessor.class);
-	private static String ALLOCINE_SERVICE_URL ="allocine.service.url";
+	
 	@Autowired
     Environment 													environment;
 	@Autowired
@@ -133,6 +135,12 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			filmTemp.setVu(false);
 		}else {
 			filmTemp.setVu(item.getVu().equalsIgnoreCase("oui")?true:false);
+		}
+		if(StringUtils.isNotEmpty(item.getDateVue())) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			filmTemp.setDateVue(LocalDate.parse(item.getDateVue(),formatter));
+		}else {
+			filmTemp.setDateVue(null);
 		}
 		if(StringUtils.isNotEmpty(item.getDateInsertion())) {
 			DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

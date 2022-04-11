@@ -513,6 +513,9 @@ public class FilmController {
 		if (StringUtils.isNotEmpty(results.getHomepage())) {
 			transformedfilm.setHomepage(results.getHomepage());
 		}
+		if(film != null && film.getDateVue() != null) {
+			transformedfilm.setDateVue(film.getDateVue());
+		}
 		return transformedfilm;
 	}
 

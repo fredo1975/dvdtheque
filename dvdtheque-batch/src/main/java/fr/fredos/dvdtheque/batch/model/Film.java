@@ -1,12 +1,17 @@
 package fr.fredos.dvdtheque.batch.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -31,7 +36,9 @@ public class Film implements Serializable, Comparable<Film>{
 	private Set<Genre> genre = new HashSet<>();
 	private String homepage;
 	private boolean alreadyInDvdtheque;
-	
+	@JsonDeserialize(using = LocalDateDeserializer.class)  
+	@JsonSerialize(using = LocalDateSerializer.class)  
+	private LocalDate dateVue;
 	public Film() {
 		super();
 	}
@@ -130,6 +137,12 @@ public class Film implements Serializable, Comparable<Film>{
 	public void setDateInsertion(Date dateInsertion) {
 		this.dateInsertion = dateInsertion;
 	}
+	public LocalDate getDateVue() {
+		return dateVue;
+	}
+	public void setDateVue(LocalDate dateVue) {
+		this.dateVue = dateVue;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -177,14 +190,15 @@ public class Film implements Serializable, Comparable<Film>{
 	public void setRuntime(Integer runtime) {
 		this.runtime = runtime;
 	}
+	
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", dateInsertion=" + dateInsertion
-				+ ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd + ", origine=" + origine
-				+ ", realisateur=" + realisateur + ", acteur=" + acteur + ", critiquesPresse=" + critiquesPresse
-				+ ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview
-				+ ", runtime=" + runtime + ", genre=" + genre + ", homepage=" + homepage + ", alreadyInDvdtheque="
-				+ alreadyInDvdtheque + "]";
+				+ ", titre=" + titre + ", titreO=" + titreO + ", dvd=" + dvd + ", origine=" + origine + ", realisateur="
+				+ realisateur + ", acteur=" + acteur + ", critiquesPresse=" + critiquesPresse + ", vu=" + vu
+				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
+				+ runtime + ", genre=" + genre + ", homepage=" + homepage + ", alreadyInDvdtheque=" + alreadyInDvdtheque
+				+ ", dateVue=" + dateVue + "]";
 	}
 	@Override
 	public int compareTo(Film film) {

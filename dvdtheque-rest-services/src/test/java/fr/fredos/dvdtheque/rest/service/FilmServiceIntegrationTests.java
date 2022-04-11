@@ -1023,7 +1023,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
                     if(cell.getColumnIndex()==6) {
                     	assertEquals("oui", cellValue);
                     }
-                    if(cell.getColumnIndex()==7) {
+                    if(cell.getColumnIndex()==8) {
                     	final SimpleDateFormat sdfInsert = new SimpleDateFormat("yyyy/MM/dd");
                     	String dateInsertion=null;
                     	try {
@@ -1033,20 +1033,20 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 						}
                     	assertEquals(dateInsertion, cellValue);
                     }
-                    if(cell.getColumnIndex()==8) {
+                    if(cell.getColumnIndex()==9) {
                     	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
                     }
-                    if(cell.getColumnIndex()==9) {
+                    if(cell.getColumnIndex()==10) {
                     	assertEquals("oui", cellValue);
                     }
-                    if(cell.getColumnIndex()==10) {
+                    if(cell.getColumnIndex()==11) {
                     	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
                     	assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
                     }
-                    if(cell.getColumnIndex()==11) {
+                    if(cell.getColumnIndex()==12) {
                     	assertEquals(DvdFormat.DVD.name(), cellValue);
                     }
-                    if(cell.getColumnIndex()==12) {
+                    if(cell.getColumnIndex()==13) {
                     	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
                     	Date sortie = null;
                     	try {
@@ -1084,7 +1084,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
                     if(cell.getColumnIndex()==6) {
                     	assertEquals("non", cellValue);
                     }
-                    if(cell.getColumnIndex()==7) {
+                    if(cell.getColumnIndex()==8) {
                     	final SimpleDateFormat sdfInsert = new SimpleDateFormat("yyyy/MM/dd");
                     	String dateInsertion=null;
                     	try {
@@ -1094,20 +1094,20 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 						}
                     	assertEquals(dateInsertion, cellValue);
                     }
-                    if(cell.getColumnIndex()==8) {
-                    	assertEquals(StringUtils.EMPTY, cellValue);
-                    }
                     if(cell.getColumnIndex()==9) {
                     	assertEquals(StringUtils.EMPTY, cellValue);
                     }
                     if(cell.getColumnIndex()==10) {
+                    	assertEquals(StringUtils.EMPTY, cellValue);
+                    }
+                    if(cell.getColumnIndex()==11) {
                     	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
                     	assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
                     }
-                    if(cell.getColumnIndex()==11) {
+                    if(cell.getColumnIndex()==12) {
                     	assertEquals(StringUtils.EMPTY, cellValue);
                     }
-                    if(cell.getColumnIndex()==12) {
+                    if(cell.getColumnIndex()==13) {
                     	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
                     	Date sortie = null;
                     	try {
@@ -1144,7 +1144,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
                     if(cell.getColumnIndex()==6) {
                     	assertEquals("oui", cellValue);
                     }
-                    if(cell.getColumnIndex()==7) {
+                    if(cell.getColumnIndex()==8) {
                     	final SimpleDateFormat sdfInsert = new SimpleDateFormat("yyyy/MM/dd");
                     	String dateInsertion=null;
                     	try {
@@ -1154,20 +1154,20 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 						}
                     	assertEquals(dateInsertion, cellValue);
                     }
-                    if(cell.getColumnIndex()==8) {
+                    if(cell.getColumnIndex()==9) {
                     	assertEquals(FilmBuilder.ZONE_DVD, cellValue);
                     }
-                    if(cell.getColumnIndex()==9) {
+                    if(cell.getColumnIndex()==10) {
                     	assertEquals("oui", cellValue);
                     }
-                    if(cell.getColumnIndex()==10) {
+                    if(cell.getColumnIndex()==11) {
                     	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
                     	assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET),Locale.FRANCE), cellValue);
                     }
-                    if(cell.getColumnIndex()==11) {
+                    if(cell.getColumnIndex()==12) {
                     	assertEquals(DvdFormat.DVD.name(), cellValue);
                     }
-                    if(cell.getColumnIndex()==12) {
+                    if(cell.getColumnIndex()==13) {
                     	final DateFormatter df = new DateFormatter("dd/MM/yyyy");
                     	Date sortie = null;
                     	try {
