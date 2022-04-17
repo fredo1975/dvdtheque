@@ -132,7 +132,7 @@ public class TmdbServiceController {
 	@GetMapping("/retrieveTmdbFilmListByTitle/byTitle")
 	public ResponseEntity<List<Results>> retrieveTmdbFilmListByTitle(@RequestParam(name="title",required = true)String title){
 		Integer firstPage = Integer.valueOf(1);
-		Set<Results> results = null;
+		Set<Results> results = new HashSet<>();
 		try {
 			SearchResults searchResults = retrieveTmdbSearchResults(title, firstPage);
 			if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
