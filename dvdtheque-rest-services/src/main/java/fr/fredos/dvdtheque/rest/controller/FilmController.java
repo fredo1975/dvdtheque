@@ -717,7 +717,7 @@ public class FilmController {
 						Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), Integer.valueOf(2), null, null,
 								DvdFormat.DVD, null);
 						//dvd.setRipped(true);
-						dvd.setDateRip(new Date());
+						//dvd.setDateRip(new Date());
 						filmToSave.setDvd(dvd);
 					}
 					filmToSave.setDateInsertion(DateUtils.clearDate(new Date()));
