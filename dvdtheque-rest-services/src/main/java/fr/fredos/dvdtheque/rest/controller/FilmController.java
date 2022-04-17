@@ -716,7 +716,7 @@ public class FilmController {
 					if (FilmOrigine.DVD.equals(filmOrigine)) {
 						Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), Integer.valueOf(2), null, null,
 								DvdFormat.DVD, null);
-						dvd.setRipped(true);
+						//dvd.setRipped(true);
 						dvd.setDateRip(new Date());
 						filmToSave.setDvd(dvd);
 					}
