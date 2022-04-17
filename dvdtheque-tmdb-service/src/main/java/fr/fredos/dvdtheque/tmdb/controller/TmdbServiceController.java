@@ -144,7 +144,7 @@ public class TmdbServiceController {
 				searchResults = retrieveTmdbSearchResults(title, firstPage);
 				addResultsToSet(results, searchResults);
 			}
-			List<Results> resultsSorted = results.stream().filter(film->StringUtils.isNotEmpty(film.getRelease_date())).sorted(new Comparator<>() {
+			List<Results> resultsSorted = results.stream().filter(film->film != null && StringUtils.isNotEmpty(film.getRelease_date())).sorted(new Comparator<>() {
 				@Override
 				public int compare(Results o1, Results o2) {
 					return o2.getRelease_date().compareTo(o1.getRelease_date());
