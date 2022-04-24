@@ -193,12 +193,13 @@ public class FilmController {
 	@RolesAllowed({ "user", "batch" })
 	@GetMapping("/films/byOrigine/{origine}")
 	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine,
-			@RequestParam(name = "displayType", required = true) String displayType) {
+			@RequestParam(name = "displayType", required = true) String displayType,
+			@RequestParam(name = "limitFilmSize", required = false) String limitFilmSize) {
 		logger.debug("findAllFilmsByOrigine - instanceId=" + instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, this.limitFilmSize,
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, Integer.valueOf(limitFilmSize),
 					filmOrigine);
 			return ResponseEntity.ok(filmService.findAllFilmsByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {

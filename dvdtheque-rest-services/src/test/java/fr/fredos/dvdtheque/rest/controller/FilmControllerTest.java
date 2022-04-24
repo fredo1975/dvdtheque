@@ -256,7 +256,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film _dvdFilm1 = dvdFilms.get(0);
 		Film _dvdFilm2 = dvdFilms.get(1);
 		
-		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name())
+				.param("limitFilmSize", "40")
+				.param("displayType", FilmDisplayType.TOUS.name())
+				.with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_dvdFilm1.getTitre())))
@@ -268,7 +271,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film _enSalleFilmsfilm1 = enSalleFilms.get(0);
 		Film _enSalleFilmsfilm2 = enSalleFilms.get(1);
 		
-		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name())
+				.param("limitFilmSize", "40")
+				.param("displayType", FilmDisplayType.TOUS.name())
+				.with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.status().isOk())
@@ -280,7 +286,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertTrue("tvFilms size should be 1", tvFilms.size() == 1);
 		Film _tvFilm1 = tvFilms.get(0);
 		
-		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name())
+				.param("limitFilmSize", "40")
+				.param("displayType", FilmDisplayType.TOUS.name())
+				.with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.status().isOk())
@@ -295,7 +304,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film _film4 = allFilms.get(3);
 		Film _film5 = allFilms.get(4);
 		
-		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name())
+				.param("limitFilmSize", "40")
+				.param("displayType", FilmDisplayType.TOUS.name())
+				.with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(_film1.getTitre())))
@@ -404,7 +416,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull("dvdFilms size should be 1", dvdFilms);
 		assertTrue("dvdFilms size should be 1", dvdFilms.size() == 1);
 		
-		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.DVD.name())
+				.param("limitFilmSize", "40")
+				.param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()).with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film2.getTitre())));
@@ -413,7 +427,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull("enSalleFilms size should be 1", dvdFilms);
 		assertTrue("enSalleFilms size should be 1", enSalleFilms.size() == 1);
 		
-		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.EN_SALLE.name())
+				.param("limitFilmSize", "40")
+				.param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()).with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film4.getTitre())));
@@ -422,12 +438,17 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull("tvFilms size should be 1", tvFilms);
 		assertTrue("tvFilms size should be 1", tvFilms.size() == 1);
 		
-		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TV.name())
+				.param("limitFilmSize", "40")
+				.param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()).with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(film5.getTitre())));
 		
-		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name()).with(jwt().jwt(builder -> builder.subject("test")))
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name())
+				.param("limitFilmSize", "40")
+				.param("displayType", FilmDisplayType.DERNIERS_AJOUTS.name())
+				.with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.status().isOk())
@@ -1665,7 +1686,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andReturn().getResponse().getContentAsString();
 		
 		
-		final String films = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(build -> build.subject("test")))
+		final String films = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_ORIGINE + FilmOrigine.TOUS.name())
+				.param("limitFilmSize", "40")
+				.param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(build -> build.subject("test")))
 				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(status().isOk())
