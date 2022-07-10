@@ -68,7 +68,7 @@ excel:
   dvd:
     file:
       path:
-        export: D:/dev/liste_dvd/
+        export: /opt/dvdtheque_batch_service/
       name:
         export: export.xlsx
 
