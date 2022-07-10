@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
@@ -13,21 +14,32 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import fr.fredos.dvdtheque.batch.film.tasklet.RetrieveDateInsertionTasklet;
+import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
+
+@Disabled
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
-@SpringBootTest(classes = {BatchImportFilmsConfiguration.class})
+@SpringBootTest(classes = {BatchImportFilmsConfiguration.class,RippedFlagTasklet.class,RetrieveDateInsertionTasklet.class,JmsMessageSender.class})
 public class BatchImportFilmsConfigurationTest{
 	@Autowired
 	@Qualifier(value = "importFilmsJob")
 	private Job 			job;
 	@Autowired
 	private JobRepository 	jobRepository;
+	@Autowired
+    @Qualifier("rippedFlagTasklet")
+    Tasklet 														rippedFlagTasklet;
+    @Autowired
+    @Qualifier("retrieveDateInsertionTasklet")
+    Tasklet 														retrieveDateInsertionTasklet;
 	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
 	public static final String TITRE_FILM_2001 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_AD_ASTRA = "AD ASTRA";
