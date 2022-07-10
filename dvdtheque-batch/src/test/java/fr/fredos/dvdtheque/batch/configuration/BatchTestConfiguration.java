@@ -4,12 +4,15 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jms.Topic;
+
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -29,7 +32,14 @@ public class BatchTestConfiguration {
     RestTemplate restTemplate() {
         return Mockito.mock(RestTemplate.class);
     }
-	
+	@Bean
+    JmsTemplate jmsTemplate() {
+        return Mockito.mock(JmsTemplate.class);
+    }
+	@Bean
+	Topic topic() {
+        return Mockito.mock(Topic.class);
+    }
 	@Bean
     ClientRegistration dvdthequeClientRegistration(
             @Value("${spring.security.oauth2.client.provider.keycloak.token-uri}") String token_uri,

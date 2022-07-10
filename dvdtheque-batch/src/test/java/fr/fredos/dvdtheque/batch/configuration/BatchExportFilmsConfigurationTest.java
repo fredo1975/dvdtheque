@@ -89,9 +89,9 @@ public class BatchExportFilmsConfigurationTest {
 		List<Film> l = new ArrayList<>();
 		l.add(buildfilm());
         ResponseEntity<List<Film>> filmList = new ResponseEntity<List<Film>>(l,HttpStatus.ACCEPTED);
-        Mockito.when(restTemplate.exchange(Mockito.any(String.class), 
-        		Mockito.any(HttpMethod.class), 
-    			Mockito.any(HttpEntity.class), 
+        Mockito.when(restTemplate.exchange(Mockito.any(String.class),
+        		Mockito.<HttpMethod> any(),
+                Mockito.<HttpEntity<?>> any(),
     			Mockito.any(ParameterizedTypeReference.class)))
         .thenReturn(filmList);
 		Calendar c = Calendar.getInstance();

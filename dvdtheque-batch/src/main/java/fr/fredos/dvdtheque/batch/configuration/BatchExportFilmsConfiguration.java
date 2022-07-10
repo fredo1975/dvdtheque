@@ -88,7 +88,7 @@ public class BatchExportFilmsConfiguration {
 		headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
-        HttpEntity<?> request = new HttpEntity(headers);
+        HttpEntity<?> request = new HttpEntity<>(headers);
         ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)+"?displayType=TOUS", 
     			HttpMethod.GET, 
     			request, 

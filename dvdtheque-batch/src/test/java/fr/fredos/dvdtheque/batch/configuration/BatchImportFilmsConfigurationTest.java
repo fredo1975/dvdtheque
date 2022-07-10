@@ -2,11 +2,14 @@ package fr.fredos.dvdtheque.batch.configuration;
 
 import static org.junit.Assert.assertEquals;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.Date;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -14,33 +17,48 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.batch.film.tasklet.RetrieveDateInsertionTasklet;
 import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
+import fr.fredos.dvdtheque.batch.model.Dvd;
+import fr.fredos.dvdtheque.batch.model.DvdBuilder;
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
 
-@Disabled
+
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
-@SpringBootTest(classes = {BatchImportFilmsConfiguration.class,RippedFlagTasklet.class,RetrieveDateInsertionTasklet.class,JmsMessageSender.class})
+@SpringBootTest(classes = {BatchImportFilmsConfiguration.class,
+		RippedFlagTasklet.class,
+		RetrieveDateInsertionTasklet.class,
+		JmsMessageSender.class,
+		BatchTestConfiguration.class})
 public class BatchImportFilmsConfigurationTest{
+	//protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfigurationTest.class);
 	@Autowired
 	@Qualifier(value = "importFilmsJob")
 	private Job 			job;
 	@Autowired
 	private JobRepository 	jobRepository;
-	@Autowired
-    @Qualifier("rippedFlagTasklet")
-    Tasklet 														rippedFlagTasklet;
-    @Autowired
-    @Qualifier("retrieveDateInsertionTasklet")
-    Tasklet 														retrieveDateInsertionTasklet;
-	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
+	@MockBean
+	private RestTemplate 	restTemplate;
+	
+	@Value("${batch.export.cron}")
+	String cron;
+	@Value("${csv.dvd.file.name.import}")
+    private String path;
+    private String INPUT_FILE_PATH="INPUT_FILE_PATH";
 	public static final String TITRE_FILM_2001 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_AD_ASTRA = "AD ASTRA";
 	public static final String TITRE_FILM_2046 = "2046";
@@ -61,9 +79,25 @@ public class BatchImportFilmsConfigurationTest{
 	
 	@Test
 	public void launchImportFilmsJob() throws Exception {
+		//logger.info("******** path="+path);
+		Dvd dvd = new Dvd();
+		dvd.setFormat(DvdFormat.DVD);
+		dvd.setDateSortie(Date.from(LocalDate.of(2013, 10, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		dvd.setZone(2);
+		dvd.setAnnee(2022);
+		dvd.setRipped(false);
+		
+		ResponseEntity<Dvd> dvdRes = new ResponseEntity<Dvd>(dvd,HttpStatus.ACCEPTED);
+        Mockito.when(restTemplate.exchange(Mockito.any(String.class), 
+        		Mockito.<HttpMethod> any(),
+                Mockito.<HttpEntity<DvdBuilder>> any(),
+                Mockito.<Class<Dvd>> any()))
+        .thenReturn(dvdRes);
+        
 		Calendar c = Calendar.getInstance();
 		JobParametersBuilder builder = new JobParametersBuilder();
 		builder.addDate("TIMESTAMP", c.getTime());
+		builder.addString(INPUT_FILE_PATH, path);
 		JobParameters jobParameters = builder.toJobParameters();
 		SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
 		jobLauncher.setJobRepository(jobRepository);

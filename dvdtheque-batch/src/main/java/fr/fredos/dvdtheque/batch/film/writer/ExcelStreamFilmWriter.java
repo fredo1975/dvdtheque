@@ -79,7 +79,7 @@ public class ExcelStreamFilmWriter implements ItemStreamWriter<Film> {
 
 	@Override
 	public void close() throws ItemStreamException {
-		if (this.workBook == null) {
+		if (this.workBook == null || this.row == null) {
 	        return;
 	    }
 	    try (BufferedOutputStream bos = new BufferedOutputStream(resource.getOutputStream())) {
