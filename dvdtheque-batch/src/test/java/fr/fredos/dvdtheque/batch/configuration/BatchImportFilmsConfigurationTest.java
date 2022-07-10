@@ -1,29 +1,33 @@
-package fr.fredos.dvdtheque.batch;
+package fr.fredos.dvdtheque.batch.configuration;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
-@Disabled
-@ContextConfiguration(classes={BatchImportFilmsConfiguration.class,BatchTestConfiguration.class})
-public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
+@RunWith(SpringRunner.class)
+@ActiveProfiles("test")
+@SpringBootTest(classes = {BatchImportFilmsConfiguration.class})
+public class BatchImportFilmsConfigurationTest{
 	@Autowired
 	@Qualifier(value = "importFilmsJob")
-	public Job job;
-	
+	private Job 			job;
+	@Autowired
+	private JobRepository 	jobRepository;
 	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
 	public static final String TITRE_FILM_2001 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_AD_ASTRA = "AD ASTRA";
@@ -43,29 +47,16 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public static final String ACT3_AD_ASTRA = "KIMBERLY ELISE";
 	public static final String ACT4_AD_ASTRA = "LISAGAY HAMILTON";
 	
-	@BeforeEach
-	public void init() {
-		jobLauncherTestUtils = new JobLauncherTestUtils();
-		jobLauncherTestUtils.setJobLauncher(jobLauncher);
-		jobLauncherTestUtils.setJobRepository(jobRepository);
-		jobLauncherTestUtils.setJob(job);
-	}
-	/*
-	@Test
-	public void contextLoads() {
-	}
-	@Test
-	public void launchCleanDBStep() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchStep("cleanDBStep");
-		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-	}*/
 	@Test
 	public void launchImportFilmsJob() throws Exception {
 		Calendar c = Calendar.getInstance();
-		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
-		jobParametersBuilder.addDate("TIMESTAMP", c.getTime());
-		jobParametersBuilder.addString("INPUT_FILE_PATH", environment.getRequiredProperty(LISTE_DVD_FILE_NAME));
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParametersBuilder.toJobParameters());
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addDate("TIMESTAMP", c.getTime());
+		JobParameters jobParameters = builder.toJobParameters();
+		SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+		jobLauncher.setJobRepository(jobRepository);
+		jobLauncher.afterPropertiesSet();
+		JobExecution jobExecution = jobLauncher.run(job, jobParameters);
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 		
 		/*

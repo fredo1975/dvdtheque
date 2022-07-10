@@ -24,11 +24,29 @@ spring:
   rabbitmq:
     host: 192.168.99.100
     port: 32777
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #jwk-set-uri: http://localhost:8080/auth/realms/dvdtheque-realm/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/auth/realms/dvdtheque
+          user-name-attribute: preferred_username
+      client:
+        provider:
+          keycloak:
+            token-uri: http://localhost:8080/auth/realms/dvdtheque/protocol/openid-connect/token
+        registration:
+          keycloak:
+            client-id: dvdtheque-api
+            client-secret: 19a8c33e-89ec-4e5e-8e80-f752a896bf07
+            authorization-grant-type: client_credentials
 eureka:
   client:
     enabled: false
 
 batch:
+  export:
+    cron: 0 16 22 * * ?
   save:
     nb:
       acteurs: 12
