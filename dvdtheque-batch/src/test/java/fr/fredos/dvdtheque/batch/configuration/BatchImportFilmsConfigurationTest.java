@@ -54,8 +54,6 @@ public class BatchImportFilmsConfigurationTest{
 	@MockBean
 	private RestTemplate 	restTemplate;
 	
-	@Value("${batch.export.cron}")
-	String cron;
 	@Value("${csv.dvd.file.name.import}")
     private String path;
     private String INPUT_FILE_PATH="INPUT_FILE_PATH";
