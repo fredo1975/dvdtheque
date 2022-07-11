@@ -57,7 +57,7 @@ csv:
   dvd:
     file:
       name:
-        import: src/test/resources/ListeDVD.csv
+        import: src/test/resources/ListeDvd.csv
 rippedFlagTasklet:
   from:
     file: true
