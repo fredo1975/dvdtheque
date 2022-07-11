@@ -68,7 +68,7 @@ excel:
   dvd:
     file:
       path:
-        export: /src/test/export/
+        export: src/test/export/
       name:
         export: export.xlsx
 
