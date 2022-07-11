@@ -1694,7 +1694,10 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andExpect(status().isOk())
 		.andReturn().getResponse().getContentAsString();
 		
-		final String filmListParam = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_FILM_LIST_PARAM + FilmOrigine.TOUS.name()).param("displayType", FilmDisplayType.TOUS.name()).with(jwt().jwt(build -> build.subject("test")))
+		final String filmListParam = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_FILM_LIST_PARAM + FilmOrigine.TOUS.name())
+				.param("displayType", FilmDisplayType.TOUS.name())
+				.param("limitFilmSize", "10")
+				.with(jwt().jwt(build -> build.subject("test")))
 				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(status().isOk())
