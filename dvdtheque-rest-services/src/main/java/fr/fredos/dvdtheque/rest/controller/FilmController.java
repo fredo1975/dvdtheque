@@ -213,12 +213,12 @@ public class FilmController {
 	@GetMapping("/filmListParam/byOrigine/{origine}")
 	ResponseEntity<FilmListParam> findFilmListParamByFilmDisplayTypeParam(@PathVariable String origine,
 			@RequestParam(name = "displayType", required = true) String displayType,
-			@RequestParam(name = "limitFilmSize", required = false)int limitFilmSize) {
+			@RequestParam(name = "limitFilmSize", required = false)Integer limitFilmSize) {
 		logger.debug("findFilmListParamByFilmDisplayType - instanceId=" + instanceId+" limitFilmSize="+limitFilmSize);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, limitFilmSize,
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, limitFilmSize.intValue(),
 					filmOrigine);
 			return ResponseEntity.ok(filmService.findFilmListParamByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
