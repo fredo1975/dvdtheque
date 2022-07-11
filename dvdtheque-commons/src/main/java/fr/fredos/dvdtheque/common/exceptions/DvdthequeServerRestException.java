@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 public class DvdthequeServerRestException extends Exception {
 	private static final long serialVersionUID = 1L;
 
-	public DvdthequeServerRestException(Class clazz, String... searchParamsMap) {
+	public DvdthequeServerRestException(Class<?> clazz, String... searchParamsMap) {
         super(DvdthequeServerRestException.generateMessage(clazz.getSimpleName(), toMap(String.class, String.class, searchParamsMap)));
     }
 

@@ -60,6 +60,7 @@ public class JmsStatusMessage<T> implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		@SuppressWarnings("unchecked")
 		JmsStatusMessage<T> other = (JmsStatusMessage<T>) obj;
 		if (film == null) {
 			if (other.film != null)

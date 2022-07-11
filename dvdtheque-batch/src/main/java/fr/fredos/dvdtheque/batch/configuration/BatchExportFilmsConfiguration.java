@@ -2,16 +2,12 @@ package fr.fredos.dvdtheque.batch.configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -39,7 +35,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
@@ -54,7 +49,7 @@ import fr.fredos.dvdtheque.batch.model.Film;
 
 @Configuration
 @EnableScheduling
-@EnableBatchProcessing(modular = true)
+@EnableBatchProcessing
 public class BatchExportFilmsConfiguration {
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfiguration.class);
 	@Autowired
@@ -74,19 +69,7 @@ public class BatchExportFilmsConfiguration {
     public static String 											DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
 	public static String 											DVDTHEQUE_SERVICE_ALL="dvdtheque-service.films";
 	
-    @Scheduled(cron = "0 16 22 * * ?")
-	public void exportFilmsJob() {
-    	Map<String, JobParameter> jobConfigMap = new HashMap<>();
-        jobConfigMap.put("time", new JobParameter(System.currentTimeMillis()));
-        JobParameters parameters = new JobParameters(jobConfigMap);
-        try {
-            jobLauncher().run(runExportFilmsJob(), parameters);
-        } catch (Exception ex) {
-            System.err.println(ex.getMessage());
-        }
-	}
-	
-	@Bean(name = "runExportFilmsJob")
+	@Bean
 	public Job runExportFilmsJob() {
 		return jobBuilders.get("exportFilms")
 				.incrementer(new RunIdIncrementer())
@@ -105,7 +88,7 @@ public class BatchExportFilmsConfiguration {
 		headers.setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
-        HttpEntity<?> request = new HttpEntity(headers);
+        HttpEntity<?> request = new HttpEntity<>(headers);
         ResponseEntity<List<Film>> filmList = restTemplate.exchange(environment.getRequiredProperty(DVDTHEQUE_SERVICE_URL)+environment.getRequiredProperty(DVDTHEQUE_SERVICE_ALL)+"?displayType=TOUS", 
     			HttpMethod.GET, 
     			request, 

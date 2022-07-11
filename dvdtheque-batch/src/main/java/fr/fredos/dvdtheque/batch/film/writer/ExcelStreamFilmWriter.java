@@ -55,7 +55,6 @@ public class ExcelStreamFilmWriter implements ItemStreamWriter<Film> {
     
 	@Autowired
     protected Environment environment;
-    public static final String EXCEL_DVD_FILE_NAME_EXPORT = "excel.dvd.file.name.export";
     public static final String EXCEL_DVD_FILE_PATH_EXPORT = "excel.dvd.file.path.export";
 	private SXSSFWorkbook workBook;
     private WritableResource resource;
@@ -79,7 +78,7 @@ public class ExcelStreamFilmWriter implements ItemStreamWriter<Film> {
 
 	@Override
 	public void close() throws ItemStreamException {
-		if (this.workBook == null) {
+		if (this.workBook == null || this.row == null) {
 	        return;
 	    }
 	    try (BufferedOutputStream bos = new BufferedOutputStream(resource.getOutputStream())) {

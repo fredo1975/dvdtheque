@@ -1,30 +1,62 @@
-package fr.fredos.dvdtheque.batch;
+package fr.fredos.dvdtheque.batch.configuration;
 
 import static org.junit.Assert.assertEquals;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.Date;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
 
-import fr.fredos.dvdtheque.batch.configuration.BatchImportFilmsConfiguration;
-@Disabled
-@ContextConfiguration(classes={BatchImportFilmsConfiguration.class,BatchTestConfiguration.class})
-public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigurationTest{
+import fr.fredos.dvdtheque.batch.film.tasklet.RetrieveDateInsertionTasklet;
+import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
+import fr.fredos.dvdtheque.batch.model.Dvd;
+import fr.fredos.dvdtheque.batch.model.DvdBuilder;
+import fr.fredos.dvdtheque.common.enums.DvdFormat;
+
+
+@RunWith(SpringRunner.class)
+@ActiveProfiles("test")
+@SpringBootTest(classes = {BatchImportFilmsConfiguration.class,
+		RippedFlagTasklet.class,
+		RetrieveDateInsertionTasklet.class,
+		JmsMessageSender.class,
+		BatchTestConfiguration.class})
+public class BatchImportFilmsConfigurationTest{
+	//protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfigurationTest.class);
 	@Autowired
 	@Qualifier(value = "importFilmsJob")
-	public Job job;
+	private Job 			job;
+	@Autowired
+	private JobRepository 	jobRepository;
+	@MockBean
+	private RestTemplate 	restTemplate;
 	
-	private static final String LISTE_DVD_FILE_NAME="csv.dvd.file.name.import";
+	@Value("${csv.dvd.file.name.import}")
+    private String path;
+    private String INPUT_FILE_PATH="INPUT_FILE_PATH";
 	public static final String TITRE_FILM_2001 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_AD_ASTRA = "AD ASTRA";
 	public static final String TITRE_FILM_2046 = "2046";
@@ -43,29 +75,32 @@ public class BatchImportFilmsConfigurationTest extends AbstractBatchFilmsConfigu
 	public static final String ACT3_AD_ASTRA = "KIMBERLY ELISE";
 	public static final String ACT4_AD_ASTRA = "LISAGAY HAMILTON";
 	
-	@BeforeEach
-	public void init() {
-		jobLauncherTestUtils = new JobLauncherTestUtils();
-		jobLauncherTestUtils.setJobLauncher(jobLauncher);
-		jobLauncherTestUtils.setJobRepository(jobRepository);
-		jobLauncherTestUtils.setJob(job);
-	}
-	/*
-	@Test
-	public void contextLoads() {
-	}
-	@Test
-	public void launchCleanDBStep() throws Exception {
-		JobExecution jobExecution = jobLauncherTestUtils.launchStep("cleanDBStep");
-		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-	}*/
 	@Test
 	public void launchImportFilmsJob() throws Exception {
+		//logger.info("******** path="+path);
+		Dvd dvd = new Dvd();
+		dvd.setFormat(DvdFormat.DVD);
+		dvd.setDateSortie(Date.from(LocalDate.of(2013, 10, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		dvd.setZone(2);
+		dvd.setAnnee(2022);
+		dvd.setRipped(false);
+		
+		ResponseEntity<Dvd> dvdRes = new ResponseEntity<Dvd>(dvd,HttpStatus.ACCEPTED);
+        Mockito.when(restTemplate.exchange(Mockito.any(String.class), 
+        		Mockito.<HttpMethod> any(),
+                Mockito.<HttpEntity<DvdBuilder>> any(),
+                Mockito.<Class<Dvd>> any()))
+        .thenReturn(dvdRes);
+        
 		Calendar c = Calendar.getInstance();
-		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
-		jobParametersBuilder.addDate("TIMESTAMP", c.getTime());
-		jobParametersBuilder.addString("INPUT_FILE_PATH", environment.getRequiredProperty(LISTE_DVD_FILE_NAME));
-		JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParametersBuilder.toJobParameters());
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addDate("TIMESTAMP", c.getTime());
+		builder.addString(INPUT_FILE_PATH, path);
+		JobParameters jobParameters = builder.toJobParameters();
+		SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+		jobLauncher.setJobRepository(jobRepository);
+		jobLauncher.afterPropertiesSet();
+		JobExecution jobExecution = jobLauncher.run(job, jobParameters);
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 		
 		/*

@@ -193,12 +193,13 @@ public class FilmController {
 	@RolesAllowed({ "user", "batch" })
 	@GetMapping("/films/byOrigine/{origine}")
 	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine,
-			@RequestParam(name = "displayType", required = true) String displayType) {
+			@RequestParam(name = "displayType", required = true) String displayType,
+			@RequestParam(name = "limitFilmSize", required = false) String limitFilmSize) {
 		logger.debug("findAllFilmsByOrigine - instanceId=" + instanceId);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, this.limitFilmSize,
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, Integer.valueOf(limitFilmSize),
 					filmOrigine);
 			return ResponseEntity.ok(filmService.findAllFilmsByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
@@ -716,8 +717,8 @@ public class FilmController {
 					if (FilmOrigine.DVD.equals(filmOrigine)) {
 						Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), Integer.valueOf(2), null, null,
 								DvdFormat.DVD, null);
-						dvd.setRipped(true);
-						dvd.setDateRip(new Date());
+						//dvd.setRipped(true);
+						//dvd.setDateRip(new Date());
 						filmToSave.setDvd(dvd);
 					}
 					filmToSave.setDateInsertion(DateUtils.clearDate(new Date()));

@@ -132,7 +132,7 @@ public class TmdbServiceController {
 	@GetMapping("/retrieveTmdbFilmListByTitle/byTitle")
 	public ResponseEntity<List<Results>> retrieveTmdbFilmListByTitle(@RequestParam(name="title",required = true)String title){
 		Integer firstPage = Integer.valueOf(1);
-		Set<Results> results = null;
+		Set<Results> results = new HashSet<>();
 		try {
 			SearchResults searchResults = retrieveTmdbSearchResults(title, firstPage);
 			if(CollectionUtils.isNotEmpty(searchResults.getResults())) {
@@ -144,7 +144,7 @@ public class TmdbServiceController {
 				searchResults = retrieveTmdbSearchResults(title, firstPage);
 				addResultsToSet(results, searchResults);
 			}
-			List<Results> resultsSorted = results.stream().filter(film->StringUtils.isNotEmpty(film.getRelease_date())).sorted(new Comparator<>() {
+			List<Results> resultsSorted = results.stream().filter(film->film != null && StringUtils.isNotEmpty(film.getRelease_date())).sorted(new Comparator<>() {
 				@Override
 				public int compare(Results o1, Results o2) {
 					return o2.getRelease_date().compareTo(o1.getRelease_date());
