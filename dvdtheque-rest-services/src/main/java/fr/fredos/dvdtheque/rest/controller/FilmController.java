@@ -212,18 +212,19 @@ public class FilmController {
 	@RolesAllowed({ "user", "batch" })
 	@GetMapping("/filmListParam/byOrigine/{origine}")
 	ResponseEntity<FilmListParam> findFilmListParamByFilmDisplayTypeParam(@PathVariable String origine,
-			@RequestParam(name = "displayType", required = true) String displayType) {
-		logger.debug("findFilmListParamByFilmDisplayType - instanceId=" + instanceId);
+			@RequestParam(name = "displayType", required = true) String displayType,
+			@RequestParam(name = "limitFilmSize", required = false)Integer limitFilmSize) {
+		logger.debug("findFilmListParamByFilmDisplayType - instanceId=" + instanceId+" limitFilmSize="+limitFilmSize);
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
 			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, this.limitFilmSize,
+			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, limitFilmSize.intValue(),
 					filmOrigine);
 			return ResponseEntity.ok(filmService.findFilmListParamByFilmDisplayType(filmDisplayTypeParam));
 		} catch (Exception e) {
 			logger.error(format(
-					"an error occured while findFilmListParamByFilmDisplayTypeParam origine='%s' and displayType='%s' ",
-					origine, displayType), e);
+					"an error occured while findFilmListParamByFilmDisplayTypeParam origine='%s' and displayType='%s' and limitFilmSize = '%s'",
+					origine, displayType,limitFilmSize), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
