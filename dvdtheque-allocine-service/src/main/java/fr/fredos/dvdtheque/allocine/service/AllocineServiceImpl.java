@@ -184,24 +184,19 @@ public class AllocineServiceImpl implements AllocineService {
 									if (e5.select(DIV_RATING_MDL_1_HOLDER).size() > 0) {
 										// logger.debug("######### 1**");
 										rating = 1.0d;
-									}
-									if (e5.select(DIV_RATING_MDL_2_HOLDER).size() > 0) {
+									}else if (e5.select(DIV_RATING_MDL_2_HOLDER).size() > 0) {
 										// logger.debug("######### 2**");
 										rating = 2.0d;
-									}
-									if (e5.select(DIV_RATING_MDL_3_HOLDER).size() > 0) {
+									}else if (e5.select(DIV_RATING_MDL_3_HOLDER).size() > 0) {
 										// logger.debug("######### 3**");
 										rating = 3.0d;
-									}
-									if (e5.select(DIV_RATING_MDL_4_HOLDER).size() > 0) {
+									}else if (e5.select(DIV_RATING_MDL_4_HOLDER).size() > 0) {
 										// logger.debug("######### 4**");
 										rating = 4.0d;
-									}
-									if (e5.select(DIV_RATING_MDL_5_HOLDER).size() > 0) {
+									}else if (e5.select(DIV_RATING_MDL_5_HOLDER).size() > 0) {
 										// logger.debug("######### 5**");
 										rating = 5.0d;
-									}
-									if (rating == null) {
+									}else{
 										rating = 0.0d;
 									}
 									cp.setRating(rating);
