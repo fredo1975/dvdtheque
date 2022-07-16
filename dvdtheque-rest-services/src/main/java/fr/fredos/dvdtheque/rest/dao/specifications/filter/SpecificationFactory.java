@@ -39,15 +39,12 @@ public class SpecificationFactory<T> {
 				return builder.equal(root.get(criteria.getKey()),Integer.valueOf((String)criteria.getValue()));
 			}else if(root.get(criteria.getKey()).getJavaType() == Set.class) {
 				Join join = null;
-            	if(((String)criteria.getKey()).equalsIgnoreCase("realisateur")) {
-    				join = root.join(criteria.getKey());
-    			}
-            	if(((String)criteria.getKey()).equalsIgnoreCase("acteur")) {
+            	if(((String)criteria.getKey()).equalsIgnoreCase("realisateur") || ((String)criteria.getKey()).equalsIgnoreCase("acteur")) {
     				join = root.join(criteria.getKey());
     			}
             	return builder.like(join.get("nom"), "%"+StringUtils.upperCase((String) criteria.getValue()) +"%");
             } else {
-            	return builder.equal(root.get(criteria.getKey()), (String)criteria.getValue());
+            	return builder.like(root.get(criteria.getKey()), "%"+StringUtils.upperCase((String) criteria.getValue()) +"%");
             }
 		};
 	}
