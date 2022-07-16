@@ -2,9 +2,11 @@ package fr.fredos.dvdtheque.rest.dao.specifications.filter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.criteria.Join;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -32,6 +34,17 @@ public class SpecificationFactory<T> {
 			if(root.get(criteria.getKey()).getJavaType().getSuperclass() == Enum.class) {
 				Class<Enum> clazz = (Class<Enum>) root.get(criteria.getKey()).getJavaType();
 				return builder.equal(root.get(criteria.getKey()),Enum.valueOf(clazz, (String) criteria.getValue()));
+			}else if(root.get(criteria.getKey()).getJavaType() == Integer.class) {
+				return builder.equal(root.get(criteria.getKey()),Integer.valueOf((String)criteria.getValue()));
+			}else if(root.get(criteria.getKey()).getJavaType() == Set.class) {
+				Join join = null;
+            	if(((String)criteria.getKey()).equalsIgnoreCase("realisateur")) {
+    				join = root.join(criteria.getKey());
+    			}
+            	if(((String)criteria.getKey()).equalsIgnoreCase("acteur")) {
+    				join = root.join(criteria.getKey());
+    			}
+            	return builder.like(join.get("nom"), "%"+criteria.getValue()+"%");
             } else {
             	return builder.equal(root.get(criteria.getKey()), (String)criteria.getValue());
             }

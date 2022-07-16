@@ -87,7 +87,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		final var query = "titre:eq:"+FilmBuilder.TITRE_FILM_TMBD_ID_844+":AND";
+		var query = "titre:eq:"+FilmBuilder.TITRE_FILM_TMBD_ID_844+":AND";
 		var l = filmService.search(query, 1, 1, "-titre");
 		assertNotNull(l);
 		var it = l.iterator();
@@ -95,6 +95,30 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		var f = it.next();
 		assertNotNull(f);
 		assertEquals("titre should match",FilmBuilder.TITRE_FILM_TMBD_ID_844, f.getTitre());
+		query = "realisateur:eq:"+FilmBuilder.REAL_NOM_TMBD_ID_844+":AND";
+		l = filmService.search(query, 1, 1, "-titre");
+		assertNotNull(l);
+		it = l.iterator();
+		assertNotNull(it);
+		var r = it.next();
+		assertNotNull(r);
+		assertEquals("titre should match",FilmBuilder.TITRE_FILM_TMBD_ID_844, r.getTitre());
+		query = "acteur:eq:"+FilmBuilder.ACT1_TMBD_ID_844+":AND";
+		l = filmService.search(query, 1, 1, "-titre");
+		assertNotNull(l);
+		it = l.iterator();
+		assertNotNull(it);
+		var a = it.next();
+		assertNotNull(a);
+		assertEquals("titre should match",FilmBuilder.TITRE_FILM_TMBD_ID_844, a.getTitre());
+		query = "annee:eq:"+FilmBuilder.ANNEE+":AND";
+		l = filmService.search(query, 1, 1, "-titre");
+		assertNotNull(l);
+		it = l.iterator();
+		assertNotNull(it);
+		var an = it.next();
+		assertNotNull(an);
+		assertEquals("titre should match",FilmBuilder.TITRE_FILM_TMBD_ID_844, an.getTitre());
 	}
 	@Test
 	public void saveNewFilm() throws ParseException {
