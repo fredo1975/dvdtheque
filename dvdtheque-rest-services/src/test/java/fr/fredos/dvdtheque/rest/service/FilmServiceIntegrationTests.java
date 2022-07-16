@@ -21,7 +21,6 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +65,36 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 	@BeforeEach
 	public void cleanAllCaches() {
 		filmService.cleanAllCaches();
+	}
+	@Test
+	public void search() throws ParseException{
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		final var query = "titre:eq:"+FilmBuilder.TITRE_FILM_TMBD_ID_844+":AND";
+		var l = filmService.search(query, 1, 1, "-titre");
+		assertNotNull(l);
+		var it = l.iterator();
+		assertNotNull(it);
+		var f = it.next();
+		assertNotNull(f);
+		assertEquals("titre should match",FilmBuilder.TITRE_FILM_TMBD_ID_844, f.getTitre());
 	}
 	@Test
 	public void saveNewFilm() throws ParseException {
@@ -743,7 +772,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		assertEquals(real.getPrenom(),realisateur.getPrenom());
 	}
 	@Test
-	@Disabled
+	//@Disabled
 	public void findAllFilmsByCriteriaRippedSinceDao() throws ParseException {
 		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
 		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
@@ -756,7 +785,7 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setAnnee(FilmBuilder.ANNEE)
 				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD)
+				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(Integer.valueOf(2))
@@ -778,17 +807,20 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 				.setGenre2(genre2)
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_4780)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET2)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET2))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId2 = filmService.saveNewFilm(film2);
 		assertNotNull(filmId2);
-		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
-		final String query = "dvd.ripped:eq:"+Boolean.TRUE+":AND";
+		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET2, FilmOrigine.DVD, null, null);
+		final String query = "origine:eq:"+FilmOrigine.DVD+":AND";
 		List<Film> films = filmService.search(query, 1, 1, "-titre");
 		assertNotNull(films);
 		for(Film f2 : films){
 			logger.debug(f2.toString());
 		}
-		assertEquals(2, films.size());
+		assertEquals(1, films.size());
 		Film f2 = films.get(0);
 		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780),f2.getTitre());
 		Set<Personne> realisateurSet = f2.getRealisateur();
