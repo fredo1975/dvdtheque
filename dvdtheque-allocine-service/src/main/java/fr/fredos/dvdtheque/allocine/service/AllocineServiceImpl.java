@@ -177,7 +177,7 @@ public class AllocineServiceImpl implements AllocineService {
 								Elements a = e5.select(DIV_EVAL_HOLDER);
 								// logger.debug("######### a="+a.text());
 								CritiquePresse cp = map.get(index++);
-								if(cp != null && StringUtils.isNotEmpty(cp.getBody())) {
+								if(cp != null && StringUtils.isNotEmpty(cp.getBody()) && a != null && StringUtils.isNotEmpty(a.text())) {
 									cp.setAuthor(a.text());
 
 									Double rating = null;
