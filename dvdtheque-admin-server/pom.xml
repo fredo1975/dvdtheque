@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>fr.fredos.dvdtheque</groupId>
 		<artifactId>dvdtheque</artifactId>
-		<version>4.1.0-SNAPSHOT</version>
+		<version>4.2.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>dvdtheque-admin-server</artifactId>
 	<packaging>jar</packaging>
