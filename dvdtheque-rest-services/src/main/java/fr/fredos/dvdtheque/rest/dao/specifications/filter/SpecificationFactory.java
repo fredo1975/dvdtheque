@@ -44,7 +44,7 @@ public class SpecificationFactory<T> {
     			}
             	return builder.like(join.get("nom"), "%"+StringUtils.upperCase((String) criteria.getValue()) +"%");
             } else {
-            	return builder.like(root.get(criteria.getKey()), "%"+StringUtils.upperCase((String) criteria.getValue()) +"%");
+            	return builder.like(root.get(criteria.getKey()), "%"+StringUtils.upperCase(criteria.getValue().toString()) +"%");
             }
 		};
 	}
