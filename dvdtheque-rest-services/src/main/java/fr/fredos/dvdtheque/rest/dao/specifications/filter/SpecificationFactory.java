@@ -8,6 +8,7 @@ import java.util.function.Function;
 import javax.annotation.PostConstruct;
 import javax.persistence.criteria.Join;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 @Component
@@ -44,7 +45,7 @@ public class SpecificationFactory<T> {
             	if(((String)criteria.getKey()).equalsIgnoreCase("acteur")) {
     				join = root.join(criteria.getKey());
     			}
-            	return builder.like(join.get("nom"), "%"+criteria.getValue()+"%");
+            	return builder.like(join.get("nom"), "%"+StringUtils.upperCase((String) criteria.getValue()) +"%");
             } else {
             	return builder.equal(root.get(criteria.getKey()), (String)criteria.getValue());
             }
