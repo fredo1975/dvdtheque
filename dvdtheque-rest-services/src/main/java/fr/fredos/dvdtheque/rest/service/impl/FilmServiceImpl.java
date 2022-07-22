@@ -367,6 +367,8 @@ public class FilmServiceImpl implements IFilmService {
 			return list;
 		}else if(FilmDisplayType.DERNIERS_AJOUTS_NON_VUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
 			return films.stream().sorted(Comparator.comparing(Film::getDateInsertion).reversed()).filter(f->!f.isVu()).limit(filmDisplayTypeParam.getLimitFilmSize()).collect(Collectors.toList());
+		}else if(FilmDisplayType.NON_VUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
+			return films.stream().sorted(Comparator.comparing(Film::getTitre)).filter(f->!f.isVu()).limit(filmDisplayTypeParam.getLimitFilmSize()).collect(Collectors.toList());
 		}else {
 			return films.stream().sorted(Comparator.comparing(Film::getDateInsertion).reversed()).limit(filmDisplayTypeParam.getLimitFilmSize()).collect(Collectors.toList());
 		}
