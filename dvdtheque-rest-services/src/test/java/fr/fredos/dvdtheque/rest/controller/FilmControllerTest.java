@@ -140,6 +140,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String 					CLEAN_ALL_CACHES_URI = GET_ALL_FILMS_URI + "cleanCaches/";
 	private static final String 					SEARCH_ALL_PERSONNE_URI = "/dvdtheque-service/personnes";
 	private static final String 					EXPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "export";
+	private static final String 					EXPORT_FILM_SEARCH_URI = GET_ALL_FILMS_URI + "search/export";
 	public static final String 						SHEET_NAME = "Films";
 	
 	@BeforeEach()
@@ -1416,7 +1417,120 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	}
 
 	@Test
-	@Disabled
+	public void testExportFilmSearch() throws Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setVu(true).setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1).setGenre2(genre2)
+				.setZone(Integer.valueOf(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		Film film2 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_4780)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780).setRipped(true)
+				.setVu(true).setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.BLUERAY).setOrigine(FilmOrigine.DVD).setGenre1(genre1).setGenre2(genre2)
+				.setZone(Integer.valueOf(2)).setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_4780)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET2)).build();
+		Long filmId2 = filmService.saveNewFilm(film2);
+		assertNotNull(filmId2);
+		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		// FilmBuilder.assertFilmIsNotNull(film2, false, FilmBuilder.RIP_DATE_OFFSET2,
+		// FilmOrigine.DVD);
+		var query = "titre:eq:"+FilmBuilder.TITRE_FILM_TMBD_ID_4780+":AND,";
+		byte[] b = mockmvc.perform(MockMvcRequestBuilders.post(EXPORT_FILM_SEARCH_URI).content(query).with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+		.andReturn().getResponse().getContentAsByteArray();
+		
+		assertNotNull(b);
+		
+		Workbook workbook = excelFilmHandler.createSheetFromByteArray(b);
+		workbook.forEach(sheet -> {
+			assertEquals(SHEET_NAME, sheet.getSheetName());
+		});
+		Sheet sheet = workbook.getSheetAt(0);
+		assertEquals(SHEET_NAME, sheet.getSheetName());
+		
+		DataFormatter dataFormatter = new DataFormatter();
+		
+		sheet.forEach(row -> {
+			//SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.FRANCE);
+			if (row.getRowNum() == 2) {
+				row.forEach(cell -> {
+					String cellValue = dataFormatter.formatCellValue(cell);
+					if (cell.getColumnIndex() == 0) {
+						assertEquals(FilmBuilder.REAL_NOM_TMBD_ID_4780, cellValue);
+					}
+					if (cell.getColumnIndex() == 1) {
+						assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_4780),
+								StringUtils.upperCase(cellValue));
+					}
+					if (cell.getColumnIndex() == 2) {
+						assertEquals(FilmBuilder.ANNEE.toString(), cellValue);
+					}
+					if (cell.getColumnIndex() == 3) {
+						assertEquals(FilmBuilder.ACT3_TMBD_ID_4780 + "," + FilmBuilder.ACT1_TMBD_ID_4780 + ","
+								+ FilmBuilder.ACT2_TMBD_ID_4780, cellValue);
+					}
+					if (cell.getColumnIndex() == 4) {
+						assertEquals(FilmOrigine.DVD.name(), cellValue);
+					}
+					if (cell.getColumnIndex() == 5) {
+						assertEquals(FilmBuilder.TMDBID_844.toString(), cellValue);
+					}
+					if (cell.getColumnIndex() == 6) {
+						assertEquals("oui", cellValue);
+					}
+					if(cell.getColumnIndex()==7) {
+						final SimpleDateFormat sdfInsert = new SimpleDateFormat("yyyy/MM/dd");
+                    	String dateInsertion=null;
+                    	try {
+                    		dateInsertion=FilmBuilder.createDateInsertion(sdfInsert.parse(FilmBuilder.FILM_DATE_INSERTION), "dd/MM/yyyy");
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+                    	assertEquals(dateInsertion, cellValue);
+                    }
+					if (cell.getColumnIndex() == 8) {
+						assertEquals(FilmBuilder.ZONE_DVD, cellValue);
+					}
+					if (cell.getColumnIndex() == 9) {
+						assertEquals("oui", cellValue);
+					}
+					if (cell.getColumnIndex() == 10) {
+						final DateFormatter df = new DateFormatter("dd/MM/yyyy");
+						assertEquals(df.print(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET2), Locale.FRANCE),
+								cellValue);
+					}
+					if (cell.getColumnIndex() == 11) {
+						assertEquals(DvdFormat.BLUERAY.name(), cellValue);
+					}
+					if (cell.getColumnIndex() == 12) {
+						assertEquals(StringUtils.EMPTY, cellValue);
+					}
+				});
+			}
+		});
+	}
+	@Test
+	//@Disabled
 	public void testExportFilmList() throws Exception {
 		filmService.cleanAllFilms();
 		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
@@ -1467,7 +1581,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		});
 		Sheet sheet = workbook.getSheetAt(0);
 		assertEquals(SHEET_NAME, sheet.getSheetName());
+		/*
 		DataFormatter dataFormatter = new DataFormatter();
+		
 		sheet.forEach(row -> {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.FRANCE);
 			if (row.getRowNum() == 2) {
@@ -1586,7 +1702,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 					}
 				});
 			}
-		});
+		});*/
 	}
 	
 	@Test
@@ -1600,7 +1716,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1).setGenre2(genre2)
@@ -1617,14 +1734,16 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
 		Long filmId2 = filmService.saveNewFilm(film2);
 		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		assertNotNull(filmId2);
@@ -1634,7 +1753,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_1271)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_1271)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
@@ -1651,7 +1771,9 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setVu(true)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
@@ -1713,6 +1835,19 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(filmListParamReaded);
 		assertEquals(relisateursReaded,filmListParamReaded.getRealisateurs());
 		assertEquals(filmsReaded,filmListParamReaded.getFilms());
+		
+		final String filmListParamNonVus = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_FILM_LIST_PARAM + FilmOrigine.TOUS.name())
+				.param("displayType", FilmDisplayType.NON_VUS.name())
+				.param("limitFilmSize", "10")
+				.with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(status().isOk())
+		.andReturn().getResponse().getContentAsString();
+		FilmListParam filmListParamNonVusRead = mapper.readValue(filmListParamNonVus,new TypeReference<FilmListParam>(){});
+		assertNotNull(filmListParamNonVusRead);
+		assertEquals(4,filmListParamNonVusRead.getFilms().size());
+		
 	}
 	@Test
 	public void testSearch() throws UnsupportedEncodingException, Exception {

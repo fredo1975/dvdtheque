@@ -838,4 +838,30 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	
+	@RolesAllowed("user")
+	@PostMapping("/films/search/export")
+	ResponseEntity<byte[]> exportFilmSearch(@RequestBody String query)
+			throws DvdthequeServerRestException, IOException {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentLanguage(Locale.FRANCE);
+		headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+		LocalDateTime localDate = LocalDateTime.now();
+		String fileName = "ListeDVDSearch" + "-" + localDate.getSecond() + ".xlsx";
+		try {
+			List<Film> list = filmService.search(query, 1, 100, "");
+			if (list == null) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+			}
+			byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
+			headers.setContentType(
+					MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+			headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+			headers.setContentLength(excelContent.length);
+			return new ResponseEntity<byte[]>(excelContent, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error("an error occured while exporting film search", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 }
