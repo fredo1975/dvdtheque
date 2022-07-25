@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.allocine.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -102,20 +103,32 @@ public class AllocineServiceImpl implements AllocineService {
 		}
 		return null;
 	}
-
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW,readOnly = false)
+	public List<FicheFilm> saveFicheFilmList(List<FicheFilm> ficheFilmList) {
+		try{
+			return ficheFilmRepository.saveAll(ficheFilmList);
+		}catch(Exception e) {
+			logger.error("an error occured while saving ficheFilm {}",ficheFilmList.toString(),e);
+		}
+		return List.of();
+	}
 	/**
 	 * 
 	 * @param allFicheFilmFromPage
 	 */
 	private void processCritiquePress(final Set<FicheFilm> allFicheFilmFromPage) {
 		if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
+			var l = new ArrayList<FicheFilm>();
 			for (FicheFilm ficheFilm : allFicheFilmFromPage) {
 				Map<Integer, CritiquePresse> map = retrieveCritiquePresseMap(ficheFilm);
 				Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getAllocineFilmId());
 				if(MapUtils.isNotEmpty(map) && op.isEmpty()) {
-					saveFicheFilm(ficheFilm);
+					//saveFicheFilm(ficheFilm);
+					l.add(ficheFilm);
 				}
 			}
+			saveFicheFilmList(l);
 		}
 	}
 

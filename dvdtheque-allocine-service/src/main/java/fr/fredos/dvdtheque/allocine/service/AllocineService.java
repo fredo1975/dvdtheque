@@ -14,4 +14,5 @@ public interface AllocineService {
 	void removeAllFilmWithoutCritique();
 	List<FicheFilm> findAllFilmWithoutCritique();
 	FicheFilm saveFicheFilm(FicheFilm ficheFilm);
+	List<FicheFilm> saveFicheFilmList(List<FicheFilm> ficheFilmList);
 }
