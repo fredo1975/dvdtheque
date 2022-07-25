@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.allocine.domain;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -29,7 +30,11 @@ public class FicheFilm {
 	private String title;
 	@OneToMany(mappedBy = "ficheFilm",cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<CritiquePresse> critiquePresse = new HashSet<>();
- 
+	@Column(name="creation_date")
+	private LocalDateTime creationDate;
+	public LocalDateTime getCreationDate() {
+		return creationDate;
+	}
 	public FicheFilm() {
 		super();
 	}
@@ -39,6 +44,7 @@ public class FicheFilm {
 		this.allocineFilmId = allocineFilmId;
 		this.url = url;
 		this.pageNumber = pageNumber;
+		this.creationDate = LocalDateTime.now();
 	}
 	
 	public int getId() {

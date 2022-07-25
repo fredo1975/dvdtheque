@@ -103,6 +103,7 @@ public class AllocineServiceImpl implements AllocineService {
 		return null;
 	}
 
+	/*
 	private void removeCritiquePresseWithNoRating(Map<Integer, CritiquePresse> map) {
 		java.util.Iterator<CritiquePresse> itr = map.values().iterator();
 		while (itr.hasNext()) {
@@ -111,7 +112,7 @@ public class AllocineServiceImpl implements AllocineService {
 				itr.remove();
 			}
 		}
-	}
+	}*/
 	/**
 	 * 
 	 * @param allFicheFilmFromPage
@@ -121,7 +122,7 @@ public class AllocineServiceImpl implements AllocineService {
 			for (FicheFilm ficheFilm : allFicheFilmFromPage) {
 				Map<Integer, CritiquePresse> map = retrieveCritiquePresseMap(ficheFilm);
 				Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getAllocineFilmId());
-				removeCritiquePresseWithNoRating(map);
+				//removeCritiquePresseWithNoRating(map);
 				if(MapUtils.isNotEmpty(map) && op.isEmpty()) {
 					saveFicheFilm(ficheFilm);
 				}
@@ -175,8 +176,7 @@ public class AllocineServiceImpl implements AllocineService {
 									if(StringUtils.isNotEmpty(e8.text())) {
 										cp.setBody(e8.text());
 									}else {
-										map.remove(cp);
-										logger.debug("### cp=" + cp.toString()+" removed");
+										cp.setBody("...");
 									}
 									// logger.debug("### cp="+cp.toString());
 								}
@@ -188,7 +188,7 @@ public class AllocineServiceImpl implements AllocineService {
 								var a = e5.select(DIV_EVAL_HOLDER);
 								// logger.debug("######### a="+a.text());
 								var cp = map.get(index++);
-								if(cp != null && StringUtils.isNotEmpty(cp.getBody()) && a != null && StringUtils.isNotEmpty(a.text())) {
+								if(cp != null && a != null && StringUtils.isNotEmpty(a.text())) {
 									cp.setAuthor(a.text());
 
 									Double rating = null;
@@ -211,10 +211,10 @@ public class AllocineServiceImpl implements AllocineService {
 										rating = 0.0d;
 									}
 									cp.setRating(rating);
+									if(StringUtils.isEmpty(cp.getBody())) {
+										cp.setBody("...");
+									}
 									logger.debug("### cp=" + cp.toString());
-								}else {
-									map.remove(cp);
-									logger.debug("### cp=" + cp.toString()+" removed");
 								}
 							}
 						}
