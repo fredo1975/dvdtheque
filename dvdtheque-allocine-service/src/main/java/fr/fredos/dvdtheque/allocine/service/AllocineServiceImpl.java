@@ -132,23 +132,23 @@ public class AllocineServiceImpl implements AllocineService {
 					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36")
 					.get();
 
-			Elements es = document.select(SECTION);
+			var es = document.select(SECTION);
 			for (Element e : es) {
-				Elements es2 = e.select(DIV);
+				var es2 = e.select(DIV);
 				for (Element e2 : es2) {
-					Elements es3 = e2.select(SECTION);
+					var es3 = e2.select(SECTION);
 					for (Element e4 : es3) {
-						Elements masthead = e4.select(DIV_REVIEWS_PRESS_COMMENT);
+						var masthead = e4.select(DIV_REVIEWS_PRESS_COMMENT);
 						for (Element ec : masthead) {
 							// logger.debug("### ec.getAllElements()="+ec.getAllElements());
-							Elements esH2 = ec.select(H2);
-							int index = 0;
+							var esH2 = ec.select(H2);
+							var index = 0;
 							for (Element e8 : esH2) {
 								// logger.debug("### e8.getAllElements()="+e8.getAllElements());
-								Elements esSpan = e8.select(SPAN);
+								var esSpan = e8.select(SPAN);
 								for (Element e9 : esSpan) {
 									if (StringUtils.isNotEmpty(e9.text())) {
-										CritiquePresse cp = new CritiquePresse();
+										var cp = new CritiquePresse();
 										cp.setNewsSource(e9.text());
 										// logger.debug("### cp="+cp.toString());
 										map.put(Integer.valueOf(index++), cp);
@@ -157,7 +157,7 @@ public class AllocineServiceImpl implements AllocineService {
 									}
 								}
 							}
-							Elements esP = ec.select(P);
+							var esP = ec.select(P);
 							index = 0;
 							for (Element e8 : esP) {
 								if (StringUtils.isNotEmpty(e8.text())) {
@@ -166,17 +166,18 @@ public class AllocineServiceImpl implements AllocineService {
 										cp.setBody(e8.text());
 									}else {
 										map.remove(cp);
+										logger.debug("### cp=" + cp.toString()+" removed");
 									}
 									// logger.debug("### cp="+cp.toString());
 								}
 							}
-							Elements es4 = ec.select(DIV_EVAL_HOLDER);
+							var es4 = ec.select(DIV_EVAL_HOLDER);
 							index = 0;
 							for (Element e5 : es4) {
 								// logger.info("######### e5.getAllElements()="+e5.getAllElements());
-								Elements a = e5.select(DIV_EVAL_HOLDER);
+								var a = e5.select(DIV_EVAL_HOLDER);
 								// logger.debug("######### a="+a.text());
-								CritiquePresse cp = map.get(index++);
+								var cp = map.get(index++);
 								if(cp != null && StringUtils.isNotEmpty(cp.getBody()) && a != null && StringUtils.isNotEmpty(a.text())) {
 									cp.setAuthor(a.text());
 
@@ -201,6 +202,9 @@ public class AllocineServiceImpl implements AllocineService {
 									}
 									cp.setRating(rating);
 									logger.debug("### cp=" + cp.toString());
+								}else {
+									map.remove(cp);
+									logger.debug("### cp=" + cp.toString()+" removed");
 								}
 							}
 						}
