@@ -107,7 +107,7 @@ public class AllocineServiceImpl implements AllocineService {
 		java.util.Iterator<CritiquePresse> itr = map.values().iterator();
 		while (itr.hasNext()) {
 			CritiquePresse cp = itr.next();
-			if(cp.getRating() != null && StringUtils.isNotEmpty(cp.getAuthor())) {
+			if(cp.getRating() == null || StringUtils.isEmpty(cp.getAuthor())) {
 				itr.remove();
 			}
 		}
