@@ -103,6 +103,7 @@ public class AllocineServiceImpl implements AllocineService {
 		return null;
 	}
 
+	/*
 	private void removeCritiquePresseWithNoRating(Map<Integer, CritiquePresse> map) {
 		java.util.Iterator<CritiquePresse> itr = map.values().iterator();
 		while (itr.hasNext()) {
@@ -111,7 +112,7 @@ public class AllocineServiceImpl implements AllocineService {
 				itr.remove();
 			}
 		}
-	}
+	}*/
 	/**
 	 * 
 	 * @param allFicheFilmFromPage
@@ -121,7 +122,7 @@ public class AllocineServiceImpl implements AllocineService {
 			for (FicheFilm ficheFilm : allFicheFilmFromPage) {
 				Map<Integer, CritiquePresse> map = retrieveCritiquePresseMap(ficheFilm);
 				Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getAllocineFilmId());
-				removeCritiquePresseWithNoRating(map);
+				//removeCritiquePresseWithNoRating(map);
 				if(MapUtils.isNotEmpty(map) && op.isEmpty()) {
 					saveFicheFilm(ficheFilm);
 				}
