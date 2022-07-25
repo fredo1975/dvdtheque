@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS "dvdtheque-allocine-service".fichefilm (
   allocine_film_id INT NOT NULL,
   url varchar(255) NOT NULL,
   page_number INT NOT NULL,
-  title varchar(255) NOT NULL
+  title varchar(255) NOT NULL,
+  creation_date TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS "dvdtheque-allocine-service".critiquepresse (
