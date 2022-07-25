@@ -31,11 +31,7 @@ public class AllocineServiceTest {
 		assertTrue(CollectionUtils.isEmpty(ficheFilmRetrieved));
 	}
 	private FicheFilm saveFilm() {
-		FicheFilm ficheFilm = new FicheFilm();
-		ficheFilm.setTitle("title");
-		ficheFilm.setAllocineFilmId(1);
-		ficheFilm.setPageNumber(1);
-		ficheFilm.setUrl("url");
+		FicheFilm ficheFilm = new FicheFilm("title",1,"url",1);
 		CritiquePresse cp = new CritiquePresse();
 		cp.setAuthor("author1");
 		cp.setBody("body1");
@@ -54,6 +50,7 @@ public class AllocineServiceTest {
 		List<FicheFilm> ficheFilmRetrieved = ficheFilmRepository.findByTitle("title");
 		assertNotNull(ficheFilmRetrieved);
 		assertNotNull(ficheFilmRetrieved.get(0));
+		assertNotNull(ficheFilmRetrieved.get(0).getCreationDate());
 		assertNotNull(ficheFilmRetrieved.get(0).getCritiquePresse());
 		assertTrue(ficheFilmRetrieved.get(0).getCritiquePresse().iterator().next().getNewsSource().equals("source1"));
 		System.out.println(ficheFilmRetrieved);

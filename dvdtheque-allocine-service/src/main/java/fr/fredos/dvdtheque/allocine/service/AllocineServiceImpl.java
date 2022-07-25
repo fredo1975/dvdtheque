@@ -175,8 +175,7 @@ public class AllocineServiceImpl implements AllocineService {
 									if(StringUtils.isNotEmpty(e8.text())) {
 										cp.setBody(e8.text());
 									}else {
-										map.remove(cp);
-										logger.debug("### cp=" + cp.toString()+" removed");
+										cp.setBody("...");
 									}
 									// logger.debug("### cp="+cp.toString());
 								}
@@ -188,7 +187,7 @@ public class AllocineServiceImpl implements AllocineService {
 								var a = e5.select(DIV_EVAL_HOLDER);
 								// logger.debug("######### a="+a.text());
 								var cp = map.get(index++);
-								if(cp != null && StringUtils.isNotEmpty(cp.getBody()) && a != null && StringUtils.isNotEmpty(a.text())) {
+								if(cp != null && a != null && StringUtils.isNotEmpty(a.text())) {
 									cp.setAuthor(a.text());
 
 									Double rating = null;
@@ -211,10 +210,10 @@ public class AllocineServiceImpl implements AllocineService {
 										rating = 0.0d;
 									}
 									cp.setRating(rating);
+									if(StringUtils.isEmpty(cp.getBody())) {
+										cp.setBody("...");
+									}
 									logger.debug("### cp=" + cp.toString());
-								}else {
-									map.remove(cp);
-									logger.debug("### cp=" + cp.toString()+" removed");
 								}
 							}
 						}
