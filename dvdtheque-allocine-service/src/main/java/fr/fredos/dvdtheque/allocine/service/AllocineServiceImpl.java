@@ -163,6 +163,9 @@ public class AllocineServiceImpl implements AllocineService {
 									if (StringUtils.isNotEmpty(e9.text())) {
 										var cp = new CritiquePresse();
 										cp.setNewsSource(e9.text());
+										cp.setBody("...");
+										cp.setAuthor("...");
+										cp.setRating(0d);
 										// logger.debug("### cp="+cp.toString());
 										map.put(Integer.valueOf(index++), cp);
 										cp.setFicheFilm(ficheFilm);
@@ -177,8 +180,6 @@ public class AllocineServiceImpl implements AllocineService {
 									var cp = map.get(index++);
 									if(StringUtils.isNotEmpty(e8.text())) {
 										cp.setBody(e8.text());
-									}else {
-										cp.setBody("...");
 									}
 									// logger.debug("### cp="+cp.toString());
 								}
