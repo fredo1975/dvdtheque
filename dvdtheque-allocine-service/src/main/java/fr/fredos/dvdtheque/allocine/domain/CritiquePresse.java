@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.allocine.domain;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -14,7 +15,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "critiquepresse")
-public class CritiquePresse {
+public class CritiquePresse implements Serializable{
+	private static final long serialVersionUID = -5043813433232666154L;
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

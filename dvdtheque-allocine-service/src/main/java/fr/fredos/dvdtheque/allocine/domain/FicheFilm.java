@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.allocine.domain;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -16,7 +17,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "fichefilm")
-public class FicheFilm {
+public class FicheFilm implements Serializable{
+	private static final long serialVersionUID = -897598306740993505L;
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -104,7 +106,8 @@ public class FicheFilm {
 	}
 	@Override
 	public String toString() {
-		return "FicheFilm [id=" + id + ", id=" + id + ", url=" + url + ", pageNumber=" + pageNumber + ", title=" + title + ", critiquePresse="
-				+ critiquePresse + "]";
+		return "FicheFilm [id=" + id + ", allocineFilmId=" + allocineFilmId + ", url=" + url + ", pageNumber="
+				+ pageNumber + ", title=" + title + ", critiquePresse=" + critiquePresse + ", creationDate="
+				+ creationDate + "]";
 	}
 }
