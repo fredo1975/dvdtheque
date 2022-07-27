@@ -608,7 +608,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		l.add(ficheFilmDto);
 		mockServer.expect(ExpectedCount.once(), 
 		          requestTo(environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_URL)
-							+environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_BY_TITLE)+"?title="+film.getTitre()))
+							+environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_BY_TITLE)+"?title="+film.getTitre()+"&titleO="+film.getTitreO()))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(l), MediaType.APPLICATION_JSON));
 	}

@@ -1,6 +1,7 @@
 package fr.fredos.dvdtheque.integration.allocine;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -30,10 +31,6 @@ public class AllocineServiceTest {
 	@MockBean
 	JwtDecoder jwtDecoder;
 	protected Logger logger = LoggerFactory.getLogger(AllocineServiceTest.class);
-	private static final String ALLOCINE_FIULM_ID_289301 = "289301";
-	private static final String ALLOCINE_FIULM_ID_289301_TITLE = "Les Bodin's en Thaïlande";
-	private static final String ALLOCINE_FIULM_ID_136316 = "136316";
-	private static final String ALLOCINE_FIULM_ID_136316_TITLE = "Les Eternels";
 	@Autowired
 	private AllocineService allocineService;
 	/*
@@ -69,23 +66,15 @@ public class AllocineServiceTest {
 		List<FicheFilm> allFicheFilmFromPageRetrievedFromDb = allocineService.retrieveAllFicheFilm();
 		//assertEquals(28,allFicheFilmFromPageRetrievedFromDb.size());
 		assertTrue(allFicheFilmFromPageRetrievedFromDb.size()>10);
-		Optional<FicheFilm> optionalFicheFilmRetrievedFromCache = allocineService.findInCacheByFicheFilmId(allFicheFilmFromPageRetrievedFromDb.get(0).getAllocineFilmId());
-		assertEquals(optionalFicheFilmRetrievedFromCache.get(),allFicheFilmFromPageRetrievedFromDb.get(0));
+		FicheFilm ficheFilm0 = allFicheFilmFromPageRetrievedFromDb.get(0);
+		Optional<FicheFilm> optionalFicheFilmRetrievedFromCache = allocineService.findInCacheByFicheFilmId(ficheFilm0.getAllocineFilmId());
+		assertEquals(optionalFicheFilmRetrievedFromCache.get(),ficheFilm0);
 		
 		Optional<FicheFilm> optionalFicheFilmRetrievedFromCache2 = allocineService.findInCacheByFicheFilmId(allFicheFilmFromPageRetrievedFromDb.get(allFicheFilmFromPageRetrievedFromDb.size()-1).getAllocineFilmId());
 		assertEquals(optionalFicheFilmRetrievedFromCache2.get(),allFicheFilmFromPageRetrievedFromDb.get(allFicheFilmFromPageRetrievedFromDb.size()-1));
-		
-		/*
-		assertEquals(ALLOCINE_FIULM_ID_289301,allFicheFilmFromPageRetrievedFromDb.get(0).getAllocineFilmId());
-		assertEquals(ALLOCINE_FIULM_ID_289301_TITLE,allFicheFilmFromPageRetrievedFromDb.get(0).getTitle());
-		logger.info("critique presses from {} are {}",allFicheFilmFromPageRetrievedFromDb.get(0).getTitle(),allFicheFilmFromPageRetrievedFromDb.get(0).getCritiquePresse().toString());
-		assertEquals(ALLOCINE_FIULM_ID_136316,allFicheFilmFromPageRetrievedFromDb.get(1).getAllocineFilmId());
-		assertEquals(ALLOCINE_FIULM_ID_136316_TITLE,allFicheFilmFromPageRetrievedFromDb.get(1).getTitle());
-		Optional<FicheFilm> optionalFicheFilmRetrievedFromDb = allocineService.retrieveFicheFilm(allFicheFilmFromPageRetrievedFromDb.get(0).getId());
-		List<FicheFilm> ficheFilmRetrievedFromDb = allocineService.retrieveFicheFilmByTitle(allFicheFilmFromPageRetrievedFromDb.get(0).getTitle());
-		assertTrue(optionalFicheFilmRetrievedFromDb.isPresent());
-		assertEquals(allFicheFilmFromPageRetrievedFromDb.get(0),optionalFicheFilmRetrievedFromDb.get());
-		assertEquals(allFicheFilmFromPageRetrievedFromDb.get(0).getTitle(),optionalFicheFilmRetrievedFromDb.get().getTitle());
-		assertEquals(allFicheFilmFromPageRetrievedFromDb.get(0),ficheFilmRetrievedFromDb.get(0));*/
+		List<FicheFilm> ficheFilmListDbRetrieved0 = allocineService.retrieveFicheFilmByTitle(ficheFilm0.getTitle());
+		assertNotNull(ficheFilmListDbRetrieved0);
+		Optional<FicheFilm> ficheFilmCacheRetrievd0 = allocineService.findInCacheByFicheFilmTitle(ficheFilmListDbRetrieved0.get(0).getTitle());
+		assertEquals(ficheFilmCacheRetrievd0.get(),ficheFilm0);
     }
 }

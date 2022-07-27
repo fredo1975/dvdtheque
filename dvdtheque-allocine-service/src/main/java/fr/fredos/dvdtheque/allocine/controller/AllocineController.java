@@ -28,12 +28,20 @@ public class AllocineController {
         this.allocineService = allocineScrapingService;
     }
 	@GetMapping("/byTitle")
-	public ResponseEntity<List<FicheFilmDto>> getAllocineFicheFilmByTitle(@RequestParam(name = "title", required = false) String title) {
+	public ResponseEntity<List<FicheFilmDto>> getAllocineFicheFilmByTitle(@RequestParam(name = "title", required = false) String title,
+			@RequestParam(name = "titleO", required = false) String titleO) {
 		List<FicheFilm> l = allocineService.retrieveFicheFilmByTitle(title);
 		List<FicheFilmDto> ll = new ArrayList<>();
 		if(CollectionUtils.isNotEmpty(l)) {
 			for(FicheFilm ficheFilm : l) {
 				ll.add(convertToDto(ficheFilm));
+			}
+		}else {
+			l = allocineService.retrieveFicheFilmByTitle(titleO);
+			if(CollectionUtils.isNotEmpty(l)) {
+				for(FicheFilm ficheFilm : l) {
+					ll.add(convertToDto(ficheFilm));
+				}
 			}
 		}
 		return ResponseEntity.ok(ll);

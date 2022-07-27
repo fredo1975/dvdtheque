@@ -35,7 +35,7 @@ import fr.fredos.dvdtheque.allocine.domain.Page;
 import fr.fredos.dvdtheque.allocine.repository.FicheFilmRepository;
 
 @Service
-@CacheConfig(cacheNames = "ficheFilms")
+@CacheConfig(cacheNames = {"ficheFilms","ficheFilmsByTitle"})
 public class AllocineServiceImpl implements AllocineService {
 	protected Logger logger = LoggerFactory.getLogger(AllocineServiceImpl.class);
 	private final FicheFilmRepository ficheFilmRepository;
@@ -67,6 +67,7 @@ public class AllocineServiceImpl implements AllocineService {
 	private int nbParsedPage;
 	private final HazelcastInstance instance;
 	IMap<Integer, FicheFilm> mapFicheFilms;
+	IMap<String, FicheFilm> mapFicheFilmsByTtile;
 	@Autowired
 	AllocineServiceImpl(FicheFilmRepository ficheFilmRepository,HazelcastInstance instance) {
 		this.ficheFilmRepository = ficheFilmRepository;
@@ -75,6 +76,7 @@ public class AllocineServiceImpl implements AllocineService {
 	}
 	public void init() {
 		mapFicheFilms = instance.getMap("ficheFilms");
+		mapFicheFilmsByTtile = instance.getMap("ficheFilmsByTitle");
 	}
 
 	/**
@@ -312,7 +314,15 @@ public class AllocineServiceImpl implements AllocineService {
 	}
 	@Override
 	public List<FicheFilm> retrieveFicheFilmByTitle(String title) {
-		return ficheFilmRepository.findByTitle(title);
+		Optional<FicheFilm> opt = findInCacheByFicheFilmTitle(title);
+		if(opt.isPresent()) {
+			return List.of(opt.get());
+		}
+		List<FicheFilm> l = ficheFilmRepository.findByTitle(title);
+		if(CollectionUtils.isNotEmpty(l)) {
+			mapFicheFilmsByTtile.putIfAbsent(StringUtils.upperCase(l.get(0).getTitle()), l.get(0));
+		}
+		return l;
 	}
 	
 	@Override
@@ -330,6 +340,11 @@ public class AllocineServiceImpl implements AllocineService {
 	@Override
 	public Optional<FicheFilm> findInCacheByFicheFilmId(Integer ficheFilmId) {
 		FicheFilm ficheFilm = mapFicheFilms.get(ficheFilmId);
+		return Optional.ofNullable(ficheFilm);
+	}
+	@Override
+	public Optional<FicheFilm> findInCacheByFicheFilmTitle(String title) {
+		FicheFilm ficheFilm = mapFicheFilmsByTtile.get(StringUtils.upperCase(title));
 		return Optional.ofNullable(ficheFilm);
 	}
 	@Override
