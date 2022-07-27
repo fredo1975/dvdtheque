@@ -38,7 +38,7 @@ public class HazelcastConfiguration {
 		config.setClusterName(clusterName);
 		config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
 		config.setInstanceName(RandomStringUtils.random(8, true, false))
-				.addMapConfig(new MapConfig().setName("ficheFilms"));
+				.addMapConfig(new MapConfig().setName("ficheFilms")).addMapConfig(new MapConfig().setName("ficheFilmsByTitle"));
 						//.setMaxSizeConfig(new MaxSizeConfig(10000, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
 						//.setEvictionPolicy(EvictionPolicy.LRU).setTimeToLiveSeconds(300)).addMapConfig(new MapConfig().setName("films"));
 		return Hazelcast.newHazelcastInstance(config);

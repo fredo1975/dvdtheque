@@ -18,7 +18,7 @@ public class HazelcastConfiguration {
 		Config config = new Config();
 		config.getNetworkConfig().setJoin(new JoinConfig().setAutoDetectionConfig(new AutoDetectionConfig().setEnabled(false)));
 		config.setInstanceName(RandomStringUtils.random(8, true, false))
-				.addMapConfig(new MapConfig().setName("ficheFilms"));
+				.addMapConfig(new MapConfig().setName("ficheFilms")).addMapConfig(new MapConfig().setName("ficheFilmsByTitle"));
 		return Hazelcast.newHazelcastInstance(config);
 	}
 }
