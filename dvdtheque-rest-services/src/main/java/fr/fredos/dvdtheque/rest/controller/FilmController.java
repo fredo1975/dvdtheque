@@ -293,7 +293,7 @@ public class FilmController {
 		if(film != null) {
 			ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = restTemplate.exchange(
 					environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
-							+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + film.getTitre(),
+							+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + film.getTitre()+"&titleO="+ film.getTitreO(),
 					HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
 			if(ficheFilmDtoResponse.getBody() != null && CollectionUtils.isNotEmpty(ficheFilmDtoResponse.getBody())) {
 				Set<CritiquePresseDto> cpDtoSet = ficheFilmDtoResponse.getBody().get(0).getCritiquePresse();
