@@ -20,10 +20,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.IMap;
 
 import fr.fredos.dvdtheque.allocine.domain.CritiquePresse;
 import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
@@ -31,13 +35,11 @@ import fr.fredos.dvdtheque.allocine.domain.Page;
 import fr.fredos.dvdtheque.allocine.repository.FicheFilmRepository;
 
 @Service
+@CacheConfig(cacheNames = "ficheFilms")
 public class AllocineServiceImpl implements AllocineService {
 	protected Logger logger = LoggerFactory.getLogger(AllocineServiceImpl.class);
-	FicheFilmRepository ficheFilmRepository;
-	@Autowired
-	AllocineServiceImpl(FicheFilmRepository ficheFilmRepository) {
-		this.ficheFilmRepository = ficheFilmRepository;
-	}
+	private final FicheFilmRepository ficheFilmRepository;
+	
 	@Autowired
 	Environment environment;
 	private final static String AHREF = "a[href]";
@@ -63,7 +65,18 @@ public class AllocineServiceImpl implements AllocineService {
 
 	@Value("${fichefilm.parsing.page}")
 	private int nbParsedPage;
-	
+	private final HazelcastInstance instance;
+	IMap<Integer, FicheFilm> mapFicheFilms;
+	@Autowired
+	AllocineServiceImpl(FicheFilmRepository ficheFilmRepository,HazelcastInstance instance) {
+		this.ficheFilmRepository = ficheFilmRepository;
+		this.instance = instance;
+		this.init();
+	}
+	public void init() {
+		mapFicheFilms = instance.getMap("ficheFilms");
+	}
+
 	/**
 	 * 
 	 */
@@ -121,11 +134,12 @@ public class AllocineServiceImpl implements AllocineService {
 		if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
 			var l = new ArrayList<FicheFilm>();
 			for (FicheFilm ficheFilm : allFicheFilmFromPage) {
-				Map<Integer, CritiquePresse> map = retrieveCritiquePresseMap(ficheFilm);
-				Optional<FicheFilm> op = retrievefindByFicheFilmId(ficheFilm.getAllocineFilmId());
+				final Map<Integer, CritiquePresse> map = retrieveCritiquePresseMap(ficheFilm);
+				Optional<FicheFilm> op = findByFicheFilmId(ficheFilm.getAllocineFilmId());
 				if(MapUtils.isNotEmpty(map) && op.isEmpty()) {
 					//saveFicheFilm(ficheFilm);
 					l.add(ficheFilm);
+					mapFicheFilms.putIfAbsent(ficheFilm.getAllocineFilmId(), ficheFilm);
 				}
 			}
 			saveFicheFilmList(l);
@@ -163,6 +177,9 @@ public class AllocineServiceImpl implements AllocineService {
 									if (StringUtils.isNotEmpty(e9.text())) {
 										var cp = new CritiquePresse();
 										cp.setNewsSource(e9.text());
+										cp.setBody("...");
+										cp.setAuthor("...");
+										cp.setRating(0d);
 										// logger.debug("### cp="+cp.toString());
 										map.put(Integer.valueOf(index++), cp);
 										cp.setFicheFilm(ficheFilm);
@@ -177,8 +194,6 @@ public class AllocineServiceImpl implements AllocineService {
 									var cp = map.get(index++);
 									if(StringUtils.isNotEmpty(e8.text())) {
 										cp.setBody(e8.text());
-									}else {
-										cp.setBody("...");
 									}
 									// logger.debug("### cp="+cp.toString());
 								}
@@ -301,8 +316,21 @@ public class AllocineServiceImpl implements AllocineService {
 	}
 	
 	@Override
-	public Optional<FicheFilm> retrievefindByFicheFilmId(Integer ficheFilmId) {
-		return Optional.ofNullable(ficheFilmRepository.findByFicheFilmId(ficheFilmId));
+	public Optional<FicheFilm> findByFicheFilmId(Integer ficheFilmId) {
+		Optional<FicheFilm> ficheFilmOpt = findInCacheByFicheFilmId(ficheFilmId);
+		if(ficheFilmOpt.isPresent()) {
+			return ficheFilmOpt;
+		}
+		FicheFilm ficheFilm = ficheFilmRepository.findByFicheFilmId(ficheFilmId);
+		if(ficheFilm != null) {
+			mapFicheFilms.putIfAbsent(ficheFilmId, ficheFilm);
+		}
+		return Optional.ofNullable(ficheFilm);
+	}
+	@Override
+	public Optional<FicheFilm> findInCacheByFicheFilmId(Integer ficheFilmId) {
+		FicheFilm ficheFilm = mapFicheFilms.get(ficheFilmId);
+		return Optional.ofNullable(ficheFilm);
 	}
 	@Override
 	public List<FicheFilm> findAllFilmWithoutCritique() {
