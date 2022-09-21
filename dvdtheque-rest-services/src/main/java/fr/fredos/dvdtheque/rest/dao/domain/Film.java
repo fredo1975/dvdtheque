@@ -82,7 +82,7 @@ public class Film implements Serializable, Comparable<Film> {
 	@Transient
 	private List<CritiquePresse> critiquePresse;
 	@Column(name = "allocine_fiche_film_id")
-	private int allocineFicheFilmId;
+	private Integer allocineFicheFilmId;
 	
 	public Film() {
 		super();
