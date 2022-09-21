@@ -81,6 +81,9 @@ public class Film implements Serializable, Comparable<Film> {
 	private LocalDate dateVue;
 	@Transient
 	private List<CritiquePresse> critiquePresse;
+	@Column(name = "allocine_fiche_film_id")
+	private int allocineFicheFilmId;
+	
 	public Film() {
 		super();
 	}
