@@ -26,6 +26,7 @@ import fr.fredos.dvdtheque.rest.dao.domain.Genre;
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
 
 public class FilmBuilder {
+	public static final Integer ALLOCINE_FICHE_FILM_ID_844 = 1;
 	public static final String TITRE_FILM_TMBD_ID_844 = "2046";
 	public static final String TITRE_FILM_TMBD_ID_62 = "2001 : L'ODYSSÉE DE L'ESPACE";
 	public static final String TITRE_FILM_TMBD_ID_4780 = "OBSESSION";
@@ -94,6 +95,8 @@ public class FilmBuilder {
 		private boolean vu;
 		private FilmOrigine origine;
 		private String posterPath;
+		private int allocineFicheFilmId;
+		
 		public Builder(String titre) {
             this.titre = titre;
         }
@@ -173,6 +176,11 @@ public class FilmBuilder {
 			this.posterPath = posterPath;
 			return this;
 		}
+		
+		public Builder setAllocineFicheFilmId(int allocineFicheFilmId) {
+			this.allocineFicheFilmId = allocineFicheFilmId;
+			return this;
+		}
 		public Film build() {
 			Film film = new Film();
 			Set<Personne> realisateurs = new HashSet<>();
@@ -222,6 +230,7 @@ public class FilmBuilder {
 			film.setTmdbId(TMDBID_844);
 			film.setOverview("Overview");
 			film.setPosterPath(this.posterPath);
+			film.setAllocineFicheFilmId(allocineFicheFilmId);
 			return film;
 		}
 	}
@@ -238,12 +247,12 @@ public class FilmBuilder {
 			final FilmOrigine filmOrigine, 
 			final String filmDateSortie, 
 			final String filmDateInsertion) throws ParseException {
-		assertNotNull("film Should exists",film);
-		assertNotNull("film Should have an id",film.getId());
-		assertNotNull("film Should have a titre",film.getTitre());
-		assertNotNull("film Should have a année",film.getAnnee());
-		assertNotNull("film Should have a date sortie",film.getDateSortie());
-		assertNotNull("film Should have a date insertion",film.getDateInsertion());
+		assertNotNull("film should exists",film);
+		assertNotNull("film should have an id",film.getId());
+		assertNotNull("film should have a titre",film.getTitre());
+		assertNotNull("film should have a année",film.getAnnee());
+		assertNotNull("film should have a date sortie",film.getDateSortie());
+		assertNotNull("film should have a date insertion",film.getDateInsertion());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd",Locale.FRANCE);
 		if(StringUtils.isNotEmpty(filmDateSortie)) {
 			Date _filmDateSortie = DateUtils.clearDate(sdf.parse(filmDateSortie));
@@ -270,11 +279,12 @@ public class FilmBuilder {
 				assertEquals("dvd date sortie should match",film.getDvd().getDateSortie(), dvdDateSortie);
 			}
 		}
-		assertTrue("genres Should exists",CollectionUtils.isNotEmpty(film.getGenre()));
-		assertTrue("actors Should exists",CollectionUtils.isNotEmpty(film.getActeur()));
-		assertTrue("there Should be at least 3 actors",film.getActeur().size() >= 3);
-		assertTrue("realisateur Should exists",CollectionUtils.isNotEmpty(film.getRealisateur()));
-		assertTrue("Should be 1 realisateur",film.getRealisateur().size() == 1);
+		assertTrue("genres should exists",CollectionUtils.isNotEmpty(film.getGenre()));
+		assertTrue("actors should exists",CollectionUtils.isNotEmpty(film.getActeur()));
+		assertTrue("there should be at least 3 actors",film.getActeur().size() >= 3);
+		assertTrue("realisateur should exists",CollectionUtils.isNotEmpty(film.getRealisateur()));
+		assertTrue("should be 1 realisateur",film.getRealisateur().size() == 1);
+		assertTrue("should be 1 Id AllocineFicheFilm",film.getAllocineFicheFilmId() != 0);
 	}
 	public static String createDateInsertion(Date dateInsertion, String pattern) {
 		String resultPattern=null;
