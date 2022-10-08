@@ -128,3 +128,4 @@ dvdtheque-batch-service:
 allocine-service:
   url: http://fake/dvdtheque-allocine-service
   byTitle: /byTitle
+  byId: /byId

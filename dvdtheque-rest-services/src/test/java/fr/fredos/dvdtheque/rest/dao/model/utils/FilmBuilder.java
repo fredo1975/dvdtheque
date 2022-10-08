@@ -284,7 +284,7 @@ public class FilmBuilder {
 		assertTrue("there should be at least 3 actors",film.getActeur().size() >= 3);
 		assertTrue("realisateur should exists",CollectionUtils.isNotEmpty(film.getRealisateur()));
 		assertTrue("should be 1 realisateur",film.getRealisateur().size() == 1);
-		assertTrue("should not be 0 for AllocineFicheFilmId",film.getAllocineFicheFilmId() != 0);
+		assertTrue("should not be 0 for AllocineFicheFilmId",film.getAllocineFicheFilmId() != null);
 	}
 	public static String createDateInsertion(Date dateInsertion, String pattern) {
 		String resultPattern=null;

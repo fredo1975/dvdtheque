@@ -250,10 +250,10 @@ public class Film implements Serializable, Comparable<Film> {
 		this.critiquePresse.add(critiquePresse);
 	}
 	
-	public int getAllocineFicheFilmId() {
+	public Integer getAllocineFicheFilmId() {
 		return allocineFicheFilmId;
 	}
-	public void setAllocineFicheFilmId(int allocineFicheFilmId) {
+	public void setAllocineFicheFilmId(Integer allocineFicheFilmId) {
 		this.allocineFicheFilmId = allocineFicheFilmId;
 	}
 	@Override
@@ -269,5 +269,4 @@ public class Film implements Serializable, Comparable<Film> {
 				+ homepage + ", alreadyInDvdtheque=" + alreadyInDvdtheque + ", dateMaj=" + dateMaj + ", dateVue="
 				+ dateVue + ", critiquePresse=" + critiquePresse + ", allocineFicheFilmId=" + allocineFicheFilmId + "]";
 	}
-	
 }
