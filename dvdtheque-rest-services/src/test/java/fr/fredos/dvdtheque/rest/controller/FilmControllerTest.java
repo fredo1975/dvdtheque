@@ -124,7 +124,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String 					SEARCH_ALL_REALISATEUR_URI = "/dvdtheque-service/realisateurs";
 	private static final String 					SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI = SEARCH_ALL_REALISATEUR_URI + "/byOrigine/";
 	private static final String 					SEARCH_ALL_ACTTEUR_URI = "/dvdtheque-service/acteurs";
-	private static final String 					SEARCH_ALL_ALLOCINE_CRITIQUE_URI = "/dvdtheque-service/films/allocine/byId";
+	private static final String 					SEARCH_BY_ID_ALLOCINE_CRITIQUE_URI = "/dvdtheque-service/films/allocine/byId";
+	private static final String 					SEARCH_ALL_BY_TITLE_ALLOCINE_CRITIQUE_URI = "/dvdtheque-service/films/allocine/byTitle";
 	private static final String 					SEARCH_ALL_ACTTEUR_BY_ORIGINE_URI = SEARCH_ALL_ACTTEUR_URI + "/byOrigine/";
 	private static final String 					SEARCH_FILM_BY_ID = GET_ALL_FILMS_URI + "byId/";
 	private static final String 					SEARCH_FILM_BY_TMDBID = GET_ALL_FILMS_URI + "byTmdbId/";
@@ -171,8 +172,32 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(film), MediaType.APPLICATION_JSON));
 		
-		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ALLOCINE_CRITIQUE_URI)
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_BY_ID_ALLOCINE_CRITIQUE_URI)
 				.param("id", String.valueOf(0))
+				.with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+	}
+	@Test
+	@WithMockUser(roles = "user")
+	public void findAllCritiquePresseByAllocineFilmByTitle() throws Exception {
+		FicheFilmDto film1 = new FicheFilmDto();
+		film1.setCritiquePresse(new HashSet<>());
+		CritiquePresseDto cp = new CritiquePresseDto();
+		film1.getCritiquePresse().add(cp);
+		FicheFilmDto film2 = new FicheFilmDto();
+		film2.setCritiquePresse(new HashSet<>());
+		CritiquePresseDto cp2 = new CritiquePresseDto();
+		film2.getCritiquePresse().add(cp2);
+		List<FicheFilmDto> l = List.of(film1,film2);
+		mockServer.expect(ExpectedCount.once(),
+		          requestTo(environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_URL)+environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_BY_TITLE)+"?title=title"))
+		          .andExpect(method(HttpMethod.GET))
+		          .andRespond(withSuccess(mapper.writeValueAsString(l), MediaType.APPLICATION_JSON));
+		
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_BY_TITLE_ALLOCINE_CRITIQUE_URI)
+				.param("title", "title")
 				.with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andExpect(status().isOk())

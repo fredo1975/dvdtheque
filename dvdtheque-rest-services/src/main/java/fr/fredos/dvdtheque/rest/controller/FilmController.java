@@ -242,6 +242,20 @@ public class FilmController {
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
+	
+	@RolesAllowed("user")
+	@GetMapping("/films/allocine/byTitle")
+	ResponseEntity<List<FicheFilmDto>> findAllCritiquePresseByAllocineFilmByTitle(@RequestParam(name = "title", required = true) String title){
+		ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = restTemplate.exchange(
+				environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
+						+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + title,
+				HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
+		if(ficheFilmDtoResponse.getBody() != null) {
+			return ResponseEntity.ok(ficheFilmDtoResponse.getBody());
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	}
+	
 	@RolesAllowed("user")
 	@GetMapping("/films/tmdb/byTitre/{titre}")
 	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre){
