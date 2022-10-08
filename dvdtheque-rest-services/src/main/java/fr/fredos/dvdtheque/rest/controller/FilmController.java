@@ -634,7 +634,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
+	
 	@RolesAllowed("user")
 	@PutMapping("/films/remove/{id}")
 	ResponseEntity<Film> removeFilm(@PathVariable Long id) {

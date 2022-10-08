@@ -649,12 +649,13 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		assertNotNull(resultActions.andReturn().getResponse().getContentAsString());
 	}
 
-	private void simulateAlloCineServiceCall(Film film) throws JsonProcessingException, IllegalStateException {
+	private List<FicheFilmDto> buildFicheFilmDtoList(Film film){
 		FicheFilmDto ficheFilmDto = new FicheFilmDto();
 		ficheFilmDto.setAllocineFilmId(15);
 		ficheFilmDto.setPageNumber(1);
 		ficheFilmDto.setTitle(film.getTitre());
 		ficheFilmDto.setUrl("fakeurl");
+		ficheFilmDto.setId(0);
 		List<FicheFilmDto> l = new ArrayList<>();
 		CritiquePresseDto cp = new CritiquePresseDto();
 		cp.setAuthor("author");
@@ -665,11 +666,29 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		critiquesPresses.add(cp);
 		ficheFilmDto.setCritiquePresse(critiquesPresses);
 		l.add(ficheFilmDto);
-		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_URL)
-							+environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_BY_TITLE)+"?title="+film.getTitre()+"&titleO="+film.getTitreO()))
-		          .andExpect(method(HttpMethod.GET))
-		          .andRespond(withSuccess(mapper.writeValueAsString(l), MediaType.APPLICATION_JSON));
+		return l;
+	}
+	private void simulateAlloCineServiceCall(Film film, boolean withFicheFilmId) throws JsonProcessingException, IllegalStateException {
+		FicheFilmDto ficheFilmDto = new FicheFilmDto();
+		ficheFilmDto.setAllocineFilmId(15);
+		ficheFilmDto.setPageNumber(1);
+		ficheFilmDto.setTitle(film.getTitre());
+		ficheFilmDto.setUrl("fakeurl");
+		List<FicheFilmDto> l = buildFicheFilmDtoList(film);
+		if(withFicheFilmId) {
+			mockServer.expect(ExpectedCount.once(), 
+			          requestTo(environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_URL)
+								+environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_BY_ID)+"?id=0"))
+			          .andExpect(method(HttpMethod.GET))
+			          .andRespond(withSuccess(mapper.writeValueAsString(ficheFilmDto), MediaType.APPLICATION_JSON));
+		}else {
+			mockServer.expect(ExpectedCount.once(), 
+			          requestTo(environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_URL)
+								+environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_BY_TITLE)+"?title="+film.getTitre()+"&titleO="+film.getTitreO()))
+			          .andExpect(method(HttpMethod.GET))
+			          .andRespond(withSuccess(mapper.writeValueAsString(l), MediaType.APPLICATION_JSON));
+		}
+		
 	}
 	@Test
 	public void findById() throws Exception {
@@ -694,7 +713,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
 		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
-		simulateAlloCineServiceCall(film);
+		simulateAlloCineServiceCall(film, false);
 		
 		
 		ResultActions resultActions = mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILM_BY_ID + film.getId()).with(jwt().jwt(builder -> builder.subject("test")))
@@ -1008,7 +1027,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		FilmBuilder.assertFilmIsNotNull(filmToUpdate, true, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
 		
-		simulateAlloCineServiceCall(filmToUpdate);
+		simulateAlloCineServiceCall(filmToUpdate, false);
 		
 		mockmvc.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate).contentType(MediaType.APPLICATION_JSON).content(filmJsonString).with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf())).andDo(MockMvcResultHandlers.print())
@@ -1023,7 +1042,54 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		FilmBuilder.assertCacheSize(0, 0, enSalleDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(enSalleDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(enSalleDisplayTypeParam));
 		FilmBuilder.assertCacheSize(3, 1, dvdDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(dvdDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(dvdDisplayTypeParam));
 	}
-
+	@Test
+	@Transactional
+	public void testUpdateCritiquePresseFilm() throws Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1).setGenre2(genre2)
+				.setZone(Integer.valueOf(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		Film filmToUpdate = filmService.findFilm(film.getId());
+		assertNotNull(filmToUpdate);
+		logger.debug("filmToUpdate=" + filmToUpdate.toString());
+		
+		List<FicheFilmDto> l = buildFicheFilmDtoList(filmToUpdate);
+		filmToUpdate.setAllocineFicheFilmId(l.get(0).getId());
+		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
+		
+		simulateAlloCineServiceCall(filmToUpdate, true);
+		
+		mockmvc.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate).contentType(MediaType.APPLICATION_JSON).content(filmJsonString).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf())).andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.allocineFicheFilmId", Is.is(0)));
+		mockServer.verify();
+		Film filmUpdated = filmService.findFilm(filmToUpdate.getId());
+		assertEquals(StringUtils.upperCase(FilmBuilder.TITRE_FILM_TMBD_ID_844), filmUpdated.getTitre());
+		assertEquals(Integer.valueOf(0), filmUpdated.getAllocineFicheFilmId());
+		
+		FilmDisplayTypeParam enSalleDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.EN_SALLE);
+		FilmDisplayTypeParam dvdDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,0,FilmOrigine.DVD);
+		FilmBuilder.assertCacheSize(0, 0, enSalleDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(enSalleDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(enSalleDisplayTypeParam));
+		FilmBuilder.assertCacheSize(3, 1, dvdDisplayTypeParam,filmService.findAllActeursByFilmDisplayType(dvdDisplayTypeParam), filmService.findAllRealisateursByFilmDisplayType(dvdDisplayTypeParam));
+	}
 	@Test
 	@Transactional
 	public void testUpdateFilmFromEnSalleToGoolgePlay() throws Exception {
@@ -1053,7 +1119,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		filmToUpdate.setOrigine(FilmOrigine.GOOGLE_PLAY);
 		FilmBuilder.assertFilmIsNotNull(filmToUpdate, true, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
-		simulateAlloCineServiceCall(filmToUpdate);
+		simulateAlloCineServiceCall(filmToUpdate, false);
 		mockmvc.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate).contentType(MediaType.APPLICATION_JSON).content(filmJsonString).with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
@@ -1244,7 +1310,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		filmToUpdate.setRealisateur(film.getRealisateur());
 		filmToUpdate.setId(filmId);
 		String filmJsonString = mapper.writeValueAsString(filmToUpdate);
-		simulateAlloCineServiceCall(filmToUpdate);
+		simulateAlloCineServiceCall(filmToUpdate, false);
 		mockmvc.perform(MockMvcRequestBuilders.put(UPDATE_FILM_URI + film.getId(), filmToUpdate).contentType(MediaType.APPLICATION_JSON).content(filmJsonString).with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
@@ -1341,7 +1407,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		Film film = new Film();
 		film.setTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
-		simulateAlloCineServiceCall(film);
+		simulateAlloCineServiceCall(film, false);
 		mockmvc.perform(MockMvcRequestBuilders
 				.put(SAVE_FILM_URI + FilmBuilder.tmdbId2)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -1409,7 +1475,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
 		Film film = new Film();
 		film.setTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
-		simulateAlloCineServiceCall(film);
+		simulateAlloCineServiceCall(film, false);
 		mockmvc.perform(MockMvcRequestBuilders
 				.put(SAVE_FILM_URI + FilmBuilder.tmdbId2)
 				.content(FilmOrigine.EN_SALLE.name())
