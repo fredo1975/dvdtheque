@@ -231,8 +231,20 @@ public class FilmController {
 	}
 
 	@RolesAllowed("user")
+	@GetMapping("/films/allocine/byId")
+	ResponseEntity<Set<CritiquePresseDto>> findAllCritiquePresseByAllocineFilmById(@RequestParam(name = "id", required = true) Integer id){
+		ResponseEntity<FicheFilmDto> ficheFilmDtoResponse = restTemplate.exchange(
+				environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
+						+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_ID) + "?id=" + id,
+				HttpMethod.GET, null, new ParameterizedTypeReference<FicheFilmDto>() {});
+		if(ficheFilmDtoResponse.getBody() != null) {
+			return ResponseEntity.ok(ficheFilmDtoResponse.getBody().getCritiquePresse());
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	}
+	@RolesAllowed("user")
 	@GetMapping("/films/tmdb/byTitre/{titre}")
-	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
+	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre){
 		List<Film> films = null;
 		try {
 			ResponseEntity<List<Results>> resultsResponse = restTemplate.exchange(
@@ -414,7 +426,7 @@ public class FilmController {
 
 	@RolesAllowed("user")
 	@PutMapping("/films/tmdb/{tmdbId}")
-	ResponseEntity<Film> replaceFilm(@RequestBody Film film, @PathVariable Long tmdbId) throws Exception {
+	ResponseEntity<Film> replaceFilm(@RequestBody Film film, @PathVariable Long tmdbId){
 		try {
 			Film filmOptional = filmService.findFilm(film.getId());
 			if (filmOptional == null) {
@@ -686,7 +698,7 @@ public class FilmController {
 
 	@RolesAllowed({ "batch" })
 	@PostMapping("/films/saveProcessedFilm")
-	ResponseEntity<Film> saveProcessedFilm(@RequestBody Film film) throws Exception {
+	ResponseEntity<Film> saveProcessedFilm(@RequestBody Film film) {
 		Film filmToSave = null;
 		try {
 			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)
@@ -721,7 +733,7 @@ public class FilmController {
 
 	@RolesAllowed({ "user", "batch" })
 	@PutMapping("/films/save/{tmdbId}")
-	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
+	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine){
 		Film filmToSave = null;
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
@@ -766,7 +778,7 @@ public class FilmController {
 
 	@RolesAllowed({ "user", "batch" })
 	@PostMapping("/films/buildDvd")
-	ResponseEntity<Dvd> buildDvd(@RequestBody DvdBuilder dvdBuilder) throws Exception {
+	ResponseEntity<Dvd> buildDvd(@RequestBody DvdBuilder dvdBuilder){
 		try {
 			Dvd dvd = filmService.buildDvd(dvdBuilder.getFilmToSave().getAnnee(), dvdBuilder.getZonedvd(), null, null,
 					StringUtils.isNotEmpty(dvdBuilder.getFilmFormat()) ? DvdFormat.valueOf(dvdBuilder.getFilmFormat())

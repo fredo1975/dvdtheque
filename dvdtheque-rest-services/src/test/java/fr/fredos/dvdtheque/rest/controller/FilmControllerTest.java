@@ -124,6 +124,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String 					SEARCH_ALL_REALISATEUR_URI = "/dvdtheque-service/realisateurs";
 	private static final String 					SEARCH_ALL_REALISATEUR_BY_ORIGINE_URI = SEARCH_ALL_REALISATEUR_URI + "/byOrigine/";
 	private static final String 					SEARCH_ALL_ACTTEUR_URI = "/dvdtheque-service/acteurs";
+	private static final String 					SEARCH_ALL_ALLOCINE_CRITIQUE_URI = "/dvdtheque-service/films/allocine/byId";
 	private static final String 					SEARCH_ALL_ACTTEUR_BY_ORIGINE_URI = SEARCH_ALL_ACTTEUR_URI + "/byOrigine/";
 	private static final String 					SEARCH_FILM_BY_ID = GET_ALL_FILMS_URI + "byId/";
 	private static final String 					SEARCH_FILM_BY_TMDBID = GET_ALL_FILMS_URI + "byTmdbId/";
@@ -152,8 +153,27 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 
 	@Test
 	@WithMockUser(roles = "user")
-	public void findAllActeurs() throws Exception {
+	public void findAllActeurs() throws Exception{
 		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ACTTEUR_URI).with(jwt().jwt(builder -> builder.subject("test")))
+				.with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+	}
+	@Test
+	@WithMockUser(roles = "user")
+	public void findAllCritiquePresseByAllocineFilmById() throws Exception {
+		FicheFilmDto film = new FicheFilmDto();
+		film.setCritiquePresse(new HashSet<>());
+		CritiquePresseDto cp = new CritiquePresseDto();
+		film.getCritiquePresse().add(cp);
+		mockServer.expect(ExpectedCount.once(),
+		          requestTo(environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_URL)+environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_BY_ID)+"?id=0"))
+		          .andExpect(method(HttpMethod.GET))
+		          .andRespond(withSuccess(mapper.writeValueAsString(film), MediaType.APPLICATION_JSON));
+		
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_ALL_ALLOCINE_CRITIQUE_URI)
+				.param("id", String.valueOf(0))
+				.with(jwt().jwt(builder -> builder.subject("test")))
 				.with(csrf()))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(MediaType.APPLICATION_JSON));
