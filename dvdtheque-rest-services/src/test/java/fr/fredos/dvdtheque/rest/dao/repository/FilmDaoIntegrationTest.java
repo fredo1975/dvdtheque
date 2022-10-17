@@ -75,7 +75,7 @@ public class FilmDaoIntegrationTest {
 		List<Film> films = filmDao.findAll();
 		assertNotNull(films);
 		assertEquals(1, films.size());
-		FilmBuilder.assertFilmIsNotNull(films.get(0), false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		FilmBuilder.assertFilmIsNotNull(films.get(0), false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null, false);
 		logger.info("films.size()="+films.size());
 	}
 	

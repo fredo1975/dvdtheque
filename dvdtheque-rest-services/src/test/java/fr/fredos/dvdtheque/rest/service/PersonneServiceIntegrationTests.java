@@ -63,7 +63,7 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null, false);
 		assertNotNull(filmId);
 		Personne personneByLoad = personneService.loadPersonne(film.getRealisateur().iterator().next().getId());
 		assertNotNull(personneByLoad);
@@ -91,7 +91,7 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null, false);
 		Personne personne = personneService.findByPersonneId(film.getRealisateur().iterator().next().getId());
 		assertNotNull(personne);
 	}
@@ -118,7 +118,7 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null, false);
 		film = filmService.findFilm(film.getId());
 		assertNotNull(film);
 		assertNotNull(film.getTitre());
@@ -147,7 +147,7 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null, false);
 		List<Personne> personneList = personneService.findAllPersonne();
 		assertNotNull(personneList);
 		assertTrue(CollectionUtils.isNotEmpty(personneList));
@@ -174,7 +174,7 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId2 = filmService.saveNewFilm(film2);
 		assertNotNull(filmId2);
-		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
+		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null, false);
 		List<Personne> personne2List = personneService.findAllPersonne();
 		assertNotNull(personne2List);
 		assertTrue(CollectionUtils.isNotEmpty(personne2List));
@@ -206,7 +206,7 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null, false);
 		Personne personne = personneService.findPersonneByName(FilmBuilder.ACT1_TMBD_ID_844);
 		assertNotNull(personne);
 	}
@@ -232,9 +232,9 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null, false);
 		film = filmService.findFilm(film.getId());
-		FilmBuilder.assertFilmIsNotNull(film,false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null);
+		FilmBuilder.assertFilmIsNotNull(film,false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null, false);
 	}
 	@Test
 	public void cleanAllPersonne() throws Exception {

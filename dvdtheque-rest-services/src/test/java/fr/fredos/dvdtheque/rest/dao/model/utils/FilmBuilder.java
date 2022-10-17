@@ -95,7 +95,7 @@ public class FilmBuilder {
 		private boolean vu;
 		private FilmOrigine origine;
 		private String posterPath;
-		private int allocineFicheFilmId;
+		private Integer allocineFicheFilmId;
 		
 		public Builder(String titre) {
             this.titre = titre;
@@ -177,7 +177,7 @@ public class FilmBuilder {
 			return this;
 		}
 		
-		public Builder setAllocineFicheFilmId(int allocineFicheFilmId) {
+		public Builder setAllocineFicheFilmId(Integer allocineFicheFilmId) {
 			this.allocineFicheFilmId = allocineFicheFilmId;
 			return this;
 		}
@@ -246,7 +246,8 @@ public class FilmBuilder {
 			final int ripDateOffset, 
 			final FilmOrigine filmOrigine, 
 			final String filmDateSortie, 
-			final String filmDateInsertion) throws ParseException {
+			final String filmDateInsertion, 
+			final boolean isNull) throws ParseException {
 		assertNotNull("film should exists",film);
 		assertNotNull("film should have an id",film.getId());
 		assertNotNull("film should have a titre",film.getTitre());
@@ -284,7 +285,16 @@ public class FilmBuilder {
 		assertTrue("there should be at least 3 actors",film.getActeur().size() >= 3);
 		assertTrue("realisateur should exists",CollectionUtils.isNotEmpty(film.getRealisateur()));
 		assertTrue("should be 1 realisateur",film.getRealisateur().size() == 1);
-		assertTrue("should not be 0 for AllocineFicheFilmId",film.getAllocineFicheFilmId() != null);
+		assertAllocineFicheFilmIdIsNull(film, isNull);
+		
+	}
+	public static void assertAllocineFicheFilmIdIsNull(final Film film,  final boolean isNull) {
+		if(isNull) {
+			assertTrue("AllocineFicheFilmId should not be null",film.getAllocineFicheFilmId() == null);
+		}else {
+			assertTrue("AllocineFicheFilmId should not be null",film.getAllocineFicheFilmId() != null);
+		}
+		
 	}
 	public static String createDateInsertion(Date dateInsertion, String pattern) {
 		String resultPattern=null;
