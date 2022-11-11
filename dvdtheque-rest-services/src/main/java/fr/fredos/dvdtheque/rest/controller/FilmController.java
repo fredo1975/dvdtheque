@@ -248,7 +248,7 @@ public class FilmController {
 	ResponseEntity<List<FicheFilmDto>> findAllCritiquePresseByAllocineFilmByTitle(@RequestParam(name = "title", required = true) String title){
 		ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = restTemplate.exchange(
 				environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
-						+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + title,
+						+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + title+"&titleO="+title,
 				HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
 		if(ficheFilmDtoResponse.getBody() != null) {
 			return ResponseEntity.ok(ficheFilmDtoResponse.getBody());
