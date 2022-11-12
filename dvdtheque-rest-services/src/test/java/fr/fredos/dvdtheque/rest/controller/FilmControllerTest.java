@@ -192,7 +192,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		film2.getCritiquePresse().add(cp2);
 		List<FicheFilmDto> l = List.of(film1,film2);
 		mockServer.expect(ExpectedCount.once(),
-		          requestTo(environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_URL)+environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_BY_TITLE)+"?title=title"))
+		          requestTo(environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_URL)+environment.getRequiredProperty(FilmController.ALLOCINE_SERVICE_BY_TITLE)+"?title=title&titleO=title"))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(l), MediaType.APPLICATION_JSON));
 		
