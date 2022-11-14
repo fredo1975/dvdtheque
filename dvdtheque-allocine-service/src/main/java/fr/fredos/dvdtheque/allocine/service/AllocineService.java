@@ -16,5 +16,5 @@ public interface AllocineService {
 	FicheFilm saveFicheFilm(FicheFilm ficheFilm);
 	List<FicheFilm> saveFicheFilmList(List<FicheFilm> ficheFilmList);
 	Optional<FicheFilm> findInCacheByFicheFilmId(Integer ficheFilmId);
-	Optional<FicheFilm> findInCacheByFicheFilmTitle(String title);
+	Optional<List<FicheFilm>> findInCacheByFicheFilmTitle(String title);
 }

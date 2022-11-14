@@ -74,7 +74,7 @@ public class AllocineServiceTest {
 		assertEquals(optionalFicheFilmRetrievedFromCache2.get(),allFicheFilmFromPageRetrievedFromDb.get(allFicheFilmFromPageRetrievedFromDb.size()-1));
 		List<FicheFilm> ficheFilmListDbRetrieved0 = allocineService.retrieveFicheFilmByTitle(ficheFilm0.getTitle());
 		assertNotNull(ficheFilmListDbRetrieved0);
-		Optional<FicheFilm> ficheFilmCacheRetrievd0 = allocineService.findInCacheByFicheFilmTitle(ficheFilmListDbRetrieved0.get(0).getTitle());
-		assertEquals(ficheFilmCacheRetrievd0.get(),ficheFilm0);
+		Optional<List<FicheFilm>> ficheFilmCacheRetrievd0 = allocineService.findInCacheByFicheFilmTitle(ficheFilmListDbRetrieved0.get(0).getTitle());
+		assertEquals(ficheFilmCacheRetrievd0.get().get(0),ficheFilm0);
     }
 }

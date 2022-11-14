@@ -765,7 +765,7 @@ public class FilmController {
 									+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + filmToSave.getTitre()+"&titleO="+ filmToSave.getTitreO(),
 							HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
 					if(ficheFilmDtoResponse.getBody() != null && CollectionUtils.isNotEmpty(ficheFilmDtoResponse.getBody())) {
-						filmToSave.setAllocineFicheFilmId(Integer.valueOf(ficheFilmDtoResponse.getBody().get(0).getAllocineFilmId()));
+						filmToSave.setAllocineFicheFilmId(Integer.valueOf(ficheFilmDtoResponse.getBody().get(0).getId()));
 					}
 					filmToSave.setId(null);
 					filmToSave.setOrigine(filmOrigine);

@@ -67,7 +67,7 @@ public class AllocineServiceImpl implements AllocineService {
 	private int nbParsedPage;
 	private final HazelcastInstance instance;
 	IMap<Integer, FicheFilm> mapFicheFilms;
-	IMap<String, FicheFilm> mapFicheFilmsByTtile;
+	IMap<String, List<FicheFilm>> mapFicheFilmsByTtile;
 	@Autowired
 	AllocineServiceImpl(FicheFilmRepository ficheFilmRepository,HazelcastInstance instance) {
 		this.ficheFilmRepository = ficheFilmRepository;
@@ -314,13 +314,14 @@ public class AllocineServiceImpl implements AllocineService {
 	}
 	@Override
 	public List<FicheFilm> retrieveFicheFilmByTitle(String title) {
-		Optional<FicheFilm> opt = findInCacheByFicheFilmTitle(title);
+		Optional<List<FicheFilm>> opt = findInCacheByFicheFilmTitle(title);
 		if(opt.isPresent()) {
-			return List.of(opt.get());
+			return opt.get();
 		}
-		List<FicheFilm> l = ficheFilmRepository.findByTitle(title);
+		List<FicheFilm> l = new ArrayList<>(new HashSet<>(ficheFilmRepository.findByTitle(title)));
 		if(CollectionUtils.isNotEmpty(l)) {
-			mapFicheFilmsByTtile.putIfAbsent(StringUtils.upperCase(l.get(0).getTitle()), l.get(0));
+			
+			mapFicheFilmsByTtile.putIfAbsent(StringUtils.upperCase(l.get(0).getTitle()), l);
 		}
 		return l;
 	}
@@ -343,9 +344,9 @@ public class AllocineServiceImpl implements AllocineService {
 		return Optional.ofNullable(ficheFilm);
 	}
 	@Override
-	public Optional<FicheFilm> findInCacheByFicheFilmTitle(String title) {
-		FicheFilm ficheFilm = mapFicheFilmsByTtile.get(StringUtils.upperCase(title));
-		return Optional.ofNullable(ficheFilm);
+	public Optional<List<FicheFilm>> findInCacheByFicheFilmTitle(String title) {
+		List<FicheFilm> ficheFilmList = mapFicheFilmsByTtile.get(StringUtils.upperCase(title));
+		return Optional.ofNullable(ficheFilmList);
 	}
 	@Override
 	public List<FicheFilm> findAllFilmWithoutCritique() {
