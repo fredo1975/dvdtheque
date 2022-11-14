@@ -613,11 +613,11 @@ public class FilmController {
 	}
 	@RolesAllowed("user")
 	@GetMapping("/films/search")
-	public ResponseEntity<List<Film>> search(@RequestParam(name = "query", required = true)String query,
+	public ResponseEntity<Set<Film>> search(@RequestParam(name = "query", required = true)String query,
 			@RequestParam(name = "offset", required = true)Integer offset,
 			@RequestParam(name = "limit", required = true)Integer limit,
 			@RequestParam(name = "sort", required = true)String sort){
-		return ResponseEntity.ok(filmService.search(query, offset, limit, sort));
+		return ResponseEntity.ok(new HashSet<>(filmService.search(query, offset, limit, sort)));
 	}
 	
 	@RolesAllowed("user")
