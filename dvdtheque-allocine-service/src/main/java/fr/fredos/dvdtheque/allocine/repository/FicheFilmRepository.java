@@ -11,12 +11,12 @@ import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
 
 @Repository
 public interface FicheFilmRepository extends JpaRepository<FicheFilm, Integer>{
-	@Query("from FicheFilm f join fetch f.critiquePresse where upper(f.title) = upper(:title)")
+	@Query("select f from FicheFilm f join fetch f.critiquePresse where upper(f.title) = upper(:title)")
 	List<FicheFilm> findByTitle(@Param("title") String title);
 	
-	@Query("from FicheFilm f where f.allocineFilmId = :ficheFilm")
+	@Query("select f from FicheFilm f where f.allocineFilmId = :ficheFilm")
 	FicheFilm findByFicheFilmId(@Param("ficheFilm") Integer ficheFilm);
 	
-	@Query("from FicheFilm f join fetch f.critiquePresse as cp where cp is empty")
+	@Query("select f from FicheFilm f join fetch f.critiquePresse as cp where cp is empty")
 	List<FicheFilm> findAllFilmWithoutCritique();
 }

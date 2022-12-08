@@ -67,13 +67,15 @@ public class FilmDaoIntegrationTest {
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE).build();
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844)
+				.build();
 		Film savedFilm = filmDao.save(film);
 		assertNotNull(savedFilm);
 		List<Film> films = filmDao.findAll();
 		assertNotNull(films);
 		assertEquals(1, films.size());
-		FilmBuilder.assertFilmIsNotNull(films.get(0), false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null);
+		FilmBuilder.assertFilmIsNotNull(films.get(0), false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null, false);
 		logger.info("films.size()="+films.size());
 	}
 	

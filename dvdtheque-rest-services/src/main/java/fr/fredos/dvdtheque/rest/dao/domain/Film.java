@@ -81,6 +81,9 @@ public class Film implements Serializable, Comparable<Film> {
 	private LocalDate dateVue;
 	@Transient
 	private List<CritiquePresse> critiquePresse;
+	@Column(name = "allocine_fiche_film_id")
+	private Integer allocineFicheFilmId;
+	
 	public Film() {
 		super();
 	}
@@ -246,6 +249,13 @@ public class Film implements Serializable, Comparable<Film> {
 		}
 		this.critiquePresse.add(critiquePresse);
 	}
+	
+	public Integer getAllocineFicheFilmId() {
+		return allocineFicheFilmId;
+	}
+	public void setAllocineFicheFilmId(Integer allocineFicheFilmId) {
+		this.allocineFicheFilmId = allocineFicheFilmId;
+	}
 	@Override
 	public int compareTo(Film film) {
 		return this.getTitre().compareTo(film.getTitre());
@@ -257,6 +267,6 @@ public class Film implements Serializable, Comparable<Film> {
 				+ realisateur + ", acteur=" + acteur + ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId="
 				+ tmdbId + ", overview=" + overview + ", runtime=" + runtime + ", genre=" + genre + ", homepage="
 				+ homepage + ", alreadyInDvdtheque=" + alreadyInDvdtheque + ", dateMaj=" + dateMaj + ", dateVue="
-				+ dateVue + ", critiquePresse=" + critiquePresse + "]";
+				+ dateVue + ", critiquePresse=" + critiquePresse + ", allocineFicheFilmId=" + allocineFicheFilmId + "]";
 	}
 }

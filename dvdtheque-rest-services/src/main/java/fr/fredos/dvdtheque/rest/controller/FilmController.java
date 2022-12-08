@@ -99,6 +99,7 @@ public class FilmController {
 	public static String DVDTHEQUE_BATCH_SERVICE_IMPORT = "dvdtheque-batch-service.import";
 	public static String ALLOCINE_SERVICE_URL = "allocine-service.url";
 	public static String ALLOCINE_SERVICE_BY_TITLE = "allocine-service.byTitle";
+	public static String ALLOCINE_SERVICE_BY_ID = "allocine-service.byId";
 	private static String NB_ACTEURS = "batch.save.nb.acteurs";
 	@Autowired
 	Environment environment;
@@ -230,8 +231,34 @@ public class FilmController {
 	}
 
 	@RolesAllowed("user")
+	@GetMapping("/films/allocine/byId")
+	ResponseEntity<Set<CritiquePresseDto>> findAllCritiquePresseByAllocineFilmById(@RequestParam(name = "id", required = true) Integer id){
+		ResponseEntity<FicheFilmDto> ficheFilmDtoResponse = restTemplate.exchange(
+				environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
+						+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_ID) + "?id=" + id,
+				HttpMethod.GET, null, new ParameterizedTypeReference<FicheFilmDto>() {});
+		if(ficheFilmDtoResponse.getBody() != null) {
+			return ResponseEntity.ok(ficheFilmDtoResponse.getBody().getCritiquePresse());
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	}
+	
+	@RolesAllowed("user")
+	@GetMapping("/films/allocine/byTitle")
+	ResponseEntity<List<FicheFilmDto>> findAllCritiquePresseByAllocineFilmByTitle(@RequestParam(name = "title", required = true) String title){
+		ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = restTemplate.exchange(
+				environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
+						+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + title+"&titleO="+title,
+				HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
+		if(ficheFilmDtoResponse.getBody() != null) {
+			return ResponseEntity.ok(ficheFilmDtoResponse.getBody());
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	}
+	
+	@RolesAllowed("user")
 	@GetMapping("/films/tmdb/byTitre/{titre}")
-	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre) throws ParseException {
+	ResponseEntity<List<Film>> findTmdbFilmByTitre(@PathVariable String titre){
 		List<Film> films = null;
 		try {
 			ResponseEntity<List<Results>> resultsResponse = restTemplate.exchange(
@@ -291,13 +318,24 @@ public class FilmController {
 	private Film processRetrieveCritiquePresse(Long id,BiConsumer<Film,Set<CritiquePresseDto>> consumer, Film updatedFilm) {
 		Film film = filmService.findFilm(id);
 		if(film != null) {
-			ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = restTemplate.exchange(
-					environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
-							+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + film.getTitre()+"&titleO="+ film.getTitreO(),
-					HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
-			if(ficheFilmDtoResponse.getBody() != null && CollectionUtils.isNotEmpty(ficheFilmDtoResponse.getBody())) {
-				Set<CritiquePresseDto> cpDtoSet = ficheFilmDtoResponse.getBody().get(0).getCritiquePresse();
-				consumer.accept(film,cpDtoSet);
+			if(film.getAllocineFicheFilmId() != null) {
+				ResponseEntity<FicheFilmDto> ficheFilmDtoResponse = restTemplate.exchange(
+						environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
+								+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_ID) + "?id=" + film.getAllocineFicheFilmId(),
+						HttpMethod.GET, null, new ParameterizedTypeReference<FicheFilmDto>() {});
+				if(ficheFilmDtoResponse.getBody() != null) {
+					Set<CritiquePresseDto> cpDtoSet = ficheFilmDtoResponse.getBody().getCritiquePresse();
+					consumer.accept(film,cpDtoSet);
+				}
+			}else {
+				ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = restTemplate.exchange(
+						environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
+								+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + film.getTitre()+"&titleO="+ film.getTitreO(),
+						HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
+				if(ficheFilmDtoResponse.getBody() != null && CollectionUtils.isNotEmpty(ficheFilmDtoResponse.getBody())) {
+					Set<CritiquePresseDto> cpDtoSet = ficheFilmDtoResponse.getBody().get(0).getCritiquePresse();
+					consumer.accept(film,cpDtoSet);
+				}
 			}
 		}
 		if(updatedFilm == null) {
@@ -402,7 +440,7 @@ public class FilmController {
 
 	@RolesAllowed("user")
 	@PutMapping("/films/tmdb/{tmdbId}")
-	ResponseEntity<Film> replaceFilm(@RequestBody Film film, @PathVariable Long tmdbId) throws Exception {
+	ResponseEntity<Film> replaceFilm(@RequestBody Film film, @PathVariable Long tmdbId){
 		try {
 			Film filmOptional = filmService.findFilm(film.getId());
 			if (filmOptional == null) {
@@ -454,6 +492,7 @@ public class FilmController {
 		if (film != null && film.getId() != null) {
 			transformedfilm.setId(film.getId());
 			transformedfilm.setDateInsertion(film.getDateInsertion());
+			transformedfilm.setAllocineFicheFilmId(film.getAllocineFicheFilmId());
 		}
 		if (film == null) {
 			transformedfilm.setId(results.getId());
@@ -574,11 +613,11 @@ public class FilmController {
 	}
 	@RolesAllowed("user")
 	@GetMapping("/films/search")
-	public ResponseEntity<List<Film>> search(@RequestParam(name = "query", required = true)String query,
+	public ResponseEntity<Set<Film>> search(@RequestParam(name = "query", required = true)String query,
 			@RequestParam(name = "offset", required = true)Integer offset,
 			@RequestParam(name = "limit", required = true)Integer limit,
 			@RequestParam(name = "sort", required = true)String sort){
-		return ResponseEntity.ok(filmService.search(query, offset, limit, sort));
+		return ResponseEntity.ok(new HashSet<>(filmService.search(query, offset, limit, sort)));
 	}
 	
 	@RolesAllowed("user")
@@ -595,7 +634,7 @@ public class FilmController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
+	
 	@RolesAllowed("user")
 	@PutMapping("/films/remove/{id}")
 	ResponseEntity<Film> removeFilm(@PathVariable Long id) {
@@ -673,7 +712,7 @@ public class FilmController {
 
 	@RolesAllowed({ "batch" })
 	@PostMapping("/films/saveProcessedFilm")
-	ResponseEntity<Film> saveProcessedFilm(@RequestBody Film film) throws Exception {
+	ResponseEntity<Film> saveProcessedFilm(@RequestBody Film film) {
 		Film filmToSave = null;
 		try {
 			Results results = restTemplate.getForObject(environment.getRequiredProperty(TMDB_SERVICE_URL)
@@ -708,7 +747,7 @@ public class FilmController {
 
 	@RolesAllowed({ "user", "batch" })
 	@PutMapping("/films/save/{tmdbId}")
-	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine) throws Exception {
+	ResponseEntity<Film> saveFilm(@PathVariable Long tmdbId, @RequestBody String origine){
 		Film filmToSave = null;
 		try {
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
@@ -721,6 +760,13 @@ public class FilmController {
 			if (results != null) {
 				filmToSave = transformTmdbFilmToDvdThequeFilm(null, results, new HashSet<Long>(), true);
 				if (filmToSave != null) {
+					ResponseEntity<List<FicheFilmDto>> ficheFilmDtoResponse = restTemplate.exchange(
+							environment.getRequiredProperty(ALLOCINE_SERVICE_URL)
+									+ environment.getRequiredProperty(ALLOCINE_SERVICE_BY_TITLE) + "?title=" + filmToSave.getTitre()+"&titleO="+ filmToSave.getTitreO(),
+							HttpMethod.GET, null, new ParameterizedTypeReference<List<FicheFilmDto>>() {});
+					if(ficheFilmDtoResponse.getBody() != null && CollectionUtils.isNotEmpty(ficheFilmDtoResponse.getBody())) {
+						filmToSave.setAllocineFicheFilmId(Integer.valueOf(ficheFilmDtoResponse.getBody().get(0).getId()));
+					}
 					filmToSave.setId(null);
 					filmToSave.setOrigine(filmOrigine);
 					if (FilmOrigine.DVD.equals(filmOrigine)) {
@@ -731,8 +777,7 @@ public class FilmController {
 						filmToSave.setDvd(dvd);
 					}
 					filmToSave.setDateInsertion(DateUtils.clearDate(new Date()));
-					Long id = filmService.saveNewFilm(filmToSave);
-					filmToSave.setId(id);
+					filmService.saveNewFilm(filmToSave);
 				}
 			}
 			if (filmToSave == null) {
@@ -747,7 +792,7 @@ public class FilmController {
 
 	@RolesAllowed({ "user", "batch" })
 	@PostMapping("/films/buildDvd")
-	ResponseEntity<Dvd> buildDvd(@RequestBody DvdBuilder dvdBuilder) throws Exception {
+	ResponseEntity<Dvd> buildDvd(@RequestBody DvdBuilder dvdBuilder){
 		try {
 			Dvd dvd = filmService.buildDvd(dvdBuilder.getFilmToSave().getAnnee(), dvdBuilder.getZonedvd(), null, null,
 					StringUtils.isNotEmpty(dvdBuilder.getFilmFormat()) ? DvdFormat.valueOf(dvdBuilder.getFilmFormat())

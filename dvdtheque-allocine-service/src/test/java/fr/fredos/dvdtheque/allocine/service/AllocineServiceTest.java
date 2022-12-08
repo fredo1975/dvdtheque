@@ -2,8 +2,9 @@ package fr.fredos.dvdtheque.allocine.service;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import static org.assertj.core.api.Assertions.*;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,17 @@ public class AllocineServiceTest {
 		assertNotNull(ficheFilmRetrieved.get(0).getCreationDate());
 		assertNotNull(ficheFilmRetrieved.get(0).getCritiquePresse());
 		assertTrue(ficheFilmRetrieved.get(0).getCritiquePresse().iterator().next().getNewsSource().equals("source1"));
+		System.out.println(ficheFilmRetrieved);
+	}
+	@Test
+	public void testFindById() {
+		FicheFilm ficheFilmSaved = saveFilm();
+		assertNotNull(ficheFilmSaved);
+		Optional<FicheFilm> ficheFilmRetrieved = ficheFilmRepository.findById(ficheFilmSaved.getId());
+		assertThat(ficheFilmRetrieved).isPresent();
+		assertThat(ficheFilmRetrieved.get().getCreationDate()).isNotNull();
+		assertThat(ficheFilmRetrieved.get().getCritiquePresse()).isNotNull();
+		assertThat(ficheFilmRetrieved.get().getCritiquePresse().iterator().next().getNewsSource()).isEqualTo("source1");
 		System.out.println(ficheFilmRetrieved);
 	}
 }
