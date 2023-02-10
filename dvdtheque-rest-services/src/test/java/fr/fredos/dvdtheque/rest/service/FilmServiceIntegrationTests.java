@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
+import static org.assertj.core.api.Assertions.*;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -128,6 +128,55 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		var allocine = it.next();
 		assertNotNull(allocine);
 		assertEquals("titre should match",FilmBuilder.TITRE_FILM_TMBD_ID_844, allocine.getTitre());
+		query = "titre:eq:"+FilmBuilder.TITRE_FILM_TMBD_ID_844+":AND";
+		l = filmService.search(query, null, null, "");
+		assertNotNull(l);
+		it = l.iterator();
+		assertNotNull(it);
+		assertEquals("titre should match",FilmBuilder.TITRE_FILM_TMBD_ID_844, allocine.getTitre());
+	}
+	@Test
+	public void paginatedSarch() throws ParseException{
+		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
+		
+		Long filmId = filmService.saveNewFilm(film);
+		assertNotNull(filmId);
+		var query = "titre:eq:"+FilmBuilder.TITRE_FILM_TMBD_ID_844+":AND";
+		var page = filmService.paginatedSarch(query, 1, 1, "-titre");
+		assertNotNull(page);
+		assertThat(page.getContent()).isNotEmpty();
+		assertThat(page.getContent().size()==1).isTrue();
+		var it = page.getContent().iterator();
+		assertNotNull(it);
+		var f = it.next();
+		assertNotNull(f);
+		assertEquals("titre should match",FilmBuilder.TITRE_FILM_TMBD_ID_844, f.getTitre());
+		page = filmService.paginatedSarch("", 1, 1, "-titre");
+		assertNotNull(page);
+		assertThat(page.getContent()).isNotEmpty();
+		assertThat(page.getContent().size()==1).isTrue();
+		it = page.getContent().iterator();
+		assertNotNull(it);
+		f = it.next();
+		assertNotNull(f);
+		assertEquals("titre should match",FilmBuilder.TITRE_FILM_TMBD_ID_844, f.getTitre());
 	}
 	@Test
 	public void saveNewFilm() throws ParseException {

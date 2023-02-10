@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -618,6 +619,14 @@ public class FilmController {
 			@RequestParam(name = "limit", required = true)Integer limit,
 			@RequestParam(name = "sort", required = true)String sort){
 		return ResponseEntity.ok(new HashSet<>(filmService.search(query, offset, limit, sort)));
+	}
+	@RolesAllowed("user")
+	@GetMapping("/films/paginatedSarch")
+	public ResponseEntity<Page<Film>> paginatedSarch(@RequestParam(name = "query", required = false)String query,
+			@RequestParam(name = "offset", required = false)Integer offset,
+			@RequestParam(name = "limit", required = false)Integer limit,
+			@RequestParam(name = "sort", required = false)String sort){
+		return ResponseEntity.ok(filmService.paginatedSarch(query, offset, limit, sort));
 	}
 	
 	@RolesAllowed("user")

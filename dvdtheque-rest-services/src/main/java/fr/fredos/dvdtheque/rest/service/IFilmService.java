@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
@@ -41,5 +43,6 @@ public interface IFilmService {
 	List<Personne> findAllRealisateursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam);
 	FilmListParam findFilmListParamByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam);
 	List<Film> search(String query,Integer offset,Integer limit,String sort);
+	Page<Film> paginatedSarch(String query,Integer offset,Integer limit,String sort);
 	List<Film> findFilmByOrigine(final FilmOrigine origine);
 }

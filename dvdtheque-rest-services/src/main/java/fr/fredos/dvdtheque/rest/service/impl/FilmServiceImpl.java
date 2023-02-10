@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -270,8 +271,57 @@ public class FilmServiceImpl implements IFilmService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Film> search(String query,Integer offset,Integer limit,String sort){
-		var page = PageRequestBuilder.getPageRequest(limit,offset, sort);
+		Integer limitToSet;
+		Integer offsetToSet;
+		String sortToSet;
+		if(limit == null) {
+			limitToSet = Integer.valueOf(50);
+		}else {
+			limitToSet = limit;
+		}
+		if(offset == null) {
+			offsetToSet = Integer.valueOf(1);
+		}else {
+			offsetToSet = offset;
+		}
+		if(StringUtils.isEmpty(sort)) {
+			sortToSet = "-dateInsertion";
+		}else {
+			sortToSet = sort;
+		}
+		var page = PageRequestBuilder.getPageRequest(limitToSet,offsetToSet, sortToSet);
+		if(StringUtils.isEmpty(sort)) {
+			return filmDao.findAll(page).getContent();
+		}
         return filmDao.findAll(builder.with(query).build(), page).getContent();
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Page<Film> paginatedSarch(String query,Integer offset,Integer limit,String sort){
+		Integer limitToSet;
+		Integer offsetToSet;
+		String sortToSet;
+		if(limit == null) {
+			limitToSet = Integer.valueOf(50);
+		}else {
+			limitToSet = limit;
+		}
+		if(offset == null) {
+			offsetToSet = Integer.valueOf(1);
+		}else {
+			offsetToSet = offset;
+		}
+		if(StringUtils.isEmpty(sort)) {
+			sortToSet = "-dateInsertion";
+		}else {
+			sortToSet = sort;
+		}
+		var page = PageRequestBuilder.getPageRequest(limitToSet,offsetToSet, sortToSet);
+		if(StringUtils.isEmpty(query)) {
+			return filmDao.findAll(page);
+		}
+        return filmDao.findAll(builder.with(query).build(), page);
 	}
 	@Override
 	public List<Film> findFilmByOrigine(final FilmOrigine origine){

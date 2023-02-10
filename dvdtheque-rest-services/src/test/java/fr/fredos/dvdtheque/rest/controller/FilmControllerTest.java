@@ -132,6 +132,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String 					SEARCH_TMDB_FILM_BY_TITRE = GET_ALL_FILMS_URI + "tmdb/byTitre/";
 	private static final String 					SEARCH_FILMS_BY_FILM_LIST_PARAM = "/dvdtheque-service/filmListParam/byOrigine/";
 	private static final String 					SEARCH_FILMS_BY_QUERY_PARAM = "/dvdtheque-service//films/search";
+	private static final String 					PAGINATED_SEARCH_FILMS_BY_QUERY_PARAM = "/dvdtheque-service//films/paginatedSarch";
 	private static final String 					SEARCH_FILMS_BY_ORIGINE = GET_ALL_FILMS_URI + "byOrigine/";
 	private static final String 					UPDATE_TMDB_FILM_BY_TMDBID = GET_ALL_FILMS_URI + "tmdb/";
 	private static final String 					SAVE_FILM_URI = GET_ALL_FILMS_URI + "save/";
@@ -2137,6 +2138,43 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
+		
+	}
+	@Test
+	public void testPaginatedSarch() throws UnsupportedEncodingException, Exception {
+		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
+		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
+		final String dateInsertion1 = "2014/08/01";
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(dateInsertion1)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setGenre1(genre1).setGenre2(genre2)
+				.setZone(Integer.valueOf(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
+		assertNotNull(filmService.saveNewFilm(film));
+		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null, false);
+		final var query = "titre:eq:"+FilmBuilder.TITRE_FILM_TMBD_ID_844+":AND";
+		mockmvc.perform(MockMvcRequestBuilders.get(PAGINATED_SEARCH_FILMS_BY_QUERY_PARAM)
+				.param("query", query)
+				.param("offset", String.valueOf(1))
+				.param("limit", String.valueOf(20))
+				.param("sort", "-titre")
+				.with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(status().isOk())
+		.andExpect(MockMvcResultMatchers.jsonPath("totalElements", Is.is(1)))
+		.andExpect(MockMvcResultMatchers.jsonPath("content[0].titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
 		
 	}
 	@Test
