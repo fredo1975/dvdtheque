@@ -210,32 +210,7 @@ public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4
 		Personne personne = personneService.findPersonneByName(FilmBuilder.ACT1_TMBD_ID_844);
 		assertNotNull(personne);
 	}
-	@Test
-	public void findAllPersonneByFilm() throws Exception {
-		Genre genre1 = filmService.saveGenre(new Genre(28,"Action"));
-		Genre genre2 = filmService.saveGenre(new Genre(35,"Comedy"));
-		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
-				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
-				.setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
-				.setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD)
-				.setGenre1(genre1)
-				.setGenre2(genre2)
-				.setZone(Integer.valueOf(2))
-				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
-				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
-		Long filmId = filmService.saveNewFilm(film);
-		assertNotNull(filmId);
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null, false);
-		film = filmService.findFilm(film.getId());
-		FilmBuilder.assertFilmIsNotNull(film,false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, null, null, false);
-	}
+	
 	@Test
 	public void cleanAllPersonne() throws Exception {
 		String methodName = "cleanAllPersonne : ";

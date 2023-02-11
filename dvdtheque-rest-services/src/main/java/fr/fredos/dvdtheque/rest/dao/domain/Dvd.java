@@ -3,11 +3,14 @@ package fr.fredos.dvdtheque.rest.dao.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,6 +40,8 @@ public class Dvd implements Serializable {
 	private DvdFormat format;
 	@Column(name = "ripped")
 	private boolean ripped;
+	@OneToOne(cascade=CascadeType.MERGE,fetch = FetchType.LAZY)
+	private Film film;
 	public Long getId() {
 		return id;
 	}
@@ -85,6 +90,12 @@ public class Dvd implements Serializable {
 	public void setDateSortie(Date dateSortie) {
 		this.dateSortie = dateSortie;
 	}
+	public Film getFilm() {
+		return film;
+	}
+	public void setFilm(Film film) {
+		this.film = film;
+	}
 	public Dvd() {
 		super();
 	}
@@ -114,6 +125,7 @@ public class Dvd implements Serializable {
 	@Override
 	public String toString() {
 		return "Dvd [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", zone=" + zone + ", edition="
-				+ edition + ", dateRip=" + dateRip + ", format=" + format + ", ripped=" + ripped + "]";
+				+ edition + ", dateRip=" + dateRip + ", format=" + format + ", ripped=" + ripped + ", film=" + film
+				+ "]";
 	}
 }

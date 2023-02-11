@@ -43,7 +43,9 @@ public class SpecificationFactory<T> {
     				join = root.join(criteria.getKey());
     			}
             	return builder.like(join.get("nom"), "%"+StringUtils.upperCase((String) criteria.getValue()) +"%");
-            } else {
+			}else if(root.get(criteria.getKey()).getJavaType() == boolean.class) {
+				return builder.equal(root.get(criteria.getKey()),Boolean.valueOf((String) criteria.getValue()));
+			} else {
             	return builder.like(root.get(criteria.getKey()), "%"+StringUtils.upperCase(criteria.getValue().toString()) +"%");
             }
 		};
