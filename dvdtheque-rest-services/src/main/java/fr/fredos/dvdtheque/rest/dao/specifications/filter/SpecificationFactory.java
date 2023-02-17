@@ -11,6 +11,8 @@ import javax.persistence.criteria.Join;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+
+import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
 @Component
 public class SpecificationFactory<T> {
 
@@ -37,6 +39,12 @@ public class SpecificationFactory<T> {
 				return builder.equal(root.get(criteria.getKey()),Enum.valueOf(clazz, (String) criteria.getValue()));
 			}else if(root.get(criteria.getKey()).getJavaType() == Integer.class) {
 				return builder.equal(root.get(criteria.getKey()),Integer.valueOf((String)criteria.getValue()));
+			}else if(root.get(criteria.getKey()).getJavaType() == Dvd.class) {
+				Join join = null;
+            	if(((String)criteria.getKey()).equalsIgnoreCase("dvd")) {
+    				join = root.join(criteria.getKey());
+    			}
+            	return builder.equal(join.get("format"),(String) criteria.getValue());
 			}else if(root.get(criteria.getKey()).getJavaType() == Set.class) {
 				Join join = null;
             	if(((String)criteria.getKey()).equalsIgnoreCase("realisateur") || ((String)criteria.getKey()).equalsIgnoreCase("acteur")) {

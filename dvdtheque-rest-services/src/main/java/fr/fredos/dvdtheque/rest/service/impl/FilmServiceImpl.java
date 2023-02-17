@@ -8,7 +8,6 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -125,7 +124,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = true)
 	public Page<Film> findAllFilmByDvdFormat(final DvdFormat format) {
 		var page = buildDefaultPageRequest(1, 10, "-dateSortie");
-		return dvdDao.findAll(dvdBuilder.with("format:eq:"+format+":AND,").build(), page).map(d->d.getFilm());
+		return filmDao.findAll(builder.with("dvd.format:eq:"+format+":AND,").build(), page);
 	}
 	@Override
 	@Transactional(readOnly = true)
@@ -139,21 +138,20 @@ public class FilmServiceImpl implements IFilmService {
 		upperCaseTitre(film);
 		film.setDateMaj(LocalDateTime.now());
 		Film filmRetrieved = findFilm(film.getId());
-		if(film.isVu()) {
-			filmRetrieved.setDateVue(LocalDate.now());
-		}
-		if(!film.isVu()) {
-			filmRetrieved.setDateVue(null);
-		}
-		if (filmRetrieved.getDvd() != null) {
-			if (film.getDvd().isRipped()) {
-				filmRetrieved.getDvd().setDateRip(new Date());
-			}
-			if (!film.getDvd().isRipped()) {
+		if (film.getDvd() != null) {
+			filmRetrieved.setDvd(film.getDvd());
+			if (!filmRetrieved.getDvd().isRipped()) {
 				filmRetrieved.getDvd().setDateRip(null);
 			}
 		}
 		filmRetrieved.setOrigine(film.getOrigine());
+		filmRetrieved.setDateInsertion(film.getDateInsertion());
+		filmRetrieved.setVu(film.isVu());
+		if(!filmRetrieved.isVu()) {
+			filmRetrieved.setDateVue(null);
+		}else {
+			filmRetrieved.setDateVue(film.getDateVue());
+		}
 		Film mergedFilm = filmDao.save(filmRetrieved);
 		return mergedFilm;
 	}

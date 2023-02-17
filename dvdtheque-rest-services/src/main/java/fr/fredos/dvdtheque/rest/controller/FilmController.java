@@ -277,9 +277,7 @@ public class FilmController {
 		if(updatedFilm == null) {
 			return film;
 		}
-		if (updatedFilm.getDvd() != null && updatedFilm.getDvd().isRipped()) {
-			updatedFilm.getDvd().setDateRip(new Date());
-		}
+		
 		return updatedFilm;
 	}
 
