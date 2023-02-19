@@ -724,6 +724,9 @@ public class FilmController {
 		return ResponseEntity.noContent().build();
 	}
 
+	private Page<Film>  paginatedSarch(String query,int pageNumber){
+		return filmService.paginatedSarch(query, pageNumber, null, "");
+	}
 	@RolesAllowed("user")
 	@PostMapping("/films/export")
 	ResponseEntity<byte[]> exportFilmList(@RequestBody String origine)
@@ -736,13 +739,23 @@ public class FilmController {
 		try {
 			List<Film> list = new ArrayList<>();
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
-			Page<Film> films = filmService.paginatedSarch("origine:eq:"+filmOrigine+":AND", null, null, "");
-			list.addAll(films.getContent());
-			
-			while(films.hasNext()) {
-				Pageable p = films.nextPageable();
-				films = filmService.paginatedSarch("origine:eq:"+filmOrigine+":AND", p.getPageNumber(), null, "");
+			//Page<Film> films;
+			if(filmOrigine == FilmOrigine.TOUS) {
+				Page<Film> films = paginatedSarch("",1);
 				list.addAll(films.getContent());
+				while(films.hasNext()) {
+					Pageable p = films.nextPageable();
+					films = paginatedSarch("",p.getPageNumber()+1);
+					list.addAll(films.getContent());
+				}
+			}else {
+				Page<Film> films = paginatedSarch("origine:eq:"+filmOrigine+":AND",1);
+				list.addAll(films.getContent());
+				while(films.hasNext()) {
+					Pageable p = films.nextPageable();
+					films = paginatedSarch("origine:eq:"+filmOrigine+":AND",p.getPageNumber()+1);
+					list.addAll(films.getContent());
+				}
 			}
 			byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
 			headers.setContentType(

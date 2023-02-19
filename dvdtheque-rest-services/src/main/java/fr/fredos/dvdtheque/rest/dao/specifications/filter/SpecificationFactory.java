@@ -44,13 +44,20 @@ public class SpecificationFactory<T> {
             	if(((String)criteria.getKey()).equalsIgnoreCase("dvd")) {
     				join = root.join(criteria.getKey());
     			}
+            	if(((String) criteria.getValue()).equals("true")|| ((String) criteria.getValue()).equals("false")) {
+            		return builder.equal(join.get("ripped"),Boolean.valueOf((String) criteria.getValue()));
+            	}
             	return builder.equal(join.get("format"),(String) criteria.getValue());
 			}else if(root.get(criteria.getKey()).getJavaType() == Set.class) {
 				Join join = null;
             	if(((String)criteria.getKey()).equalsIgnoreCase("realisateur") || ((String)criteria.getKey()).equalsIgnoreCase("acteur")) {
     				join = root.join(criteria.getKey());
+    				return builder.like(join.get("nom"), "%"+StringUtils.upperCase((String) criteria.getValue()) +"%");
+    			}else {
+    				// means genre
+    				join = root.join(criteria.getKey());
+    				return builder.equal(join.get("name"),(String) criteria.getValue());
     			}
-            	return builder.like(join.get("nom"), "%"+StringUtils.upperCase((String) criteria.getValue()) +"%");
 			}else if(root.get(criteria.getKey()).getJavaType() == boolean.class) {
 				return builder.equal(root.get(criteria.getKey()),Boolean.valueOf((String) criteria.getValue()));
 			} else {

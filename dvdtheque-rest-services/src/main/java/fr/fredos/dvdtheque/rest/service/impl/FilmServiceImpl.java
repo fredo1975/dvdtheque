@@ -137,10 +137,13 @@ public class FilmServiceImpl implements IFilmService {
 	public Film updateFilm(Film film) {
 		upperCaseTitre(film);
 		film.setDateMaj(LocalDateTime.now());
-		Film filmRetrieved = findFilm(film.getId());
-		if (film.getDvd() != null) {
+		var filmRetrieved = findFilm(film.getId());
+		if(filmRetrieved.getOrigine() == FilmOrigine.DVD && film.getOrigine() != FilmOrigine.DVD) {
+			filmRetrieved.setDvd(null);
+		}
+		if (film.getDvd() != null && film.getOrigine() == FilmOrigine.DVD) {
 			filmRetrieved.setDvd(film.getDvd());
-			if (!filmRetrieved.getDvd().isRipped()) {
+			if (!film.getDvd().isRipped()) {
 				filmRetrieved.getDvd().setDateRip(null);
 			}
 		}
@@ -152,7 +155,7 @@ public class FilmServiceImpl implements IFilmService {
 		}else {
 			filmRetrieved.setDateVue(film.getDateVue());
 		}
-		Film mergedFilm = filmDao.save(filmRetrieved);
+		var mergedFilm = filmDao.save(filmRetrieved);
 		return mergedFilm;
 	}
 

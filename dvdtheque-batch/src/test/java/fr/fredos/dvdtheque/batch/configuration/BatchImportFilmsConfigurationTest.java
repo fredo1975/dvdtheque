@@ -102,54 +102,5 @@ public class BatchImportFilmsConfigurationTest{
 		jobLauncher.afterPropertiesSet();
 		JobExecution jobExecution = jobLauncher.run(job, jobParameters);
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-		
-		/*
-		List<Film> films = filmService.findAllFilms(null);
-		assertTrue(films.size()==8);
-		boolean isAdAstraExists = false;
-		boolean is2046Exists = false;
-		boolean is40ansExists = false;
-		
-		for(Film film : films) {
-			if(TITRE_AD_ASTRA.equals(film.getTitre())) {
-				isAdAstraExists = true;
-				Personne real = film.getRealisateurs().iterator().next();
-				assertTrue(REAL_NOM_AD_ASTRA.equals(real.getNom()));
-				Set<Personne> acteurs = film.getActeurs();
-				assertTrue(CollectionUtils.isNotEmpty(acteurs));
-				assertTrue(acteurs.size()>7);
-				assertTrue(FilmOrigine.EN_SALLE.equals(film.getOrigine()));
-				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.EN_SALLE, "2019/09/18", "2020/01/13");
-			}
-			if(TITRE_FILM_2046.equals(film.getTitre())) {
-				is2046Exists = true;
-				Personne real = film.getRealisateurs().iterator().next();
-				assertTrue(REAL_NOM2.equals(real.getNom()));
-				Set<Personne> acteurs = film.getActeurs();
-				assertTrue(CollectionUtils.isNotEmpty(acteurs));
-				assertTrue(acteurs.size()>7);
-				assertFalse(film.getDvd().isRipped());
-				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
-				FilmBuilder.assertFilmIsNotNull(film,true,0,FilmOrigine.DVD, "2004/05/20", "2018/06/18");
-			}
-			if(TITRE_FILM_40_ans.equals(film.getTitre())) {
-				is40ansExists = true;
-				Personne real = film.getRealisateurs().iterator().next();
-				assertTrue(REAL_NOM3.equals(real.getNom()));
-				Set<Personne> acteurs = film.getActeurs();
-				assertTrue(CollectionUtils.isNotEmpty(acteurs));
-				assertTrue(acteurs.size()>7);
-				assertTrue(film.getDvd().isRipped());
-				assertTrue(DvdFormat.DVD.name().equals(film.getDvd().getFormat().name()));
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd",Locale.FRANCE);
-				Date ripDate = DateUtils.clearDate(sdf.parse("2019/07/24"));
-				long temp = ChronoUnit.DAYS.between(DateUtils.clearDate(new Date()).toInstant(),DateUtils.clearDate(ripDate).toInstant());
-				FilmBuilder.assertFilmIsNotNull(film,false,Long.valueOf(temp).intValue(),FilmOrigine.DVD, "2013/03/13", "2019/08/01");
-			}
-		}
-		assertTrue(isAdAstraExists);
-		assertTrue(is2046Exists);
-		assertTrue(is40ansExists);*/
-		
 	}
 }
