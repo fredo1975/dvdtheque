@@ -60,19 +60,15 @@ public class FilmServiceImpl implements IFilmService {
 	IMap<Long, Genre> mapGenres;
 	
 	private final FilmDao filmDao;
-	private final DvdDao dvdDao;
 	private final GenreDao genreDao;
 	private final IPersonneService personneService;
 	private final HazelcastInstance instance;
 	
 	@Autowired
 	private SpecificationsBuilder<Film> builder;
-	@Autowired
-	private SpecificationsBuilder<Dvd> dvdBuilder;
 	
 	public FilmServiceImpl(FilmDao filmDao,DvdDao dvdDao,GenreDao genreDao,IPersonneService personneService,HazelcastInstance instance) {
 		this.filmDao = filmDao;
-		this.dvdDao = dvdDao;
 		this.genreDao = genreDao;
 		this.personneService = personneService;
 		this.instance = instance;
