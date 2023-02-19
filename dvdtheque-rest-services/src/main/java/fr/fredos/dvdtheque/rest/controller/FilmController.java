@@ -545,7 +545,7 @@ public class FilmController {
 				return ResponseEntity.notFound().build();
 			}
 			Results results = restTemplate.getForObject(
-					environment.getRequiredProperty(TMDB_SERVICE_URL) + "?tmdbId=" + film.getTmdbId(), Results.class);
+					environment.getRequiredProperty(TMDB_SERVICE_URL) + environment.getRequiredProperty(TMDB_SERVICE_RESULTS) + "?tmdbId=" + film.getTmdbId(), Results.class);
 			film.setPosterPath(
 					environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL) + results.getPoster_path());
 			return ResponseEntity.ok(filmService.updateFilm(film));
