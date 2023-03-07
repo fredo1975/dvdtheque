@@ -125,7 +125,6 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String 					SEARCH_TMDB_FILM_BY_TITRE = GET_ALL_FILMS_URI + "tmdb/byTitre/";
 	private static final String 					SEARCH_FILMS_BY_QUERY_PARAM = "/dvdtheque-service//films/search";
 	private static final String 					PAGINATED_SEARCH_FILMS_BY_QUERY_PARAM = "/dvdtheque-service//films/paginatedSarch";
-	private static final String 					UPDATE_TMDB_FILM_BY_TMDBID = GET_ALL_FILMS_URI + "tmdb/";
 	private static final String 					SAVE_FILM_URI = GET_ALL_FILMS_URI + "save/";
 	private static final String 					UPDATE_FILM_URI = GET_ALL_FILMS_URI + "update/";
 	private static final String 					REMOVE_FILM_URI = GET_ALL_FILMS_URI + "remove/";
@@ -889,7 +888,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		res.setId(film.getTmdbId());
 		
 		mockServer.expect(ExpectedCount.once(), 
-		          requestTo(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)+"?tmdbId="+res.getId()))
+		          requestTo(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)+ environment.getRequiredProperty(FilmController.TMDB_SERVICE_RESULTS)+"?tmdbId="+res.getId()))
 		          .andExpect(method(HttpMethod.GET))
 		          .andRespond(withSuccess(mapper.writeValueAsString(res), MediaType.APPLICATION_JSON));
 		
