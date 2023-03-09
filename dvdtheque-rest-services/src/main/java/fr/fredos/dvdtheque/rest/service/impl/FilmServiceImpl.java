@@ -8,7 +8,6 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,11 +16,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -30,54 +26,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.util.StopWatch;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
-import com.hazelcast.query.Predicate;
-import com.hazelcast.query.Predicates;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
-import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
-import fr.fredos.dvdtheque.common.enums.PersonneType;
-import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
 import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
-import fr.fredos.dvdtheque.rest.dao.domain.Personne;
+import fr.fredos.dvdtheque.rest.dao.repository.DvdDao;
 import fr.fredos.dvdtheque.rest.dao.repository.FilmDao;
 import fr.fredos.dvdtheque.rest.dao.repository.GenreDao;
 import fr.fredos.dvdtheque.rest.dao.specifications.filter.PageRequestBuilder;
 import fr.fredos.dvdtheque.rest.dao.specifications.filter.SpecificationsBuilder;
+import fr.fredos.dvdtheque.rest.exception.FilmNotFoundException;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
 import fr.fredos.dvdtheque.rest.service.IPersonneService;
 import fr.fredos.dvdtheque.rest.service.model.FilmDto;
-import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
-import fr.fredos.dvdtheque.rest.service.model.FilmListParamBuilder;
 
 @Service("filmService")
 @CacheConfig(cacheNames = "films")
 public class FilmServiceImpl implements IFilmService {
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceImpl.class);
 	private static final String REALISATEUR_MESSAGE_WARNING = "Film should contains one producer";
-	// private static final String ACTEURS_MESSAGE_WARNING = "Film should contains
-	// actors";
-	public static final String CACHE_ACTEUR = "actCache";
-	public static final String CACHE_REALISATEUR = "realCache";
-	public static final String CACHE_ACTEUR_BY_ORIGINE = "actCacheByOrigine";
-	public static final String CACHE_REALISATEUR_BY_ORIGINE = "realCacheByOrigine";
-	public static final String CACHE_FILM = "films";
+
 	public static final String CACHE_GENRE = "genreCache";
-	IMap<Long, Film> mapFilms;
 	IMap<Long, Genre> mapGenres;
-	IMap<Long, Personne> mapRealisateurs;
-	IMap<Long, Personne> mapActeurs;
-	IMap<FilmOrigine, Map<Film,Set<Personne>>> mapActeursByOrigine;
-	IMap<FilmOrigine, Map<Film,Set<Personne>>> mapRealisateursByOrigine;
 	
 	private final FilmDao filmDao;
 	private final GenreDao genreDao;
@@ -87,7 +67,7 @@ public class FilmServiceImpl implements IFilmService {
 	@Autowired
 	private SpecificationsBuilder<Film> builder;
 	
-	public FilmServiceImpl(FilmDao filmDao,GenreDao genreDao,IPersonneService personneService,HazelcastInstance instance) {
+	public FilmServiceImpl(FilmDao filmDao,DvdDao dvdDao,GenreDao genreDao,IPersonneService personneService,HazelcastInstance instance) {
 		this.filmDao = filmDao;
 		this.genreDao = genreDao;
 		this.personneService = personneService;
@@ -96,15 +76,7 @@ public class FilmServiceImpl implements IFilmService {
 	}
 	
 	public void init() {
-		mapFilms = instance.getMap(CACHE_FILM);
-		/*mapFilms.addIndex("id", false);
-		mapFilms.addIndex("origine", false);
-		mapFilms.addIndex("tmdbId", false);*/
-		// logger.info("films cache: " + mapFilms.size());
 		mapGenres = instance.getMap(CACHE_GENRE);
-		//mapGenres.addIndex("id", true);
-		FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS,40,FilmOrigine.TOUS);
-		findAllFilms(filmDisplayTypeParam);
 	}
 
 	@Transactional(readOnly = true)
@@ -128,11 +100,6 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Transactional(readOnly = true, noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })
-	public List<Film> findFilmByTitre(final String titre) {
-		return filmDao.findFilmByTitre(titre);
-	}
-	
-	@Transactional(readOnly = true, noRollbackFor = { org.springframework.dao.EmptyResultDataAccessException.class })
 	public Film findFilmByTitreWithoutSpecialsCharacters(final String titre) {
 		return filmDao.findFilmByTitreWithoutSpecialsCharacters(titre);
 	}
@@ -140,17 +107,21 @@ public class FilmServiceImpl implements IFilmService {
 	@Override
 	@Transactional(readOnly = true)
 	public Film findFilm(final Long id) {
-		Film film = mapFilms.get(id);
-		if (film != null)
-			return film;
-		Optional<Film> filmOpt = filmDao.findById(id);
-		if(filmOpt.isEmpty()) {
-			return null;
-		}
-		mapFilms.putIfAbsent(id, filmOpt.get());
-		return filmOpt.get();
+		return filmDao.findById(id).orElseThrow(()->new FilmNotFoundException(String.format("film with id %s not found", id)));
 	}
-
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Page<Film> findAllFilmByOrigine(final FilmOrigine origine) {
+		var page = buildDefaultPageRequest(1, 10, "-dateSortie");
+		return filmDao.findAll(builder.with("origine:eq:"+origine+":AND,").build(), page);
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public Page<Film> findAllFilmByDvdFormat(final DvdFormat format) {
+		var page = buildDefaultPageRequest(1, 10, "-dateSortie");
+		return filmDao.findAll(builder.with("dvd.format:eq:"+format+":AND,").build(), page);
+	}
 	@Override
 	@Transactional(readOnly = true)
 	public Genre findGenre(int tmdbId) {
@@ -162,26 +133,25 @@ public class FilmServiceImpl implements IFilmService {
 	public Film updateFilm(Film film) {
 		upperCaseTitre(film);
 		film.setDateMaj(LocalDateTime.now());
-		Film filmRetrieved = mapFilms.get(film.getId());
-		if(filmRetrieved != null) {
-			if(!filmRetrieved.isVu() && film.isVu()) {
-				film.setDateVue(LocalDate.now());
-			}
-			if(filmRetrieved.isVu() && !film.isVu()) {
-				film.setDateVue(null);
-			}
-			if (filmRetrieved.getDvd() != null) {
-				if (!filmRetrieved.getDvd().isRipped() && film.getDvd().isRipped()) {
-					film.getDvd().setDateRip(new Date());
-				}
-				if (filmRetrieved.getDvd().isRipped() && !film.getDvd().isRipped()) {
-					film.getDvd().setDateRip(null);
-				}
-			}
-			
+		var filmRetrieved = findFilm(film.getId());
+		if(filmRetrieved.getOrigine() == FilmOrigine.DVD && film.getOrigine() != FilmOrigine.DVD) {
+			filmRetrieved.setDvd(null);
 		}
-		Film mergedFilm = filmDao.save(film);
-		mapFilms.put(film.getId(), mergedFilm);
+		if (film.getDvd() != null && film.getOrigine() == FilmOrigine.DVD) {
+			filmRetrieved.setDvd(film.getDvd());
+			if (!film.getDvd().isRipped()) {
+				filmRetrieved.getDvd().setDateRip(null);
+			}
+		}
+		filmRetrieved.setOrigine(film.getOrigine());
+		filmRetrieved.setDateInsertion(film.getDateInsertion());
+		filmRetrieved.setVu(film.isVu());
+		if(!filmRetrieved.isVu()) {
+			filmRetrieved.setDateVue(null);
+		}else {
+			filmRetrieved.setDateVue(film.getDateVue());
+		}
+		var mergedFilm = filmDao.save(filmRetrieved);
 		return mergedFilm;
 	}
 
@@ -198,7 +168,6 @@ public class FilmServiceImpl implements IFilmService {
 		Assert.notEmpty(film.getRealisateur(), REALISATEUR_MESSAGE_WARNING);
 		upperCaseTitre(film);
 		Film savedFilm = filmDao.save(film);
-		mapFilms.putIfAbsent(savedFilm.getId(), savedFilm);
 		return savedFilm.getId();
 	}
 	
@@ -210,26 +179,6 @@ public class FilmServiceImpl implements IFilmService {
 		return persistedGenre;
 	}
 	
-	@Override
-	@Transactional(readOnly = true)
-	public List<Film> findAllFilms(FilmDisplayTypeParam filmDisplayTypeParam) {
-		Collection<Film> films = mapFilms.values();
-		logger.debug("findAllFilms films cache size: " + films.size());
-		if (films.size() > 0) {
-			return sortListAccordingToFilmDisplayType(films,filmDisplayTypeParam);
-		}
-		logger.debug("no films find");
-		List<Film> filmList = this.filmDao.findAll();
-		logger.debug("filmList size: " + filmList.size());
-		filmList.parallelStream().forEach(it -> {
-			mapFilms.putIfAbsent(it.getId(), it);
-		});
-		if(filmDisplayTypeParam == null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-			return filmList;
-		}
-		return sortListAccordingToFilmDisplayType(filmList,filmDisplayTypeParam);
-	}
-
 	@Override
 	@Transactional(readOnly = true)
 	public List<Genre> findAllGenres() {
@@ -255,7 +204,6 @@ public class FilmServiceImpl implements IFilmService {
 	@Transactional(readOnly = false)
 	public void cleanAllFilms() {
 		filmDao.deleteAll();
-		mapFilms.clear();
 		genreDao.deleteAll();
 		mapGenres.clear();
 		personneService.cleanAllPersonnes();
@@ -270,8 +218,64 @@ public class FilmServiceImpl implements IFilmService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Film> search(String query,Integer offset,Integer limit,String sort){
-		var page = PageRequestBuilder.getPageRequest(limit,offset, sort);
+		Integer limitToSet;
+		Integer offsetToSet;
+		String sortToSet;
+		if(limit == null) {
+			limitToSet = Integer.valueOf(50);
+		}else {
+			limitToSet = limit;
+		}
+		if(offset == null) {
+			offsetToSet = Integer.valueOf(1);
+		}else {
+			offsetToSet = offset;
+		}
+		if(StringUtils.isEmpty(sort)) {
+			sortToSet = "-dateInsertion";
+		}else {
+			sortToSet = sort;
+		}
+		var page = PageRequestBuilder.getPageRequest(limitToSet,offsetToSet, sortToSet);
+		if(StringUtils.isEmpty(sort)) {
+			return filmDao.findAll(page).getContent();
+		}
         return filmDao.findAll(builder.with(query).build(), page).getContent();
+	}
+	private PageRequest buildDefaultPageRequest(Integer offset,
+			Integer limit,
+			String sort) {
+		Integer limitToSet;
+		Integer offsetToSet;
+		String sortToSet;
+		if(limit == null) {
+			limitToSet = Integer.valueOf(50);
+		}else {
+			limitToSet = limit;
+		}
+		if(offset == null) {
+			offsetToSet = Integer.valueOf(1);
+		}else {
+			offsetToSet = offset;
+		}
+		if(StringUtils.isEmpty(sort)) {
+			sortToSet = "-dateInsertion";
+		}else {
+			sortToSet = sort;
+		}
+		return PageRequestBuilder.getPageRequest(limitToSet,offsetToSet, sortToSet);
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public Page<Film> paginatedSarch(String query,
+			Integer offset,
+			Integer limit,
+			String sort){
+		var page = buildDefaultPageRequest(offset, limit, sort);
+		if(StringUtils.isEmpty(query)) {
+			return filmDao.findAll(page);
+		}
+        return filmDao.findAll(builder.with(query).build(), page);
 	}
 	@Override
 	public List<Film> findFilmByOrigine(final FilmOrigine origine){
@@ -285,7 +289,7 @@ public class FilmServiceImpl implements IFilmService {
 		Optional<Film> filmOpt = filmDao.findById(film.getId());
 		if(filmOpt.isPresent()) {
 			filmDao.delete(filmOpt.get());
-			mapFilms.remove(filmOpt.get().getId());
+			//mapFilms.remove(filmOpt.get().getId());
 		}
 	}
 
@@ -349,178 +353,12 @@ public class FilmServiceImpl implements IFilmService {
 		}
 		return dvd;
 	}
-
+	@Override
+	public void cleanAllCaches() {
+		mapGenres.clear();
+	}
 	@Override
 	public Boolean checkIfTmdbFilmExists(final Long tmdbId) {
 		return filmDao.checkIfTmdbFilmExists(tmdbId).equals(Integer.valueOf(1))?Boolean.TRUE:Boolean.FALSE;
-	}
-
-	/**
-	 * 
-	 * @param films
-	 * @return
-	 */
-	private List<Film> sortListAccordingToFilmDisplayType(Collection<Film> films, final FilmDisplayTypeParam filmDisplayTypeParam) {
-		if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-			List<Film> list = films.stream().collect(Collectors.toList());
-			Collections.sort(list);
-			return list;
-		}else if(FilmDisplayType.DERNIERS_AJOUTS_NON_VUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-			return films.stream().sorted(Comparator.comparing(Film::getDateInsertion).reversed()).filter(f->!f.isVu()).limit(filmDisplayTypeParam.getLimitFilmSize()).collect(Collectors.toList());
-		}else if(FilmDisplayType.NON_VUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-			return films.stream().sorted(Comparator.comparing(Film::getTitre)).filter(f->!f.isVu()).limit(filmDisplayTypeParam.getLimitFilmSize()).collect(Collectors.toList());
-		}else {
-			return films.stream().sorted(Comparator.comparing(Film::getDateInsertion).reversed()).limit(filmDisplayTypeParam.getLimitFilmSize()).collect(Collectors.toList());
-		}
-		
-	}
-	@Transactional(readOnly = true)
-	@Override
-	public List<Film> findAllFilmsByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam) {
-		StopWatch watch = new StopWatch();
-		watch.start();
-		if(filmDisplayTypeParam != null
-				&& FilmOrigine.TOUS.equals(filmDisplayTypeParam.getFilmOrigine())) {
-			return findAllFilms(filmDisplayTypeParam);
-		}else {
-			Predicate<Long, Film> predicate = Predicates.equal("origine", filmDisplayTypeParam.getFilmOrigine());
-			//logger.info("findAllFilmsByFilmDisplayType films cache find ");
-			Collection<Film> films = mapFilms.values(predicate);
-			logger.debug("findAllFilmsByFilmDisplayType films cache size: " + films.size());
-			if (films.size() > 0) {
-				watch.stop();
-				//logger.info("findAllFilmsByFilmDisplayType="+watch.getTotalTimeSeconds());
-				return sortListAccordingToFilmDisplayType(films,filmDisplayTypeParam);
-			}
-			logger.debug("no films found");
-			List<Film> filmsRes = this.filmDao.findFilmByOrigine(filmDisplayTypeParam.getFilmOrigine());
-			logger.debug("findAllFilmsByFilmDisplayType films size: " + filmsRes.size());
-			filmsRes.stream().forEach(it -> {
-				mapFilms.put(it.getId(), it);
-			});
-			watch.stop();
-			//logger.info("findAllFilmsByFilmDisplayType="+watch.getTotalTimeMillis());
-			return sortListAccordingToFilmDisplayType(filmsRes,filmDisplayTypeParam);
-		}
-	}
-	
-	@Override
-	public void cleanAllCaches() {
-		mapFilms.clear();
-		mapGenres.clear();
-	}
-	
-	@Override
-	public List<Personne> findAllRealisateurs(FilmDisplayTypeParam filmDisplayTypeParam) {
-		Set<Personne> realisateurs = new ConcurrentSkipListSet<Personne>();
-		Collection<Film> films = mapFilms.values();
-		logger.debug("findAllRealisateurs films cache size: " + films.size());
-		if (films.size() > 0) {
-			if(filmDisplayTypeParam!=null && FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-				List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
-				return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.REALISATEUR,sortedFilms, realisateurs);
-			}
-			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.REALISATEUR,films, realisateurs);
-		}
-		logger.debug("findAllRealisateurs no films find");
-		List<Film> filmList = this.filmDao.findAll();
-		logger.debug("findAllRealisateurs filmList size: " + filmList.size());
-		if(FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
-			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.REALISATEUR,sortedFilms, realisateurs);
-		}
-		return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.REALISATEUR,filmList, realisateurs);
-	}
-	
-	@Override
-	public List<Personne> findAllRealisateursByFilmDisplayType(FilmDisplayTypeParam filmDisplayTypeParam) {
-		StopWatch watch = new StopWatch();
-		watch.start();
-		Set<Personne> realisateursByOrigineToReturnSet = new TreeSet<Personne>();
-		List<Film> films = findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
-		if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-			realisateursByOrigineToReturnSet = findAllFilmsByFilmDisplayType(filmDisplayTypeParam).stream().map(Film::getRealisateur).flatMap(x->x.stream()).collect(Collectors.toSet());
-		}else {
-			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
-			for(Film film : sortedFilms) {
-				realisateursByOrigineToReturnSet.addAll(film.getRealisateur());
-			}
-		}
-		watch.stop();
-		//logger.info("findAllRealisateursByFilmDisplayType="+watch.getTotalTimeMillis());
-		return new ArrayList<>(realisateursByOrigineToReturnSet);
-	}
-	
-	@Override
-	public List<Personne> findAllActeurs(FilmDisplayTypeParam filmDisplayTypeParam) {
-		Set<Personne> acteurs = new ConcurrentSkipListSet<Personne>();
-		Collection<Film> films = mapFilms.values();
-		logger.debug("findAllActeurs films cache size: " + films.size());
-		if (films.size() > 0) {
-			if(filmDisplayTypeParam!=null && FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-				List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
-				return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,sortedFilms, acteurs);
-			}
-			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,films, acteurs);
-		}
-		logger.debug("findAllActeurs no films find");
-		List<Film> filmList = this.filmDao.findAll();
-		logger.debug("findAllActeurs filmList size: " + filmList.size());
-		if(FilmDisplayType.DERNIERS_AJOUTS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
-			return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,sortedFilms, acteurs);
-		}
-		return iterateThroughFilmsToGetPersonnesListSorted(PersonneType.ACTEUR,filmList, acteurs);
-	}
-	
-	private List<Personne> iterateThroughFilmsToGetPersonnesListSorted(final PersonneType personneType,final Collection<Film> films,final Set<Personne> personnes){
-		films.parallelStream().forEach(it -> {
-			personnes.addAll(PersonneType.ACTEUR.equals(personneType)?it.getActeur():it.getRealisateur());
-		});
-		return personnes.stream().collect(Collectors.toList());
-	}
-	
-	@Override
-	public List<Personne> findAllActeursByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam) {
-		StopWatch watch = new StopWatch();
-		watch.start();
-		Set<Personne> acteursByOrigineToReturnSet = new TreeSet<Personne>();
-		List<Film> films = findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
-		if(filmDisplayTypeParam==null || FilmDisplayType.TOUS.equals(filmDisplayTypeParam.getFilmDisplayType())) {
-			acteursByOrigineToReturnSet = findAllFilmsByFilmDisplayType(filmDisplayTypeParam).stream().map(Film::getActeur).flatMap(x->x.stream()).collect(Collectors.toSet());
-		}else {
-			List<Film> sortedFilms = sortListAccordingToFilmDisplayType(films, filmDisplayTypeParam);
-			for(Film film : sortedFilms) {
-				acteursByOrigineToReturnSet.addAll(film.getActeur());
-			}
-		}
-		watch.stop();
-		//logger.info("findAllActeursByFilmDisplayType="+watch.getTotalTimeMillis());
-		return new ArrayList<>(acteursByOrigineToReturnSet);
-	}
-	@Override
-	public FilmListParam findFilmListParamByFilmDisplayType(final FilmDisplayTypeParam filmDisplayTypeParam) {
-		StopWatch watch = new StopWatch();
-		watch.start();
-		List<Film> films = this.findAllFilmsByFilmDisplayType(filmDisplayTypeParam);
-		Set<Personne> acteurs = films.stream().map(Film::getActeur).flatMap(x->x.stream()).sorted().collect(Collectors.toSet());
-		List<Personne> acteursList = new ArrayList<Personne>(acteurs);
-		Collections.sort(acteursList);
-		Set<Personne> realisateurs = films.stream().map(Film::getRealisateur).flatMap(x->x.stream()).sorted().collect(Collectors.toSet());
-		List<Personne> realisateursList = new ArrayList<Personne>(realisateurs);
-		Collections.sort(realisateursList);
-		int realisateursLength = realisateurs.size();
-		int acteursLength = acteurs.size();
-		FilmListParam filmListParam = new FilmListParamBuilder.Builder()
-				.setFilms(films)
-				.setActeurs(acteursList)
-				.setRealisateurs(realisateursList)
-				.setActeursLength(acteursLength)
-				.setRealisateursLength(realisateursLength)
-				.setGenres(this.findAllGenres())
-				.build();
-		watch.stop();
-		//logger.info("findFilmListParamByFilmDisplayType="+watch.getTotalTimeMillis());
-		return filmListParam;
 	}
 }

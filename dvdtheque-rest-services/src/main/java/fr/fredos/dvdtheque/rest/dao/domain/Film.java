@@ -17,8 +17,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -51,7 +51,7 @@ public class Film implements Serializable, Comparable<Film> {
 	@Column(name = "titre_o")
 	private String titreO;
 	@JoinColumn(name = "dvd_id",nullable = true)
-	@ManyToOne(cascade=CascadeType.ALL)
+	@OneToOne(cascade=CascadeType.ALL)
 	private Dvd dvd;
 	@Column(name = "origine")
 	private FilmOrigine origine;

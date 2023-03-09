@@ -37,6 +37,7 @@ public class Dvd implements Serializable {
 	private DvdFormat format;
 	@Column(name = "ripped")
 	private boolean ripped;
+	
 	public Long getId() {
 		return id;
 	}
@@ -85,6 +86,7 @@ public class Dvd implements Serializable {
 	public void setDateSortie(Date dateSortie) {
 		this.dateSortie = dateSortie;
 	}
+	
 	public Dvd() {
 		super();
 	}
@@ -116,4 +118,5 @@ public class Dvd implements Serializable {
 		return "Dvd [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", zone=" + zone + ", edition="
 				+ edition + ", dateRip=" + dateRip + ", format=" + format + ", ripped=" + ripped + "]";
 	}
+	
 }

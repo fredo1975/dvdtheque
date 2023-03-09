@@ -36,6 +36,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -60,10 +62,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
-import fr.fredos.dvdtheque.common.enums.FilmDisplayType;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.exceptions.DvdthequeServerRestException;
-import fr.fredos.dvdtheque.common.model.FilmDisplayTypeParam;
 import fr.fredos.dvdtheque.common.tmdb.model.Cast;
 import fr.fredos.dvdtheque.common.tmdb.model.Credits;
 import fr.fredos.dvdtheque.common.tmdb.model.Crew;
@@ -83,7 +83,6 @@ import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
 import fr.fredos.dvdtheque.rest.service.IPersonneService;
 import fr.fredos.dvdtheque.rest.service.model.CritiquePresse;
-import fr.fredos.dvdtheque.rest.service.model.FilmListParam;
 
 @RestController
 //@ComponentScan({ "fr.fredos.dvdtheque" })
@@ -150,19 +149,6 @@ public class FilmController {
 		}
 	}
 
-	@RolesAllowed({ "user", "batch" })
-	@GetMapping("/films")
-	ResponseEntity<List<Film>> findAllFilms(@RequestParam(name = "displayType", required = true) String displayType) {
-		try {
-			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, 0, FilmOrigine.TOUS);
-			return ResponseEntity.ok(filmService.findAllFilms(filmDisplayTypeParam));
-		} catch (Exception e) {
-			logger.error(format("an error occured while findAllFilms displayType='%s' ", displayType), e);
-		}
-		return ResponseEntity.badRequest().build();
-	}
-
 	@RolesAllowed("user")
 	@GetMapping("/films/genres")
 	ResponseEntity<List<Genre>> findAllGenres() {
@@ -178,56 +164,6 @@ public class FilmController {
 	@PutMapping("/films/cleanAllfilms")
 	void cleanAllFilms() {
 		filmService.cleanAllFilms();
-	}
-/*
-	@RolesAllowed("user")
-	@GetMapping("/films/byTitre/{titre}")
-	ResponseEntity<Film> findFilmByTitre(@PathVariable String titre) {
-		try {
-			return ResponseEntity.ok(filmService.findFilmByTitre(titre));
-		} catch (Exception e) {
-			logger.error(format("an error occured while findFilmByTitre titre='%s' ", titre), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}*/
-
-	@RolesAllowed({ "user", "batch" })
-	@GetMapping("/films/byOrigine/{origine}")
-	ResponseEntity<List<Film>> findAllFilmsByOrigine(@PathVariable String origine,
-			@RequestParam(name = "displayType", required = true) String displayType,
-			@RequestParam(name = "limitFilmSize", required = false) String limitFilmSize) {
-		logger.debug("findAllFilmsByOrigine - instanceId=" + instanceId);
-		try {
-			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
-			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, Integer.valueOf(limitFilmSize),
-					filmOrigine);
-			return ResponseEntity.ok(filmService.findAllFilmsByFilmDisplayType(filmDisplayTypeParam));
-		} catch (Exception e) {
-			logger.error(format("an error occured while findAllFilmsByOrigine origine='%s' and displayType='%s' ",
-					origine, displayType), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
-	@RolesAllowed({ "user", "batch" })
-	@GetMapping("/filmListParam/byOrigine/{origine}")
-	ResponseEntity<FilmListParam> findFilmListParamByFilmDisplayTypeParam(@PathVariable String origine,
-			@RequestParam(name = "displayType", required = true) String displayType,
-			@RequestParam(name = "limitFilmSize", required = false)Integer limitFilmSize) {
-		logger.debug("findFilmListParamByFilmDisplayType - instanceId=" + instanceId+" limitFilmSize="+limitFilmSize);
-		try {
-			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
-			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, limitFilmSize.intValue(),
-					filmOrigine);
-			return ResponseEntity.ok(filmService.findFilmListParamByFilmDisplayType(filmDisplayTypeParam));
-		} catch (Exception e) {
-			logger.error(format(
-					"an error occured while findFilmListParamByFilmDisplayTypeParam origine='%s' and displayType='%s' and limitFilmSize = '%s'",
-					origine, displayType,limitFilmSize), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
 	}
 
 	@RolesAllowed("user")
@@ -341,9 +277,7 @@ public class FilmController {
 		if(updatedFilm == null) {
 			return film;
 		}
-		if (updatedFilm.getDvd() != null && updatedFilm.getDvd().isRipped()) {
-			updatedFilm.getDvd().setDateRip(new Date());
-		}
+		
 		return updatedFilm;
 	}
 
@@ -354,75 +288,6 @@ public class FilmController {
 			return ResponseEntity.ok(filmService.checkIfTmdbFilmExists(tmdbid));
 		} catch (Exception e) {
 			logger.error(format("an error occured while checkIfTmdbFilmExists tmdbid='%s' ", tmdbid), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
-	@RolesAllowed("user")
-	@GetMapping("/realisateurs")
-	ResponseEntity<List<Personne>> findAllRealisateurs() {
-		try {
-			return ResponseEntity.ok(filmService
-					.findAllRealisateurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS, 0, FilmOrigine.TOUS)));
-		} catch (Exception e) {
-			logger.error(format("an error occured while findAllRealisateurs"), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
-	@RolesAllowed("user")
-	@GetMapping("/realisateurs/byOrigine/{origine}")
-	ResponseEntity<List<Personne>> findAllRealisateursByOrigine(@PathVariable String origine,
-			@RequestParam(name = "displayType", required = true) String displayType) {
-		logger.info("findAllRealisateursByOrigine - instanceId=" + instanceId);
-		try {
-			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
-			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, this.limitFilmSize,
-					filmOrigine);
-			if (FilmOrigine.TOUS.equals(filmOrigine)) {
-				return ResponseEntity.ok(filmService.findAllRealisateurs(filmDisplayTypeParam));
-			}
-			return ResponseEntity.ok(filmService.findAllRealisateursByFilmDisplayType(filmDisplayTypeParam));
-		} catch (Exception e) {
-			logger.error(
-					format("an error occured while findAllRealisateursByOrigine origine='%s' and displayType='%s' ",
-							origine, displayType),
-					e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
-	@RolesAllowed("user")
-	// @PreAuthorize("hasAuthority('user')")
-	@GetMapping("/acteurs")
-	ResponseEntity<List<Personne>> findAllActeurs() {
-		try {
-			return ResponseEntity.ok(
-					filmService.findAllActeurs(new FilmDisplayTypeParam(FilmDisplayType.TOUS, 0, FilmOrigine.TOUS)));
-		} catch (Exception e) {
-			logger.error(format("an error occured while findAllActeurs"), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
-	@RolesAllowed("user")
-	@GetMapping("/acteurs/byOrigine/{origine}")
-	ResponseEntity<List<Personne>> findAllActeursByOrigine(@PathVariable String origine,
-			@RequestParam(name = "displayType", required = true) String displayType) {
-		logger.info("findAllActeursByOrigine - instanceId=" + instanceId);
-		try {
-			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
-			FilmDisplayType filmDisplayType = FilmDisplayType.valueOf(displayType);
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(filmDisplayType, this.limitFilmSize,
-					filmOrigine);
-			if (FilmOrigine.TOUS.equals(filmOrigine)) {
-				return ResponseEntity.ok(filmService.findAllActeurs(filmDisplayTypeParam));
-			}
-			return ResponseEntity.ok(filmService.findAllActeursByFilmDisplayType(filmDisplayTypeParam));
-		} catch (Exception e) {
-			logger.error(format("an error occured while findAllActeursByOrigine origine='%s' and displayType='%s' ",
-					origine, displayType), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -619,6 +484,14 @@ public class FilmController {
 			@RequestParam(name = "sort", required = true)String sort){
 		return ResponseEntity.ok(new HashSet<>(filmService.search(query, offset, limit, sort)));
 	}
+	@RolesAllowed("user")
+	@GetMapping("/films/paginatedSarch")
+	public ResponseEntity<Page<Film>> paginatedSarch(@RequestParam(name = "query", required = false)String query,
+			@RequestParam(name = "offset", required = false)Integer offset,
+			@RequestParam(name = "limit", required = false)Integer limit,
+			@RequestParam(name = "sort", required = false)String sort){
+		return ResponseEntity.ok(filmService.paginatedSarch(query, offset, limit, sort));
+	}
 	
 	@RolesAllowed("user")
 	@PutMapping("/films/update/{id}")
@@ -672,7 +545,7 @@ public class FilmController {
 				return ResponseEntity.notFound().build();
 			}
 			Results results = restTemplate.getForObject(
-					environment.getRequiredProperty(TMDB_SERVICE_URL) + "?tmdbId=" + film.getTmdbId(), Results.class);
+					environment.getRequiredProperty(TMDB_SERVICE_URL) + environment.getRequiredProperty(TMDB_SERVICE_RESULTS) + "?tmdbId=" + film.getTmdbId(), Results.class);
 			film.setPosterPath(
 					environment.getRequiredProperty(TmdbServiceCommon.TMDB_POSTER_PATH_URL) + results.getPoster_path());
 			return ResponseEntity.ok(filmService.updateFilm(film));
@@ -687,10 +560,10 @@ public class FilmController {
 	ResponseEntity<Void> retrieveAllFilmImages() {
 		Results results = null;
 		try {
-			FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS, 0,
-					FilmOrigine.TOUS);
-			List<Film> films = filmService.findAllFilms(filmDisplayTypeParam);
-			for (Film film : films) {
+			
+			Page<Film> films = filmService.paginatedSarch("", null, null, "");
+			for(int i = 0 ; i<films.getContent().size();i++) {
+				Film film = films.getContent().get(i);
 				Boolean posterExists = restTemplate.getForObject(
 						environment.getRequiredProperty(TMDB_SERVICE_URL) + "?posterPath=" + film.getPosterPath(),
 						Boolean.class);
@@ -703,6 +576,7 @@ public class FilmController {
 				}
 				filmService.updateFilm(film);
 			}
+			
 			return ResponseEntity.noContent().build();
 		} catch (Exception e) {
 			logger.error("an error occured while retrieving all images", e);
@@ -850,6 +724,9 @@ public class FilmController {
 		return ResponseEntity.noContent().build();
 	}
 
+	private Page<Film>  paginatedSarch(String query,int pageNumber){
+		return filmService.paginatedSarch(query, pageNumber, null, "");
+	}
 	@RolesAllowed("user")
 	@PostMapping("/films/export")
 	ResponseEntity<byte[]> exportFilmList(@RequestBody String origine)
@@ -860,17 +737,25 @@ public class FilmController {
 		LocalDateTime localDate = LocalDateTime.now();
 		String fileName = "ListeDVDExport" + "-" + localDate.getSecond() + "-" + origine + ".xlsx";
 		try {
-			List<Film> list = null;
+			List<Film> list = new ArrayList<>();
 			FilmOrigine filmOrigine = FilmOrigine.valueOf(origine);
-			if (FilmOrigine.TOUS.equals(filmOrigine)) {
-				FilmDisplayTypeParam filmDisplayTypeParam = new FilmDisplayTypeParam(FilmDisplayType.TOUS, 0,
-						FilmOrigine.TOUS);
-				list = filmService.findAllFilms(filmDisplayTypeParam);
-			} else {
-				list = filmService.findFilmByOrigine(filmOrigine);
-			}
-			if (list == null) {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+			//Page<Film> films;
+			if(filmOrigine == FilmOrigine.TOUS) {
+				Page<Film> films = paginatedSarch("",1);
+				list.addAll(films.getContent());
+				while(films.hasNext()) {
+					Pageable p = films.nextPageable();
+					films = paginatedSarch("",p.getPageNumber()+1);
+					list.addAll(films.getContent());
+				}
+			}else {
+				Page<Film> films = paginatedSarch("origine:eq:"+filmOrigine+":AND",1);
+				list.addAll(films.getContent());
+				while(films.hasNext()) {
+					Pageable p = films.nextPageable();
+					films = paginatedSarch("origine:eq:"+filmOrigine+":AND",p.getPageNumber()+1);
+					list.addAll(films.getContent());
+				}
 			}
 			byte[] excelContent = this.excelFilmHandler.createByteContentFromFilmList(list);
 			headers.setContentType(
