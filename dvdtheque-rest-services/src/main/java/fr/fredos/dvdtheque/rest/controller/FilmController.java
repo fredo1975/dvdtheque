@@ -727,6 +727,19 @@ public class FilmController {
 	private Page<Film>  paginatedSarch(String query,int pageNumber){
 		return filmService.paginatedSarch(query, pageNumber, null, "");
 	}
+	@RolesAllowed({ "user", "batch" })
+	@GetMapping("/films")
+	ResponseEntity<List<Film>> getAllFilms(){
+		List<Film> list = new ArrayList<>();
+		Page<Film> films = paginatedSarch("",1);
+		list.addAll(films.getContent());
+		while(films.hasNext()) {
+			Pageable p = films.nextPageable();
+			films = paginatedSarch("",p.getPageNumber()+1);
+			list.addAll(films.getContent());
+		}
+		return ResponseEntity.ok(list);
+	}
 	@RolesAllowed("user")
 	@PostMapping("/films/export")
 	ResponseEntity<byte[]> exportFilmList(@RequestBody String origine)
