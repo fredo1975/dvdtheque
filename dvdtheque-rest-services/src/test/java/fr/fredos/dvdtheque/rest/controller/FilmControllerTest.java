@@ -123,7 +123,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String 					SEARCH_FILM_BY_ID = GET_ALL_FILMS_URI + "byId/";
 	private static final String 					SEARCH_FILM_BY_TMDBID = GET_ALL_FILMS_URI + "byTmdbId/";
 	private static final String 					SEARCH_TMDB_FILM_BY_TITRE = GET_ALL_FILMS_URI + "tmdb/byTitre/";
-	private static final String 					SEARCH_FILMS_BY_QUERY_PARAM = "/dvdtheque-service//films/search";
+	private static final String 					SEARCH_FILMS_BY_QUERY_PARAM = "/dvdtheque-service/films/search";
 	private static final String 					PAGINATED_SEARCH_FILMS_BY_QUERY_PARAM = "/dvdtheque-service//films/paginatedSarch";
 	private static final String 					SAVE_FILM_URI = GET_ALL_FILMS_URI + "save/";
 	private static final String 					UPDATE_FILM_URI = GET_ALL_FILMS_URI + "update/";
@@ -235,7 +235,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setRipped(true)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1).setGenre2(genre2)
@@ -253,7 +254,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setDvdFormat(DvdFormat.DVD)
 				.setOrigine(FilmOrigine.DVD)
 				.setGenre1(genre1)
@@ -271,7 +273,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_1271)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_1271)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
@@ -289,7 +292,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setOrigine(FilmOrigine.EN_SALLE)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
@@ -307,7 +311,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
 				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
 				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
 				.setOrigine(FilmOrigine.TV)
 				.setGenre1(genre1)
 				.setGenre2(genre2)
@@ -328,8 +333,8 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.with(csrf()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(status().isOk())
-		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_4780)))
-		.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
+		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)))
+		.andExpect(MockMvcResultMatchers.jsonPath("$[1].titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_4780)));
 		
 		query = "origine:eq:"+FilmOrigine.EN_SALLE+":AND";
 		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_FILMS_BY_QUERY_PARAM)
