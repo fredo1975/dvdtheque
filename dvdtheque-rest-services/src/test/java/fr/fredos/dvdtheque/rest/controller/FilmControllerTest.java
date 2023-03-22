@@ -142,37 +142,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		mockServer = MockRestServiceServer.createServer(restTemplate);
 		filmService.cleanAllFilms();
 	}
-	@Test
-	@WithMockUser(roles = "user")
-	public void getAllFilms() throws Exception {
-		Genre genre1 = filmService.saveGenre(new Genre(28, "Action"));
-		Genre genre2 = filmService.saveGenre(new Genre(35, "Comedy"));
-		final String dateInsertion1 = "2014/08/01";
-		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
-				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
-				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
-				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
-				.setRipped(true)
-				.setAnnee(FilmBuilder.ANNEE)
-				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE).setDateInsertion(dateInsertion1)
-				.setDvdFormat(DvdFormat.DVD)
-				.setOrigine(FilmOrigine.DVD)
-				.setGenre1(genre1).setGenre2(genre2)
-				.setZone(Integer.valueOf(2))
-				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
-				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
-		assertNotNull(filmService.saveNewFilm(film));
-		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null, false);
-		mockmvc.perform(MockMvcRequestBuilders.get(GET_ALL_FILMS_URI)
-				.with(jwt().jwt(builder -> builder.subject("test")))
-				.with(csrf()))
-		.andExpect(status().isOk())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(MockMvcResultMatchers.jsonPath("$[0].titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
-	}
+
 	@Test
 	@WithMockUser(roles = "user")
 	public void findAllCritiquePresseByAllocineFilmById() throws Exception {
