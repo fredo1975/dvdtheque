@@ -143,6 +143,10 @@ public class FilmServiceImpl implements IFilmService {
 				filmRetrieved.getDvd().setDateRip(null);
 			}
 		}
+		if(film.getDvd() != null && filmRetrieved.getOrigine() == FilmOrigine.EN_SALLE) {
+			filmRetrieved.setDvd(film.getDvd());
+			filmRetrieved.getDvd().setDateRip(null);
+		}
 		filmRetrieved.setOrigine(film.getOrigine());
 		filmRetrieved.setDateInsertion(film.getDateInsertion());
 		filmRetrieved.setVu(film.isVu());
