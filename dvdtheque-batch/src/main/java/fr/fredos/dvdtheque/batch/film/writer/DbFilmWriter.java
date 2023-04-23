@@ -70,7 +70,6 @@ public class DbFilmWriter implements ItemWriter<Film> {
 						HttpMethod.POST, 
 						request, 
 						Film.class);
-		        logger.debug("Film "+resultsResponse.getBody().toString()+" saved ");
 				watch.stop();
 				jmsTemplate.convertAndSend(topic, new JmsStatusMessage<Film>(JmsStatus.DB_FILM_WRITER_COMPLETED, 
 						film, 
