@@ -45,6 +45,9 @@ public class Film implements Serializable, Comparable<Film> {
 	@Column(name = "date_insertion")
 	@Temporal(TemporalType.DATE)
 	private Date dateInsertion;
+	@Column(name = "date_sortie_dvd")
+	@Temporal(TemporalType.DATE)
+	private Date dateSortieDvd;
 	@Column(name = "titre")
 	@NotNull
 	private String titre;
@@ -171,6 +174,12 @@ public class Film implements Serializable, Comparable<Film> {
 		this.dateInsertion = dateInsertion;
 	}
 	
+	public Date getDateSortieDvd() {
+		return dateSortieDvd;
+	}
+	public void setDateSortieDvd(Date dateSortieDvd) {
+		this.dateSortieDvd = dateSortieDvd;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -267,6 +276,7 @@ public class Film implements Serializable, Comparable<Film> {
 				+ realisateur + ", acteur=" + acteur + ", vu=" + vu + ", posterPath=" + posterPath + ", tmdbId="
 				+ tmdbId + ", overview=" + overview + ", runtime=" + runtime + ", genre=" + genre + ", homepage="
 				+ homepage + ", alreadyInDvdtheque=" + alreadyInDvdtheque + ", dateMaj=" + dateMaj + ", dateVue="
-				+ dateVue + ", critiquePresse=" + critiquePresse + ", allocineFicheFilmId=" + allocineFicheFilmId + "]";
+				+ dateVue + ", critiquePresse=" + critiquePresse + ", allocineFicheFilmId=" + allocineFicheFilmId 
+				+ ", dateSortieDvd=" + dateSortieDvd+ "]";
 	}
 }

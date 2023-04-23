@@ -24,7 +24,7 @@ public interface IFilmService {
 	Film findFilmByTitreWithoutSpecialsCharacters(final String titre);
 	List<Film> getAllRippedFilms();
 	void removeFilm(Film film);
-	Dvd buildDvd(final Integer annee,final Integer zone,final String edition,final Date ripDate,final DvdFormat dvdFormat, final String dateSortieDvd) throws ParseException;
+	Dvd buildDvd(final Integer annee,final Integer zone,final String edition,final Date ripDate,final DvdFormat dvdFormat) throws ParseException;
 	Boolean checkIfTmdbFilmExists(final Long tmdbId);
 	Genre findGenre(final int id);
 	Genre saveGenre(final Genre genre);

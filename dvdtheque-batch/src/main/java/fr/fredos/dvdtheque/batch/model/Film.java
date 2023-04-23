@@ -21,6 +21,7 @@ public class Film implements Serializable, Comparable<Film>{
 	private Integer annee;
 	private Date dateSortie;
 	private Date dateInsertion;
+	private Date dateSortieDvd;
 	private String titre;
 	private String titreO;
 	private Dvd dvd;
@@ -143,6 +144,12 @@ public class Film implements Serializable, Comparable<Film>{
 	public void setDateVue(LocalDate dateVue) {
 		this.dateVue = dateVue;
 	}
+	public Date getDateSortieDvd() {
+		return dateSortieDvd;
+	}
+	public void setDateSortieDvd(Date dateSortieDvd) {
+		this.dateSortieDvd = dateSortieDvd;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -198,7 +205,7 @@ public class Film implements Serializable, Comparable<Film>{
 				+ realisateur + ", acteur=" + acteur + ", critiquesPresse=" + critiquesPresse + ", vu=" + vu
 				+ ", posterPath=" + posterPath + ", tmdbId=" + tmdbId + ", overview=" + overview + ", runtime="
 				+ runtime + ", genre=" + genre + ", homepage=" + homepage + ", alreadyInDvdtheque=" + alreadyInDvdtheque
-				+ ", dateVue=" + dateVue + "]";
+				+ ", dateVue=" + dateVue+ ", dateSortieDvd=" + dateSortieDvd + "]";
 	}
 	@Override
 	public int compareTo(Film film) {

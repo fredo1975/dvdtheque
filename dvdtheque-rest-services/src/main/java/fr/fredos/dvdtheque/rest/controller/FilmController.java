@@ -358,6 +358,7 @@ public class FilmController {
 			transformedfilm.setId(film.getId());
 			transformedfilm.setDateInsertion(film.getDateInsertion());
 			transformedfilm.setAllocineFicheFilmId(film.getAllocineFicheFilmId());
+			transformedfilm.setDateSortieDvd(film.getDateSortieDvd());
 		}
 		if (film == null) {
 			transformedfilm.setId(results.getId());
@@ -644,8 +645,11 @@ public class FilmController {
 					filmToSave.setId(null);
 					filmToSave.setOrigine(filmOrigine);
 					if (FilmOrigine.DVD.equals(filmOrigine)) {
-						Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), Integer.valueOf(2), null, null,
-								DvdFormat.DVD, null);
+						Dvd dvd = filmService.buildDvd(filmToSave.getAnnee(), 
+								Integer.valueOf(2), 
+								null, 
+								null,
+								DvdFormat.DVD);
 						//dvd.setRipped(true);
 						//dvd.setDateRip(new Date());
 						filmToSave.setDvd(dvd);
@@ -668,10 +672,11 @@ public class FilmController {
 	@PostMapping("/films/buildDvd")
 	ResponseEntity<Dvd> buildDvd(@RequestBody DvdBuilder dvdBuilder){
 		try {
-			Dvd dvd = filmService.buildDvd(dvdBuilder.getFilmToSave().getAnnee(), dvdBuilder.getZonedvd(), null, null,
-					StringUtils.isNotEmpty(dvdBuilder.getFilmFormat()) ? DvdFormat.valueOf(dvdBuilder.getFilmFormat())
-							: null,
-					dvdBuilder.getDateSortieDvd());
+			Dvd dvd = filmService.buildDvd(dvdBuilder.getFilmToSave().getAnnee(), 
+					dvdBuilder.getZonedvd(), 
+					null, 
+					null,
+					StringUtils.isNotEmpty(dvdBuilder.getFilmFormat()) ? DvdFormat.valueOf(dvdBuilder.getFilmFormat()): null);
 			return ResponseEntity.ok(dvd);
 		} catch (Exception e) {
 			logger.error("an error occured while building dvd ", e);
