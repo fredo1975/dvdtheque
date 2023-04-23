@@ -14,6 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Film implements Serializable, Comparable<Film>{
 	private static final long serialVersionUID = 1L;

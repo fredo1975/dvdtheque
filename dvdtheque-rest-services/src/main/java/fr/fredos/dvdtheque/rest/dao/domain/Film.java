@@ -80,7 +80,7 @@ public class Film implements Serializable, Comparable<Film> {
 	private boolean alreadyInDvdtheque;
 	@Column(name="update_ts", insertable=false, updatable=true)
 	private LocalDateTime dateMaj;
-	@Column(name="vue_date", insertable=false, updatable=true)
+	@Column(name="vue_date", insertable=true, updatable=true)
 	private LocalDate dateVue;
 	@Transient
 	private List<CritiquePresse> critiquePresse;

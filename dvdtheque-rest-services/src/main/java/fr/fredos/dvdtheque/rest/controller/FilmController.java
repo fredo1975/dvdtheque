@@ -607,7 +607,10 @@ public class FilmController {
 						filmToSave.setDateInsertion(DateUtils.clearDate(new Date()));
 					}
 					filmToSave.setVu(film.isVu());
+					filmToSave.setDateVue(film.getDateVue());
+					filmToSave.setDateSortieDvd(film.getDateSortieDvd());
 					Long id = filmService.saveNewFilm(filmToSave);
+					logger.info(filmToSave.toString());
 					filmToSave.setId(id);
 					return ResponseEntity.ok(filmToSave);
 				}
@@ -617,7 +620,6 @@ public class FilmController {
 			logger.error("an error occured while saving film tmdbId=" + film.getTmdbId(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-
 	}
 
 	@RolesAllowed({ "user", "batch" })
