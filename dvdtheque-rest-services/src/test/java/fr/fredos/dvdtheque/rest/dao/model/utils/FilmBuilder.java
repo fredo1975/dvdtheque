@@ -39,7 +39,6 @@ public class FilmBuilder {
 	public static final String FILM_DATE_SORTIE = "2015/08/01";
 	public static final String FILM_DATE_INSERTION = "2019/08/01";
 	public static final String DVD_DATE_SORTIE = "2015/12/01";
-	public static final String DVD_DATE_SORTIE2 = "2017/11/15";
 	public static final String REAL_NOM_TMBD_ID_844 = "WONG KAR-WAI";
 	public static final String REAL_NOM_TMBD_ID_4780 = "BRIAN DE PALMA";
 	public static final String REAL_NOM_TMBD_ID_1271 = "ZACK SNYDER";
@@ -81,7 +80,7 @@ public class FilmBuilder {
 		private Integer annee;
 		private Date dateSortie;
 		private Date dateInsertion;
-		private Date dvdDateSortie;
+		private Date dateSortieDvd;
 		private String realNom;
 		private String act1Nom;
 		private String act2Nom;
@@ -158,9 +157,9 @@ public class FilmBuilder {
 			this.ripped = ripped;
 			return this;
 		}
-		public Builder setDvdDateSortie(String dateSortie) throws ParseException {
+		public Builder setDateSortieDvd(String dateSortie) throws ParseException {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-			this.dvdDateSortie = sdf.parse(dateSortie);
+			this.dateSortieDvd = sdf.parse(dateSortie);
 			return this;
 		}
 		public Builder setVu(boolean vu) {
@@ -209,18 +208,18 @@ public class FilmBuilder {
 			film.setAnnee(this.annee);
 			film.setDateSortie(this.dateSortie);
 			film.setDateInsertion(this.dateInsertion);
+			film.setDateSortieDvd(this.dateSortieDvd);
 			film.setRealisateur(realisateurs);
 			film.setActeur(acteurs);
 			genres.add(this.genre1);
 			genres.add(this.genre2);
 			film.setGenre(genres);
-			if(this.ripDate!=null || this.dvdFormat!=null || this.zone!=null || this.ripped==true || this.dvdDateSortie!=null) {
+			if(this.ripDate!=null || this.dvdFormat!=null || this.zone!=null || this.ripped==true) {
 				Dvd dvd = new Dvd();
 				dvd.setDateRip(this.ripDate);
 				dvd.setFormat(this.dvdFormat);
 				dvd.setZone(this.zone);
 				dvd.setRipped(this.ripped);
-				dvd.setDateSortie(this.dvdDateSortie);
 				film.setDvd(dvd);
 			}
 			
@@ -270,14 +269,14 @@ public class FilmBuilder {
 			Date _filmDateInsertion = DateUtils.clearDate(sdf.parse(FILM_DATE_INSERTION));
 			assertEquals("film date insertion should match",film.getDateInsertion(), _filmDateInsertion);
 		}*/
+		if(film.getDateSortieDvd() != null) {
+			Date dvdDateSortie = sdf.parse(DVD_DATE_SORTIE);
+			assertEquals("dvd date sortie should match",film.getDateSortieDvd(), dvdDateSortie);
+		}
 		if(FilmOrigine.DVD == filmOrigine) {
 			assertNotNull("dvd Should exists",film.getDvd());
 			if (!dateRipNull) {
 				assertEquals("now -10 days should match",DateUtils.clearDate(createRipDate(ripDateOffset)), film.getDvd().getDateRip());
-			}
-			if(film.getDvd().getDateSortie() != null) {
-				Date dvdDateSortie = sdf.parse(DVD_DATE_SORTIE);
-				assertEquals("dvd date sortie should match",film.getDvd().getDateSortie(), dvdDateSortie);
 			}
 		}
 		assertTrue("genres should exists",CollectionUtils.isNotEmpty(film.getGenre()));

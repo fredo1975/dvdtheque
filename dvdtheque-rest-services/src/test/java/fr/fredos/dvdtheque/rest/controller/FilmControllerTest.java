@@ -162,7 +162,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		assertNotNull(filmService.saveNewFilm(film));
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null, false);
@@ -243,7 +243,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -262,7 +262,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setGenre2(genre2)
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId2 = filmService.saveNewFilm(film2);
 		FilmBuilder.assertFilmIsNotNull(film2, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null, false);
@@ -281,7 +281,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
 				.setZone(Integer.valueOf(2))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId3 = filmService.saveNewFilm(film3);
 		FilmBuilder.assertFilmIsNotNull(film3, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE, null, false);
@@ -300,7 +300,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
 				.setZone(Integer.valueOf(2))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.build();
 		Long filmId4 = filmService.saveNewFilm(film4);
 		FilmBuilder.assertFilmIsNotNull(film4, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.EN_SALLE, FilmBuilder.FILM_DATE_SORTIE, null, true);
@@ -381,7 +381,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844)
 				.build();
 		Long filmId = filmService.saveNewFilm(film);
@@ -414,7 +414,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		FilmBuilder.assertFilmIsNotNull(film, false, FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null, false);
@@ -515,7 +515,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844)
 				.build();
 		Long filmId = filmService.saveNewFilm(film);
@@ -551,7 +551,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -586,7 +586,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -624,7 +624,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setGenre2(genre2).setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -658,7 +658,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844)
 				.build();
 		Long filmId = filmService.saveNewFilm(film);
@@ -703,7 +703,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -746,7 +746,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -787,7 +787,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setGenre1(genre1).setGenre2(genre2)
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setZone(Integer.valueOf(1))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844)
 				.build();
 		Long filmId = filmService.saveNewFilm(film);
@@ -828,7 +828,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setGenre2(genre2).setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -873,7 +873,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -909,7 +909,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setGenre2(genre2).setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -958,7 +958,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setGenre1(genre1).setGenre2(genre2).setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -977,7 +977,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setGenre2(genre2)
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
-				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET)).setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844)
 				.build();
 		filmToUpdate.setActeur(film.getActeur());
@@ -1183,7 +1183,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -1215,7 +1215,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setGenre2(genre2).setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -1252,7 +1252,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -1371,7 +1371,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);
@@ -1552,7 +1552,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		assertNotNull(filmService.saveNewFilm(film));
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null, false);
@@ -1588,7 +1588,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		assertNotNull(filmService.saveNewFilm(film));
 		FilmBuilder.assertFilmIsNotNull(film, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null, false);
@@ -1625,7 +1625,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 				.setZone(Integer.valueOf(2))
 				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
 				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
-				.setDvdDateSortie(FilmBuilder.DVD_DATE_SORTIE)
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
 				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
 		Long filmId = filmService.saveNewFilm(film);
 		assertNotNull(filmId);

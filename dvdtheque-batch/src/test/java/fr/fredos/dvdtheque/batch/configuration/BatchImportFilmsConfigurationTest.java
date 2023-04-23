@@ -2,10 +2,7 @@ package fr.fredos.dvdtheque.batch.configuration;
 
 import static org.junit.Assert.assertEquals;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Calendar;
-import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -80,7 +77,6 @@ public class BatchImportFilmsConfigurationTest{
 		//logger.info("******** path="+path);
 		Dvd dvd = new Dvd();
 		dvd.setFormat(DvdFormat.DVD);
-		dvd.setDateSortie(Date.from(LocalDate.of(2013, 10, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		dvd.setZone(2);
 		dvd.setAnnee(2022);
 		dvd.setRipped(false);

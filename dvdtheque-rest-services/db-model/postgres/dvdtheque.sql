@@ -4,10 +4,8 @@ DROP DATABASE IF EXISTS dvdthequedb;
 
 CREATE DATABASE dvdthequedb
     WITH 
-    OWNER = postgres
+    OWNER = dvdtheque
     ENCODING = 'UTF8'
-    LC_COLLATE = 'French_France.1252'
-    LC_CTYPE = 'French_France.1252'
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1;
 	
@@ -58,7 +56,7 @@ CREATE TABLE IF NOT EXISTS "dvdtheque-service".film (
   runtime INT DEFAULT NULL,
   date_sortie TIMESTAMP NOT NULL,
   date_insertion TIMESTAMP NOT NULL,
-  update_ts  TIMESTAMP NOT NULL,
+  update_ts  TIMESTAMP,
   vue_date DATE,
   allocine_fiche_film_id INT DEFAULT NULL,
   FOREIGN KEY (dvd_id)

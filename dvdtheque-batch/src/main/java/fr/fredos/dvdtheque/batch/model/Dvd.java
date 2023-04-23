@@ -11,7 +11,6 @@ public class Dvd implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private Integer annee;
-	private Date dateSortie;
 	private Integer zone;
 	private String edition;
 	private Date dateRip;
@@ -59,12 +58,6 @@ public class Dvd implements Serializable {
 	public void setRipped(boolean ripped) {
 		this.ripped = ripped;
 	}
-	public Date getDateSortie() {
-		return dateSortie;
-	}
-	public void setDateSortie(Date dateSortie) {
-		this.dateSortie = dateSortie;
-	}
 	public Dvd() {
 		super();
 	}
@@ -93,7 +86,7 @@ public class Dvd implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "Dvd [id=" + id + ", annee=" + annee + ", dateSortie=" + dateSortie + ", zone=" + zone + ", edition="
+		return "Dvd [id=" + id + ", annee=" + annee + ", dateSortie=" + zone + ", edition="
 				+ edition + ", dateRip=" + dateRip + ", format=" + format + ", ripped=" + ripped + "]";
 	}
 }
