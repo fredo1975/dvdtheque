@@ -105,7 +105,6 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 		if(item.getOrigine().equalsIgnoreCase(FilmOrigine.DVD.name()) || item.getOrigine().equalsIgnoreCase(FilmOrigine.EN_SALLE.name())) {
 			DvdBuilder dvdBuilder = new DvdBuilder();
 			dvdBuilder.setFilmFormat(item.getFilmFormat());
-			dvdBuilder.setDateSortieDvd(item.getDateSortieDvd());
 			dvdBuilder.setFilmToSave(filmTemp);
 			dvdBuilder.setZonedvd(item.getZonedvd());
 			
@@ -141,6 +140,12 @@ public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 			filmTemp.setDateVue(LocalDate.parse(item.getDateVue(),formatter));
 		}else {
 			filmTemp.setDateVue(null);
+		}
+		if(StringUtils.isNotEmpty(item.getDateSortieDvd())) {
+			DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			filmTemp.setDateSortieDvd(sdf.parse(item.getDateSortieDvd()));
+		}else {
+			filmTemp.setDateSortieDvd(null);
 		}
 		if(StringUtils.isNotEmpty(item.getDateInsertion())) {
 			DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

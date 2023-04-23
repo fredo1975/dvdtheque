@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -38,6 +39,7 @@ public class FilmBuilder {
 	public static final Integer ANNEE = 2015;
 	public static final String FILM_DATE_SORTIE = "2015/08/01";
 	public static final String FILM_DATE_INSERTION = "2019/08/01";
+	public static final String FILM_DATE_VU = "2019-08-01";
 	public static final String DVD_DATE_SORTIE = "2015/12/01";
 	public static final String REAL_NOM_TMBD_ID_844 = "WONG KAR-WAI";
 	public static final String REAL_NOM_TMBD_ID_4780 = "BRIAN DE PALMA";
@@ -95,7 +97,7 @@ public class FilmBuilder {
 		private FilmOrigine origine;
 		private String posterPath;
 		private Integer allocineFicheFilmId;
-		
+		private LocalDate dateVue;
 		public Builder(String titre) {
             this.titre = titre;
         }
@@ -166,6 +168,10 @@ public class FilmBuilder {
 			this.vu = vu;
 			return this;
 		}
+		public Builder setDateVue(LocalDate dateVue) {
+			this.dateVue = dateVue;
+			return this;
+		}
 		public Builder setOrigine(FilmOrigine origine) {
 			this.origine = origine;
 			return this;
@@ -209,6 +215,7 @@ public class FilmBuilder {
 			film.setDateSortie(this.dateSortie);
 			film.setDateInsertion(this.dateInsertion);
 			film.setDateSortieDvd(this.dateSortieDvd);
+			film.setDateVue(this.dateVue);
 			film.setRealisateur(realisateurs);
 			film.setActeur(acteurs);
 			genres.add(this.genre1);

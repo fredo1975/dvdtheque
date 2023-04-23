@@ -18,6 +18,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -126,6 +127,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 	private static final String 					SEARCH_FILMS_BY_QUERY_PARAM = "/dvdtheque-service/films/search";
 	private static final String 					PAGINATED_SEARCH_FILMS_BY_QUERY_PARAM = "/dvdtheque-service//films/paginatedSarch";
 	private static final String 					SAVE_FILM_URI = GET_ALL_FILMS_URI + "save/";
+	private static final String 					SAVE_PROCESSED_FILM_URI = GET_ALL_FILMS_URI + "saveProcessedFilm/";
 	private static final String 					UPDATE_FILM_URI = GET_ALL_FILMS_URI + "update/";
 	private static final String 					REMOVE_FILM_URI = GET_ALL_FILMS_URI + "remove/";
 	private static final String 					RETRIEVE_FILM_IMAGE_URI = GET_ALL_FILMS_URI + "retrieveImage/";
@@ -1031,6 +1033,87 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 
 	@Test
 	@Transactional
+	public void testSaveProcessedFilm() throws Exception {
+		Results res = new Results();
+		res.setTitle(FilmBuilder.TITRE_FILM_TMBD_ID_844);
+		res.setId(FilmBuilder.tmdbId2);
+		List<Genres> l = new ArrayList<>();
+		Genres genres1 = new Genres();
+		genres1.setName("Comedy");
+		genres1.setId(35);
+		l.add(genres1);
+		res.setGenres(l);
+		Credits credits = new Credits();
+		Crew crew = new Crew();
+		crew.setCredit_id("52fe42ecc3a36847f802d26d");
+		crew.setName("William Hoy");
+		crew.setJob("Director");
+		credits.setCrew(Lists.newArrayList(crew));
+		List<Cast> casts = new ArrayList<>();
+		Cast cast1 = new Cast();
+		cast1.setName(FilmBuilder.ACT1_TMBD_ID_844);
+		Cast cast2 = new Cast();
+		cast2.setName(FilmBuilder.ACT2_TMBD_ID_844);
+		Cast cast3 = new Cast();
+		cast3.setName(FilmBuilder.ACT3_TMBD_ID_844);
+		casts.add(cast1);
+		casts.add(cast2);
+		casts.add(cast3);
+		credits.setCast(casts);
+		mockServer.expect(ExpectedCount.once(), 
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_RESULTS)+"?tmdbId="+res.getId())))
+		          .andExpect(method(HttpMethod.GET))
+		          .andRespond(withSuccess(mapper.writeValueAsString(res), MediaType.APPLICATION_JSON));
+		mockServer.expect(ExpectedCount.once(), 
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_RELEASE_DATE)+"?tmdbId="+res.getId())))
+		          .andExpect(method(HttpMethod.GET))
+		          .andRespond(withSuccess(mapper.writeValueAsString(TMDB_RELEASE_DATE), MediaType.APPLICATION_JSON));
+		mockServer.expect(ExpectedCount.once(), 
+		          requestTo(new URI(environment.getRequiredProperty(FilmController.TMDB_SERVICE_URL)
+		        		  +environment.getRequiredProperty(FilmController.TMDB_SERVICE_CREDITS)+"?tmdbId="+res.getId())))
+		          .andExpect(method(HttpMethod.GET))
+		          .andRespond(withSuccess(mapper.writeValueAsString(credits), MediaType.APPLICATION_JSON));
+		Film film = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_844)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_844)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_844)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_844)
+				.setRipped(true)
+				.setVu(true)
+				.setDateVue(LocalDate.parse(FilmBuilder.FILM_DATE_VU))
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(FilmBuilder.FILM_DATE_INSERTION)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.DVD)
+				.setZone(Integer.valueOf(2))
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_844)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
+				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_844).build();
+		String filmSerialized = mapper.writeValueAsString(film);
+		mockmvc.perform(MockMvcRequestBuilders
+				.post(SAVE_PROCESSED_FILM_URI)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(filmSerialized)
+				.with(jwt().jwt(build -> build.subject("test")))
+				.with(csrf()))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.titre", Is.is(FilmBuilder.TITRE_FILM_TMBD_ID_844)));
+		mockServer.verify();
+		
+		var query = "titre:eq:"+FilmBuilder.TITRE_FILM_TMBD_ID_844+":AND";
+		var page = filmService.paginatedSarch(query, 1, 10, "");
+		assertTrue(CollectionUtils.isNotEmpty(page.getContent()));
+		Film filmRetrieved = page.getContent().iterator().next();
+		assertThat(FilmBuilder.TITRE_FILM_TMBD_ID_844).isEqualTo(filmRetrieved.getTitre());
+		assertThat(LocalDate.parse(FilmBuilder.FILM_DATE_VU)).isEqualTo(filmRetrieved.getDateVue());
+	}
+	@Test
+	@Transactional
 	public void testSaveNewFilmDvd() throws Exception {
 		Results res = new Results();
 		res.setTitle(FilmBuilder.TITRE_FILM_TMBD_ID_844);
@@ -1078,6 +1161,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		Film film = new Film();
 		film.setTitre(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		simulateAlloCineServiceCall(film, null);
+		
 		mockmvc.perform(MockMvcRequestBuilders
 				.put(SAVE_FILM_URI + FilmBuilder.tmdbId2)
 				.contentType(MediaType.APPLICATION_JSON)

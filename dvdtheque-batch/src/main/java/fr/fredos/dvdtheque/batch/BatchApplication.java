@@ -15,11 +15,6 @@ import org.springframework.jms.support.converter.MessageType;
 @EnableDiscoveryClient
 public class BatchApplication {
 	public static void main(String[] args) throws Exception {
-		/*
-		ConfigurableApplicationContext applicationContext =
-                SpringApplication.run(BatchApplication.class, args);
-		System.exit(SpringApplication.exit(applicationContext));
-		*/
 		SpringApplication.run(BatchApplication.class,args);
     }
 	
