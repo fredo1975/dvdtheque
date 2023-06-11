@@ -22,9 +22,9 @@ public class ContextConfiguration {
 
         RequestConfig requestConfig = RequestConfig
             .custom()
-            .setConnectionRequestTimeout(200000)
-            .setSocketTimeout(200000)
-            .setConnectTimeout(200000)
+            .setConnectionRequestTimeout(2000000)
+            .setSocketTimeout(2000000)
+            .setConnectTimeout(2000000)
             .build();
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         connectionManager.setMaxTotal(5);
