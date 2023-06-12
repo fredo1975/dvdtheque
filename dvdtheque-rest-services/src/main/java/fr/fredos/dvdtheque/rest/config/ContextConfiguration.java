@@ -1,12 +1,7 @@
 package fr.fredos.dvdtheque.rest.config;
 
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.AbstractOAuth2Token;
@@ -31,10 +26,10 @@ public class ContextConfiguration {
 		    request.getHeaders().setBearerAuth(token.getTokenValue());
 		    return execution.execute(request, body);
 		});
-		rest.setRequestFactory(requestFactory());
+		//rest.setRequestFactory(requestFactory());
 		return rest;
     }
-	
+	/*
 	private HttpComponentsClientHttpRequestFactory requestFactory() {
 
         RequestConfig requestConfig = RequestConfig
@@ -51,5 +46,5 @@ public class ContextConfiguration {
                                                           .setDefaultRequestConfig(requestConfig)
                                                           .build();
         return new HttpComponentsClientHttpRequestFactory(httpClient);
-    }
+    }*/
 }
