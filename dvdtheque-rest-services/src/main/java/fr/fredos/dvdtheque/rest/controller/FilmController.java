@@ -69,6 +69,7 @@ import fr.fredos.dvdtheque.common.tmdb.model.Credits;
 import fr.fredos.dvdtheque.common.tmdb.model.Crew;
 import fr.fredos.dvdtheque.common.tmdb.model.Genres;
 import fr.fredos.dvdtheque.common.tmdb.model.Results;
+import fr.fredos.dvdtheque.common.tmdb.model.SearchResults;
 import fr.fredos.dvdtheque.common.tmdb.model.TmdbServiceCommon;
 import fr.fredos.dvdtheque.common.utils.DateUtils;
 import fr.fredos.dvdtheque.rest.allocine.model.CritiquePresseDto;
@@ -91,6 +92,7 @@ public class FilmController {
 	protected Logger logger = LoggerFactory.getLogger(FilmController.class);
 	public static String TMDB_SERVICE_URL = "tmdb-service.url";
 	public static String TMDB_SERVICE_BY_TITLE = "tmdb-service.byTitle";
+	public static String TMDB_SERVICE_BY_TITLE_BY_PAGE = "tmdb-service.byTitle-byPage";
 	public static String TMDB_SERVICE_RELEASE_DATE = "tmdb-service.release-date";
 	public static String TMDB_SERVICE_CREDITS = "tmdb-service.get-credits";
 	public static String TMDB_SERVICE_RESULTS = "tmdb-service.get-results";
@@ -218,6 +220,34 @@ public class FilmController {
 			return ResponseEntity.ok(films);
 		} catch (Exception e) {
 			logger.error(format("an error occured while findTmdbFilmByTitre titre='%s' ", titre), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@RolesAllowed("user")
+	@GetMapping("/films/tmdb/byTitre/{titre}/{page}")
+	ResponseEntity<List<Film>> findTmdbFilmByTitreByPage(@PathVariable String titre,@PathVariable Integer page){
+		List<Film> films = null;
+		try {
+			ResponseEntity<SearchResults> searchResultsResponse = restTemplate.getForEntity(environment.getRequiredProperty(TMDB_SERVICE_URL)
+							+ environment.getRequiredProperty(TMDB_SERVICE_BY_TITLE_BY_PAGE) + "?title=" + titre+ "&page="+page, 
+							SearchResults.class);
+			if (searchResultsResponse != null && searchResultsResponse.getBody()!= null) {
+				var searchResults = searchResultsResponse.getBody();
+				films = new ArrayList<>(searchResults.getResults().size());
+				Set<Long> tmdbIds = searchResults.getResults().stream().map(r -> r.getId()).collect(Collectors.toSet());
+				Set<Long> tmdbFilmAlreadyInDvdthequeSet = filmService.findAllTmdbFilms(tmdbIds);
+				for (Results res : searchResults.getResults()) {
+					Film transformedFilm = transformTmdbFilmToDvdThequeFilm(null, res, tmdbFilmAlreadyInDvdthequeSet,
+							false);
+					if (transformedFilm != null) {
+						films.add(transformedFilm);
+					}
+				}
+			}
+			return ResponseEntity.ok(films);
+		} catch (Exception e) {
+			logger.error(format("an error occured while findTmdbFilmByTitreByPage titre='%s' page='%s'", titre, page), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}

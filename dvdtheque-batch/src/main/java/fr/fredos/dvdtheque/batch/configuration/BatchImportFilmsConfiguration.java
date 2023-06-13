@@ -133,8 +133,14 @@ public class BatchImportFilmsConfiguration{
 	@Bean(name = "importFilmsJob")
 	public Job importFilmsJob() throws Exception {
 		//logger.info("######## importFilmsJob");
-		return jobBuilderFactory.get("importFilms").listener(new DvdthequeJobResultListener()).incrementer(new RunIdIncrementer()).start(cleanDBStep())
-				.next(importFilmsStep()).next(setRippedFlagStep()).next(setRetrieveDateInsertionStep()).build();
+		return jobBuilderFactory.get("importFilms")
+				.listener(new DvdthequeJobResultListener())
+				.incrementer(new RunIdIncrementer())
+				.start(cleanDBStep())
+				.next(importFilmsStep())
+				.next(setRippedFlagStep())
+				.next(setRetrieveDateInsertionStep())
+				.build();
 	}
 	
     @Bean
@@ -211,7 +217,7 @@ public class BatchImportFilmsConfiguration{
     @Bean
     protected Step importFilmsStep() {
         return stepBuilderFactory.get("importFilmsStep")
-                .<FilmCsvImportFormat, Film>chunk(100)
+                .<FilmCsvImportFormat, Film>chunk(50)
                 .reader(reader(null))
                 .processor(filmProcessor())
                 .writer(filmWriter())

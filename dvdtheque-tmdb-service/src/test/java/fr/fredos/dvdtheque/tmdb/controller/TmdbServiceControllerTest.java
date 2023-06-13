@@ -56,6 +56,7 @@ public class TmdbServiceControllerTest {
 	private static final String 					SEARCH_REL_DATE_BY_TMDB_ID = TMDB_BASE_URI + "/retrieveTmdbFrReleaseDate/byTmdbId";
 	private static final String 					SEARCH_CREDITS_BY_TMDB_ID = TMDB_BASE_URI + "/retrieveTmdbCredits/byTmdbId";
 	private static final String 					SEARCH_RESULTS_BY_TITLE = TMDB_BASE_URI + "/retrieveTmdbFilmListByTitle/byTitle";
+	private static final String 					SEARCH_RESULTS_BY_TITLE_BY_PAGE = TMDB_BASE_URI + "/retrieveTmdbSearchResultsByTitle/byTitle";
 	private static final String 					PROFILE_IMAGE_EXISTS_BY_POSTER_PATH = TMDB_BASE_URI + "/checkIfProfileImageExists/byPosterPath";
 	private static final String 					POSTER_IMAGE_EXISTS_BY_POSTER_PATH = TMDB_BASE_URI + "/checkIfPosterExists/byPosterPath";
 	private static final String 					TITLE_300 = "300";
@@ -151,6 +152,38 @@ public class TmdbServiceControllerTest {
 		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Is.is(1271)))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.crew[0].credit_id", Is.is("52fe42ecc3a36847f802d26d")))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.crew[0].name", Is.is("William Hoy")));
+	}
+	@WithMockUser(roles = "user")
+	@Test
+	public void retrieveTmdbSearchResultsByTitle() throws Exception{
+		SearchResults searchResults = new SearchResults();
+		searchResults.setTotal_results(1);
+		searchResults.setTotal_pages(0);
+		Results res = new Results();
+		res.setId(TMDB_ID_1271);
+		res.setTitle(TITRE_FILM_TMBD_ID_1271);
+		res.setOriginal_title(TITRE_FILM_TMBD_ID_1271);
+		res.setPoster_path(POSTER_PATH_FILM_TMBD_ID_1271);
+		res.setRelease_date(RELEASE_DATE_FILM_TMBD_ID_1271);
+		List<Results> l = List.of(res);
+		searchResults.setResults(l);
+		mockServer.expect(ExpectedCount.once(), 
+		          requestTo(environment.getRequiredProperty(TmdbServiceController.TMDB_SEARCH_MOVIE_QUERY)+"?"
+		+"api_key="+environment.getRequiredProperty(TmdbServiceController.TMDB_API_KEY)
+		+"&query="+TITLE_300
+		+"&language=fr&page="+1))
+		          .andExpect(method(HttpMethod.GET))
+		          .andRespond(withSuccess(mapper.writeValueAsString(searchResults), MediaType.APPLICATION_JSON));
+		
+		mockmvc.perform(MockMvcRequestBuilders.get(SEARCH_RESULTS_BY_TITLE_BY_PAGE).param("title", TITLE_300).param("page", String.valueOf(1)))
+		.andExpect(status().isOk())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.results[0].id", Is.is(1271)))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.results[0].title", Is.is(TITRE_FILM_TMBD_ID_1271)))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.results[0].original_title", Is.is(TITRE_FILM_TMBD_ID_1271)))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.results[0].poster_path", Is.is(POSTER_PATH_FILM_TMBD_ID_1271)))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.results[0].release_date", Is.is(RELEASE_DATE_FILM_TMBD_ID_1271)))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.total_pages", Is.is(0)))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.total_results", Is.is(1)));
 	}
 	@WithMockUser(roles = "user")
 	@Test

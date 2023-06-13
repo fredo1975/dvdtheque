@@ -169,7 +169,19 @@ public class TmdbServiceController {
 			throw e;
 		}
 	}
-	
+	@RolesAllowed({"user","batch"})
+	@GetMapping("/retrieveTmdbSearchResultsByTitle/byTitle")
+	public ResponseEntity<SearchResults> retrieveTmdbSearchResultsByTitle(@RequestParam(name="title",required = true)String title, 
+			@RequestParam(name="page",required = false) Integer page) {
+		if(page == null) {
+			page = Integer.valueOf(1);
+		}
+		try {
+			return ResponseEntity.ok(restTemplate.getForObject(environment.getRequiredProperty(TMDB_SEARCH_MOVIE_QUERY)+"?"+"api_key="+environment.getRequiredProperty(TMDB_API_KEY)+"&query="+title+"&language=fr&page="+page, SearchResults.class));
+		} catch (RestClientException e) {
+			throw e;
+		}
+	}
 	@RolesAllowed({"user","batch"})
 	@GetMapping("/checkIfPosterExists/byPosterPath")
 	public ResponseEntity<Boolean> checkIfPosterExists(String posterPath) {
