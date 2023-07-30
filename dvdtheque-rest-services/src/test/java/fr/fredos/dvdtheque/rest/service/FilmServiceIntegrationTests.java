@@ -1340,7 +1340,28 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Long filmId5 = filmService.saveNewFilm(film5);
 		FilmBuilder.assertFilmIsNotNull(film5, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.TV, FilmBuilder.FILM_DATE_SORTIE, null, false);
 		assertNotNull(filmId5);
-		
+		final String dateInsertion6 = "2023/07/30";
+		Film film6 = new FilmBuilder.Builder(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setTitreO(FilmBuilder.TITRE_FILM_TMBD_ID_4780)
+				.setAct1Nom(FilmBuilder.ACT1_TMBD_ID_4780)
+				.setAct2Nom(FilmBuilder.ACT2_TMBD_ID_4780)
+				.setAct3Nom(FilmBuilder.ACT3_TMBD_ID_4780)
+				.setAnnee(FilmBuilder.ANNEE)
+				.setDateSortie(FilmBuilder.FILM_DATE_SORTIE)
+				.setDateInsertion(dateInsertion6)
+				.setDvdFormat(DvdFormat.DVD)
+				.setOrigine(FilmOrigine.CANAL_PLUS)
+				.setVu(Boolean.TRUE.booleanValue())
+				.setGenre1(genre1)
+				.setGenre2(genre2)
+				.setRealNom(FilmBuilder.REAL_NOM_TMBD_ID_4780)
+				.setRipDate(FilmBuilder.createRipDate(FilmBuilder.RIP_DATE_OFFSET))
+				.setDateSortieDvd(FilmBuilder.DVD_DATE_SORTIE)
+				.setAllocineFicheFilmId(FilmBuilder.ALLOCINE_FICHE_FILM_ID_4780)
+				.build();
+		Long filmId6 = filmService.saveNewFilm(film6);
+		FilmBuilder.assertFilmIsNotNull(film6, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.CANAL_PLUS, FilmBuilder.FILM_DATE_SORTIE, null, false);
+		assertNotNull(filmId6);
 		var query = "origine:eq:"+FilmOrigine.DVD+":AND";
 		var page = filmService.paginatedSarch(query, 1, 10, "-dateInsertion");
 		assertTrue(CollectionUtils.isNotEmpty(page.getContent()));
@@ -1351,6 +1372,14 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		assertEquals(film2, f2);
 		Film f3 = page.getContent().get(2);
 		assertEquals(film, f3);
+		
+		query = "origine:eq:"+FilmOrigine.CANAL_PLUS+":AND";
+		page = filmService.paginatedSarch(query, 1, 10, "-dateInsertion");
+		assertTrue(CollectionUtils.isNotEmpty(page.getContent()));
+		final int rowNumberCanal = 1;
+		assertTrue("list should be equals to "+rowNumberCanal,page.getContent().size()==rowNumberCanal);
+		Film f6 = page.getContent().get(0);
+		assertEquals(film6, f6);
 	}
 	
 	@Test
