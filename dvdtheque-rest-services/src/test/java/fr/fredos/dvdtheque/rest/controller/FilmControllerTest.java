@@ -1492,7 +1492,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		
 		sheet.forEach(row -> {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.FRANCE);
-			if (row.getRowNum() == 1) {
+			if (row.getRowNum() == 2) {
 				row.forEach(cell -> {
 					String cellValue = dataFormatter.formatCellValue(cell);
 					if (cell.getColumnIndex() == 0) {
@@ -1549,7 +1549,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 						assertEquals(StringUtils.EMPTY, cellValue);
 					}
 				});
-			} else if (row.getRowNum() == 2) {
+			} else if (row.getRowNum() == 1) {
 				row.forEach(cell -> {
 					String cellValue = dataFormatter.formatCellValue(cell);
 					if (cell.getColumnIndex() == 0) {
