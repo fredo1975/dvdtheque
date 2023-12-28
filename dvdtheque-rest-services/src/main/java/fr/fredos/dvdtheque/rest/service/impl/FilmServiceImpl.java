@@ -239,11 +239,8 @@ public class FilmServiceImpl implements IFilmService {
 		}else {
 			sortToSet = sort;
 		}
-		var page = PageRequestBuilder.getPageRequest(limitToSet,offsetToSet, sortToSet);
-		if(StringUtils.isEmpty(sort)) {
-			return filmDao.findAll(page).getContent();
-		}
-        return filmDao.findAll(builder.with(query).build(), page).getContent();
+		return filmDao.findAll(builder.with(query).build(), 
+				PageRequestBuilder.getPageRequest(limitToSet,offsetToSet, sortToSet)).getContent();
 	}
 	private PageRequest buildDefaultPageRequest(Integer offset,
 			Integer limit,

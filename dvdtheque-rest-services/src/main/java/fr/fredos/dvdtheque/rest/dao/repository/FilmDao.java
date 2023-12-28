@@ -18,7 +18,7 @@ public interface FilmDao extends JpaRepository<Film, Long>, JpaSpecificationExec
 	@Query("from Film where UPPER(REPLACE(REPLACE(titre, ':', ''),'  ',' ')) = UPPER(:titre)")
 	Film findFilmByTitreWithoutSpecialsCharacters(final String titre);
 	
-	@Query("from Film film left join fetch film.dvd dvd where dvd.ripped=1")
+	@Query("from Film film left join fetch film.dvd dvd where dvd.ripped = true")
 	List<Film> getAllRippedFilms();
 	
 	@Query("select film.tmdbId from Film film where film.tmdbId in (:tmdbIds) ")
