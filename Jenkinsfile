@@ -1,8 +1,8 @@
 pipeline {
     agent any
     tools {
-        maven 'Maven 3.6.0'
-        jdk 'jdk11'
+        maven 'Maven 3.9.6'
+        jdk 'jdk17'
     }
     environment {
     	def DEV_SERVER1_IP = '192.168.1.103'
@@ -50,7 +50,7 @@ pipeline {
                 branch 'develop'
             }
             steps {
-		 		withMaven(mavenSettingsConfig: 'MyMavenSettings') {
+		 		withMaven {
 		 			sh """
 			 			mvn -B org.codehaus.mojo:versions-maven-plugin:2.8.1:set -DprocessAllModules -DnewVersion=${VERSION}
 			        	mvn -B clean compile

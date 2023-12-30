@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.fredos.dvdtheque</groupId>
 	<artifactId>dvdtheque</artifactId>
-	<version>6.0.0</version>
+	<version>7.0.0</version>
 	<packaging>pom</packaging>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -27,11 +27,12 @@
 		<!-- module>dvdtheque-hystrix-dashboard</module -->
 	</modules>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<spring-cloud.dependency.version>2021.0.1</spring-cloud.dependency.version>
 		<activemq.version>5.15.10</activemq.version>
 		<spring-boot-admin.version>2.3.0</spring-boot-admin.version>
+		<maven.compiler.release>17</maven.compiler.release>
 	</properties>
 	<dependencies>
 		<dependency>
