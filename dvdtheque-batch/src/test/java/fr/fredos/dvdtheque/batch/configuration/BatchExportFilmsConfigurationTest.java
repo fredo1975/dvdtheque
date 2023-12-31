@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.batch.model.Dvd;
@@ -41,7 +39,7 @@ import fr.fredos.dvdtheque.batch.model.Personne;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 
-@RunWith(SpringRunner.class)
+
 @ActiveProfiles("test")
 @SpringBootTest(classes = {BatchExportFilmsConfiguration.class,BatchTestConfiguration.class})
 public class BatchExportFilmsConfigurationTest {

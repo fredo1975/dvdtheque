@@ -3,7 +3,7 @@ package fr.fredos.dvdtheque.rest.controller;
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

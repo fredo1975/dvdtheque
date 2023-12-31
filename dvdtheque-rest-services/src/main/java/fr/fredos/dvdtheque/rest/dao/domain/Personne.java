@@ -2,15 +2,8 @@ package fr.fredos.dvdtheque.rest.dao.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.Size;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "personne")
 public class Personne implements Serializable,Comparable<Personne> {
