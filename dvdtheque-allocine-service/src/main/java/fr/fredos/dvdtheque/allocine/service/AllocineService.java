@@ -11,8 +11,6 @@ public interface AllocineService {
 	Optional<FicheFilm> retrieveFicheFilm(int id);
 	List<FicheFilm> retrieveFicheFilmByTitle(String title);
 	Optional<FicheFilm> findByFicheFilmId(Integer ficheFilmId);
-	void removeAllFilmWithoutCritique();
-	List<FicheFilm> findAllFilmWithoutCritique();
 	FicheFilm saveFicheFilm(FicheFilm ficheFilm);
 	List<FicheFilm> saveFicheFilmList(List<FicheFilm> ficheFilmList);
 	Optional<FicheFilm> findInCacheByFicheFilmId(Integer ficheFilmId);
