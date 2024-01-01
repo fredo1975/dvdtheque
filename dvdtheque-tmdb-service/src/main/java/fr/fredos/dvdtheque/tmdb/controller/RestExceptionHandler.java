@@ -42,6 +42,4 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		String error = "Malformed JSON request";
 		return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
 	}
-	
-	
 }

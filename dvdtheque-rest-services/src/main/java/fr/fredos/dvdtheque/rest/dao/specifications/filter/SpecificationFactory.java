@@ -6,13 +6,13 @@ import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.criteria.Join;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
+import jakarta.persistence.criteria.Join;
 @Component
 public class SpecificationFactory<T> {
 
