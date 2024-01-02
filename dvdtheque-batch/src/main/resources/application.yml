@@ -10,7 +10,7 @@ spring:
       fail-fast: true
 logging:
   level:
-    root: info
+    root: debug
 management:
   endpoints:
     web:

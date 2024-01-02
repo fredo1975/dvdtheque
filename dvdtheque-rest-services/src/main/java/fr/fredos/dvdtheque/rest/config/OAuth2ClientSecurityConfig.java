@@ -11,30 +11,39 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.messaging.Message;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.socket.EnableWebSocketSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.messaging.access.intercept.MessageMatcherDelegatingAuthorizationManager;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSocketSecurity
 public class OAuth2ClientSecurityConfig {
 	protected Logger logger = LoggerFactory.getLogger(OAuth2ClientSecurityConfig.class);
 	@Value("${stomp.endpoint}")
 	private String stompEndpoint;
 	
-	/*
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/dvdtheque-ws/**");
-	}*/
+	@Bean
+    AuthorizationManager<Message<?>> messageAuthorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
+        messages.anyMessage().permitAll();
+        //messages.simpDestMatchers("/user/**").hasRole("USER");
+        return messages.build();
+    }
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http
+		http.csrf(csrf -> csrf
+                // ignore our stomp endpoints since they are protected using Stomp headers
+                .ignoringRequestMatchers("/dvdtheque-ws/**")
+            )
 	       .authorizeHttpRequests((authz) -> authz.anyRequest().authenticated())
 	       .oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
                    .jwt(jwtConfigurer -> jwtConfigurer
@@ -52,13 +61,10 @@ public class OAuth2ClientSecurityConfig {
 	@Bean
     public Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter() {
         JwtGrantedAuthoritiesConverter delegate = new JwtGrantedAuthoritiesConverter();
-
         return new Converter<>() {
             @Override
             public Collection<GrantedAuthority> convert(Jwt jwt) {
                 Collection<GrantedAuthority> grantedAuthorities = delegate.convert(jwt);
-
-                
                 Map<String, Object> map = jwt.getClaims();
                 if (map.get("realm_access") == null) {
                 	return grantedAuthorities;
@@ -67,12 +73,9 @@ public class OAuth2ClientSecurityConfig {
                 if (realmAccess == null) {
                     return grantedAuthorities;
                 }
-                
                 List<String> roles = (List<String>) realmAccess.get("roles");
-
                 final List<SimpleGrantedAuthority> keycloakAuthorities = roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).collect(Collectors.toList());
                 grantedAuthorities.addAll(keycloakAuthorities);
-
                 return grantedAuthorities;
             }
         };
