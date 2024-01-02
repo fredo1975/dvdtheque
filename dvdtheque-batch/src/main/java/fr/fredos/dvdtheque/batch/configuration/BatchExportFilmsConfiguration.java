@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -43,7 +42,6 @@ import fr.fredos.dvdtheque.batch.model.Film;
 
 @Configuration
 @EnableScheduling
-@EnableBatchProcessing
 public class BatchExportFilmsConfiguration {
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfiguration.class);
     @Autowired
