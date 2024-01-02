@@ -19,7 +19,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,7 +41,8 @@ import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 
 
 @ActiveProfiles("test")
-@SpringBootTest(classes = {BatchExportFilmsConfiguration.class,BatchTestConfiguration.class})
+@SpringBootTest(classes = {BatchExportFilmsConfiguration.class,
+		BatchTestConfiguration.class})
 public class BatchExportFilmsConfigurationTest {
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfigurationTest.class);
 	@Autowired
@@ -96,7 +97,7 @@ public class BatchExportFilmsConfigurationTest {
 		JobParametersBuilder builder = new JobParametersBuilder();
 		builder.addDate("TIMESTAMP", c.getTime());
 		JobParameters jobParameters = builder.toJobParameters();
-		SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+		TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
 		jobLauncher.setJobRepository(jobRepository);
 		jobLauncher.afterPropertiesSet();
 		JobExecution jobExecution = jobLauncher.run(job, jobParameters);

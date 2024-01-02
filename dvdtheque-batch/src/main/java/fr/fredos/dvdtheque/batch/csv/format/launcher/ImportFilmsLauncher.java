@@ -36,9 +36,7 @@ public class ImportFilmsLauncher {
     }
 
     private JobParameters newExecution() {
-        Map<String, JobParameter> parameters = new HashMap<>();
-        JobParameter parameter = new JobParameter(new Date());
-        parameters.put("currentTime", parameter);
-        return new JobParameters(parameters);
+        
+        return new JobParameters();
     }
 }

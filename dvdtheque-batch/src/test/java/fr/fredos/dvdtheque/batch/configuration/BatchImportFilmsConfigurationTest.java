@@ -1,18 +1,17 @@
 package fr.fredos.dvdtheque.batch.configuration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Calendar;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,7 +23,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.batch.film.tasklet.RetrieveDateInsertionTasklet;
@@ -34,7 +32,6 @@ import fr.fredos.dvdtheque.batch.model.DvdBuilder;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 
 
-@RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @SpringBootTest(classes = {BatchImportFilmsConfiguration.class,
 		RippedFlagTasklet.class,
@@ -93,7 +90,7 @@ public class BatchImportFilmsConfigurationTest{
 		builder.addDate("TIMESTAMP", c.getTime());
 		builder.addString(INPUT_FILE_PATH, path);
 		JobParameters jobParameters = builder.toJobParameters();
-		SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+		TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
 		jobLauncher.setJobRepository(jobRepository);
 		jobLauncher.afterPropertiesSet();
 		JobExecution jobExecution = jobLauncher.run(job, jobParameters);

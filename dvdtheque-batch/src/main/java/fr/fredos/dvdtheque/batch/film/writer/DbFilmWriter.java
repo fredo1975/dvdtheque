@@ -1,14 +1,12 @@
 package fr.fredos.dvdtheque.batch.film.writer;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-
-import javax.jms.Topic;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -27,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import fr.fredos.dvdtheque.batch.model.Film;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
+import jakarta.jms.Topic;
 
 public class DbFilmWriter implements ItemWriter<Film> {
 	protected Logger logger = LoggerFactory.getLogger(DbFilmWriter.class);
@@ -43,8 +42,9 @@ public class DbFilmWriter implements ItemWriter<Film> {
     private Topic topic;
 	@Autowired
 	AuthorizedClientServiceOAuth2AuthorizedClientManager 			authorizedClientServiceAndManager;
+	
 	@Override
-	public void write(List<? extends Film> items) throws Exception {
+	public void write(Chunk<? extends Film> items) throws Exception {
 		logger.info("##### write");
 		for(Film film : items){
 			logger.info("##### write film="+film.toString());
