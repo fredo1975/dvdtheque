@@ -30,24 +30,27 @@ public class OAuth2ClientSecurityConfig {
 	protected Logger logger = LoggerFactory.getLogger(OAuth2ClientSecurityConfig.class);
 	@Value("${stomp.endpoint}")
 	private String stompEndpoint;
-	
+	/*
 	@Bean
     AuthorizationManager<Message<?>> messageAuthorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
-        messages.anyMessage().permitAll();
-        //messages.simpDestMatchers("/user/**").hasRole("USER");
-        return messages.build();
-    }
+        return messages.simpSubscribeDestMatchers("/topic").permitAll().build();
+        
+    }*/
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		/*
 		http.csrf(csrf -> csrf
                 // ignore our stomp endpoints since they are protected using Stomp headers
-                .ignoringRequestMatchers("/dvdtheque-ws/**")
-            )
-	       .authorizeHttpRequests((authz) -> authz.anyRequest().authenticated())
+                .ignoringRequestMatchers("/dvdtheque-ws/**"))
+		.headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions
+                        .sameOrigin()))
+		.authorizeHttpRequests((authz) -> authz.anyRequest().authenticated())
 	       .oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
-                   .jwt(jwtConfigurer -> jwtConfigurer
-                           .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                .jwt(jwtConfigurer -> jwtConfigurer
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter())));*/
+		http.authorizeHttpRequests((authz) -> authz.anyRequest().permitAll());
 		return http.build();
 	}
 	

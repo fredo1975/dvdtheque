@@ -1,6 +1,9 @@
 spring:
   application:
     name: dvdtheque-sockjs-client
+  cloud:
+    config:
+      fail-fast: true
 logging:
   level:
     org.springframework.cloud.gateway: INFO
