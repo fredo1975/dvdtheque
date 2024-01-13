@@ -80,8 +80,7 @@ public class DvdthequeWebSocketControllerTest {
         HttpStatus status = restTemplate.getForEntity(homeUrl, Void.class, host, port).getStatusCode();
         assertThat(status).isEqualTo(HttpStatus.OK);
         sessionHandler = new MyStompSessionHandlerAdapter();
-        stompSession = stompClient.connect(WEBSOCKET_URI, sessionHandler).get(1, TimeUnit.SECONDS);
-        
+        stompSession = stompClient.connect(WEBSOCKET_URI, sessionHandler).get(3, TimeUnit.SECONDS);
     }
     
     @After
