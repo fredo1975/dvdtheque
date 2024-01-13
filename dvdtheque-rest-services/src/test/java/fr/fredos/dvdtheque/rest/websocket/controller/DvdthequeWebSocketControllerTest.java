@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import org.junit.After;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +25,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -34,12 +33,9 @@ import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
@@ -48,12 +44,13 @@ import com.hazelcast.core.Hazelcast;
 
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
-import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
 import fr.fredos.dvdtheque.rest.DvdthequeRestApplication;
+import fr.fredos.dvdtheque.rest.config.HazelcastConfiguration;
+import fr.fredos.dvdtheque.rest.config.TestWebSocketConfig;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = {DvdthequeWebSocketControllerTest.TestWebSocketConfig.class,HazelcastConfiguration.class,
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = {TestWebSocketConfig.class,HazelcastConfiguration.class,
 		DvdthequeRestApplication.class},webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
 		properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
 @ActiveProfiles("test")
@@ -175,22 +172,6 @@ public class DvdthequeWebSocketControllerTest {
 			super.handleTransportError(session, exception);
 		}
     }
-	@EnableWebSocketMessageBroker
-	static class TestWebSocketConfig implements WebSocketMessageBrokerConfigurer{
-		@Override
-		public void registerStompEndpoints(StompEndpointRegistry registry) {
-			registry.addEndpoint("/"+STOMP_ENDPOINT)
-			.setAllowedOriginPatterns("*")
-			.withSockJS()
-			.setWebSocketEnabled(true);
-		}
-
-		@Override
-		public void configureMessageBroker(MessageBrokerRegistry registry) {
-			registry.enableSimpleBroker("/topic");
-			registry.setApplicationDestinationPrefixes("/app");
-		}
-	}
 	
 	@SpringBootApplication
     static class WebApplicationTest {

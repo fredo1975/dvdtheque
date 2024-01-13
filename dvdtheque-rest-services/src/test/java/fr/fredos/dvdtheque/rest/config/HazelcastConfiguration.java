@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.integration.config;
+package fr.fredos.dvdtheque.rest.config;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.boot.test.context.TestConfiguration;
