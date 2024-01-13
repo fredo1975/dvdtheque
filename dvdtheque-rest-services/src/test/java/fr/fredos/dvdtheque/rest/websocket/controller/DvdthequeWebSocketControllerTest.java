@@ -1,9 +1,10 @@
-package fr.fredos.dvdtheque.websocket.controller.test;
+package fr.fredos.dvdtheque.rest.websocket.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -17,24 +18,30 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.env.Environment;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.SubscribableChannel;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.annotation.support.SimpAnnotationMethodMessageHandler;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.Assert;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -47,29 +54,30 @@ import com.hazelcast.core.Hazelcast;
 
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
-import fr.fredos.dvdtheque.integration.config.ContextConfiguration;
-import fr.fredos.dvdtheque.rest.DvdthequeRestApplication;
+import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
-/*
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {ContextConfiguration.class},webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = {DvdthequeWebSocketControllerTest.TestWebSocketConfig.class,
+		DvdthequeWebSocketControllerTest.TestConfig.class,HazelcastConfiguration.class},
 		properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
-@ActiveProfiles("test")*/
+@ActiveProfiles("test")
 public class DvdthequeWebSocketControllerTest {
 	protected Logger logger = LoggerFactory.getLogger(DvdthequeWebSocketControllerTest.class);
-	
-    @Value("${local.server.port}")
-    private int port;
+    
     private String WEBSOCKET_URI;
     WebSocketStompClient stompClient;
     private static final String SEND_CREATE_JMS_STATUS_ENDPOINT = "/app/";
     private static final String SUBSCRIBE_TOPIC_ENDPOINT = "/topic";
-    private StompSession stompSession;
-    @Autowired
-	private RestTemplate 							restTemplate;
+    private StompSession 							stompSession;
+    private RestTemplate restTemplate;
+    @MockBean
+	private JwtDecoder 								jwtDecoder;
+    private MockRestServiceServer 					mockServer;
     @BeforeEach
     public void setup() throws InterruptedException, ExecutionException, TimeoutException {
-    	
+    	restTemplate = new RestTemplate();
+    	mockServer = MockRestServiceServer.createServer(restTemplate);
     }
     
     @After
@@ -92,31 +100,31 @@ public class DvdthequeWebSocketControllerTest {
     /*
     @Test
     public void connectsToSocket() throws Exception {
+    	assertThat(stompSession).isNotNull();
         assertThat(stompSession.isConnected()).isTrue();
     }*/
 	
-	//@Test
+	@Test
 	@WithMockUser(roles = "user")
     public void shouldReceiveAMessageFromTheServer() throws Exception {
+		
+		String host = "localhost";
+		
 		stompClient = new WebSocketStompClient(new SockJsClient(Arrays.asList(new WebSocketTransport(new StandardWebSocketClient()))));
     	stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-    	String host = "localhost";
-        WEBSOCKET_URI = "ws://"+host+":"+port+"/";
-        /*
-        String homeUrl = "http://localhost:"+port+"/dvdtheque-ws/websocket";
-		logger.debug("Sending warm-up HTTP request to" + homeUrl);
-        
-		HttpStatus status = restTemplate.getForEntity(homeUrl, Void.class, host, port).getStatusCode();
-		Assert.state(status == HttpStatus.OK);
-		*/
-        stompSession = stompClient.connect(WEBSOCKET_URI, new MyStompSessionHandlerAdapter() {}).get(1, TimeUnit.SECONDS);
+    	
+        WEBSOCKET_URI = "ws://localhost:8083/dvdtheque-ws";
+        var headers = new WebSocketHttpHeaders();
+        headers.setBasicAuth("guest", "guest");
+        ListenableFuture<StompSession> l = stompClient.connect(WEBSOCKET_URI, new MyStompSessionHandlerAdapter() {});
+        //CompletableFuture<StompSession> c = stompClient.connectAsync(WEBSOCKET_URI, headers, stompSessionHandler);
+        stompSession = l.get(1, TimeUnit.SECONDS);
 		CompletableFuture<JmsStatusMessage<Film>> resultKeeper = new CompletableFuture<>();
         stompSession.subscribe(SUBSCRIBE_TOPIC_ENDPOINT, new MyStompFrameHandler((payload) -> resultKeeper.complete(payload)));
         JmsStatusMessage<Film> jms = new JmsStatusMessage<Film>(JmsStatus.CLEAN_DB_INIT,null,0l,JmsStatus.CLEAN_DB_INIT.statusValue());
         stompSession.send(SEND_CREATE_JMS_STATUS_ENDPOINT, jms);
         assertEquals(jms, resultKeeper.get(5, TimeUnit.SECONDS));
     }
-
 	public static class MyStompFrameHandler implements StompFrameHandler {
     	private final Consumer<JmsStatusMessage<Film>> frameHandler;
         @Override
@@ -155,27 +163,53 @@ public class DvdthequeWebSocketControllerTest {
 			super.handleTransportError(session, exception);
 		}
     }
-    
-    @Configuration
-    @EnableWebSocketMessageBroker
-    static class DvdthequeWebSocketConfigurationTest implements WebSocketMessageBrokerConfigurer{
-    	@Override
-    	public void configureMessageBroker(MessageBrokerRegistry config) {
-    		config.enableSimpleBroker("/topic");
-    		config.setApplicationDestinationPrefixes("/app", "/topic");
-    	}
+	@EnableWebSocketMessageBroker
+	static class TestWebSocketConfig implements WebSocketMessageBrokerConfigurer{
 
-    	@Override
-    	public void registerStompEndpoints(StompEndpointRegistry registry) {
-    		registry.addEndpoint("/dvdtheque").setAllowedOrigins("*").withSockJS();
-    	}
-    }
-    
-    @SpringBootApplication
-    static class WebApplicationTest {
+		@Autowired
+		Environment env;
 
-    	public static void main(String... args) {
-    		SpringApplication.run(DvdthequeRestApplication.class, args);
-    	}
-    }
+		@Override
+		public void registerStompEndpoints(StompEndpointRegistry registry) {
+			registry.addEndpoint("/dvdtheque-ws").setAllowedOriginPatterns("*").withSockJS().setWebSocketEnabled(true);
+		}
+
+		@Override
+		public void configureMessageBroker(MessageBrokerRegistry registry) {
+			registry.enableSimpleBroker("/queue/", "/topic/");
+			//registry.enableStompBrokerRelay("/queue/", "/topic/");
+			registry.setApplicationDestinationPrefixes("/app");
+		}
+	}
+	
+	/**
+	 * Configuration class that un-registers MessageHandler's it finds in the
+	 * ApplicationContext from the message channels they are subscribed to...
+	 * except the message handler used to invoke annotated message handling methods.
+	 * The intent is to reduce additional processing and additional messages not
+	 * related to the test.
+	 */
+	@Configuration
+	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+	static class TestConfig implements ApplicationListener<ContextRefreshedEvent> {
+
+		@Autowired
+		private List<SubscribableChannel> channels;
+
+		@Autowired
+		private List<MessageHandler> handlers;
+
+
+		@Override
+		public void onApplicationEvent(ContextRefreshedEvent event) {
+			for (MessageHandler handler : handlers) {
+				if (handler instanceof SimpAnnotationMethodMessageHandler) {
+					continue;
+				}
+				for (SubscribableChannel channel :channels) {
+					channel.unsubscribe(handler);
+				}
+			}
+		}
+	}
 }

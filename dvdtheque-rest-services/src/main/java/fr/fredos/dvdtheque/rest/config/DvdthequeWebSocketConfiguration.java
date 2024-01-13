@@ -12,7 +12,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-@Profile({ "local1", "local2", "dev1", "dev2", "prod1", "prod2" })
+//@Profile({ "local1", "local2", "dev1", "dev2", "prod1", "prod2" })
 public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 	protected Logger logger = LoggerFactory.getLogger(DvdthequeWebSocketConfiguration.class);
 	
@@ -34,6 +34,10 @@ public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerCo
 				.setClientPasscode(activemqPasswd);
 		config.setApplicationDestinationPrefixes("/app");
 		config.setPreservePublishOrder(true);
+		/*
+		config.enableSimpleBroker("/topic/");
+		config.setApplicationDestinationPrefixes("/app");
+		*/
 	}
 
 	@Override

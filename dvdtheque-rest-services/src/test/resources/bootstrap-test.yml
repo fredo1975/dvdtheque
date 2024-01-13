@@ -23,9 +23,10 @@ spring:
           destination: input
       default:
         contentType: application/json
-  rabbitmq:
-    host: 192.168.99.100
-    port: 32777
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
 
 eureka:
   client:
@@ -34,9 +35,6 @@ eureka:
     hostname: localhost
     instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
 
-local:
-  server:
-    port: 8087
 server:
   port: 8083
 
@@ -102,7 +100,7 @@ hazelcast:
 stomp:
   endpoint: /dvdtheque-ws
   relay:
-    host: 192.168.1.105
+    host: localhost
     port: 61613
 keycloak:
   realm: dvdtheque

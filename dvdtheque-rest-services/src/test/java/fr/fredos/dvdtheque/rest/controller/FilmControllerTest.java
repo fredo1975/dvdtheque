@@ -87,7 +87,7 @@ import fr.fredos.dvdtheque.rest.service.IFilmService;
 import fr.fredos.dvdtheque.rest.service.IPersonneService;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {ContextConfiguration.class,HazelcastConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {HazelcastConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
