@@ -35,8 +35,9 @@ eureka:
     hostname: localhost
     instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
 
-server:
-  port: 8083
+local:
+  server:
+    port: 8083
 
 hibernate:
   hbm2ddl:
