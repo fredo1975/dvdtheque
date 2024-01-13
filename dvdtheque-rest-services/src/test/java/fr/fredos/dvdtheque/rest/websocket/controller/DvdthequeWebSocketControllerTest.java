@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.rest.websocket.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Type;
@@ -18,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
@@ -32,6 +35,7 @@ import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -49,10 +53,12 @@ import com.hazelcast.core.Hazelcast;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
+import fr.fredos.dvdtheque.rest.DvdthequeRestApplication;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = {DvdthequeWebSocketControllerTest.TestWebSocketConfig.class,HazelcastConfiguration.class},
+@SpringBootTest(classes = {DvdthequeWebSocketControllerTest.TestWebSocketConfig.class,HazelcastConfiguration.class,
+		DvdthequeRestApplication.class},
 webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
 		properties = { "eureka.client.enabled:false", "spring.cloud.config.enabled:false" })
 @ActiveProfiles("test")
@@ -73,7 +79,6 @@ public class DvdthequeWebSocketControllerTest {
     public void setup() throws InterruptedException, ExecutionException, TimeoutException {
     	restTemplate = new RestTemplate();
     	//mockServer = MockRestServiceServer.createServer(restTemplate);
-    	
     	stompClient = new WebSocketStompClient(new SockJsClient(Arrays.asList(new WebSocketTransport(new StandardWebSocketClient()))));
     	stompClient.setMessageConverter(new MappingJackson2MessageConverter());
     	String host = "localhost";
@@ -82,6 +87,7 @@ public class DvdthequeWebSocketControllerTest {
 		logger.debug("Sending warm-up HTTP request to " + homeUrl);
         HttpStatus status = restTemplate.getForEntity(homeUrl, Void.class, host, port).getStatusCode();
 		//Assert.state(status == HttpStatus.OK);
+        assertThat(status).isEqualTo(HttpStatus.OK);
         stompSession = stompClient.connect(WEBSOCKET_URI, new MyStompSessionHandlerAdapter() {}).get(1, TimeUnit.SECONDS);
     }
     
@@ -100,7 +106,6 @@ public class DvdthequeWebSocketControllerTest {
 			System.err.println("Failed to stop stompClient");
 			t.printStackTrace();
 		}
-        
     }
     /*
     @Test
@@ -112,9 +117,7 @@ public class DvdthequeWebSocketControllerTest {
 	@Test
 	@WithMockUser(roles = "user")
     public void shouldReceiveAMessageFromTheServer() throws Exception {
-		
         ListenableFuture<StompSession> l = stompClient.connect(WEBSOCKET_URI, new MyStompSessionHandlerAdapter() {});
-        
         stompSession = l.get(1, TimeUnit.SECONDS);
 		CompletableFuture<JmsStatusMessage<Film>> resultKeeper = new CompletableFuture<>();
         stompSession.subscribe(SUBSCRIBE_TOPIC_ENDPOINT, new MyStompFrameHandler((payload) -> resultKeeper.complete(payload)));
@@ -178,12 +181,12 @@ public class DvdthequeWebSocketControllerTest {
 			registry.setApplicationDestinationPrefixes("/app", "/topic");
 		}
 	}
-	/*
+	
 	@SpringBootApplication
     static class WebApplicationTest {
 
     	public static void main(String... args) {
-    		SpringApplication.run(WebApplication.class, args);
+    		SpringApplication.run(DvdthequeRestApplication.class, args);
     	}
-    }*/
+    }
 }

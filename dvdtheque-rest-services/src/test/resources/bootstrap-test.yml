@@ -38,7 +38,8 @@ eureka:
 local:
   server:
     port: 8083
-
+server:
+    port: 8083
 hibernate:
   hbm2ddl:
     auto: validate
@@ -98,11 +99,6 @@ hazelcast:
     join:
       auto-detection:
         enabled: false
-stomp:
-  endpoint: /dvdtheque-ws
-  relay:
-    host: localhost
-    port: 61613
 keycloak:
   realm: dvdtheque
   auth-server-url: http://localhost:8080/auth

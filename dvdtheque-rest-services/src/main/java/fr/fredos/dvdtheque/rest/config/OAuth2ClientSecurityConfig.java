@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -35,10 +34,6 @@ import com.nimbusds.jose.shaded.json.JSONObject;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class OAuth2ClientSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected Logger logger = LoggerFactory.getLogger(OAuth2ClientSecurityConfig.class);
-	@Value("${stomp.endpoint}")
-	private String stompEndpoint;
-	
-	
 	
 	@Override
 	public void configure(WebSecurity web) throws Exception {
