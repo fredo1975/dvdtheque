@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.integration.config;
+package fr.fredos.dvdtheque.rest.config;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -12,7 +12,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 
 @TestConfiguration
-public class HazelcastConfiguration {
+public class HazelcastConfigurationTest {
 	@Bean
 	public HazelcastInstance hazelcastInstance() {
 		Config config = new Config();
