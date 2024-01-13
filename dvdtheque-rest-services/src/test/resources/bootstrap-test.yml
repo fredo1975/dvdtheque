@@ -23,9 +23,10 @@ spring:
           destination: input
       default:
         contentType: application/json
-  rabbitmq:
-    host: 192.168.99.100
-    port: 32777
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
 
 eureka:
   client:
@@ -36,10 +37,9 @@ eureka:
 
 local:
   server:
-    port: 8087
+    port: 8083
 server:
-  port: 8083
-
+    port: 8083
 hibernate:
   hbm2ddl:
     auto: validate

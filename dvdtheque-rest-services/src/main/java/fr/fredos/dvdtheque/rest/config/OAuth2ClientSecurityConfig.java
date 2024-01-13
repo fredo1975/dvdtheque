@@ -35,10 +35,6 @@ import com.nimbusds.jose.shaded.json.JSONObject;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class OAuth2ClientSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected Logger logger = LoggerFactory.getLogger(OAuth2ClientSecurityConfig.class);
-	@Value("${stomp.endpoint}")
-	private String stompEndpoint;
-	
-	
 	
 	@Override
 	public void configure(WebSecurity web) throws Exception {
