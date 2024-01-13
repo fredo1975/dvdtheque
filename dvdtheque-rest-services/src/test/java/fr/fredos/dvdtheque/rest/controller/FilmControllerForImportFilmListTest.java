@@ -37,7 +37,7 @@ import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {HazelcastConfiguration.class, ContextConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {HazelcastConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class FilmControllerForImportFilmListTest {
