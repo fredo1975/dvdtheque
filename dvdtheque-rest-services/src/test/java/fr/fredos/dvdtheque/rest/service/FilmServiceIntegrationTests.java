@@ -36,7 +36,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
-import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
+import fr.fredos.dvdtheque.rest.DvdthequeRestApplication;
+import fr.fredos.dvdtheque.rest.config.HazelcastConfigurationTest;
+import fr.fredos.dvdtheque.rest.config.TestWebSocketConfig;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
@@ -45,7 +47,8 @@ import fr.fredos.dvdtheque.rest.dao.repository.FilmDao;
 import fr.fredos.dvdtheque.rest.exception.FilmNotFoundException;
 import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 
-@SpringBootTest(classes = {HazelcastConfiguration.class})
+@SpringBootTest(classes = {HazelcastConfigurationTest.class,
+		TestWebSocketConfig.class,DvdthequeRestApplication.class})
 @ActiveProfiles("test")
 public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(FilmServiceIntegrationTests.class);
@@ -1496,10 +1499,10 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		Long filmId5 = filmService.saveNewFilm(film5);
 		FilmBuilder.assertFilmIsNotNull(film5, false,FilmBuilder.RIP_DATE_OFFSET, FilmOrigine.DVD, FilmBuilder.FILM_DATE_SORTIE, null, false);
 		assertNotNull(filmId5);
-		var query = "origine:eq:"+FilmOrigine.DVD+":AND,vu:eq:"+Boolean.FALSE+":AND";
+		var query = "origine:eq:"+FilmOrigine.DVD+":AND,vu:eq:false:AND,";
 		var page = filmService.paginatedSarch(query, 1, 10, "-dateInsertion");
 		assertTrue(CollectionUtils.isNotEmpty(page.getContent()));
-		assertTrue("list should be equals to "+rowNumber,page.getContent().size()==rowNumber);
+		assertTrue("list should be equals to "+rowNumber+" but was "+page.getContent().size(),page.getContent().size()==rowNumber);
 		Film f1 = page.getContent().get(0);
 		assertEquals(film5, f1);
 		Film f2 = page.getContent().get(1);

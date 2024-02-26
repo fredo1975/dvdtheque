@@ -72,9 +72,11 @@ import fr.fredos.dvdtheque.common.tmdb.model.Credits;
 import fr.fredos.dvdtheque.common.tmdb.model.Crew;
 import fr.fredos.dvdtheque.common.tmdb.model.Genres;
 import fr.fredos.dvdtheque.common.tmdb.model.Results;
-import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
+import fr.fredos.dvdtheque.rest.DvdthequeRestApplication;
 import fr.fredos.dvdtheque.rest.allocine.model.CritiquePresseDto;
 import fr.fredos.dvdtheque.rest.allocine.model.FicheFilmDto;
+import fr.fredos.dvdtheque.rest.config.HazelcastConfigurationTest;
+import fr.fredos.dvdtheque.rest.config.TestWebSocketConfig;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
@@ -84,7 +86,8 @@ import fr.fredos.dvdtheque.rest.service.IFilmService;
 import fr.fredos.dvdtheque.rest.service.IPersonneService;
 
 
-@SpringBootTest(classes = {HazelcastConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {HazelcastConfigurationTest.class,
+		TestWebSocketConfig.class,DvdthequeRestApplication.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {

@@ -20,14 +20,17 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
-import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
+import fr.fredos.dvdtheque.rest.DvdthequeRestApplication;
+import fr.fredos.dvdtheque.rest.config.HazelcastConfigurationTest;
+import fr.fredos.dvdtheque.rest.config.TestWebSocketConfig;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
 import fr.fredos.dvdtheque.rest.dao.model.utils.FilmBuilder;
 import fr.fredos.dvdtheque.rest.service.model.PersonneDto;
 @ActiveProfiles("test")
-@SpringBootTest(classes = {HazelcastConfiguration.class})
+@SpringBootTest(classes = {HazelcastConfigurationTest.class,
+		TestWebSocketConfig.class,DvdthequeRestApplication.class})
 public class PersonneServiceIntegrationTests extends AbstractTransactionalJUnit4SpringContextTests {
 	protected Logger logger = LoggerFactory.getLogger(PersonneServiceIntegrationTests.class);
 	@Autowired

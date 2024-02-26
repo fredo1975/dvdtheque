@@ -10,13 +10,11 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import org.springframework.web.socket.server.jetty.JettyRequestUpgradeStrategy;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
-import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
 @Configuration
 @EnableWebSocketMessageBroker
-//@Profile({ "local1", "local2", "dev1", "dev2", "prod1", "prod2" })
+@Profile({ "local1", "local2", "dev1", "dev2", "prod1", "prod2" })
 public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 	protected Logger logger = LoggerFactory.getLogger(DvdthequeWebSocketConfiguration.class);
 	

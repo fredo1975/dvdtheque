@@ -1,9 +1,5 @@
-debug: false
+debug: true
 spring:
-  activemq:
-    broker-url: tcp://localhost:61616
-    user: admin
-    password: admin
   datasource:
     testWhileIdle: true
     validationQuery: SELECT 1
@@ -27,9 +23,10 @@ spring:
           destination: input
       default:
         contentType: application/json
-  rabbitmq:
-    host: 192.168.99.100
-    port: 32777
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
 
 eureka:
   client:
@@ -38,6 +35,10 @@ eureka:
     hostname: localhost
     instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
 
+
+local:
+  server:
+    port: 8083
 server:
   port: 8092
 

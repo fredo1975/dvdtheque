@@ -31,12 +31,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import fr.fredos.dvdtheque.integration.config.HazelcastConfiguration;
+import fr.fredos.dvdtheque.rest.DvdthequeRestApplication;
+import fr.fredos.dvdtheque.rest.config.HazelcastConfigurationTest;
+import fr.fredos.dvdtheque.rest.config.TestWebSocketConfig;
 import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {HazelcastConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {HazelcastConfigurationTest.class,
+		TestWebSocketConfig.class,DvdthequeRestApplication.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class FilmControllerForImportFilmListTest {
