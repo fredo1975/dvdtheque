@@ -62,7 +62,7 @@ public class DvdthequeWebSocketControllerTest {
     private String WEBSOCKET_URI;
     WebSocketStompClient stompClient;
     private static final String SEND_CREATE_JMS_STATUS_ENDPOINT = "/app/dvdtheque-ws";
-    private static final String SUBSCRIBE_TOPIC_ENDPOINT = "/topic";
+    private static final String SUBSCRIBE_TOPIC_ENDPOINT = "/topic/";
     private StompSession 							stompSession;
     private RestTemplate 							restTemplate;
     @MockBean
