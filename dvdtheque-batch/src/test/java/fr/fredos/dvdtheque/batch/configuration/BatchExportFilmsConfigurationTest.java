@@ -41,8 +41,7 @@ import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 
 
 @ActiveProfiles("test")
-@SpringBootTest(classes = {BatchExportFilmsConfiguration.class,
-		BatchTestConfiguration.class})
+@SpringBootTest(classes = {BatchExportFilmsConfiguration.class, BatchTestConfiguration.class})
 public class BatchExportFilmsConfigurationTest {
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfigurationTest.class);
 	@Autowired
