@@ -13,41 +13,42 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.test.StepScopeTestExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.web.client.RestTemplate;
 
-import fr.fredos.dvdtheque.batch.film.tasklet.RetrieveDateInsertionTasklet;
-import fr.fredos.dvdtheque.batch.film.tasklet.RippedFlagTasklet;
 import fr.fredos.dvdtheque.batch.model.Dvd;
 import fr.fredos.dvdtheque.batch.model.DvdBuilder;
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 
 
-@ActiveProfiles("test")
-@SpringBootTest(classes = {BatchImportFilmsConfiguration.class,
-		RippedFlagTasklet.class,
-		RetrieveDateInsertionTasklet.class,
-		JmsMessageSender.class,
-		BatchTestConfiguration.class})
+@ActiveProfiles("test-import")
+@SpringBootTest
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
+    StepScopeTestExecutionListener.class})
+	@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class BatchImportFilmsConfigurationTest{
 	//protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfigurationTest.class);
 	@Autowired
 	@Qualifier(value = "importFilmsJob")
 	private Job 			job;
 	@Autowired
-	private JobRepository 	jobRepository;
-	@MockBean
 	private RestTemplate 	restTemplate;
 	
+	@Autowired
+	private JobRepository 	jobRepository;
 	@Value("${csv.dvd.file.name.import}")
     private String path;
     private String INPUT_FILE_PATH="INPUT_FILE_PATH";

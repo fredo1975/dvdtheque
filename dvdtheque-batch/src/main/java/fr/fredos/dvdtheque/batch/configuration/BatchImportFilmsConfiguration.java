@@ -59,18 +59,18 @@ public class BatchImportFilmsConfiguration{
 	private static String DVDTHEQUE_SERVICE_URL ="dvdtheque-service.url";
 	private static String DVDTHEQUE_SERVICE_CLEAN_ALL ="dvdtheque-service.cleanAllFilms";
 	@Autowired
-    Environment 													environment;
+	private Environment 											environment;
     @Autowired
-    JobRepository													jobRepository;
+    private JobRepository											jobRepository;
     @Autowired
-    PlatformTransactionManager 										transactionManager;
+    private PlatformTransactionManager 								transactionManager;
     @Autowired
     @Qualifier("rippedFlagTasklet")
-    Tasklet 														rippedFlagTasklet;
+    private Tasklet 												rippedFlagTasklet;
     @Autowired
     @Qualifier("retrieveDateInsertionTasklet")
-    Tasklet 														retrieveDateInsertionTasklet;
-    JmsMessageSender												jmsMessageSender;
+    private Tasklet 												retrieveDateInsertionTasklet;
+    private JmsMessageSender										jmsMessageSender;
     @Autowired
 	public void setJmsMessageSender(JmsMessageSender jmsMessageSender) {
 		this.jmsMessageSender = jmsMessageSender;

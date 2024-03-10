@@ -47,17 +47,17 @@ public class BatchExportFilmsConfiguration {
     @Autowired
     private JobRepository 											jobRepository;
     @Autowired
-    PlatformTransactionManager 										transactionManager;
+    private PlatformTransactionManager 								transactionManager;
     @Autowired
-    RestTemplate													restTemplate;
+    private RestTemplate											restTemplate;
     @Autowired
     private Environment 											environment;
     @Autowired
-	AuthorizedClientServiceOAuth2AuthorizedClientManager 			authorizedClientServiceAndManager;
+    private AuthorizedClientServiceOAuth2AuthorizedClientManager 	authorizedClientServiceAndManager;
     public static String 											DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
 	public static String 											DVDTHEQUE_SERVICE_ALL="dvdtheque-service.films";
 	
-	@Bean
+	@Bean(name = "runExportFilmsJob")
 	public Job runExportFilmsJob() {
 		return new JobBuilder("exportFilms", jobRepository)
 				.incrementer(new RunIdIncrementer())
