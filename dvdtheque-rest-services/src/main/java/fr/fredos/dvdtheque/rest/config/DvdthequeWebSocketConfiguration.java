@@ -40,7 +40,10 @@ public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerCo
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint(stompEndpoint).setAllowedOriginPatterns("*").withSockJS().setWebSocketEnabled(true);
+		registry.addEndpoint(stompEndpoint)
+		.setAllowedOriginPatterns("*")
+		.withSockJS()
+		.setWebSocketEnabled(true);
 	}
 	@Bean
 	public ServletServerContainerFactoryBean createWebSocketContainer() {
