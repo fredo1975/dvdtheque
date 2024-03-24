@@ -1,11 +1,15 @@
 package fr.fredos.dvdtheque.rest.config;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -45,12 +49,11 @@ public class DvdthequeWebSocketConfiguration implements WebSocketMessageBrokerCo
 		.withSockJS()
 		.setWebSocketEnabled(true);
 	}
-	@Bean
-	public ServletServerContainerFactoryBean createWebSocketContainer() {
-	    ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-	    container.setMaxTextMessageBufferSize(8192);
-	    container.setMaxBinaryMessageBufferSize(8192);
-	    return container;
+
+	@Override
+	public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+		messageConverters.add(new MappingJackson2MessageConverter());
+		return WebSocketMessageBrokerConfigurer.super.configureMessageConverters(messageConverters);
 	}
 	
 	

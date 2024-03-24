@@ -1,11 +1,8 @@
 package fr.fredos.dvdtheque.common.jms.model;
 
-import java.io.Serializable;
-
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 
-public class JmsStatusMessage<T> implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class JmsStatusMessage<T>{
 	private JmsStatus status;
 	private T film;
 	private long timing;

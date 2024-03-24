@@ -71,6 +71,7 @@ public class BatchImportFilmsConfiguration{
     @Qualifier("retrieveDateInsertionTasklet")
     private Tasklet 												retrieveDateInsertionTasklet;
     private JmsMessageSender										jmsMessageSender;
+    
     @Autowired
 	public void setJmsMessageSender(JmsMessageSender jmsMessageSender) {
 		this.jmsMessageSender = jmsMessageSender;
@@ -94,7 +95,7 @@ public class BatchImportFilmsConfiguration{
 		}
 	}
    
-    
+	
     @Bean
 	protected Tasklet cleanDBTasklet() {
     	return new Tasklet() {
