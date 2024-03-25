@@ -3,7 +3,6 @@ package fr.fredos.dvdtheque.allocine.config;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Bean;
