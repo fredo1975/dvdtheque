@@ -1,4 +1,4 @@
-debug: false
+debug: true
 
 server:
   port: 8089
@@ -7,13 +7,13 @@ spring:
   datasource:
     testWhileIdle: true
     validationQuery: SELECT 1
-    url: jdbc:h2:file:./DB
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
   batch:
-    initialize-schema: never
     initializer:
-      enabled: false
+      enabled: true
     job:
-      enabled: false
+      enabled: true
+      name: importFilms
   cloud:
     config:
       enabled: false

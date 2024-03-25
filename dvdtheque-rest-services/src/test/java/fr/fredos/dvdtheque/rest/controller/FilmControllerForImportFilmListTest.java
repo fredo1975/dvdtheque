@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -37,10 +37,9 @@ import fr.fredos.dvdtheque.rest.config.TestWebSocketConfig;
 import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {TestWebSocketConfig.class,
-		HazelcastConfigurationTest.class,
-		DvdthequeRestApplication.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {HazelcastConfigurationTest.class,
+		TestWebSocketConfig.class,DvdthequeRestApplication.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class FilmControllerForImportFilmListTest {

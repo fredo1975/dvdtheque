@@ -16,7 +16,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
-@Profile({ "prod","dev","local"})
+@Profile({ "prod","dev","local","local-mig"})
 public class OAuthClientCredentialsRestTemplateInterceptor implements ClientHttpRequestInterceptor{
 	private final OAuth2AuthorizedClientManager manager;
     private final Authentication principal;

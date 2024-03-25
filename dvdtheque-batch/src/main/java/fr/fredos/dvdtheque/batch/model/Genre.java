@@ -2,9 +2,9 @@ package fr.fredos.dvdtheque.batch.model;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.validation.constraints.NotNull;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Genre implements Serializable{
 	private static final long serialVersionUID = 1L;

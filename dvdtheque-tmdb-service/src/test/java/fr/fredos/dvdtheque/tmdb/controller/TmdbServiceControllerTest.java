@@ -45,7 +45,7 @@ import fr.fredos.dvdtheque.common.tmdb.model.Results;
 import fr.fredos.dvdtheque.common.tmdb.model.SearchResults;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {ContextConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class TmdbServiceControllerTest {

@@ -9,8 +9,6 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
-import javax.jms.Topic;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
@@ -37,6 +35,7 @@ import fr.fredos.dvdtheque.batch.model.Film;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
 import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
+import jakarta.jms.Topic;
 
 public class FilmProcessor implements ItemProcessor<FilmCsvImportFormat,Film> {
 	protected Logger logger = LoggerFactory.getLogger(FilmProcessor.class);

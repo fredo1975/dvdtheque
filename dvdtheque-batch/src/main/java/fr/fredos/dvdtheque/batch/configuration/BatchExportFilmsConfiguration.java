@@ -9,19 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
-import org.springframework.batch.core.launch.support.SimpleJobOperator;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +32,7 @@ import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2A
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,29 +42,24 @@ import fr.fredos.dvdtheque.batch.model.Film;
 
 @Configuration
 @EnableScheduling
-@EnableBatchProcessing
 public class BatchExportFilmsConfiguration {
 	protected Logger logger = LoggerFactory.getLogger(BatchExportFilmsConfiguration.class);
-	@Autowired
-	protected JobBuilderFactory 									jobBuilders;
-    @Autowired
-    protected StepBuilderFactory 									stepBuilderFactory;
     @Autowired
     private JobRepository 											jobRepository;
     @Autowired
-    private JobExplorer 											jobExplorer;
+    private PlatformTransactionManager 								transactionManager;
     @Autowired
-    RestTemplate													restTemplate;
+    private RestTemplate											restTemplate;
     @Autowired
     private Environment 											environment;
     @Autowired
-	AuthorizedClientServiceOAuth2AuthorizedClientManager 			authorizedClientServiceAndManager;
+    private AuthorizedClientServiceOAuth2AuthorizedClientManager 	authorizedClientServiceAndManager;
     public static String 											DVDTHEQUE_SERVICE_URL="dvdtheque-service.url";
 	public static String 											DVDTHEQUE_SERVICE_ALL="dvdtheque-service.films";
 	
-	@Bean
+	@Bean(name = "runExportFilmsJob")
 	public Job runExportFilmsJob() {
-		return jobBuilders.get("exportFilms")
+		return new JobBuilder("exportFilms", jobRepository)
 				.incrementer(new RunIdIncrementer())
 				.start(exportFilmsStep())
 				.build();
@@ -107,8 +95,8 @@ public class BatchExportFilmsConfiguration {
     
     @Bean
     protected Step exportFilmsStep() {
-        return stepBuilderFactory.get("exportFilms")
-                .<Film, Film>chunk(800).reader(dvdthequeServiceFilmReader())
+    	return new StepBuilder("exportFilms", jobRepository)
+                .<Film, Film>chunk(800,transactionManager).reader(dvdthequeServiceFilmReader())
                 .writer(excelFilmWriter())
                 .build();
     }
@@ -124,31 +112,5 @@ public class BatchExportFilmsConfiguration {
         taskExecutor.setMaxPoolSize(20);
         taskExecutor.setQueueCapacity(30);
         return taskExecutor;
-    }
-
-    @Bean
-    public JobLauncher jobLauncher() throws Exception {
-        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
-        jobLauncher.setTaskExecutor(taskExecutor());
-        jobLauncher.setJobRepository(jobRepository);
-        jobLauncher.afterPropertiesSet();
-        return jobLauncher;
-    }
-    
-    @Bean
-    public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(JobRegistry jobRegistry) {
-        JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor = new JobRegistryBeanPostProcessor();
-        jobRegistryBeanPostProcessor.setJobRegistry(jobRegistry);
-        return jobRegistryBeanPostProcessor;
-    }
-    
-    @Bean
-    public JobOperator jobOperator(JobRegistry jobRegistry) throws Exception {
-        SimpleJobOperator jobOperator = new SimpleJobOperator();
-        jobOperator.setJobExplorer(jobExplorer);
-        jobOperator.setJobLauncher(jobLauncher());
-        jobOperator.setJobRegistry(jobRegistry);
-        jobOperator.setJobRepository(jobRepository);
-        return jobOperator;
     }
 }

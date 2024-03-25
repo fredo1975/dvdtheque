@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.tmdb.config;
+package fr.fredos.dvdtheque.rest.config;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -18,14 +19,14 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class OAuth2ClientSecurityConfig {
+@EnableWebSecurity
+public class WebSecurityConfig {
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http
-	       .authorizeHttpRequests((authz) -> authz.anyRequest().authenticated())
+		http.authorizeHttpRequests((authz) -> authz.requestMatchers("/dvdtheque-ws/**").permitAll().anyRequest().authenticated())
 	       .oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
-                   .jwt(jwtConfigurer -> jwtConfigurer
-                           .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                .jwt(jwtConfigurer -> jwtConfigurer
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter())));
 		return http.build();
 	}
 	
@@ -39,13 +40,10 @@ public class OAuth2ClientSecurityConfig {
 	@Bean
     public Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter() {
         JwtGrantedAuthoritiesConverter delegate = new JwtGrantedAuthoritiesConverter();
-
         return new Converter<>() {
             @Override
             public Collection<GrantedAuthority> convert(Jwt jwt) {
                 Collection<GrantedAuthority> grantedAuthorities = delegate.convert(jwt);
-
-                
                 Map<String, Object> map = jwt.getClaims();
                 if (map.get("realm_access") == null) {
                 	return grantedAuthorities;
@@ -54,12 +52,9 @@ public class OAuth2ClientSecurityConfig {
                 if (realmAccess == null) {
                     return grantedAuthorities;
                 }
-                
                 List<String> roles = (List<String>) realmAccess.get("roles");
-
                 final List<SimpleGrantedAuthority> keycloakAuthorities = roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).collect(Collectors.toList());
                 grantedAuthorities.addAll(keycloakAuthorities);
-
                 return grantedAuthorities;
             }
         };

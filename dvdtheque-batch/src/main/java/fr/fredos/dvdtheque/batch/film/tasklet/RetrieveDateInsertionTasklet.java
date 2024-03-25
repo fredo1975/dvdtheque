@@ -1,11 +1,5 @@
 package fr.fredos.dvdtheque.batch.film.tasklet;
 
-import java.io.File;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
@@ -14,14 +8,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-
-import fr.fredos.dvdtheque.batch.model.Film;
-import fr.fredos.dvdtheque.common.utils.DateUtils;
 
 @Component(value="retrieveDateInsertionTasklet")
 public class RetrieveDateInsertionTasklet implements Tasklet{

@@ -104,12 +104,6 @@ public class AllocineServiceImpl implements AllocineService {
 	}
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW,readOnly = false)
-	public void removeAllFilmWithoutCritique() {
-		List<FicheFilm> l = findAllFilmWithoutCritique();
-		ficheFilmRepository.deleteAll(l);
-	}
-	@Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW,readOnly = false)
 	public FicheFilm saveFicheFilm(FicheFilm ficheFilm) {
 		try{
 			return ficheFilmRepository.save(ficheFilm);
@@ -347,9 +341,5 @@ public class AllocineServiceImpl implements AllocineService {
 	public Optional<List<FicheFilm>> findInCacheByFicheFilmTitle(String title) {
 		List<FicheFilm> ficheFilmList = mapFicheFilmsByTtile.get(StringUtils.upperCase(title));
 		return Optional.ofNullable(ficheFilmList);
-	}
-	@Override
-	public List<FicheFilm> findAllFilmWithoutCritique() {
-		return ficheFilmRepository.findAllFilmWithoutCritique();
 	}
 }
