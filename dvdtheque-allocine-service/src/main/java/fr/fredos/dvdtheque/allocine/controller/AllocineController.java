@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
 import fr.fredos.dvdtheque.allocine.dto.FicheFilmDto;
 import fr.fredos.dvdtheque.allocine.service.AllocineService;
+import jakarta.annotation.security.RolesAllowed;
 
 @Controller
 @RequestMapping("/dvdtheque-allocine-service")
@@ -28,6 +29,7 @@ public class AllocineController {
     public AllocineController(AllocineService allocineService) {
         this.allocineService = allocineService;
     }
+	@RolesAllowed({"batch"})
 	@GetMapping("/byTitle")
 	public ResponseEntity<List<FicheFilmDto>> getAllocineFicheFilmByTitle(@RequestParam(name = "title", required = false) String title,
 			@RequestParam(name = "titleO", required = false) String titleO) {
@@ -47,6 +49,7 @@ public class AllocineController {
 		}
 		return ResponseEntity.ok(ll);
 	}
+	@RolesAllowed({"batch"})
 	@GetMapping("/byId")
 	public ResponseEntity<FicheFilmDto> getAllocineFicheFilmById(@RequestParam(name = "id", required = true) Integer id) {
 		Optional<FicheFilm> ficheFilm = allocineService.retrieveFicheFilm(id.intValue());

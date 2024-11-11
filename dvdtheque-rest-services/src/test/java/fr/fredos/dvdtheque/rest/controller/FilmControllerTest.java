@@ -35,7 +35,6 @@ import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -87,11 +85,9 @@ import fr.fredos.dvdtheque.rest.model.ExcelFilmHandler;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
 import fr.fredos.dvdtheque.rest.service.IPersonneService;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {TestWebSocketConfig.class,
-		HazelcastConfigurationTest.class,
-		DvdthequeRestApplication.class}, 
-webEnvironment = WebEnvironment.RANDOM_PORT)
+
+@SpringBootTest(classes = {HazelcastConfigurationTest.class,
+		TestWebSocketConfig.class,DvdthequeRestApplication.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
@@ -118,28 +114,28 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 			MediaType.APPLICATION_JSON.getSubtype(),
 			Charset.forName("utf8"));
 	
-	private static final String 					GET_ALL_FILMS_URI = "/dvdtheque-service/films/";
-	private static final String 					GET_CLEAN_ALL_FILMS_URI = GET_ALL_FILMS_URI+"cleanAllfilms/";
-	private static final String 					GET_ALL_GENRES_URI = GET_ALL_FILMS_URI+"genres/";
+	private static final String 					GET_ALL_FILMS_URI = "/dvdtheque-service/films";
+	private static final String 					GET_CLEAN_ALL_FILMS_URI = GET_ALL_FILMS_URI+"/cleanAllfilms";
+	private static final String 					GET_ALL_GENRES_URI = GET_ALL_FILMS_URI+"/genres";
 	private static final String 					UPDATE_PERSONNE_URI = "/dvdtheque-service/personnes/byId/";
-	private static final String 					SEARCH_PERSONNE_URI = GET_ALL_FILMS_URI + "byPersonne";
+	private static final String 					SEARCH_PERSONNE_URI = GET_ALL_FILMS_URI + "/byPersonne";
 	private static final String 					SEARCH_BY_ID_ALLOCINE_CRITIQUE_URI = "/dvdtheque-service/films/allocine/byId";
 	private static final String 					SEARCH_ALL_BY_TITLE_ALLOCINE_CRITIQUE_URI = "/dvdtheque-service/films/allocine/byTitle";
-	private static final String 					SEARCH_FILM_BY_ID = GET_ALL_FILMS_URI + "byId/";
-	private static final String 					SEARCH_FILM_BY_TMDBID = GET_ALL_FILMS_URI + "byTmdbId/";
-	private static final String 					SEARCH_TMDB_FILM_BY_TITRE = GET_ALL_FILMS_URI + "tmdb/byTitre/";
+	private static final String 					SEARCH_FILM_BY_ID = GET_ALL_FILMS_URI + "/byId/";
+	private static final String 					SEARCH_FILM_BY_TMDBID = GET_ALL_FILMS_URI + "/byTmdbId/";
+	private static final String 					SEARCH_TMDB_FILM_BY_TITRE = GET_ALL_FILMS_URI + "/tmdb/byTitre/";
 	private static final String 					SEARCH_FILMS_BY_QUERY_PARAM = "/dvdtheque-service/films/search";
 	private static final String 					PAGINATED_SEARCH_FILMS_BY_QUERY_PARAM = "/dvdtheque-service//films/paginatedSarch";
-	private static final String 					SAVE_FILM_URI = GET_ALL_FILMS_URI + "save/";
-	private static final String 					SAVE_PROCESSED_FILM_URI = GET_ALL_FILMS_URI + "saveProcessedFilm/";
-	private static final String 					UPDATE_FILM_URI = GET_ALL_FILMS_URI + "update/";
-	private static final String 					REMOVE_FILM_URI = GET_ALL_FILMS_URI + "remove/";
-	private static final String 					RETRIEVE_FILM_IMAGE_URI = GET_ALL_FILMS_URI + "retrieveImage/";
-	private static final String 					RETRIEVE_ALL_FILM_IMAGE_URI = GET_ALL_FILMS_URI + "retrieveAllImages";
-	private static final String 					CLEAN_ALL_CACHES_URI = GET_ALL_FILMS_URI + "cleanCaches/";
+	private static final String 					SAVE_FILM_URI = GET_ALL_FILMS_URI + "/save/";
+	private static final String 					SAVE_PROCESSED_FILM_URI = GET_ALL_FILMS_URI + "/saveProcessedFilm";
+	private static final String 					UPDATE_FILM_URI = GET_ALL_FILMS_URI + "/update/";
+	private static final String 					REMOVE_FILM_URI = GET_ALL_FILMS_URI + "/remove/";
+	private static final String 					RETRIEVE_FILM_IMAGE_URI = GET_ALL_FILMS_URI + "/retrieveImage/";
+	private static final String 					RETRIEVE_ALL_FILM_IMAGE_URI = GET_ALL_FILMS_URI + "/retrieveAllImages";
+	private static final String 					CLEAN_ALL_CACHES_URI = GET_ALL_FILMS_URI + "/cleanCaches";
 	private static final String 					SEARCH_ALL_PERSONNE_URI = "/dvdtheque-service/personnes";
-	private static final String 					EXPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "export";
-	private static final String 					EXPORT_FILM_SEARCH_URI = GET_ALL_FILMS_URI + "search/export";
+	private static final String 					EXPORT_FILM_LIST_URI = GET_ALL_FILMS_URI + "/export";
+	private static final String 					EXPORT_FILM_SEARCH_URI = GET_ALL_FILMS_URI + "/search/export";
 	public static final String 						SHEET_NAME = "Films";
 	
 	public static final String TMDB_RELEASE_DATE = "2007-03-21T00:00:00.000+00:00";
@@ -1724,6 +1720,7 @@ public class FilmControllerTest extends AbstractTransactionalJUnit4SpringContext
 		res.setTitle(FilmBuilder.TITRE_FILM_TMBD_ID_844);
 		res.setId(film.getTmdbId());
 		results.add(res);
+		
+		
 	}
-	
 }

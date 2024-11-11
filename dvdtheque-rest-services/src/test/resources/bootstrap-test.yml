@@ -35,11 +35,13 @@ eureka:
     hostname: localhost
     instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
 
+
 local:
   server:
     port: 8083
 server:
-    port: 8083
+  port: 8092
+
 hibernate:
   hbm2ddl:
     auto: validate
@@ -102,7 +104,7 @@ hazelcast:
 stomp:
   endpoint: /dvdtheque-ws
   relay:
-    host: 192.168.1.105
+    host: localhost
     port: 61613
 keycloak:
   realm: dvdtheque

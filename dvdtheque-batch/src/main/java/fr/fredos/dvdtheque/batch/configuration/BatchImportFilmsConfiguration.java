@@ -12,12 +12,12 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
@@ -42,6 +42,7 @@ import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2A
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.client.RestTemplate;
 
 import fr.fredos.dvdtheque.batch.csv.format.FilmCsvImportFormat;
@@ -53,24 +54,24 @@ import fr.fredos.dvdtheque.common.enums.JmsStatus;
 import fr.fredos.dvdtheque.common.jms.model.JmsStatusMessage;
 
 @Configuration
-@EnableBatchProcessing(modular = true)
 public class BatchImportFilmsConfiguration{
 	protected Logger logger = LoggerFactory.getLogger(BatchImportFilmsConfiguration.class);
 	private static String DVDTHEQUE_SERVICE_URL ="dvdtheque-service.url";
 	private static String DVDTHEQUE_SERVICE_CLEAN_ALL ="dvdtheque-service.cleanAllFilms";
 	@Autowired
-    Environment 													environment;
-	@Autowired
-	JobBuilderFactory 												jobBuilderFactory;
+	private Environment 											environment;
     @Autowired
-    StepBuilderFactory 												stepBuilderFactory;
+    private JobRepository											jobRepository;
+    @Autowired
+    private PlatformTransactionManager 								transactionManager;
     @Autowired
     @Qualifier("rippedFlagTasklet")
-    Tasklet 														rippedFlagTasklet;
+    private Tasklet 												rippedFlagTasklet;
     @Autowired
     @Qualifier("retrieveDateInsertionTasklet")
-    Tasklet 														retrieveDateInsertionTasklet;
-    JmsMessageSender												jmsMessageSender;
+    private Tasklet 												retrieveDateInsertionTasklet;
+    private JmsMessageSender										jmsMessageSender;
+    
     @Autowired
 	public void setJmsMessageSender(JmsMessageSender jmsMessageSender) {
 		this.jmsMessageSender = jmsMessageSender;
@@ -84,7 +85,7 @@ public class BatchImportFilmsConfiguration{
 
 		@Override
 		public void afterJob(JobExecution jobExecution) {
-			long executionTime = jobExecution.getEndTime().getTime()-jobExecution.getStartTime().getTime();
+			long executionTime = jobExecution.getEndTime().getNano()-jobExecution.getStartTime().getNano();
 			logger.debug("afterJob executionTime="+executionTime/100 + " s");
 			if( jobExecution.getStatus() == BatchStatus.COMPLETED ){
 				jmsMessageSender.sendMessage(new JmsStatusMessage<Film>(JmsStatus.IMPORT_COMPLETED_SUCCESS, null,executionTime,JmsStatus.IMPORT_COMPLETED_SUCCESS.statusValue()));
@@ -94,7 +95,7 @@ public class BatchImportFilmsConfiguration{
 		}
 	}
    
-    
+	
     @Bean
 	protected Tasklet cleanDBTasklet() {
     	return new Tasklet() {
@@ -133,7 +134,7 @@ public class BatchImportFilmsConfiguration{
 	@Bean(name = "importFilmsJob")
 	public Job importFilmsJob() throws Exception {
 		//logger.info("######## importFilmsJob");
-		return jobBuilderFactory.get("importFilms")
+		return new JobBuilder("importFilms", jobRepository)
 				.listener(new DvdthequeJobResultListener())
 				.incrementer(new RunIdIncrementer())
 				.start(cleanDBStep())
@@ -145,15 +146,18 @@ public class BatchImportFilmsConfiguration{
 	
     @Bean
     protected Step cleanDBStep() {
-    	return stepBuilderFactory.get("cleanDBStep").tasklet(cleanDBTasklet()).build();
+    	return new StepBuilder("cleanDBStep", jobRepository)
+    			.tasklet(cleanDBTasklet(), transactionManager).build();
     }
     @Bean
     protected Step setRippedFlagStep() {
-    	return stepBuilderFactory.get("rippedFlagStep").tasklet(rippedFlagTasklet).build();
+    	return new StepBuilder("rippedFlagStep", jobRepository)
+    			.tasklet(rippedFlagTasklet, transactionManager).build();
     }
     @Bean
     protected Step setRetrieveDateInsertionStep() {
-    	return stepBuilderFactory.get("retrieveDateInsertionStep").tasklet(retrieveDateInsertionTasklet).build();
+    	return new StepBuilder("retrieveDateInsertionStep", jobRepository)
+    			.tasklet(retrieveDateInsertionTasklet, transactionManager).build();
     }
     @Bean
     @StepScope
@@ -216,8 +220,8 @@ public class BatchImportFilmsConfiguration{
     }
     @Bean
     protected Step importFilmsStep() {
-        return stepBuilderFactory.get("importFilmsStep")
-                .<FilmCsvImportFormat, Film>chunk(50)
+    	return new StepBuilder("importFilmsStep", jobRepository)
+    			.<FilmCsvImportFormat, Film>chunk(50,transactionManager)
                 .reader(reader(null))
                 .processor(filmProcessor())
                 .writer(filmWriter())

@@ -16,7 +16,4 @@ public interface FicheFilmRepository extends JpaRepository<FicheFilm, Integer>{
 	
 	@Query("select f from FicheFilm f where f.allocineFilmId = :ficheFilm")
 	FicheFilm findByFicheFilmId(@Param("ficheFilm") Integer ficheFilm);
-	
-	@Query("select f from FicheFilm f join fetch f.critiquePresse as cp where cp is empty")
-	List<FicheFilm> findAllFilmWithoutCritique();
 }

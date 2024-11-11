@@ -1,12 +1,8 @@
 package fr.fredos.dvdtheque.rest.dao.domain;
 
 import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 //@Entity
 //@Table(name = "PAYS")
 public class Pays implements Serializable {

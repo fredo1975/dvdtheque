@@ -19,7 +19,7 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@Profile({ "prod","dev","local"})
+@Profile({ "prod","dev","local","local-mig"})
 public class OAuth2ClientConfiguration {
 	//private final RestTemplateBuilder restTemplateBuilder;
     

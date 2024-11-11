@@ -21,7 +21,7 @@ public class DvdthequeWebSocketController {
 	@MessageMapping("/dvdtheque-ws")
 	public void onReceiveMessage(JmsStatusMessage<Film> jmsStatusMessage) {
 		logger.info("onReceiveMessage jmsStatusMessage="+jmsStatusMessage.toString()); 
-		this.simpMessagingTemplate.convertAndSend("/topic", jmsStatusMessage);
+		this.simpMessagingTemplate.convertAndSend("/topic/", jmsStatusMessage);
 	}
 	@SubscribeMapping("/topic")
 	public void onSendMessage(){

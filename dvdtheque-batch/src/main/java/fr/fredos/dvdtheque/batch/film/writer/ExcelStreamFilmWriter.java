@@ -28,6 +28,7 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.ItemStreamWriter;
@@ -89,13 +90,6 @@ public class ExcelStreamFilmWriter implements ItemStreamWriter<Film> {
 	        throw new ItemStreamException("Error writing to output file", ex);
 	    }
 	    this.setRow(null);
-	}
-	
-	@Override
-	public void write(List<? extends Film> items) throws Exception {
-		for(Film film : items) {
-			this.writeBook(film);
-		}
 	}
 	
 	@Bean
@@ -295,4 +289,11 @@ public class ExcelStreamFilmWriter implements ItemStreamWriter<Film> {
         }
         return sb.toString();
     }
+
+	@Override
+	public void write(Chunk<? extends Film> items) throws Exception {
+		for(Film film : items) {
+			this.writeBook(film);
+		}
+	}
 }
