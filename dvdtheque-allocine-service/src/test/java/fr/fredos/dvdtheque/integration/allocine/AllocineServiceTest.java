@@ -1,10 +1,12 @@
 package fr.fredos.dvdtheque.integration.allocine;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +22,7 @@ import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.fredos.dvdtheque.allocine.AllocineServiceApplication;
+import fr.fredos.dvdtheque.allocine.domain.CritiquePresse;
 import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
 import fr.fredos.dvdtheque.allocine.integration.config.HazelcastConfiguration;
 import fr.fredos.dvdtheque.allocine.service.AllocineService;
@@ -33,13 +36,9 @@ public class AllocineServiceTest {
 	protected Logger logger = LoggerFactory.getLogger(AllocineServiceTest.class);
 	@Autowired
 	private AllocineService allocineService;
-	/*
+	
 	private FicheFilm saveFilm() {
-		FicheFilm ficheFilm = new FicheFilm();
-		ficheFilm.setTitle("title");
-		ficheFilm.setAllocineFilmId(1);
-		ficheFilm.setPageNumber(1);
-		ficheFilm.setUrl("url");
+		FicheFilm ficheFilm = new FicheFilm("title",1555,"url",1);
 		CritiquePresse cp = new CritiquePresse();
 		cp.setAuthor("author1");
 		cp.setBody("body1");
@@ -50,7 +49,7 @@ public class AllocineServiceTest {
 		FicheFilm ficheFilmSaved = allocineService.saveFicheFilm(ficheFilm);
 		assertNotNull(ficheFilmSaved);
 		return ficheFilmSaved;
-	}*/
+	}
 	
     @Test
     @Transactional
@@ -77,4 +76,28 @@ public class AllocineServiceTest {
 		Optional<List<FicheFilm>> ficheFilmCacheRetrievd0 = allocineService.findInCacheByFicheFilmTitle(ficheFilmListDbRetrieved0.get(0).getTitle());
 		assertEquals(ficheFilmCacheRetrievd0.get().get(0),ficheFilm0);
     }
+    
+    @Test
+	public void paginatedSarch() throws ParseException{
+		FicheFilm ficheFilmSaved = saveFilm();
+		var page = allocineService.paginatedSarch("", 1, 1, "-title");
+		assertNotNull(page);
+		assertThat(page.getContent()).isNotEmpty();
+		assertThat(page.getContent().size()==1).isTrue();
+		var it = page.getContent().iterator();
+		assertNotNull(it);
+		var f = it.next();
+		assertNotNull(f);
+		assertThat(ficheFilmSaved.getTitle()).isEqualTo(f.getTitle());
+		var query = "title:eq:"+ficheFilmSaved.getTitle()+":AND,";
+		page = allocineService.paginatedSarch(query, 1, 1, "-title");
+		assertNotNull(page);
+		assertThat(page.getContent()).isNotEmpty();
+		assertThat(page.getContent().size()==1).isTrue();
+		it = page.getContent().iterator();
+		assertNotNull(it);
+		f = it.next();
+		assertNotNull(f);
+		assertThat(ficheFilmSaved.getTitle()).isEqualTo(f.getTitle());
+	}
 }

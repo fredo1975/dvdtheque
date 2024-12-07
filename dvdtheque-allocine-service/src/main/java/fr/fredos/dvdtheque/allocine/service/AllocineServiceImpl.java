@@ -21,7 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,9 +35,12 @@ import fr.fredos.dvdtheque.allocine.domain.CritiquePresse;
 import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
 import fr.fredos.dvdtheque.allocine.domain.Page;
 import fr.fredos.dvdtheque.allocine.repository.FicheFilmRepository;
+import fr.fredos.dvdtheque.common.specifications.filter.PageRequestBuilder;
+import fr.fredos.dvdtheque.common.specifications.filter.SpecificationsBuilder;
 
 @Service
 @CacheConfig(cacheNames = {"ficheFilms","ficheFilmsByTitle"})
+@ComponentScan("fr.fredos.dvdtheque.common.specifications.filter")
 public class AllocineServiceImpl implements AllocineService {
 	protected Logger logger = LoggerFactory.getLogger(AllocineServiceImpl.class);
 	private final FicheFilmRepository ficheFilmRepository;
@@ -74,11 +79,52 @@ public class AllocineServiceImpl implements AllocineService {
 		this.instance = instance;
 		this.init();
 	}
+	
+	@Autowired
+	private SpecificationsBuilder<FicheFilm> builder;
+	
 	public void init() {
 		mapFicheFilms = instance.getMap("ficheFilms");
 		mapFicheFilmsByTtile = instance.getMap("ficheFilmsByTitle");
 	}
 
+	private PageRequest buildDefaultPageRequest(Integer offset,
+			Integer limit,
+			String sort) {
+		Integer limitToSet;
+		Integer offsetToSet;
+		String sortToSet;
+		if(limit == null) {
+			limitToSet = Integer.valueOf(50);
+		}else {
+			limitToSet = limit;
+		}
+		if(offset == null) {
+			offsetToSet = Integer.valueOf(1);
+		}else {
+			offsetToSet = offset;
+		}
+		if(StringUtils.isEmpty(sort)) {
+			sortToSet = "-creationDate";
+		}else {
+			sortToSet = sort;
+		}
+		return PageRequestBuilder.getPageRequest(limitToSet,offsetToSet, sortToSet);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public org.springframework.data.domain.Page<FicheFilm> paginatedSarch(String query,
+			Integer offset,
+			Integer limit,
+			String sort){
+		var page = buildDefaultPageRequest(offset, limit, sort);
+		if(StringUtils.isEmpty(query)) {
+			return ficheFilmRepository.findAll(page);
+		}
+        return ficheFilmRepository.findAll(builder.with(query).build(), page);
+	}
+	
 	/**
 	 * 
 	 */
