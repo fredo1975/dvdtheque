@@ -2,7 +2,6 @@ package fr.fredos.dvdtheque.rest.dao.specifications.filter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
@@ -11,6 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import fr.fredos.dvdtheque.common.specifications.filter.FilterOperation;
+import fr.fredos.dvdtheque.common.specifications.filter.SearchCriteria;
 import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
 import jakarta.persistence.criteria.Join;
