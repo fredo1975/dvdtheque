@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -16,6 +17,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,6 +37,7 @@ import com.hazelcast.map.IMap;
 import fr.fredos.dvdtheque.allocine.domain.CritiquePresse;
 import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
 import fr.fredos.dvdtheque.allocine.domain.Page;
+import fr.fredos.dvdtheque.allocine.dto.FicheFilmDto;
 import fr.fredos.dvdtheque.allocine.repository.FicheFilmRepository;
 import fr.fredos.dvdtheque.common.specifications.filter.PageRequestBuilder;
 import fr.fredos.dvdtheque.common.specifications.filter.SpecificationsBuilder;
@@ -44,7 +48,8 @@ import fr.fredos.dvdtheque.common.specifications.filter.SpecificationsBuilder;
 public class AllocineServiceImpl implements AllocineService {
 	protected Logger logger = LoggerFactory.getLogger(AllocineServiceImpl.class);
 	private final FicheFilmRepository ficheFilmRepository;
-	
+	@Autowired
+    private ModelMapper modelMapper;
 	@Autowired
 	Environment environment;
 	private final static String AHREF = "a[href]";
@@ -114,15 +119,17 @@ public class AllocineServiceImpl implements AllocineService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public org.springframework.data.domain.Page<FicheFilm> paginatedSarch(String query,
+	public org.springframework.data.domain.Page<FicheFilmDto> paginatedSarch(String query,
 			Integer offset,
 			Integer limit,
 			String sort){
 		var page = buildDefaultPageRequest(offset, limit, sort);
 		if(StringUtils.isEmpty(query)) {
-			return ficheFilmRepository.findAll(page);
+			var l = ficheFilmRepository.findAll(page).getContent().stream().map(f->modelMapper.map(f, FicheFilmDto.class)).collect(Collectors.toList());
+			return new PageImpl<FicheFilmDto>(l,page,l.size()); 
 		}
-        return ficheFilmRepository.findAll(builder.with(query).build(), page);
+		var l = ficheFilmRepository.findAll(builder.with(query).build(), page).getContent().stream().map(f->modelMapper.map(f, FicheFilmDto.class)).collect(Collectors.toList());
+        return new PageImpl<FicheFilmDto>(l,page,l.size()); 
 	}
 	
 	/**

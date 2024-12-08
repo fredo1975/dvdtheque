@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,5 +75,14 @@ public class AllocineController {
 	public ResponseEntity<Void> launchAllocineScrapingFicheFilm() {
 		allocineService.scrapAllAllocineFicheFilm();
 		return ResponseEntity.noContent().build();
+	}
+	
+	@RolesAllowed("user")
+	@GetMapping("/paginatedSarch")
+	public ResponseEntity<Page<FicheFilmDto>> paginatedSarch(@RequestParam(name = "query", required = false)String query,
+			@RequestParam(name = "offset", required = false)Integer offset,
+			@RequestParam(name = "limit", required = false)Integer limit,
+			@RequestParam(name = "sort", required = false)String sort){
+		return ResponseEntity.ok(allocineService.paginatedSarch(query, offset, limit, sort));
 	}
 }
