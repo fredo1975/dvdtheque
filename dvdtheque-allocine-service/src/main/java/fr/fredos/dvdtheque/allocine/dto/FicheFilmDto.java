@@ -1,5 +1,6 @@
 package fr.fredos.dvdtheque.allocine.dto;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ public class FicheFilmDto {
 	private int pageNumber;
 	private String title;
 	private Set<CritiquePresseDto> critiquePresse = new HashSet<>();
+	private LocalDateTime creationDate;
 	public FicheFilmDto() {
 		super();
 	}
@@ -49,11 +51,17 @@ public class FicheFilmDto {
 	public void setCritiquePresse(Set<CritiquePresseDto> critiquePresse) {
 		this.critiquePresse = critiquePresse;
 	}
+	
+	public LocalDateTime getCreationDate() {
+		return creationDate;
+	}
+	public void setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
+	}
 	@Override
 	public String toString() {
 		return "FicheFilmDto [id=" + id + ", allocineFilmId=" + allocineFilmId + ", url=" + url + ", pageNumber="
-				+ pageNumber + ", title=" + title + ", critiquePresse=" + critiquePresse + "]";
+				+ pageNumber + ", title=" + title + ", critiquePresse=" + critiquePresse + ", creationDate="
+				+ creationDate + "]";
 	}
-	
-	
 }

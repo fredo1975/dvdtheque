@@ -125,11 +125,13 @@ public class AllocineServiceImpl implements AllocineService {
 			String sort){
 		var page = buildDefaultPageRequest(offset, limit, sort);
 		if(StringUtils.isEmpty(query)) {
-			var l = ficheFilmRepository.findAll(page).getContent().stream().map(f->modelMapper.map(f, FicheFilmDto.class)).collect(Collectors.toList());
-			return new PageImpl<FicheFilmDto>(l,page,l.size()); 
+			var p = ficheFilmRepository.findAll(page);
+			var l = p.getContent().stream().map(f->modelMapper.map(f, FicheFilmDto.class)).collect(Collectors.toList());
+			return new PageImpl<FicheFilmDto>(l,page,p.getTotalElements()); 
 		}
-		var l = ficheFilmRepository.findAll(builder.with(query).build(), page).getContent().stream().map(f->modelMapper.map(f, FicheFilmDto.class)).collect(Collectors.toList());
-        return new PageImpl<FicheFilmDto>(l,page,l.size()); 
+		var p = ficheFilmRepository.findAll(builder.with(query).build(), page);
+		var l = p.getContent().stream().map(f->modelMapper.map(f, FicheFilmDto.class)).collect(Collectors.toList());
+        return new PageImpl<FicheFilmDto>(l,page,p.getTotalElements()); 
 	}
 	
 	/**
