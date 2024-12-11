@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.rest.dao.specifications.filter;
+package fr.fredos.dvdtheque.common.specifications.filter;
 
 public class SearchCriteria {
 	private String key;
@@ -48,5 +48,4 @@ public class SearchCriteria {
 	public void setPredicate(String predicate) {
 		this.predicate = predicate;
 	}
-    
 }

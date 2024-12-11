@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.rest.dao.specifications.filter;
+package fr.fredos.dvdtheque.common.specifications.filter;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -11,8 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 
-public class PageRequestBuilder {
 
+public class PageRequestBuilder {
 	private PageRequestBuilder() {
 		
 	}

@@ -35,13 +35,13 @@ import com.hazelcast.map.IMap;
 
 import fr.fredos.dvdtheque.common.enums.DvdFormat;
 import fr.fredos.dvdtheque.common.enums.FilmOrigine;
+import fr.fredos.dvdtheque.common.specifications.filter.PageRequestBuilder;
 import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
 import fr.fredos.dvdtheque.rest.dao.domain.Film;
 import fr.fredos.dvdtheque.rest.dao.domain.Genre;
 import fr.fredos.dvdtheque.rest.dao.repository.DvdDao;
 import fr.fredos.dvdtheque.rest.dao.repository.FilmDao;
 import fr.fredos.dvdtheque.rest.dao.repository.GenreDao;
-import fr.fredos.dvdtheque.rest.dao.specifications.filter.PageRequestBuilder;
 import fr.fredos.dvdtheque.rest.dao.specifications.filter.SpecificationsBuilder;
 import fr.fredos.dvdtheque.rest.exception.FilmNotFoundException;
 import fr.fredos.dvdtheque.rest.service.IFilmService;
