@@ -1,8 +1,8 @@
-package fr.fredos.dvdtheque.rest.dao.specifications.filter;
+package fr.fredos.dvdtheque.common.specifications.filter;
 
 import java.util.stream.Stream;
 
-import fr.fredos.dvdtheque.rest.dao.specifications.exceptions.NotImplementedException;
+import fr.fredos.dvdtheque.common.exceptions.NotImplementedException;
 
 public enum FilterOperation {
 	EQUAL("eq"),

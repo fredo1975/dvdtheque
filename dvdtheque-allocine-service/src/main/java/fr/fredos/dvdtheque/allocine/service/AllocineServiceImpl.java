@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -16,12 +17,16 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,14 +37,19 @@ import com.hazelcast.map.IMap;
 import fr.fredos.dvdtheque.allocine.domain.CritiquePresse;
 import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
 import fr.fredos.dvdtheque.allocine.domain.Page;
+import fr.fredos.dvdtheque.allocine.dto.FicheFilmDto;
 import fr.fredos.dvdtheque.allocine.repository.FicheFilmRepository;
+import fr.fredos.dvdtheque.common.specifications.filter.PageRequestBuilder;
+import fr.fredos.dvdtheque.common.specifications.filter.SpecificationsBuilder;
 
 @Service
 @CacheConfig(cacheNames = {"ficheFilms","ficheFilmsByTitle"})
+@ComponentScan("fr.fredos.dvdtheque.common.specifications.filter")
 public class AllocineServiceImpl implements AllocineService {
 	protected Logger logger = LoggerFactory.getLogger(AllocineServiceImpl.class);
 	private final FicheFilmRepository ficheFilmRepository;
-	
+	@Autowired
+    private ModelMapper modelMapper;
 	@Autowired
 	Environment environment;
 	private final static String AHREF = "a[href]";
@@ -74,11 +84,56 @@ public class AllocineServiceImpl implements AllocineService {
 		this.instance = instance;
 		this.init();
 	}
+	
+	@Autowired
+	private SpecificationsBuilder<FicheFilm> builder;
+	
 	public void init() {
 		mapFicheFilms = instance.getMap("ficheFilms");
 		mapFicheFilmsByTtile = instance.getMap("ficheFilmsByTitle");
 	}
 
+	private PageRequest buildDefaultPageRequest(Integer offset,
+			Integer limit,
+			String sort) {
+		Integer limitToSet;
+		Integer offsetToSet;
+		String sortToSet;
+		if(limit == null) {
+			limitToSet = Integer.valueOf(50);
+		}else {
+			limitToSet = limit;
+		}
+		if(offset == null) {
+			offsetToSet = Integer.valueOf(1);
+		}else {
+			offsetToSet = offset;
+		}
+		if(StringUtils.isEmpty(sort)) {
+			sortToSet = "-creationDate";
+		}else {
+			sortToSet = sort;
+		}
+		return PageRequestBuilder.getPageRequest(limitToSet,offsetToSet, sortToSet);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public org.springframework.data.domain.Page<FicheFilmDto> paginatedSarch(String query,
+			Integer offset,
+			Integer limit,
+			String sort){
+		var page = buildDefaultPageRequest(offset, limit, sort);
+		if(StringUtils.isEmpty(query)) {
+			var p = ficheFilmRepository.findAll(page);
+			var l = p.getContent().stream().map(f->modelMapper.map(f, FicheFilmDto.class)).collect(Collectors.toList());
+			return new PageImpl<FicheFilmDto>(l,page,p.getTotalElements()); 
+		}
+		var p = ficheFilmRepository.findAll(builder.with(query).build(), page);
+		var l = p.getContent().stream().map(f->modelMapper.map(f, FicheFilmDto.class)).collect(Collectors.toList());
+        return new PageImpl<FicheFilmDto>(l,page,p.getTotalElements()); 
+	}
+	
 	/**
 	 * 
 	 */

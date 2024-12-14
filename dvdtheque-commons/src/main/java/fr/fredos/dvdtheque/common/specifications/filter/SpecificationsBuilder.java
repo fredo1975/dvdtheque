@@ -1,4 +1,4 @@
-package fr.fredos.dvdtheque.rest.dao.specifications.filter;
+package fr.fredos.dvdtheque.common.specifications.filter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import fr.fredos.dvdtheque.common.specifications.filter.SearchCriteria;
-import fr.fredos.dvdtheque.rest.dao.specifications.exceptions.ParameterException;
+import fr.fredos.dvdtheque.common.exceptions.ParameterException;
 
 @Component
 public class SpecificationsBuilder<T> {

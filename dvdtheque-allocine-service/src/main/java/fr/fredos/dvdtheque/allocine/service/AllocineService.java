@@ -3,7 +3,10 @@ package fr.fredos.dvdtheque.allocine.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+
 import fr.fredos.dvdtheque.allocine.domain.FicheFilm;
+import fr.fredos.dvdtheque.allocine.dto.FicheFilmDto;
 
 public interface AllocineService {
 	void scrapAllAllocineFicheFilm();
@@ -15,4 +18,5 @@ public interface AllocineService {
 	List<FicheFilm> saveFicheFilmList(List<FicheFilm> ficheFilmList);
 	Optional<FicheFilm> findInCacheByFicheFilmId(Integer ficheFilmId);
 	Optional<List<FicheFilm>> findInCacheByFicheFilmTitle(String title);
+	Page<FicheFilmDto> paginatedSarch(String query, Integer offset, Integer limit, String sort);
 }
