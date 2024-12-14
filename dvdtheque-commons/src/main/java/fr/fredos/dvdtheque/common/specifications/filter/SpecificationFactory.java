@@ -36,7 +36,7 @@ public class SpecificationFactory<T> {
 			}else if(root.get(criteria.getKey()).getJavaType() == boolean.class || root.get(criteria.getKey()).getJavaType() == Boolean.class) {
 				return builder.equal(root.get(criteria.getKey()),Boolean.valueOf((String) criteria.getValue()));
 			} else {
-            	return builder.like(root.get(criteria.getKey()),(String)criteria.getValue());
+				return builder.like(root.get(criteria.getKey()), "%"+criteria.getValue().toString() +"%");
             }
 		};
 	}

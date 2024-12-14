@@ -89,7 +89,7 @@ public class AllocineServiceTest {
 		var f = it.next();
 		assertNotNull(f);
 		assertThat(ficheFilmSaved.getTitle()).isEqualTo(f.getTitle());
-		var query = "title:eq:"+ficheFilmSaved.getTitle()+":AND,";
+		var query = "title:eq:it:AND";
 		page = allocineService.paginatedSarch(query, 1, 1, "-title");
 		assertNotNull(page);
 		assertThat(page.getContent()).isNotEmpty();
