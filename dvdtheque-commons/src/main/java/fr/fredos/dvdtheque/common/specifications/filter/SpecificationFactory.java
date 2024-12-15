@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +37,7 @@ public class SpecificationFactory<T> {
 			}else if(root.get(criteria.getKey()).getJavaType() == boolean.class || root.get(criteria.getKey()).getJavaType() == Boolean.class) {
 				return builder.equal(root.get(criteria.getKey()),Boolean.valueOf((String) criteria.getValue()));
 			} else {
-				return builder.like(root.get(criteria.getKey()), "%"+criteria.getValue().toString() +"%");
+				return builder.like(root.get(criteria.getKey()), "%"+StringUtils.upperCase(criteria.getValue().toString()) +"%");
             }
 		};
 	}
