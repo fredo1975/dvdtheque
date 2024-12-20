@@ -178,6 +178,16 @@ public class FilmServiceIntegrationTests extends AbstractTransactionalJUnit4Spri
 		f = it.next();
 		assertNotNull(f);
 		assertThat(FilmBuilder.TITRE_FILM_TMBD_ID_844).isEqualTo(f.getTitre());
+		
+		page = filmService.paginatedSarch("genre:eq:"+genre1.getName()+":AND", 1, 1, "");
+		assertNotNull(page);
+		assertThat(page.getContent()).isNotEmpty();
+		assertThat(page.getContent().size()==1).isTrue();
+		it = page.getContent().iterator();
+		assertNotNull(it);
+		f = it.next();
+		assertNotNull(f);
+		assertThat(f.getGenre()).contains(genre1);
 	}
 	@Test
 	public void saveNewFilm() throws ParseException {

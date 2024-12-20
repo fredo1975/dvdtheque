@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import fr.fredos.dvdtheque.common.specifications.filter.FilterOperation;
 import fr.fredos.dvdtheque.common.specifications.filter.SearchCriteria;
 import fr.fredos.dvdtheque.rest.dao.domain.Dvd;
+import fr.fredos.dvdtheque.rest.dao.domain.Genre;
 import fr.fredos.dvdtheque.rest.dao.domain.Personne;
 import jakarta.persistence.criteria.Join;
 @Component
@@ -41,6 +42,8 @@ public class SpecificationFactory<T> {
 				return builder.equal(root.get(criteria.getKey()),Enum.valueOf(clazz, (String) criteria.getValue()));
 			}else if(root.get(criteria.getKey()).getJavaType() == Integer.class) {
 				return builder.equal(root.get(criteria.getKey()),Integer.valueOf((String)criteria.getValue()));
+			}else if(root.get(criteria.getKey()).getJavaType() == Genre.class) {
+				return builder.equal(root.get(criteria.getKey()).get("name"),criteria.getValue());
 			}else if(root.get(criteria.getKey()).getJavaType() == Dvd.class) {
 				Join join = null;
             	if(((String)criteria.getKey()).equalsIgnoreCase("dvd")) {
