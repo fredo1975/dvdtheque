@@ -73,7 +73,7 @@ public class AllocineController {
 	}*/
 	@PostMapping("/scraping-fichefilm")
 	public ResponseEntity<Void> launchAllocineScrapingFicheFilm() {
-		allocineService.scrapAllAllocineFicheFilm();
+		allocineService.scrapAllAllocineFicheFilmMultithreaded();
 		return ResponseEntity.noContent().build();
 	}
 	

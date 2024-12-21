@@ -6,10 +6,10 @@ public class Page {
 		super();
 		this.numPage = numPage;
 	}
-	public Integer getNumPage() {
+	public synchronized Integer getNumPage() {
 		return numPage;
 	}
-	public void setNumPage(Integer numPage) {
+	public synchronized void setNumPage(Integer numPage) {
 		this.numPage = numPage;
 	}
 	@Override
