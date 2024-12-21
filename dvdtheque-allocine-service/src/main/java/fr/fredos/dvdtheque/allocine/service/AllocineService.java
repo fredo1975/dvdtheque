@@ -19,4 +19,8 @@ public interface AllocineService {
 	Optional<FicheFilm> findInCacheByFicheFilmId(Integer ficheFilmId);
 	Optional<List<FicheFilm>> findInCacheByFicheFilmTitle(String title);
 	Page<FicheFilmDto> paginatedSarch(String query, Integer offset, Integer limit, String sort);
+	/**
+	 * 
+	 */
+	void scrapAllAllocineFicheFilmMultithreaded();
 }
