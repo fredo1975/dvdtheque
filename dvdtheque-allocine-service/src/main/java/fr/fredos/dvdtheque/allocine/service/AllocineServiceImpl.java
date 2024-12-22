@@ -194,8 +194,6 @@ public class AllocineServiceImpl implements AllocineService {
 			};
 			executorService.submit(callableTask);
 		}
-		
-		executorService.shutdown();
 		logger.info("***** end scrapping allociné critiques presse *****");
 	}
 	@Override
