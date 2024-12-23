@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -21,6 +24,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.context.annotation.ComponentScan;
@@ -88,6 +92,11 @@ public class AllocineServiceImpl implements AllocineService {
 	@Autowired
 	private SpecificationsBuilder<FicheFilm> builder;
 	
+	@Autowired
+    @Qualifier("fixedThreadPool")
+    private ExecutorService executorService;
+	private AtomicInteger pageNum;
+	
 	public void init() {
 		mapFicheFilms = instance.getMap("ficheFilms");
 		mapFicheFilmsByTtile = instance.getMap("ficheFilmsByTitle");
@@ -134,9 +143,12 @@ public class AllocineServiceImpl implements AllocineService {
         return new PageImpl<FicheFilmDto>(l,page,p.getTotalElements()); 
 	}
 	
-	/**
-	 * 
-	 */
+	private synchronized Page inc(AtomicInteger pageNum) {
+		var localPage = pageNum.incrementAndGet();
+		Page page = new Page(localPage);
+		page.setNumPage(localPage);
+		return page;
+	}
 	@Override
 	public void scrapAllAllocineFicheFilm() {
 		Integer _page = Integer.valueOf(1);
@@ -156,6 +168,33 @@ public class AllocineServiceImpl implements AllocineService {
 				processCritiquePress(allFicheFilmFromPage);
 			}
 		}
+	}
+	/**
+	 * 
+	 */
+	@Override
+	public void scrapAllAllocineFicheFilmMultithreaded() {
+		Callable<String> callableTask = null;
+		pageNum = new AtomicInteger(Integer.valueOf(0));
+		logger.info("***** start scrapping allociné critiques presse *****");
+		for(int i=0;i<nbParsedPage;i++) {
+			callableTask = () -> {
+				var page = inc(pageNum);
+				
+				Set<FicheFilm> allFicheFilmFromPage = retrieveAllFicheFilmFromPage(page);
+				if (CollectionUtils.isNotEmpty(allFicheFilmFromPage)) {
+					processCritiquePress(allFicheFilmFromPage);
+				}
+				allFicheFilmFromPage = null;
+				
+				var res = String.format("page number %s treated",page.getNumPage());
+				logger.info(res);
+				
+				return res;
+			};
+			executorService.submit(callableTask);
+		}
+		logger.info("***** end scrapping allociné critiques presse *****");
 	}
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW,readOnly = false)

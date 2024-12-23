@@ -154,6 +154,7 @@ public class FilmServiceImpl implements IFilmService {
 		}else {
 			filmRetrieved.setDateVue(film.getDateVue());
 		}
+		filmRetrieved.setAllocineFicheFilmId(film.getAllocineFicheFilmId());
 		var mergedFilm = filmDao.save(filmRetrieved);
 		return mergedFilm;
 	}
