@@ -20,6 +20,6 @@ public class TaskSchedulerConfiguration {
 	
 	@Bean("fixedThreadPool")
 	public ExecutorService fixedThreadPool() {
-		return Executors.newFixedThreadPool(3);
+		return Executors.newFixedThreadPool(5);
 	}
 }
