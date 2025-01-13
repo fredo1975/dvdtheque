@@ -1,5 +1,5 @@
 package fr.fredos.dvdtheque.common.enums;
 
 public enum FilmOrigine {
-	DVD, EN_SALLE, TV, GOOGLE_PLAY, CANAL_PLUS,TOUS
+	DVD, EN_SALLE, TV, GOOGLE_PLAY, CANAL_PLUS,PRIME_VIDEO,TOUS
 }
