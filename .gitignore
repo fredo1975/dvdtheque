@@ -2,3 +2,6 @@
 /.project
 /dvdtheque-ejb/
 /.mvn/
+/logs/
+/.idea/
+dvdtheque.iml
